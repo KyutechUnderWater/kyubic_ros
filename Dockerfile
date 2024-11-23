@@ -58,7 +58,7 @@ RUN apt update && \
     cd ~/.pyenv && src/configure && make -C src && \
     echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
     eval "$(pyenv init -)" && \
-    pyenv install 3.12 && pyenv global 3.12
+    pyenv install 3.12 && pyenv global system
 
 
 #########################################
@@ -67,7 +67,7 @@ RUN apt update && \
 #########################################
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
 	echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null && \
-	apt update && apt upgrade``
+	apt update && apt -y upgrade
 
 
 #######################################################################################
@@ -91,7 +91,7 @@ RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DI
 WORKDIR /home/ros2_ws
 
 COPY ./entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/bin/bash", "-c", "chmod 555 /entrypoint.sh && $_"]
+ENTRYPOINT ["/bin/bash", "-c", "chmod 555 /entrypoint.sh && $_ && bash"]
 
 
 
