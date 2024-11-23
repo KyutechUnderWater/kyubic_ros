@@ -35,7 +35,7 @@ jobs:
         shell: bash
 
       - name: Generate Doxygen Documentation
-        run: cd kyubic_ws/src && doxygen Doxyfile
+        run: cd kyubic_ws && doxygen Doxyfile
         shell: bash
 
       - name: Create .nojekyll (ensures pages with underscores work on gh pages)
