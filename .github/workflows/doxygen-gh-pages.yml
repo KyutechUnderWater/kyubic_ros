@@ -6,15 +6,45 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  DOXYGEN_VERSION: 1.9.6
+  BRANCH: gh-pages
+  FOLDER: docs/html
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: DenverCoder1/doxygen-github-pages-action@v2.0.0
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          folder: docs/html
-          config_file: kyubic_ws/src/Doxyfile
+          submodules: "true"
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y wget graphviz
+        shell: bash
+
+      - name: Install Doxygen v$DOXYGEN_VERSION
+        run: |
+          transformed_version=$(echo "$DOXYGEN_VERSION" | tr '.' '_')
+          wget https://github.com/doxygen/doxygen/releases/download/Release_${transformed_version}/doxygen-$DOXYGEN_VERSION.linux.bin.tar.gz
+          tar -xzf doxygen-$DOXYGEN_VERSION.linux.bin.tar.gz
+          sudo mv doxygen-$DOXYGEN_VERSION/bin/doxygen /usr/local/bin/doxygen
+        shell: bash
+
+      - name: Generate Doxygen Documentation
+        run: cd kyubic_ws/src && doxygen Doxyfile
+        shell: bash
+
+      - name: Create .nojekyll (ensures pages with underscores work on gh pages)
+        run: touch $FOLDER/.nojekyll
+        shell: bash
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: $BRANCH
+          folder: $FOLDER
