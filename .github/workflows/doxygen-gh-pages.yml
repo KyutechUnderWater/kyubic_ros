@@ -43,4 +43,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: $BRANCH
-          folder: $FOLDER
+          folder: kyubic_ws/docs/html
