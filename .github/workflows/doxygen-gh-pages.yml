@@ -38,10 +38,6 @@ jobs:
         run: cd kyubic_ws && doxygen Doxyfile
         shell: bash
 
-      - name: Create .nojekyll (ensures pages with underscores work on gh pages)
-        run: touch $FOLDER/.nojekyll
-        shell: bash
-
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
