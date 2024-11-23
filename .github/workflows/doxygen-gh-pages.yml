@@ -9,7 +9,7 @@ on:
 env:
   DOXYGEN_VERSION: 1.9.6
   BRANCH: gh-pages
-  FOLDER: docs/html
+  FOLDER: kyubic_ws/docs/html
 
 jobs:
   deploy:
