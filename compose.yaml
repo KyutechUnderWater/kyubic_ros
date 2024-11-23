@@ -1,0 +1,20 @@
+services:
+  ros-humble:
+    build:
+      context: .
+      args:
+        ubuntu_ver: "22.04"
+        ros2_ver: "humble"
+    image: my/ros:humble
+    container_name: kyubic-ros-humble
+    hostname: kyubic
+    working_dir: /home/kyubic_ros/kyubic_ws
+    tty: true
+    privileged: true
+    network_mode: "host"
+    volumes:
+      - ./:/home/kyubic_ros
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=$DISPLAY
+      - QT_X11_NO_MITSHM=1
