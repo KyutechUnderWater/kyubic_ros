@@ -8,8 +8,6 @@ on:
 
 env:
   DOXYGEN_VERSION: 1.9.6
-  BRANCH: gh-pages
-  FOLDER: kyubic_ws/docs/html
 
 jobs:
   deploy:
@@ -42,5 +40,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: $BRANCH
+          branch: gh-pages
           folder: kyubic_ws/docs/html
