@@ -31,16 +31,14 @@ class DepthDriver : public rclcpp::Node
 public:
   /**
    * @brief Ba30 & Ros-topic setting
-   * @param portname Port name of serial device
-   * @param baudrate Baudrate of serial communication
    * @details The ba30 serial setting and Define a callback function to flow the acquired data to
    * the topic at 100ms interval
    */
-  explicit DepthDriver(const char * _portname, const int _baudrate);
+  explicit DepthDriver();
 
 private:
-  const char * portname;
-  const int baudrate;
+  std::string portname;
+  int baudrate;
 
   std::shared_ptr<Bar30> bar30_;
   rclcpp::Publisher<driver_msgs::msg::Depth>::SharedPtr pub_;
