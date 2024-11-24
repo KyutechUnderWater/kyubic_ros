@@ -15,10 +15,12 @@ using namespace std::chrono_literals;
 namespace depth_driver
 {
 
-DepthDriver::DepthDriver(const char * _portname, const int _baudrate)
-: Node("depth"), portname(_portname), baudrate(_baudrate)
+DepthDriver::DepthDriver() : Node("depth")
 {
-  bar30_ = std::make_shared<Bar30>(portname, baudrate);
+  portname = this->declare_parameter("serial_port", "/dev/ttyACM0");
+  baudrate = this->declare_parameter("serial_speed", 115200);
+
+  bar30_ = std::make_shared<Bar30>(portname.c_str(), baudrate);
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::Depth>("depth", qos);
   timer_ = create_wall_timer(100ms, std::bind(&DepthDriver::update, this));
@@ -44,11 +46,8 @@ int main(int argc, char ** argv)
   setvbuf(stdout, NULL, _IONBF, BUFSIZ);
   rclcpp::init(argc, argv);
 
-  const char * PORTNAME = "/dev/ttyACM0";
-  const int BAUDRATE = 115200;
-
   try {
-    auto node = std::make_shared<depth_driver::DepthDriver>(PORTNAME, BAUDRATE);
+    auto node = std::make_shared<depth_driver::DepthDriver>();
     rclcpp::spin(node);
   } catch (std::exception & e) {
     std::cout << e.what() << std::endl;
