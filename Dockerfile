@@ -41,22 +41,31 @@ RUN apt update && apt install locales && \
 ##################
 ## Install variety
 ##################
-RUN apt update && apt install -y curl gnupg2 lsb-release tmux vim git wget locate python3-pip python3-flake8-docstrings doxygen && \
+RUN apt update && apt install -y sudo gosu iproute2 curl gnupg2 lsb-release \
+	tmux vim git wget locate python3-pip python3-venv python3-flake8-docstrings doxygen && \
 	updatedb
+	
+##################
+## Create new user
+##################
+RUN useradd -ms /bin/bash ros
+WORKDIR /home/ros
+# RUN userdel ubuntu  # for ubuntu24.04
+# RUN echo 'user:pass' | chpasswd
 
 
 ######################################
 ## Install vertual env for python 3.12
 ######################################
-ENV PYENV_ROOT=/root/.pyenv
-ENV PATH=/root/.pyenv/shims:$PYENV_ROOT/bin:$PATH
+ENV PYENV_ROOT=/home/ros/.pyenv
+ENV PATH=/home/ros/.pyenv/shims:$PYENV_ROOT/bin:$PATH
 
 RUN apt update && \
     apt install -y git curl build-essential libffi-dev libssl-dev zlib1g-dev liblzma-dev libbz2-dev \
     libreadline-dev libsqlite3-dev libncursesw5-dev libxml2-dev libxmlsec1-dev tk-dev xz-utils && \
-    git clone https://github.com/pyenv/pyenv.git ~/.pyenv && \
-    cd ~/.pyenv && src/configure && make -C src && \
-    echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
+    git clone https://github.com/pyenv/pyenv.git /home/ros/.pyenv && \
+    cd /home/ros/.pyenv && src/configure && make -C src && \
+    echo 'eval "$(pyenv init -)"' >> /home/ros/.bashrc && \
     eval "$(pyenv init -)" && \
     pyenv install 3.12 && pyenv global system
 
@@ -81,17 +90,16 @@ RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DI
 	echo "ros installed" && \
 	rosdep init && \
 	rosdep update && \
-	echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
-	echo "source /home/kyubic_ros/kyubic_ws/install/setup.bash" >> ~/.bashrc && \
-	echo "source /home/kyubic_ros/kyubic_ws/install/local_setup.bash" >> ~/.bashrc && \
+	echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/ros/.bashrc && \
+	echo "source /home/ros/kyubic_ros/kyubic_ws/install/setup.bash" >> /home/ros/.bashrc && \
+	echo "source /home/ros/kyubic_ros/kyubic_ws/install/local_setup.bash" >> /home/ros/.bashrc && \
 	apt update && apt clean && \
 	rm -rf /var/lib/apt/lists/* && \
 	echo "succesfully"
 
-WORKDIR /home/ros2_ws
-
-COPY ./entrypoint.sh /entrypoint.sh
-ENTRYPOINT ["/bin/bash", "-c", "chmod 555 /entrypoint.sh && $_ && bash"]
+COPY ./entrypoint.sh /usr/bin
+RUN chmod +x /usr/bin/entrypoint.sh
+ENTRYPOINT [ "/bin/bash", "-c", "/usr/bin/entrypoint.sh" ]
 
 
 
