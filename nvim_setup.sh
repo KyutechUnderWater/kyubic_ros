@@ -30,3 +30,5 @@ fi
 cd $orig_path
 
 git clone https://github.com/atomon/astronvim_config_v4.git ~/.config/nvim
+
+echo "alias v='nvim'" >> ~/.bash_aliases
