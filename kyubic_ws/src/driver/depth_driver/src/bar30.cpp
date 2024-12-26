@@ -23,8 +23,10 @@ bool Bar30::update()
 {
   uint8_t buf[100] = {};
   serial_->flush();
-  serial_->read_until(buf, sizeof(buf), 's', 10ms);
-  ssize_t len = serial_->read_until(buf, sizeof(buf), '\n', 10ms);
+
+  // TODO: 開始文字を設定する
+  // serial_->read_until(buf, sizeof(buf), 's', 10ms);
+  ssize_t len = serial_->read_until(buf, sizeof(buf), '\n', 100ms);
   if (len > 0) {
     // TODO: binaryで送れるようにする。s->fでエラーが起こると異常終了するので
     std::string s_depth = std::string(buf, buf + len).substr(0, 6);
