@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install Requirement pkg
-apt update && apt install -y build-essential cmake ripgrep xsel fuse3 cargo zip git
+sudo apt update && sudo apt install -y build-essential cmake ripgrep xsel fuse3 cargo zip git
 
 # installs NVM (Node Version Manager)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
@@ -21,12 +21,14 @@ npm -v # should print `10.5.0`
 orig_path=$(pwd)
 mkdir -p ~/Apps/nvim && nvim_dir=$_ && cd $nvim_dir
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
-chmod u+x ./nvim.appimage && $_ --version
+sudo chmod u+x ./nvim.appimage && $_ --version
 if [[ $? == 0 ]]; then
 	ln -s $nvim_dir/nvim.appimage /usr/bin/nvim
 else
-	./nvim.appimage --appimage-extract >& /dev/null && ln -s $nvim_dir/squashfs-root/usr/bin/nvim /usr/bin/nvim
+	./nvim.appimage --appimage-extract >& /dev/null && sudo ln -s $nvim_dir/squashfs-root/usr/bin/nvim /usr/bin/nvim
 fi
 cd $orig_path
 
 git clone https://github.com/atomon/astronvim_config_v4.git ~/.config/nvim
+
+echo "alias v='nvim'" >> ~/.bash_aliases

@@ -37,3 +37,5 @@ log
 .cache
 
 docs
+99-usb-kyubic.rules
+.env

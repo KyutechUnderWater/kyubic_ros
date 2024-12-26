@@ -24,6 +24,8 @@ DepthDriver::DepthDriver() : Node("depth")
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::Depth>("depth", qos);
   timer_ = create_wall_timer(100ms, std::bind(&DepthDriver::update, this));
+
+  RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
 }
 
 void DepthDriver::update()
@@ -32,7 +34,7 @@ void DepthDriver::update()
     auto msg = std::make_unique<driver_msgs::msg::Depth>();
     msg->depth = bar30_->get_depth_data();
 
-    RCLCPP_INFO(this->get_logger(), "depth: %f", msg->depth);
+    RCLCPP_INFO(this->get_logger(), "%f", msg->depth);
     pub_->publish(std::move(msg));
   } else {
     RCLCPP_WARN(this->get_logger(), "Faild to get depth data");
