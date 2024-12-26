@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-# symbolic link for udev rules
-sudo ln -si ./99-usb-kyubic.rules /etc/udev/rules.d/99-usb-kyubic.rules
+# Hard link for udev rules
+sudo ln -i ./99-usb-kyubic.rules /etc/udev/rules.d/99-usb-kyubic.rules
 
 
 # Set alias
