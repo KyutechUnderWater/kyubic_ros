@@ -12,8 +12,8 @@ sudo chmod +x ./ros2_start.sh
 
 
 # Set Environment Variables (UID and GID)
-echo "USER_ID=$(id -u)" >>  ./.env
-echo "GROUP_ID=$(id -g)" >>  ./.env
+echo "USER_ID=$(id -u)" > ./.env
+echo "GROUP_ID=$(id -g)" > ./.env
 
 
 # Reload bashrc
