@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    serial_port: /dev/ttyUSB-arduino-led
+    serial_speed: 115200
