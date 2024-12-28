@@ -22,6 +22,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 	"msg/Depth.msg"
 	"msg/IMU.msg"
 	"msg/Thruster.msg"
+	"msg/PathFinder.msg"
 	DEPENDENCIES std_msgs
 	DEPENDENCIES geometry_msgs
 )
