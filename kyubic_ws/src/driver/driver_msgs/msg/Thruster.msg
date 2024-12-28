@@ -1,0 +1,7 @@
+std_msgs/Float32 thrust_hfr     #[N]
+std_msgs/Float32 thrust_hrr     #[N]
+std_msgs/Float32 thrust_hrl     #[N]
+std_msgs/Float32 thrust_hfl     #[N]
+std_msgs/Float32 thrust_vmr     #[N]
+std_msgs/Float32 thrust_vml     #[N]
+std_msgs/Float32 total_thrust  #[N]
