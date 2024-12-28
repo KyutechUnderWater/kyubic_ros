@@ -8,5 +8,13 @@ var searchData=
   ['test_5fpep257_5',['test_pep257',['../namespacetest__pep257.html',1,'test_pep257'],['../namespacetest__pep257.html#ac69de1fd6a28f245460be3110acc273f',1,'test_pep257.test_pep257()']]],
   ['test_5fpep257_2epy_6',['test_pep257.py',['../test__pep257_8py.html',1,'']]],
   ['tests_5frequire_7',['tests_require',['../namespacesetup.html#a6369bb060267ccf90b93519796e7cc2c',1,'setup']]],
-  ['toggle_5fnode_8',['toggle_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ac4ad21c3caa090c03e868a7e75585924',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['theta_5fh_8',['theta_h',['../namespacethruster__driver.html#a638b0226ee3770d3d42b64506a6b4a29',1,'thruster_driver']]],
+  ['theta_5fv_9',['theta_v',['../namespacethruster__driver.html#adb3e519bfcf67ddb5c603ce96b7343a1',1,'thruster_driver']]],
+  ['thruster_5fdriver_10',['thruster_driver',['../namespacethruster__driver.html',1,'']]],
+  ['thruster_5fdriver_2ecpp_11',['thruster_driver.cpp',['../thruster__driver_8cpp.html',1,'']]],
+  ['thruster_5fdriver_2ehpp_12',['thruster_driver.hpp',['../thruster__driver_8hpp.html',1,'']]],
+  ['thruster_5fdriver_5flaunch_13',['thruster_driver_launch',['../namespacethruster__driver__launch.html',1,'']]],
+  ['thruster_5fdriver_5flaunch_2epy_14',['thruster_driver_launch.py',['../thruster__driver__launch_8py.html',1,'']]],
+  ['thrusterdriver_15',['ThrusterDriver',['../classthruster__driver_1_1ThrusterDriver.html',1,'thruster_driver::ThrusterDriver'],['../classthruster__driver_1_1ThrusterDriver.html#a4eaf0c67ea919ef3c03623080eb9382b',1,'thruster_driver::ThrusterDriver::ThrusterDriver()']]],
+  ['toggle_5fnode_16',['toggle_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ac4ad21c3caa090c03e868a7e75585924',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

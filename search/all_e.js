@@ -9,5 +9,7 @@ var searchData=
   ['settermios_6',['setTermios',['../classserial_1_1Serial.html#a4fea3d0ac96d0def65b942ccb80e5eb0',1,'serial::Serial']]],
   ['setup_7',['setup',['../namespacesetup.html',1,'setup'],['../classimu__driver_1_1g366_1_1G366.html#a2da8c17300d4c098b01e97e6c4b16436',1,'imu_driver::g366::G366::setup()']]],
   ['setup_2epy_8',['setup.py',['../setup_8py.html',1,'']]],
-  ['stop_5fnode_9',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['sin_5fh_9',['sin_h',['../namespacethruster__driver.html#ad996a462479e639f02185841a7020d4b',1,'thruster_driver']]],
+  ['sin_5fv_10',['sin_v',['../namespacethruster__driver.html#aeb15b67065c300af59de2cbdd29d7989',1,'thruster_driver']]],
+  ['stop_5fnode_11',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];
