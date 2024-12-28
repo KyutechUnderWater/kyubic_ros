@@ -7,6 +7,9 @@
  * @details 各軸の推力をサブスクライブし，ESC制御マイコンに命令する
  *******************************************************************/
 
+#ifndef _THRUSTER_DRIVER_HPP
+#define _THRUSTER_DRIVER_HPP
+
 #include <rclcpp/rclcpp.hpp>
 #include <serial/serial.hpp>
 
@@ -61,3 +64,5 @@ private:
 };
 
 }  // namespace thruster_driver
+
+#endif

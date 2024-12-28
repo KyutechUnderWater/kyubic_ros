@@ -7,6 +7,9 @@
  * @details LEDのduty比を受け取り，LED制御マイコンに命令する
  */
 
+#ifndef _LED_DRIVER_HPP
+#define _LED_DRIVER_HPP
+
 #include <rclcpp/rclcpp.hpp>
 #include <serial/serial.hpp>
 
@@ -46,3 +49,5 @@ private:
 };
 
 }  // namespace led_driver
+
+#endif
