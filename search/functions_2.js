@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['flush_0',['flush',['../classserial_1_1Serial.html#a45a7676a6e6c775cd549e889e714b5bb',1,'serial::Serial']]]
+  ['close_5fapplication_0',['close_application',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a7e5627907791a7cb561e88aa38c33720',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

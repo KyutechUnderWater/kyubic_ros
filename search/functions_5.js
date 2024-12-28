@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['read_0',['read',['../classserial_1_1Serial.html#a62ab0612564a90bc1f82eba3c9fc0a68',1,'serial::Serial::read(uint8_t *buf, const size_t len)'],['../classserial_1_1Serial.html#a4574314c5723864c0f319e3a447da0d3',1,'serial::Serial::read(uint8_t *buf, const size_t len, const std::chrono::duration&lt; long, std::ratio&lt; 1, 1000 &gt; &gt; timeout)']]],
-  ['read_5funtil_1',['read_until',['../classserial_1_1Serial.html#aa2b00a921c5295ad818ef917bb6d09d2',1,'serial::Serial']]]
+  ['generate_5flaunch_5fdescription_0',['generate_launch_description',['../namespacedepth__driver__launch.html#a951e829d8c479bfd6937c10f7ba3247b',1,'depth_driver_launch']]],
+  ['get_5fdepth_5fdata_1',['get_depth_data',['../classdepth__driver_1_1Bar30.html#ae30d0bb34dbc934efb94a3f908bdf573',1,'depth_driver::Bar30']]],
+  ['gettermios_2',['getTermios',['../classserial_1_1Serial.html#a2ad33e557ba5332d3cc6ebfad2bc4ef4',1,'serial::Serial']]]
 ];

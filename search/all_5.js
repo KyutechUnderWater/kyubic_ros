@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['read_0',['read',['../classserial_1_1Serial.html#a62ab0612564a90bc1f82eba3c9fc0a68',1,'serial::Serial::read(uint8_t *buf, const size_t len)'],['../classserial_1_1Serial.html#a4574314c5723864c0f319e3a447da0d3',1,'serial::Serial::read(uint8_t *buf, const size_t len, const std::chrono::duration&lt; long, std::ratio&lt; 1, 1000 &gt; &gt; timeout)']]],
-  ['read_5funtil_1',['read_until',['../classserial_1_1Serial.html#aa2b00a921c5295ad818ef917bb6d09d2',1,'serial::Serial']]]
+  ['fd_0',['fd',['../classserial_1_1Serial.html#a10defd62e94ec9ed6b9e56d9e6bc1102',1,'serial::Serial']]],
+  ['flush_1',['flush',['../classserial_1_1Serial.html#a45a7676a6e6c775cd549e889e714b5bb',1,'serial::Serial']]]
 ];

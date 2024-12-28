@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['serial_0',['Serial',['../classserial_1_1Serial.html',1,'serial']]],
-  ['serialexception_1',['SerialException',['../classserial_1_1SerialException.html',1,'serial']]]
+  ['nodemanager_0',['NodeManager',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html',1,'driver_node_manager::driver_node_manager']]]
 ];
