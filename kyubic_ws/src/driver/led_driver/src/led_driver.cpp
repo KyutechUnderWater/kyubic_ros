@@ -1,3 +1,12 @@
+/**
+ * @file led_driver.cpp
+ * @brief LED driver
+ * @author R.Ohnishi
+ * @date 2024/10/27
+ *
+ * @details LEDのduty比を受け取り，LED制御マイコンに命令する
+ */
+
 #include "led_driver/led_driver.hpp"
 
 namespace led_driver

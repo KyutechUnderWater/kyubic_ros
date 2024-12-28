@@ -1,5 +1,5 @@
 /**
- * @file imu_driver.hpp
+ * @file imu_driver.cpp
  * @brief imu driver
  * @author R.Ohnishi
  * @date 2024/10/27
