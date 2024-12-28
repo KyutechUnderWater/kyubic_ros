@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    serial_port: /dev/ttyUSB-arduino-thruster
+    serial_speed: 115200
