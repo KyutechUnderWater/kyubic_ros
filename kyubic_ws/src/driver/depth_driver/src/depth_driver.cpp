@@ -21,11 +21,11 @@ DepthDriver::DepthDriver() : Node("depth")
   baudrate = this->declare_parameter("serial_speed", 115200);
 
   bar30_ = std::make_shared<Bar30>(portname.c_str(), baudrate);
+  RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
+
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::Depth>("depth", qos);
   timer_ = create_wall_timer(100ms, std::bind(&DepthDriver::_update, this));
-
-  RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
 }
 
 void DepthDriver::_update()

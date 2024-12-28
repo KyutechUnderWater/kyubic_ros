@@ -30,8 +30,8 @@ class DepthDriver : public rclcpp::Node
 {
 public:
   /**
-   * @brief Ba30 & ROS-topic setting
-   * @details The ba30 serial setting and Define a callback function to flow the acquired data to
+   * @brief Bar30 & ROS-topic setting
+   * @details The bar30 serial setting and Define a callback function to flow the acquired data to
    * the topic at 100ms interval
    */
   explicit DepthDriver();
