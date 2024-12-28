@@ -44,7 +44,14 @@ RUN apt update && apt install locales && \
 RUN apt update && apt install -y sudo gosu iproute2 curl gnupg2 lsb-release \
 	tmux vim git wget locate python3-pip python3-venv python3-flake8-docstrings doxygen && \
 	updatedb
-	
+
+####################################################
+## Enable completion
+## ref: https://penguin-coffeebreak.com/archives/242
+####################################################
+RUN apt install bash-completion && source /etc/bash_completion && \
+	rm /etc/apt/apt.conf.d/docker-clean && apt update
+
 ##################
 ## Create new user
 ##################
@@ -61,13 +68,13 @@ ENV PYENV_ROOT=/home/ros/.pyenv
 ENV PATH=/home/ros/.pyenv/shims:$PYENV_ROOT/bin:$PATH
 
 RUN apt update && \
-    apt install -y git curl build-essential libffi-dev libssl-dev zlib1g-dev liblzma-dev libbz2-dev \
-    libreadline-dev libsqlite3-dev libncursesw5-dev libxml2-dev libxmlsec1-dev tk-dev xz-utils && \
-    git clone https://github.com/pyenv/pyenv.git /home/ros/.pyenv && \
-    cd /home/ros/.pyenv && src/configure && make -C src && \
-    echo 'eval "$(pyenv init -)"' >> /home/ros/.bashrc && \
-    eval "$(pyenv init -)" && \
-    pyenv install 3.12 && pyenv global system
+	apt install -y git curl build-essential libffi-dev libssl-dev zlib1g-dev liblzma-dev libbz2-dev \
+	libreadline-dev libsqlite3-dev libncursesw5-dev libxml2-dev libxmlsec1-dev tk-dev xz-utils && \
+	git clone https://github.com/pyenv/pyenv.git /home/ros/.pyenv && \
+	cd /home/ros/.pyenv && src/configure && make -C src && \
+	echo 'eval "$(pyenv init -)"' >> /home/ros/.bashrc && \
+	eval "$(pyenv init -)" && \
+	pyenv install 3.12 && pyenv global system
 
 
 #########################################
