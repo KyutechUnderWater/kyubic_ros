@@ -10,7 +10,7 @@
 #ifndef _BAR30_HPP
 #define _BAR30_HPP
 
-#include "serial/serial.hpp"
+#include <serial/serial.hpp>
 
 #include <memory>
 
@@ -46,7 +46,7 @@ public:
    * @brief Get depth data
    * @return depth data
    */
-  float get_depth_data();
+  float get_data();
 
 private:
   const char * portname;

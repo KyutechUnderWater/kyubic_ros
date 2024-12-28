@@ -23,16 +23,16 @@ DepthDriver::DepthDriver() : Node("depth")
   bar30_ = std::make_shared<Bar30>(portname.c_str(), baudrate);
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::Depth>("depth", qos);
-  timer_ = create_wall_timer(100ms, std::bind(&DepthDriver::update, this));
+  timer_ = create_wall_timer(100ms, std::bind(&DepthDriver::_update, this));
 
   RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
 }
 
-void DepthDriver::update()
+void DepthDriver::_update()
 {
   if (bar30_->update()) {
     auto msg = std::make_unique<driver_msgs::msg::Depth>();
-    msg->depth = bar30_->get_depth_data();
+    msg->depth = bar30_->get_data();
 
     RCLCPP_INFO(this->get_logger(), "%f", msg->depth);
     pub_->publish(std::move(msg));

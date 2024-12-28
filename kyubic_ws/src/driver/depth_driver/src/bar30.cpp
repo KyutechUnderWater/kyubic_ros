@@ -37,7 +37,7 @@ bool Bar30::update()
   return false;
 }
 
-float Bar30::get_depth_data()
+float Bar30::get_data()
 {
   return depth_data;
 }

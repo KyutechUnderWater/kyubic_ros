@@ -30,7 +30,7 @@ class DepthDriver : public rclcpp::Node
 {
 public:
   /**
-   * @brief Ba30 & Ros-topic setting
+   * @brief Ba30 & ROS-topic setting
    * @details The ba30 serial setting and Define a callback function to flow the acquired data to
    * the topic at 100ms interval
    */
@@ -44,7 +44,7 @@ private:
   rclcpp::Publisher<driver_msgs::msg::Depth>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 
-  void update();
+  void _update();
 };
 
 }  // namespace depth_driver
