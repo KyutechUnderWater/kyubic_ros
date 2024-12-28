@@ -4,7 +4,7 @@
   <name>depth_driver</name>
   <version>0.0.0</version>
   <description>depth driver</description>
-  <maintainer email="todo@todo.todo">Ryohei Ohnishi</maintainer>
+  <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
