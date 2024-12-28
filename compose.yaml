@@ -19,6 +19,5 @@ services:
     environment:
       - DISPLAY=$DISPLAY
       - QT_X11_NO_MITSHM=1
-    env_file:
-      - .env
-
+      - USER_ID=$USER_ID
+      - GROUP_ID=$GROUP_ID

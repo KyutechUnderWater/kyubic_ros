@@ -7,15 +7,15 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory("depth_driver"), "config", "depth_driver.param.yaml"
+        get_package_share_directory("imu_driver"), "config", "imu_driver.param.yaml"
     )
 
     return LaunchDescription(
         [
             Node(
-                package="depth_driver",
+                package="imu_driver",
                 namespace="driver",
-                executable="depth_driver",
+                executable="imu_driver",
                 parameters=[config],
                 output="screen",
             )

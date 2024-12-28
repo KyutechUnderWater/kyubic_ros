@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    serial_port: /dev/ttyUSB-g366
+    serial_speed: 460800

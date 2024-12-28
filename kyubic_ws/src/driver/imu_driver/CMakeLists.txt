@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(serial)
+project(imu_driver)
 
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)
@@ -15,10 +15,17 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-include_directories(include)
+# include_directories(include)
 
-ament_auto_add_library(${PROJECT_NAME} SHARED
-  src/serial.cpp
+ament_auto_add_executable(${PROJECT_NAME}
+  src/g366.cpp
+  src/imu_driver.cpp
+)
+
+install(DIRECTORY
+  config
+  launch
+  DESTINATION share/${PROJECT_NAME}/
 )
 
 if(BUILD_TESTING)

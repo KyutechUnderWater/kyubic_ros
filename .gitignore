@@ -214,4 +214,3 @@ cython_debug/
 docs
 99-usb-kyubic.rules
 .env
-resource
