@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['package_5fname_0',['package_name',['../namespacesetup.html#a69903e4f05cebc9e005b22b36f5724eb',1,'setup']]],
-  ['packages_1',['packages',['../namespacesetup.html#aff2375a361fd5865c77bd9aa093be747',1,'setup']]],
-  ['processes_2',['processes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a11742ed5aa6d05fe13377caa2f2dd6bd',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['py_5fmodules_3',['py_modules',['../namespacesetup.html#ad6a0f278ba38b7ed3595fd6896196fb3',1,'setup']]]
+  ['name_0',['name',['../namespacesetup.html#ab3a7a0638d76a01367c5bc3cc699447f',1,'setup']]],
+  ['node_5fstatus_1',['node_status',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#abce255ead68a038acae9fe6bd1d04f44',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['nodemanager_2',['NodeManager',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html',1,'driver_node_manager::driver_node_manager']]],
+  ['nodes_3',['nodes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ae64c07aaa135224e453985d7b1d3c5ca',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

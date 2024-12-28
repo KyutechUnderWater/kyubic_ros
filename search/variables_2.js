@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fd_0',['fd',['../classserial_1_1Serial.html#a10defd62e94ec9ed6b9e56d9e6bc1102',1,'serial::Serial']]]
+  ['entry_5fpoints_0',['entry_points',['../namespacesetup.html#ada7058afc98897f073d3f3b8b9157059',1,'setup']]]
 ];

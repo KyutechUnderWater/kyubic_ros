@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['nodemanager_0',['NodeManager',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html',1,'driver_node_manager::driver_node_manager']]]
+  ['g366_0',['G366',['../classimu__driver_1_1g366_1_1G366.html',1,'imu_driver::g366']]]
 ];

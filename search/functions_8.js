@@ -1,8 +1,4 @@
 var searchData=
 [
-  ['serial_0',['Serial',['../classserial_1_1Serial.html#ab0764fe0d037a8b46accac8fe2a72999',1,'serial::Serial']]],
-  ['serialexception_1',['SerialException',['../classserial_1_1SerialException.html#a3713871bf41f84d80537388b7e3308a2',1,'serial::SerialException']]],
-  ['setconfig_2',['setConfig',['../classserial_1_1Serial.html#a70c460f4584e3f27eab799bde02e2836',1,'serial::Serial']]],
-  ['settermios_3',['setTermios',['../classserial_1_1Serial.html#a4fea3d0ac96d0def65b942ccb80e5eb0',1,'serial::Serial']]],
-  ['stop_5fnode_4',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['main_0',['main',['../depth__driver_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main():&#160;depth_driver.cpp'],['../namespacedriver__node__manager_1_1driver__node__manager.html#aa0961e141bda24aefbb162a6f28848c7',1,'driver_node_manager.driver_node_manager.main()'],['../imu__driver_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main():&#160;imu_driver.cpp']]]
 ];
