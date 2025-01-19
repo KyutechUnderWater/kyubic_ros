@@ -9,6 +9,9 @@
 
 #include "thruster_driver/thruster_driver.hpp"
 
+#include <cstring>
+#include <iostream>
+
 namespace thruster_driver
 {
 
@@ -80,7 +83,7 @@ void ThrusterDriver::_robot_force_callback(const geometry_msgs::msg::WrenchStamp
     s_buf += end_char;
 
     const uint8_t * buf = reinterpret_cast<const uint8_t *>(s_buf.c_str());
-    serial_->write(buf, sizeof(buf));
+    serial_->write(buf, strlen(s_buf.c_str()));
     RCLCPP_INFO(this->get_logger(), "sending message is %s", s_buf.c_str());
   }
 
