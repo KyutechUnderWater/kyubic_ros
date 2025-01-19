@@ -9,6 +9,8 @@
 
 #include "dvl_driver/dvl_driver.hpp"
 
+#include <iostream>
+
 using namespace std::chrono_literals;
 
 namespace dvl_driver
@@ -17,10 +19,12 @@ namespace dvl_driver
 DVLDriver::DVLDriver() : Node("dvl_driver")
 {
   address = this->declare_parameter("ip_address", "0.0.0.0");
-  port = this->declare_parameter("port", 8888);
+  listener_port = this->declare_parameter("listener_port", 8888);
+  sender_port = this->declare_parameter("sender_port", 8888);
 
-  listener_ = std::make_shared<path_finder::Listener>(address.c_str(), port);
-  sender_ = std::make_shared<path_finder::Sender>(address.c_str(), port);
+  listener_ = std::make_shared<path_finder::Listener>(address.c_str(), listener_port, 500);
+  sender_ = std::make_shared<path_finder::Sender>(address.c_str(), sender_port, 500);
+  RCLCPP_INFO(this->get_logger(), "DVL connection successful");
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::PathFinder>("path_finder", qos);
@@ -47,8 +51,15 @@ driver_msgs::msg::PathFinder::UniquePtr DVLDriver::_create_msg(
 
 bool DVLDriver::update()
 {
-  if (!sender_->ping()) return false;
-  if (!listener_->listen()) return false;
+  if (!sender_->ping()) {
+    RCLCPP_ERROR(this->get_logger(), "ping faild");
+    return false;
+  }
+
+  if (!listener_->listen()) {
+    RCLCPP_ERROR(this->get_logger(), "listen faild");
+    return false;
+  }
 
   auto msg = _create_msg(listener_->get_dvl_data());
   pub_->publish(std::move(msg));

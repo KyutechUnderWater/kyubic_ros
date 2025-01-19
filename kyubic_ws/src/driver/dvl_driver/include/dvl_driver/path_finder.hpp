@@ -134,6 +134,7 @@ class Listener
 private:
   const char * address;
   const int port;
+  const int timeout;
 
   int sockfd;
   struct sockaddr_in server;
@@ -170,9 +171,10 @@ public:
    * @brief Create socket and Connect Socket
    * @param address Ip address of Path Finder
    * @param port Port of Path Finder
+   * @param timeout socket timeout [msec]
    * @details Socket creation with IPv4 and TCP. Socket connection based on address and port
    */
-  explicit Listener(const char * _address, const int _port);
+  explicit Listener(const char * _address, const int _port, const int _timeout = 1000);
 
   /**
    * @brief Listen and parse data from Path Finder
@@ -196,6 +198,7 @@ class Sender
 {
   const char * address;
   const int port;
+  const int timeout;
 
   int sockfd;
   struct sockaddr_in server;
@@ -209,9 +212,10 @@ public:
    * @brief Create socket and Connect Socket
    * @param address Ip address of Path Finder
    * @param port Port of Path Finder
+   * @param timeout socket timeout [msec]
    * @details Socket creation with IPv4 and TCP. Socket connection based on address and port
    */
-  explicit Sender(const char * _address, const int _port);
+  explicit Sender(const char * _address, const int _port, const int _timeout = 1000);
 
   /**
    * @brief Send ping to Path Finder

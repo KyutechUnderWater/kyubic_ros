@@ -25,9 +25,13 @@ namespace dvl_driver::path_finder
 void error(const char * msg)
 {
   perror(msg);
+  exit(0);
 }
 
-Listener::Listener(const char * _address, const int _port) : address(_address), port(_port)
+// TODO: socket通信のラッパーライブラリを作る
+// TODO: socketのcloseをデコンストラクタに入れる
+Listener::Listener(const char * _address, const int _port, const int _timeout)
+: address(_address), port(_port), timeout(_timeout)
 {
   // AF_INET: IPv4, SOCK_STREAM: TCP
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) error("ERROR opening socket");
@@ -38,6 +42,14 @@ Listener::Listener(const char * _address, const int _port) : address(_address), 
 
   if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) < 0)
     error("DVL Listener: ERROR connecting");
+
+  // Set time out
+  struct timeval tv;
+  tv.tv_sec = static_cast<int>(timeout / 1000);
+  tv.tv_usec = (timeout - tv.tv_sec * 1000) * 1000;
+  std::cout << tv.tv_sec << " " << tv.tv_usec << std::endl;
+  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
+    std::cout << "ERROR setting socket timeout" << std::endl;
 
   std::cout << "DVL Listener Start!!!" << std::endl;
 }
@@ -50,7 +62,7 @@ bool Listener::listen()
   if (num_of_listen == 88)
     return _parse();
   else if (num_of_listen < 0)
-    error("Failed to Listen!");
+    std::cout << "Failed to Listen!" << std::endl;
   else
     std::cout << "Missing Data" << std::endl;
 
@@ -78,7 +90,7 @@ bool Listener::_parse()
 
   // TODO: bit arrayを使わず，実装
   if (bit_array.at(LEAK_SENSOR).any() || bit_array.at(LEAK_SENSOR + 1).any()) {
-    error("Leaking or Circuit short in DVL！");
+    std::cout << "Leaking or Circuit short in DVL！" << std::endl;
     return false;
   }
 
@@ -140,7 +152,7 @@ void Listener::print_info()
   if (dvl_data.pathfinder_id == 125) {
     std::cout << "Path Finder ID is correct" << std::endl;
   } else {
-    error("This Packet is not from Path Finder");
+    std::cout << "This Packet is not from Path Finder" << std::endl;
   }
 
   std::cout << "Setting of Speed of Sound is " << dvl_data.speed_of_sound << std::endl;
@@ -165,7 +177,8 @@ void Listener::print_info()
   std::cout << "bit_array is cleard  " << std::endl;
 }
 
-Sender::Sender(const char * _address, const int _port) : address(_address), port(_port)
+Sender::Sender(const char * _address, const int _port, const int _timeout)
+: address(_address), port(_port), timeout(_timeout)
 {
   // AF_INET: IPv4, SOCK_STREAM: TCP
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) error("ERROR opening socket");
@@ -177,13 +190,20 @@ Sender::Sender(const char * _address, const int _port) : address(_address), port
   if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) < 0)
     error("DVL Sender: ERROR connecting");
 
+  // Set time out
+  struct timeval tv;
+  tv.tv_sec = static_cast<int>(timeout / 1000);
+  tv.tv_usec = (timeout - tv.tv_sec * 1000) * 1000;
+  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
+    error("ERROR setting socket timeout");
+
   std::cout << "DVL Sender Start!!!" << std::endl;
 }
 
 bool Sender::ping()
 {
   if (send(sockfd, ping_char, sizeof(ping_char), 0) != sizeof(ping_char)) {
-    error("Ping don't send");
+    std::cout << "Ping don't send" << std::endl;
     return false;
   }
   std::cout << "ping send!!" << std::endl;

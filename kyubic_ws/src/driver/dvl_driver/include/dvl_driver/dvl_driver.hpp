@@ -33,7 +33,8 @@ public:
 
 private:
   std::string address;
-  int port;
+  int listener_port;
+  int sender_port;
 
   std::shared_ptr<path_finder::Sender> sender_;
   std::shared_ptr<path_finder::Listener> listener_;
