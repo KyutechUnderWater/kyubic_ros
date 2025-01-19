@@ -31,7 +31,7 @@ void LEDDriver::_led_callback(const std_msgs::msg::Float32 msg)
   if (duty < 0 || 1 < duty)
     RCLCPP_ERROR(this->get_logger(), "Out of range: duty is %f", duty);
   else {
-    uint8_t buf = uint8_t(duty * 255);
+    uint8_t buf = uint8_t(duty * 100);
     serial_->write(&buf, sizeof(buf));
     RCLCPP_INFO(this->get_logger(), "Send: %d", buf);
   }
