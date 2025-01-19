@@ -7,7 +7,9 @@ if [ $# != 1 ]; then
 fi
 
 # Hard link for udev rules
-sudo ln -i ./99-usb-kyubic.rules /etc/udev/rules.d/99-usb-kyubic.rules
+if [ -f ./99-usb-kyubic.rules ] && [ ! -L /etc/udev/rules.d/99-usb-kyubic.rules ]; then
+	sudo ln -i ./99-usb-kyubic.rules /etc/udev/rules.d/99-usb-kyubic.rules
+fi
 
 # Set alias
 path=$(pwd)
@@ -17,6 +19,7 @@ sudo chmod +x ./ros2_start.sh
 # Set Environment Variables (UID and GID)
 echo "export USER_ID=$(id -u)" >>~/.bashrc
 echo "export GROUP_ID=$(id -g)" >>~/.bashrc
+echo "export KYUBIC_ROS=$path" >>~/.bashrc
 
 # Reload bashrc
 eval "$(cat ~/.bashrc | tail -n +10)"
