@@ -31,7 +31,7 @@ SHELL ["/bin/bash", "-c"]
 #########################################
 # RUN touch /etc/apt/apt.conf.d/99fixbadproxy && \
 #     echo "Acquire::http::Pipeline-Depth 0; Acquire::http::No-Cache true; Acquire::BrokenProxy true;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
-RUN apt update && apt install locales && \
+RUN apt update && apt install -y locales && \
 	locale-gen en_US en_US.UTF-8  && \
 	update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
 	export LANG=en_US.UTF-8
@@ -64,17 +64,12 @@ WORKDIR /home/ros
 ######################################
 ## Install vertual env for python 3.12
 ######################################
-ENV PYENV_ROOT=/home/ros/.pyenv
-ENV PATH=/home/ros/.pyenv/shims:$PYENV_ROOT/bin:$PATH
-
-RUN apt update && \
-	apt install -y git curl build-essential libffi-dev libssl-dev zlib1g-dev liblzma-dev libbz2-dev \
-	libreadline-dev libsqlite3-dev libncursesw5-dev libxml2-dev libxmlsec1-dev tk-dev xz-utils && \
-	git clone https://github.com/pyenv/pyenv.git /home/ros/.pyenv && \
-	cd /home/ros/.pyenv && src/configure && make -C src && \
-	echo 'eval "$(pyenv init -)"' >> /home/ros/.bashrc && \
-	eval "$(pyenv init -)" && \
-	pyenv install 3.12 && pyenv global system
+RUN gosu ros bash -l -c "curl -LsSf https://astral.sh/uv/install.sh | sh && \
+	source /home/ros/.local/bin/env && \
+	uv python install 3.12 && \
+	uv venv /home/ros/python3.12 --system-site-packages && \
+	echo source /home/ros/.local/bin/env >> /home/ros/.bashrc && \
+	echo source /home/ros/python3.12/bin/activate >> /home/ros/.bashrc"
 
 
 #########################################
@@ -92,8 +87,10 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
 ARG ros2_ver=jazzy
 ENV ROS_DISTRO=$ros2_ver
 
-RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DISTRO-teleop-twist-keyboard ros-dev-tools && \
-	python3 -m pip install -U argcomplete colcon-common-extensions vcstools && \
+RUN source /home/ros/.local/bin/env && \
+	source /home/ros/python3.12/bin/activate && \
+	apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DISTRO-teleop-twist-keyboard ros-dev-tools && \
+	gosu ros bash -l -c "uv pip install -U argcomplete colcon-common-extensions vcstools" && \
 	echo "ros installed" && \
 	rosdep init && \
 	rosdep update && \
