@@ -55,7 +55,7 @@ RUN apt install bash-completion && source /etc/bash_completion && \
 ##################
 ## Create new user
 ##################
-RUN useradd -ms /bin/bash ros
+RUN userdel -r ubuntu && useradd -ms /bin/bash ros
 WORKDIR /home/ros
 # RUN userdel ubuntu  # for ubuntu24.04
 # RUN echo 'user:pass' | chpasswd
