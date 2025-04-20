@@ -67,9 +67,7 @@ WORKDIR /home/ros
 RUN gosu ros bash -l -c "curl -LsSf https://astral.sh/uv/install.sh | sh && \
 	source /home/ros/.local/bin/env && \
 	uv python install 3.12 && \
-	uv venv /home/ros/python3.12 --system-site-packages && \
-	echo source /home/ros/.local/bin/env >> /home/ros/.bashrc && \
-	echo source /home/ros/python3.12/bin/activate >> /home/ros/.bashrc"
+	echo source /home/ros/.local/bin/env >> /home/ros/.bashrc"
 
 
 #########################################
@@ -87,10 +85,7 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
 ARG ros2_ver=jazzy
 ENV ROS_DISTRO=$ros2_ver
 
-RUN source /home/ros/.local/bin/env && \
-	source /home/ros/python3.12/bin/activate && \
-	apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DISTRO-teleop-twist-keyboard ros-dev-tools && \
-	gosu ros bash -l -c "uv pip install -U argcomplete colcon-common-extensions vcstools" && \
+RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DISTRO-teleop-twist-keyboard ros-dev-tools && \
 	echo "ros installed" && \
 	rosdep init && \
 	rosdep update && \
