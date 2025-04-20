@@ -32,7 +32,12 @@ void DepthDriver::_update()
 {
   if (bar30_->update()) {
     auto msg = std::make_unique<driver_msgs::msg::Depth>();
-    msg->depth = bar30_->get_data();
+    auto data = bar30_->get_data();
+
+    msg->header.stamp = this->get_clock()->now();
+    msg->header.frame_id = "base_link";
+    msg->sequence = data.sequence;
+    msg->depth = data.depth;
 
     RCLCPP_INFO(this->get_logger(), "%f", msg->depth);
     pub_->publish(std::move(msg));

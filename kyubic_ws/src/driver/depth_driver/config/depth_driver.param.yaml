@@ -1,4 +1,5 @@
 /**:
   ros__parameters:
-    serial_port: /dev/ttyUSB-arduino-depth
+    # serial_port: /dev/ttyUSB-arduino-depth
+    serial_port: /dev/ttyACM0
     serial_speed: 115200
