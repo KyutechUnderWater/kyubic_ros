@@ -1,4 +1,4 @@
-Close #<issue_number>
+resolve #<issue_number>
 
 ### Done
 - 
