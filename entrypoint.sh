@@ -4,6 +4,7 @@
 ## sudo: unable to resolve host kyubic: Temporary failure in name resolution
 sh -c 'echo 172.30.51.207 kyubic >> /etc/hosts'
 
+groupmod -g $GROUP_ID ros
 usermod -u $USER_ID -g $GROUP_ID -G sudo ros
 chown ros:ros -R /home/ros
 

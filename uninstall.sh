@@ -6,6 +6,7 @@ docker compose down
 # Delete Enviroment Variable
 sed -i '/export USER_ID=/d' ~/.bashrc
 sed -i '/export GROUP_ID=/d' ~/.bashrc
+sed -i '/export KYUBIC_ROS=/d' ~/.bashrc
 export -n USER_ID
 export -n GROUP_ID
 export -n KYUBIC_ROS
