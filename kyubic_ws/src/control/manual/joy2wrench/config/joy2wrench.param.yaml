@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    force_scale: 30.0
+    torque_scale: 30.0

@@ -6,11 +6,11 @@ HOME_DIR=/home/ros
 sudo apt update && sudo apt install -y build-essential cmake ripgrep xsel fuse3 cargo zip git
 
 # installs NVM (Node Version Manager)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-eval "$(cat ~/.bashrc | tail -n +10)"
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+\. "$HOME/.nvm/nvm.sh"
 
 # download and install Node.js
-nvm install 20
+nvm install 23
 
 # verifies the right Node.js version is in the environment
 node -v # should print `v20.12.2`
