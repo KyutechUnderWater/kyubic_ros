@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Move directory
+cd ./docker || exit
+
 # Delete container
 docker compose down
 
@@ -19,3 +22,5 @@ eval "$(cat ~/.bashrc | tail -n +10)"
 if [ -L /etc/udev/rules.d/99-usb-kyubic.rules ]; then
 	sudo unlink /etc/udev/rules.d/99-usb-kyubic.rules
 fi
+
+cd ../
