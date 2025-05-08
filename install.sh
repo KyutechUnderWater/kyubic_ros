@@ -25,6 +25,9 @@ echo "export KYUBIC_ROS=$path" >>~/.bashrc
 eval "$(cat ~/.bashrc | tail -n +10)"
 
 #############################################################################
+# Move directory
+cd ./docker || exit
+
 # Create and Start container
 docker compose build $2
 docker compose create
@@ -37,8 +40,10 @@ docker compose exec kyubic-ros sh -c "echo "ros:$1" | chpasswd"
 docker compose exec kyubic-ros gosu ros bash -l -c "echo 'export ROS_DOMAIN_ID=1' >> ~/.bashrc"
 
 ## Install nvim
-docker compose exec kyubic-ros gosu ros bash -c "../nvim_setup.sh"
+docker compose exec kyubic-ros gosu ros bash -c "../docker/nvim_setup.sh"
 
 ## Stop Container
 docker compose stop
 #############################################################################
+
+cd $path || exit

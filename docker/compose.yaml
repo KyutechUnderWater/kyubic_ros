@@ -14,7 +14,7 @@ services:
     network_mode: "host"
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./:/home/ros/kyubic_ros
+      - ../:/home/ros/kyubic_ros
       - /dev:/dev
     environment:
       - DISPLAY=$DISPLAY

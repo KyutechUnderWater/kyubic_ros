@@ -13,10 +13,10 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
 nvm install 23
 
 # verifies the right Node.js version is in the environment
-node -v # should print `v20.12.2`
+node -v # should print `v23.11.0`
 
 # verifies the right NPM version is in the environment
-npm -v # should print `10.5.0`
+npm -v # should print `10.9.2`
 
 # Install Neovim
 orig_path=$(pwd)
@@ -30,6 +30,6 @@ else
 fi
 cd $orig_path
 
-git clone https://github.com/atomon/astronvim_config_v4.git $HOME_DIR/.config/nvim
+git clone https://github.com/atomon/astronvim_v5.git $HOME_DIR/.config/nvim
 
 echo "alias v='nvim'" >>$HOME_DIR/.bash_aliases
