@@ -16,6 +16,8 @@
 
 #include <driver_msgs/msg/depth.hpp>
 
+#include <cstdint>
+
 /**
  * @namespace depth_driver
  * @brief For depth driver
@@ -39,6 +41,7 @@ public:
 private:
   std::string portname;
   int baudrate;
+  uint64_t timeout;
 
   std::shared_ptr<Bar30> bar30_;
   rclcpp::Publisher<driver_msgs::msg::Depth>::SharedPtr pub_;
