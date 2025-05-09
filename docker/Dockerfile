@@ -100,20 +100,3 @@ COPY ./entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT [ "/bin/bash", "-c", "/usr/bin/entrypoint.sh" ]
 
-
-
-#apt install ros-melodic-joint-state-publisher-gui
-#vcs import src < turtlebot3.repos
-#git clone -b ros2 https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git && \
-#git clone -b foxy https://github.com/ros2/examples && \
-
-
-#docker run -it --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 --gpus all nvidia/opengl:1.2-glvnd-runtime-ubuntu20.04 /bin/bash
-
-#RUN apt install -y python3 python3-pip vim
-#RUN pip3 install torch torchvision jupyterlab matplotlib
-#WORKDIR /work
-
-#COPY train.py /work/
-
-#ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
