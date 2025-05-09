@@ -44,6 +44,8 @@ private:
   rclcpp::Publisher<driver_msgs::msg::Depth>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 
+  rclcpp::Time time;
+
   void _update();
 };
 
