@@ -18,6 +18,8 @@ IMUDriver::IMUDriver() : Node("imu_driver")
 {
   portname = this->declare_parameter("serial_port", "/dev/ttyACM0");
   baudrate = this->declare_parameter("serial_speed", 115200);
+  timeout = this->declare_parameter("timeout", 0);
+  time = this->get_clock()->now();
 
   g366_ = std::make_shared<g366::G366>(portname.c_str(), baudrate);
   RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
@@ -47,9 +49,12 @@ void IMUDriver::_setup()
 void IMUDriver::_update()
 {
   if (g366_->update()) {
+    time = this->get_clock()->now();
+
     std::shared_ptr<g366::DATA> data_ = g366_->get_data();
 
     auto msg = std::make_unique<driver_msgs::msg::IMU>();
+    msg->status = true;
     msg->gyro.x = data_->x_gyro;
     msg->gyro.y = data_->y_gyro;
     msg->gyro.z = data_->z_gyro;
@@ -63,7 +68,16 @@ void IMUDriver::_update()
     pub_->publish(std::move(msg));
     RCLCPP_INFO(this->get_logger(), "Update imu data");
   } else {
-    RCLCPP_WARN(this->get_logger(), "Don't update imu data");
+    uint64_t elapsed_time = (this->get_clock()->now() - time).nanoseconds();
+    if (elapsed_time > timeout) {
+      auto msg = std::make_unique<driver_msgs::msg::IMU>();
+      msg->status = false;
+
+      RCLCPP_ERROR(this->get_logger(), "IMU driver timeout: %lu [ns]", elapsed_time);
+      pub_->publish(std::move(msg));
+    } else {
+      RCLCPP_WARN(this->get_logger(), "Don't update imu data");
+    }
   }
 }
 

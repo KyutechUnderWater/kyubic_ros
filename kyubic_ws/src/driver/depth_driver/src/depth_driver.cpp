@@ -10,6 +10,8 @@
 
 #include "depth_driver/depth_driver.hpp"
 
+#include <iostream>
+
 using namespace std::chrono_literals;
 
 namespace depth_driver
@@ -19,6 +21,8 @@ DepthDriver::DepthDriver() : Node("depth")
 {
   portname = this->declare_parameter("serial_port", "/dev/ttyACM0");
   baudrate = this->declare_parameter("serial_speed", 115200);
+  timeout = this->declare_parameter("timeout", 0);
+  time = this->get_clock()->now();
 
   bar30_ = std::make_shared<Bar30>(portname.c_str(), baudrate);
   RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
@@ -31,13 +35,29 @@ DepthDriver::DepthDriver() : Node("depth")
 void DepthDriver::_update()
 {
   if (bar30_->update()) {
+    time = this->get_clock()->now();
+
     auto msg = std::make_unique<driver_msgs::msg::Depth>();
-    msg->depth = bar30_->get_data();
+    auto data = bar30_->get_data();
+
+    msg->header.stamp = this->get_clock()->now();
+    msg->header.frame_id = "base_link";
+    msg->status = true;
+    msg->depth = data.depth;
 
     RCLCPP_INFO(this->get_logger(), "%f", msg->depth);
     pub_->publish(std::move(msg));
   } else {
-    RCLCPP_WARN(this->get_logger(), "Faild to get depth data");
+    uint64_t elapsed_time = (this->get_clock()->now() - time).nanoseconds();
+    if (elapsed_time > timeout) {
+      auto msg = std::make_unique<driver_msgs::msg::Depth>();
+      msg->status = false;
+
+      RCLCPP_ERROR(this->get_logger(), "Depth driver timeout: %lu [ns]", elapsed_time);
+      pub_->publish(std::move(msg));
+    } else {
+      RCLCPP_WARN(this->get_logger(), "Faild to get depth data");
+    }
   }
 }
 

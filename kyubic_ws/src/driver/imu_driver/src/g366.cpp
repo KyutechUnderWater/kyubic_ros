@@ -26,6 +26,7 @@ void G366::setup()
   uint8_t buf[12];
   serial_->flush();
   serial_->write(config_comm1, sizeof(config_comm1));
+  std::cout << "read" << std::endl;
   serial_->write(config_comm2, sizeof(config_comm2));
   serial_->read(buf, sizeof(buf), 10ms);
 
