@@ -48,17 +48,16 @@ void DepthDriver::_update()
     RCLCPP_INFO(this->get_logger(), "%f", msg->depth);
     pub_->publish(std::move(msg));
   } else {
-    // uint64_t elapsed_time = (this->get_clock()->now() - time).nanoseconds();
-    // if (elapsed_time > timeout) {
-    //   auto msg = std::make_unique<driver_msgs::msg::Depth>();
-    //   msg->status = false;
-    //
-    //   RCLCPP_ERROR(this->get_logger(), "Timeout: %lu [ns]", elapsed_time);
-    //   pub_->publish(std::move(msg));
-    // } else {
-    //   RCLCPP_WARN(this->get_logger(), "Faild to get depth data");
-    // }
-    std::cout << "asdf" << std::endl;
+    uint64_t elapsed_time = (this->get_clock()->now() - time).nanoseconds();
+    if (elapsed_time > timeout) {
+      auto msg = std::make_unique<driver_msgs::msg::Depth>();
+      msg->status = false;
+
+      RCLCPP_ERROR(this->get_logger(), "Depth driver timeout: %lu [ns]", elapsed_time);
+      pub_->publish(std::move(msg));
+    } else {
+      RCLCPP_WARN(this->get_logger(), "Faild to get depth data");
+    }
   }
 }
 

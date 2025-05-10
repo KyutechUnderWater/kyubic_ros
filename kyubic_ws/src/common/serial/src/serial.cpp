@@ -104,7 +104,7 @@ void Serial::setConfig(const int _baudrate)
 
   tty.c_oflag &= ~ONLCR;
 
-  tty.c_cc[VTIME] = 10; /* Wait for up to 1 deciseconds */
+  tty.c_cc[VTIME] = 5; /* Wait for up to 5 deciseconds */
   tty.c_cc[VMIN] = 0;
 
   setTermios();

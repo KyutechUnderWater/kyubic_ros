@@ -10,7 +10,6 @@
 #include "depth_driver/bar30.hpp"
 
 #include <cstring>
-#include <iostream>
 
 using namespace std::chrono_literals;
 
