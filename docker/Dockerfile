@@ -31,7 +31,7 @@ SHELL ["/bin/bash", "-c"]
 #########################################
 # RUN touch /etc/apt/apt.conf.d/99fixbadproxy && \
 #     echo "Acquire::http::Pipeline-Depth 0; Acquire::http::No-Cache true; Acquire::BrokenProxy true;" >> /etc/apt/apt.conf.d/99fixbadproxy && \
-RUN apt update && apt install locales && \
+RUN apt update && apt install -y locales && \
 	locale-gen en_US en_US.UTF-8  && \
 	update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8 && \
 	export LANG=en_US.UTF-8
@@ -41,8 +41,8 @@ RUN apt update && apt install locales && \
 ##################
 ## Install variety
 ##################
-RUN apt update && apt install -y sudo gosu iproute2 curl gnupg2 lsb-release \
-	tmux vim git wget locate python3-pip python3-venv python3-flake8-docstrings doxygen && \
+RUN apt update && apt install -y sudo gosu iproute2 iputils-ping curl gnupg2 lsb-release \
+	screen tmux vim git wget locate python3-pip python3-venv python3-flake8-docstrings doxygen && \
 	updatedb
 
 ####################################################
@@ -55,7 +55,7 @@ RUN apt install bash-completion && source /etc/bash_completion && \
 ##################
 ## Create new user
 ##################
-RUN useradd -ms /bin/bash ros
+RUN userdel -r ubuntu && useradd -ms /bin/bash ros
 WORKDIR /home/ros
 # RUN userdel ubuntu  # for ubuntu24.04
 # RUN echo 'user:pass' | chpasswd
@@ -64,17 +64,10 @@ WORKDIR /home/ros
 ######################################
 ## Install vertual env for python 3.12
 ######################################
-ENV PYENV_ROOT=/home/ros/.pyenv
-ENV PATH=/home/ros/.pyenv/shims:$PYENV_ROOT/bin:$PATH
-
-RUN apt update && \
-	apt install -y git curl build-essential libffi-dev libssl-dev zlib1g-dev liblzma-dev libbz2-dev \
-	libreadline-dev libsqlite3-dev libncursesw5-dev libxml2-dev libxmlsec1-dev tk-dev xz-utils && \
-	git clone https://github.com/pyenv/pyenv.git /home/ros/.pyenv && \
-	cd /home/ros/.pyenv && src/configure && make -C src && \
-	echo 'eval "$(pyenv init -)"' >> /home/ros/.bashrc && \
-	eval "$(pyenv init -)" && \
-	pyenv install 3.12 && pyenv global system
+RUN gosu ros bash -l -c "curl -LsSf https://astral.sh/uv/install.sh | sh && \
+	source /home/ros/.local/bin/env && \
+	uv python install 3.12 && \
+	echo source /home/ros/.local/bin/env >> /home/ros/.bashrc"
 
 
 #########################################
@@ -93,7 +86,6 @@ ARG ros2_ver=jazzy
 ENV ROS_DISTRO=$ros2_ver
 
 RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DISTRO-teleop-twist-keyboard ros-dev-tools && \
-	python3 -m pip install -U argcomplete colcon-common-extensions vcstools && \
 	echo "ros installed" && \
 	rosdep init && \
 	rosdep update && \
@@ -108,20 +100,3 @@ COPY ./entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT [ "/bin/bash", "-c", "/usr/bin/entrypoint.sh" ]
 
-
-
-#apt install ros-melodic-joint-state-publisher-gui
-#vcs import src < turtlebot3.repos
-#git clone -b ros2 https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git && \
-#git clone -b foxy https://github.com/ros2/examples && \
-
-
-#docker run -it --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 --gpus all nvidia/opengl:1.2-glvnd-runtime-ubuntu20.04 /bin/bash
-
-#RUN apt install -y python3 python3-pip vim
-#RUN pip3 install torch torchvision jupyterlab matplotlib
-#WORKDIR /work
-
-#COPY train.py /work/
-
-#ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs

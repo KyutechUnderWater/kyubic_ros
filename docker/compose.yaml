@@ -3,10 +3,10 @@ services:
     build:
       context: .
       args:
-        ubuntu_ver: "22.04"
-        ros2_ver: "humble"
-    image: kyubic/ros:humble
-    container_name: kyubic-ros-humble
+        ubuntu_ver: "24.04"
+        ros2_ver: "jazzy"
+    image: kyubic/ros:jazzy
+    container_name: kyubic-ros-jazzy
     hostname: kyubic
     working_dir: /home/ros/kyubic_ros/kyubic_ws
     tty: true
@@ -14,7 +14,7 @@ services:
     network_mode: "host"
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./:/home/ros/kyubic_ros
+      - ../:/home/ros/kyubic_ros
       - /dev:/dev
     environment:
       - DISPLAY=$DISPLAY
