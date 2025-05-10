@@ -20,9 +20,9 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
 	"msg/Depth.msg"
+	"msg/DVL.msg"
 	"msg/IMU.msg"
 	"msg/Thruster.msg"
-	"msg/PathFinder.msg"
 	DEPENDENCIES std_msgs
 	DEPENDENCIES geometry_msgs
 )

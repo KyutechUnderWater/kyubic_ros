@@ -204,7 +204,7 @@ class Sender
   struct sockaddr_in server;
 
   char ping_char[4] = {'C', 'S', '\r', '\n'};
-  char break_char[4] = {'='};
+  char break_char[3] = {'=', '=', '='};
   char topic_message[256] = {0};
 
 public:
@@ -218,9 +218,14 @@ public:
   explicit Sender(const char * _address, const int _port, const int _timeout = 1000);
 
   /**
-   * @brief Send ping to Path Finder
+   * @brief Send break command to Path Finder
    */
-  bool ping();
+  bool break_cmd();
+
+  /**
+   * @brief Send ping command to Path Finder
+   */
+  bool ping_cmd();
 };
 
 }  // namespace dvl_driver::path_finder

@@ -11,7 +11,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <driver_msgs/msg/path_finder.hpp>
+#include <driver_msgs/msg/dvl.hpp>
 
 /**
  * @namespace dvl_driver
@@ -39,14 +39,20 @@ private:
   std::shared_ptr<path_finder::Sender> sender_;
   std::shared_ptr<path_finder::Listener> listener_;
 
-  rclcpp::Publisher<driver_msgs::msg::PathFinder>::SharedPtr pub_;
+  rclcpp::Publisher<driver_msgs::msg::DVL>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
+
+  /**
+   * @brief Send a break command for startup
+   * @return True if successful, False otherwise
+   */
+  bool setup();
 
   /**
    * @brief Create Topic msgs from dvl data
    * @return PathFinder message
    */
-  driver_msgs::msg::PathFinder::UniquePtr _create_msg(std::shared_ptr<path_finder::Data> dvl_data_);
+  driver_msgs::msg::DVL::UniquePtr _create_msg(std::shared_ptr<path_finder::Data> dvl_data_);
 
   /**
    * @brief Get dvl data and Publish data

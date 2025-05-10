@@ -200,13 +200,20 @@ Sender::Sender(const char * _address, const int _port, const int _timeout)
   std::cout << "DVL Sender Start!!!" << std::endl;
 }
 
-bool Sender::ping()
+bool Sender::break_cmd()
 {
-  if (send(sockfd, ping_char, sizeof(ping_char), 0) != sizeof(ping_char)) {
-    std::cout << "Ping don't send" << std::endl;
+  if (send(sockfd, break_char, sizeof(break_char), 0) != sizeof(break_char)) {
     return false;
   }
-  std::cout << "ping send!!" << std::endl;
+  sleep(2);
+  return true;
+}
+
+bool Sender::ping_cmd()
+{
+  if (send(sockfd, ping_char, sizeof(ping_char), 0) != sizeof(ping_char)) {
+    return false;
+  }
   return true;
 }
 

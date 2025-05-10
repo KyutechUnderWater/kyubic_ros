@@ -20,38 +20,50 @@ DVLDriver::DVLDriver() : Node("dvl_driver")
 {
   address = this->declare_parameter("ip_address", "0.0.0.0");
   listener_port = this->declare_parameter("listener_port", 8888);
-  sender_port = this->declare_parameter("sender_port", 8888);
+  sender_port = this->declare_parameter("sender_port", 8889);
 
   listener_ = std::make_shared<path_finder::Listener>(address.c_str(), listener_port, 500);
   sender_ = std::make_shared<path_finder::Sender>(address.c_str(), sender_port, 500);
   RCLCPP_INFO(this->get_logger(), "DVL connection successful");
 
+  if (!setup()) exit(1);
+
   rclcpp::QoS qos(rclcpp::KeepLast(10));
-  pub_ = create_publisher<driver_msgs::msg::PathFinder>("path_finder", qos);
+  pub_ = create_publisher<driver_msgs::msg::DVL>("dvl", qos);
   timer_ = create_wall_timer(100ms, std::bind(&DVLDriver::update, this));
 }
 
-driver_msgs::msg::PathFinder::UniquePtr DVLDriver::_create_msg(
+bool DVLDriver::setup()
+{
+  if (!sender_->break_cmd()) {
+    RCLCPP_ERROR(this->get_logger(), "Failded to send the break command.");
+    return false;
+  }
+  RCLCPP_INFO(this->get_logger(), "Send break command.");
+  return true;
+}
+
+driver_msgs::msg::DVL::UniquePtr DVLDriver::_create_msg(
   std::shared_ptr<path_finder::Data> dvl_data_)
 {
-  driver_msgs::msg::PathFinder::UniquePtr pathfinder_;
+  auto msgs = std::make_unique<driver_msgs::msg::DVL>();
 
-  pathfinder_->header.frame_id = "/pathfinder";
+  msgs->header.frame_id = "/pathfinder";
 
-  pathfinder_->velocity.x = dvl_data_->x_vel_bottom;
-  pathfinder_->velocity.y = dvl_data_->y_vel_bottom;
-  pathfinder_->velocity.z = dvl_data_->z_vel_bottom;
-  pathfinder_->velocity_error = dvl_data_->e_vel_bottom;
+  msgs->velocity.x = dvl_data_->x_vel_bottom;
+  msgs->velocity.y = dvl_data_->y_vel_bottom;
+  msgs->velocity.z = dvl_data_->z_vel_bottom;
+  msgs->velocity_error = dvl_data_->e_vel_bottom;
 
-  pathfinder_->depth = 0.0;
-  pathfinder_->altitude = dvl_data_->altitude;
+  msgs->depth = 0.0;
+  msgs->altitude = dvl_data_->altitude;
 
-  return pathfinder_;
+  return msgs;
 }
 
 bool DVLDriver::update()
 {
-  if (!sender_->ping()) {
+  if (!sender_->ping_cmd()) {
     RCLCPP_ERROR(this->get_logger(), "ping faild");
     return false;
   }
@@ -63,6 +75,8 @@ bool DVLDriver::update()
 
   auto msg = _create_msg(listener_->get_dvl_data());
   pub_->publish(std::move(msg));
+
+  RCLCPP_INFO(this->get_logger(), "Update DVL data");
   return true;
 }
 
