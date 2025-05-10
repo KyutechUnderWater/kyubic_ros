@@ -17,6 +17,7 @@
 
 #include <driver_msgs/msg/imu.hpp>
 
+#include <cstdint>
 #include <string>
 
 /**
@@ -47,11 +48,14 @@ public:
 private:
   std::string portname;
   int baudrate;
+  uint64_t timeout;
 
   std::shared_ptr<g366::G366> g366_;
   // std::shared_ptr<g366::G366HWReseter> g366_hw_resetter_;
   rclcpp::Publisher<driver_msgs::msg::IMU>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
+
+  rclcpp::Time time;
 
   void _setup();
   void _update();
