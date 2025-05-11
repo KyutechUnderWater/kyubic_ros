@@ -9,6 +9,9 @@
 
 #include "imu_driver/g366.hpp"
 
+#include <unistd.h>
+
+#include <cstdlib>
 #include <iostream>
 
 using namespace std::chrono_literals;
@@ -21,22 +24,26 @@ G366::G366(const char * _portname, const int _baudrate) : portname(_portname), b
   serial_ = std::make_shared<serial::Serial>(portname, baudrate);
 }
 
-void G366::setup()
+bool G366::setup()
 {
   uint8_t buf[12];
   serial_->flush();
   serial_->write(config_comm1, sizeof(config_comm1));
-  std::cout << "read" << std::endl;
   serial_->write(config_comm2, sizeof(config_comm2));
   serial_->read(buf, sizeof(buf), 10ms);
 
+  int count = 1;
   while (buf[2] != 0x05) {
     serial_->write(config_comm3, sizeof(config_comm3));
     ssize_t len = serial_->read(buf, 4, 10ms);
     for (int i = 0; i < len; i++) printf("%02X ", buf[i]);
+
+    if (count++ == 3) return false;
+    sleep(1);
   }
 
   serial_->write(config_comm6, sizeof(config_comm6));
+  return true;
 }
 
 bool G366::update()

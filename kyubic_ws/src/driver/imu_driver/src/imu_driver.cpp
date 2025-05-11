@@ -9,6 +9,11 @@
 
 #include "imu_driver/imu_driver.hpp"
 
+#include <rclcpp/logging.hpp>
+
+#include <cstdlib>
+#include <memory>
+
 using namespace std::chrono_literals;
 
 namespace imu_driver
@@ -19,7 +24,7 @@ IMUDriver::IMUDriver() : Node("imu_driver")
   portname = this->declare_parameter("serial_port", "/dev/ttyACM0");
   baudrate = this->declare_parameter("serial_speed", 115200);
   timeout = this->declare_parameter("timeout", 0);
-  time = this->get_clock()->now();
+  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout);
 
   g366_ = std::make_shared<g366::G366>(portname.c_str(), baudrate);
   RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
@@ -43,13 +48,17 @@ void IMUDriver::hw_reset()
 void IMUDriver::_setup()
 {
   hw_reset();
-  g366_->setup();
+  if (!g366_->setup()) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to Setup");
+    exit(1);
+  }
+  RCLCPP_INFO(this->get_logger(), "Setup is complete.");
 }
 
 void IMUDriver::_update()
 {
   if (g366_->update()) {
-    time = this->get_clock()->now();
+    timeout_->reset(this->get_clock()->now());
 
     std::shared_ptr<g366::DATA> data_ = g366_->get_data();
 
@@ -68,12 +77,12 @@ void IMUDriver::_update()
     pub_->publish(std::move(msg));
     RCLCPP_INFO(this->get_logger(), "Update imu data");
   } else {
-    uint64_t elapsed_time = (this->get_clock()->now() - time).nanoseconds();
-    if (elapsed_time > timeout) {
+    if (timeout_->check(this->get_clock()->now())) {
       auto msg = std::make_unique<driver_msgs::msg::IMU>();
       msg->status = false;
 
-      RCLCPP_ERROR(this->get_logger(), "IMU driver timeout: %lu [ns]", elapsed_time);
+      RCLCPP_ERROR(
+        this->get_logger(), "IMU driver timeout: %lu [ns]", timeout_->get_elapsed_time());
       pub_->publish(std::move(msg));
     } else {
       RCLCPP_WARN(this->get_logger(), "Don't update imu data");

@@ -1,5 +1,6 @@
 /**:
   ros__parameters:
-    serial_port: /dev/ttyUSB-g366
+    serial_port: /dev/ttyACM0
+    # serial_port: /dev/ttyUSB-g366
     serial_speed: 460800
-    timeout: 5000000000 # [ns]
+    timeout: 2000000000 # [ns]

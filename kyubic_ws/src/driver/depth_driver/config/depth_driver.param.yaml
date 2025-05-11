@@ -2,4 +2,4 @@
   ros__parameters:
     serial_port: /dev/ttyUSB-arduino-depth
     serial_speed: 115200
-    timeout: 5000000000 # [ns]
+    timeout: 2000000000 # [ns]

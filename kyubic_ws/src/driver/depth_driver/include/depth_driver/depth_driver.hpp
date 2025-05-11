@@ -13,6 +13,7 @@
 #include "depth_driver/bar30.hpp"
 
 #include <rclcpp/rclcpp.hpp>
+#include <timer/timeout.hpp>
 
 #include <driver_msgs/msg/depth.hpp>
 
@@ -43,11 +44,10 @@ private:
   int baudrate;
   uint64_t timeout;
 
+  std::shared_ptr<timer::Timeout> timeout_;
   std::shared_ptr<Bar30> bar30_;
   rclcpp::Publisher<driver_msgs::msg::Depth>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
-
-  rclcpp::Time time;
 
   void _update();
 };
