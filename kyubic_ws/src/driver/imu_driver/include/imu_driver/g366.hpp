@@ -123,7 +123,7 @@ public:
   /**
    * @brief Setting G366 configuration
    */
-  void setup();
+  bool setup();
 
   /**
    * @brief Update g366 data
