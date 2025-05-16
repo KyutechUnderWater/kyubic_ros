@@ -10,7 +10,7 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(${PROJECT_NAME}
-  src/dvl_odometry.cpp
+  src/localization.cpp
 )
 
 install(DIRECTORY
