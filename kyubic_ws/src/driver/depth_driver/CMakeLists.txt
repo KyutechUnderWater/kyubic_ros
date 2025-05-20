@@ -16,6 +16,7 @@ endif()
 # ament_auto_find_build_dependencies()
 find_package(ament_cmake REQUIRED)
 find_package(serial REQUIRED)
+find_package(status REQUIRED)
 find_package(timer REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(driver_msgs REQUIRED)
@@ -28,6 +29,7 @@ include_directories(include)
 function(custom_executable target)
   add_executable(${target} src/${target}.cpp src/bar30.cpp)
   ament_target_dependencies(${target}
+    status
     serial
     timer
     rclcpp

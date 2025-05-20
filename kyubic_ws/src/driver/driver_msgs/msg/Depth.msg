@@ -1,3 +1,3 @@
 std_msgs/Header header
-bool status
+int32 status
 float64 depth #[m]

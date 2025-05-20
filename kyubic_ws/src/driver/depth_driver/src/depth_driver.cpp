@@ -10,8 +10,6 @@
 
 #include "depth_driver/depth_driver.hpp"
 
-#include <iostream>
-
 using namespace std::chrono_literals;
 
 namespace depth_driver
