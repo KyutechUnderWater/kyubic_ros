@@ -16,12 +16,13 @@
 
 #include <array>
 
-namespace localization
+namespace depth_driver
 {
 
-class DepthVelocity : rclcpp::Node
+class DepthOdometry : public rclcpp::Node
 {
 private:
+  rclcpp::Publisher<driver_msgs::msg::Depth>::SharedPtr pub_;
   rclcpp::Subscription<driver_msgs::msg::Depth>::SharedPtr sub_;
   rclcpp::Time pre_time;
 
@@ -30,7 +31,7 @@ private:
   double vel_z = 0.0;
 
 public:
-  explicit DepthVelocity();
+  explicit DepthOdometry(const rclcpp::NodeOptions & options);
 
   void _update_callback(const driver_msgs::msg::Depth::UniquePtr msg);
 
@@ -39,6 +40,6 @@ public:
   void reset();
 };
 
-}  // namespace localization
+}  // namespace depth_driver
 
 #endif  // !_DEPTH_VELOCITY_HPP
