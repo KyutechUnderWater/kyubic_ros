@@ -1,4 +1,6 @@
 /**:
   ros__parameters:
+    device_name: "Logicool Dual Action"
+    deadzone: 0.1
     force_scale: 30.0
     torque_scale: 30.0
