@@ -15,7 +15,7 @@
 #include <memory>
 
 /**
- * #namespace imu_driver
+ * @namespace imu_driver
  * @brief For imu driver
  */
 namespace imu_driver::g366
