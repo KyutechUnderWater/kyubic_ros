@@ -1,15 +1,21 @@
 var searchData=
 [
-  ['data_0',['DATA',['../structimu__driver_1_1g366_1_1DATA.html',1,'imu_driver::g366']]],
-  ['data_5ffiles_1',['data_files',['../namespacesetup.html#ad027a8e9452da003dca32bf7467bd16e',1,'setup']]],
-  ['data_5fmeta_2',['DATA_META',['../structimu__driver_1_1g366_1_1DATA__META.html',1,'imu_driver::g366']]],
-  ['depth_5fdriver_3',['depth_driver',['../namespacedepth__driver.html',1,'']]],
-  ['depth_5fdriver_2ecpp_4',['depth_driver.cpp',['../depth__driver_8cpp.html',1,'']]],
-  ['depth_5fdriver_2ehpp_5',['depth_driver.hpp',['../depth__driver_8hpp.html',1,'']]],
-  ['depth_5fdriver_5flaunch_6',['depth_driver_launch',['../namespacedepth__driver__launch.html',1,'']]],
-  ['depth_5fdriver_5flaunch_2epy_7',['depth_driver_launch.py',['../depth__driver__launch_8py.html',1,'']]],
-  ['depthdriver_8',['DepthDriver',['../classdepth__driver_1_1DepthDriver.html',1,'depth_driver::DepthDriver'],['../classdepth__driver_1_1DepthDriver.html#a08917c2290f39bcaf547371d4675737e',1,'depth_driver::DepthDriver::DepthDriver()']]],
-  ['description_9',['description',['../namespacesetup.html#aedf461ec52a946bda975938ba0b93ec0',1,'setup']]],
-  ['driver_5fnode_5fmanager_10',['driver_node_manager',['../namespacedriver__node__manager.html',1,'driver_node_manager'],['../namespacedriver__node__manager_1_1driver__node__manager.html',1,'driver_node_manager.driver_node_manager']]],
-  ['driver_5fnode_5fmanager_2epy_11',['driver_node_manager.py',['../driver__node__manager_8py.html',1,'']]]
+  ['calcurated_5fdistance_5fto_5feast_5fbottom_0',['calcurated_distance_to_EAST_BOTTOM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830dad8e3384b0da6897b5f84723c5e95b5da',1,'dvl_driver::path_finder']]],
+  ['caled_5fdistance_5ferror_5fref_1',['CALED_DISTANCE_ERROR_REF',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da730d4a298132715a74fddf099e5810de',1,'dvl_driver::path_finder']]],
+  ['caled_5fdistance_5fto_5ferror_2',['CALED_DISTANCE_TO_ERROR',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830daaf4a6a6899c0b48e74ffd56b3ceca33a',1,'dvl_driver::path_finder']]],
+  ['caled_5fdistance_5fto_5fnorth_3',['CALED_DISTANCE_TO_NORTH',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da1d0a8be4372d8141058cb7f6c8508067',1,'dvl_driver::path_finder']]],
+  ['caled_5fdistance_5fto_5fnorth_5fref_4',['CALED_DISTANCE_TO_NORTH_REF',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da054fe5b0a0cfe1d0caf23145ba6ac65f',1,'dvl_driver::path_finder']]],
+  ['caled_5fdistance_5fto_5fref_5',['CALED_DISTANCE_TO_REF',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da34833fee32ad2a7b409fe36a36b0fc69',1,'dvl_driver::path_finder']]],
+  ['caled_5fdistance_5fto_5fup_6',['CALED_DISTANCE_TO_UP',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830dac4901fd696716513899a9b69bb79c24d',1,'dvl_driver::path_finder']]],
+  ['caled_5fdistance_5fup_5fref_7',['CALED_DISTANCE_UP_REF',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da2ea02614d00df1d03111466c8cb1f24a',1,'dvl_driver::path_finder']]],
+  ['checksum_8',['CHECKSUM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da5f3c90e5be58235131ae4fae1cdf86a9',1,'dvl_driver::path_finder']]],
+  ['close_5fapplication_9',['close_application',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a7e5627907791a7cb561e88aa38c33720',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['config_5fcomm1_10',['config_comm1',['../namespaceimu__driver_1_1g366.html#a2e7821cad87d9f7be4799fd46ee99ae7',1,'imu_driver::g366']]],
+  ['config_5fcomm2_11',['config_comm2',['../namespaceimu__driver_1_1g366.html#a6e20ba689c7993efd4532f18a01de0ee',1,'imu_driver::g366']]],
+  ['config_5fcomm3_12',['config_comm3',['../namespaceimu__driver_1_1g366.html#ac4b0b290653f8f475671793c5dd69bab',1,'imu_driver::g366']]],
+  ['config_5fcomm4_13',['config_comm4',['../namespaceimu__driver_1_1g366.html#a1478e4b1ef54fbc6d2db5b654719f6c6',1,'imu_driver::g366']]],
+  ['config_5fcomm5_14',['config_comm5',['../namespaceimu__driver_1_1g366.html#a2e3378cbda30b87b2908f795c2a7f3fb',1,'imu_driver::g366']]],
+  ['config_5fcomm6_15',['config_comm6',['../namespaceimu__driver_1_1g366.html#a6b7249d5c29f524198b48630725b9464',1,'imu_driver::g366']]],
+  ['cos_5fh_16',['cos_h',['../namespacethruster__driver.html#ae0624cf49fc7845ce3a046c45cd8c789',1,'thruster_driver']]],
+  ['count_17',['count',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()'],['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()']]]
 ];

@@ -1,6 +1,14 @@
 var searchData=
 [
-  ['fd_0',['fd',['../classserial_1_1Serial.html#a10defd62e94ec9ed6b9e56d9e6bc1102',1,'serial::Serial']]],
-  ['flag_1',['flag',['../structimu__driver_1_1g366_1_1DATA__META.html#a01c271df39082a716b18237b314e4288',1,'imu_driver::g366::DATA_META::flag()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a095763fb49f082999a9eadc41bad59b5',1,'imu_driver::g366::RAW_DATA_T::flag()']]],
-  ['foot_2',['foot',['../structimu__driver_1_1g366_1_1DATA__META.html#ac032e5b3b9c200b8b3872ef185dc2aaf',1,'imu_driver::g366::DATA_META::foot()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a46d12c151a3bd0659aca641bee9b786f',1,'imu_driver::g366::RAW_DATA_T::foot()']]]
+  ['data_5ffiles_0',['data_files',['../namespacesetup.html#ad027a8e9452da003dca32bf7467bd16e',1,'setup']]],
+  ['data_5fstructure_1',['data_structure',['../structdvl__driver_1_1path__finder_1_1Data.html#a0b3536d702c93b62074affa2361e194f',1,'dvl_driver::path_finder::Data']]],
+  ['depth_2',['depth',['../structdvl__driver_1_1path__finder_1_1Data.html#a354cbefb4f97988261d57da200cfe97d',1,'dvl_driver::path_finder::Data']]],
+  ['description_3',['description',['../namespacesetup.html#aedf461ec52a946bda975938ba0b93ec0',1,'setup']]],
+  ['dmg_5fdistance_5fbottom_5feast_4',['dmg_distance_bottom_east',['../structdvl__driver_1_1path__finder_1_1Data.html#a29b56cef20705e2a1d2623b4f91e1a44',1,'dvl_driver::path_finder::Data']]],
+  ['dmg_5fdistance_5fbottom_5fnorth_5',['dmg_distance_bottom_north',['../structdvl__driver_1_1path__finder_1_1Data.html#ac81a0842e7aa4190c4febf00c4523d50',1,'dvl_driver::path_finder::Data']]],
+  ['dmg_5fdistance_5fref_5feast_6',['dmg_distance_ref_east',['../structdvl__driver_1_1path__finder_1_1Data.html#ae114a6ab3b0446e38e7f6d31d3f2621d',1,'dvl_driver::path_finder::Data']]],
+  ['dmg_5fdistance_5fref_5ferror_7',['dmg_distance_ref_error',['../structdvl__driver_1_1path__finder_1_1Data.html#aeeeb19e67fc82e6e2cace2565a9e57f2',1,'dvl_driver::path_finder::Data']]],
+  ['dmg_5fdistance_5fref_5fnorth_8',['dmg_distance_ref_north',['../structdvl__driver_1_1path__finder_1_1Data.html#ae4ee1128332e81fab571f0ac5459f559',1,'dvl_driver::path_finder::Data']]],
+  ['dmg_5fdistance_5fref_5fup_9',['dmg_distance_ref_up',['../structdvl__driver_1_1path__finder_1_1Data.html#a8a6dcc63d14d5485b8495ac18ef95a65',1,'dvl_driver::path_finder::Data']]],
+  ['dvl_5fvel_5ferror_10',['DVL_VEL_ERROR',['../structdvl__driver_1_1path__finder_1_1Data.html#a51bca68583390111d0cfe0a312734ac2',1,'dvl_driver::path_finder::Data']]]
 ];

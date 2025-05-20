@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['name_0',['name',['../namespacesetup.html#ab3a7a0638d76a01367c5bc3cc699447f',1,'setup']]],
-  ['node_5fstatus_1',['node_status',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#abce255ead68a038acae9fe6bd1d04f44',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['nodes_2',['nodes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ae64c07aaa135224e453985d7b1d3c5ca',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['leak_5fstatus_0',['leak_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a3f6e67ef9053385376a3b5d83cc6d480',1,'dvl_driver::path_finder::Data']]],
+  ['license_1',['license',['../namespacesetup.html#a8ed6f50a28bd6a8794f8e1153baa6de9',1,'setup']]]
 ];

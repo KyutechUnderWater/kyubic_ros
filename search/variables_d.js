@@ -1,7 +1,13 @@
 var searchData=
 [
-  ['temp_0',['temp',['../structimu__driver_1_1g366_1_1DATA.html#a5da2d56e1d1bb8a644f4b7bafb104e7a',1,'imu_driver::g366::DATA::temp()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a2f835b1465b35e2215ddaa199d382c1a',1,'imu_driver::g366::RAW_DATA_T::temp()']]],
-  ['tests_5frequire_1',['tests_require',['../namespacesetup.html#a6369bb060267ccf90b93519796e7cc2c',1,'setup']]],
-  ['theta_5fh_2',['theta_h',['../namespacethruster__driver.html#a638b0226ee3770d3d42b64506a6b4a29',1,'thruster_driver']]],
-  ['theta_5fv_3',['theta_v',['../namespacethruster__driver.html#adb3e519bfcf67ddb5c603ce96b7343a1',1,'thruster_driver']]]
+  ['range_5fto_5fbottom_5fbm1_0',['range_to_bottom_bm1',['../structdvl__driver_1_1path__finder_1_1Data.html#ad16429d0f02a3cf5d764a9f54354f3b1',1,'dvl_driver::path_finder::Data']]],
+  ['range_5fto_5fbottom_5fbm2_1',['range_to_bottom_bm2',['../structdvl__driver_1_1path__finder_1_1Data.html#a3e31782b6fddd4aeaa5890231a7a6b69',1,'dvl_driver::path_finder::Data']]],
+  ['range_5fto_5fbottom_5fbm3_2',['range_to_bottom_bm3',['../structdvl__driver_1_1path__finder_1_1Data.html#a292e2c96c3a6c12e27020e53d1ff865a',1,'dvl_driver::path_finder::Data']]],
+  ['range_5fto_5fbottom_5fbm4_3',['range_to_bottom_bm4',['../structdvl__driver_1_1path__finder_1_1Data.html#ac280feb6e3d7b3f03711f462fdeec784',1,'dvl_driver::path_finder::Data']]],
+  ['ref_5flayer_5fend_4',['ref_layer_end',['../structdvl__driver_1_1path__finder_1_1Data.html#a06098b4f9233f5a5a3585708f618a81c',1,'dvl_driver::path_finder::Data']]],
+  ['ref_5flayer_5fstart_5',['ref_layer_start',['../structdvl__driver_1_1path__finder_1_1Data.html#a24c8519fb95b7cf11a9730d37d8d0c22',1,'dvl_driver::path_finder::Data']]],
+  ['ref_5flayer_5fstatus_6',['ref_layer_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a4ebacc5623b4615835ee60e9d29c4ad6',1,'dvl_driver::path_finder::Data']]],
+  ['request_5fcomm_7',['request_comm',['../namespaceimu__driver_1_1g366.html#a286b0f2fbb8ff3317617559a9f8209fe',1,'imu_driver::g366']]],
+  ['roll_8',['roll',['../structdvl__driver_1_1path__finder_1_1Data.html#abad80c260ef070eef82def0894ff9ed1',1,'dvl_driver::path_finder::Data::roll()'],['../structimu__driver_1_1g366_1_1DATA.html#ad8221b9ae94781bb620e159e162bbc24',1,'imu_driver::g366::DATA::roll()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a1df683254b395731991af82d27931c15',1,'imu_driver::g366::RAW_DATA_T::roll()']]],
+  ['root_9',['root',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a68f7e0cc6e35b9d7df4a06e3895a2208',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

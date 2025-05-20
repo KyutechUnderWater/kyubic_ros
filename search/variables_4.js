@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['gpio_0',['gpio',['../structimu__driver_1_1g366_1_1DATA__META.html#acf3aa521ac860442279d4307a54a8af1',1,'imu_driver::g366::DATA_META::gpio()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a19992d54c925c7ebdfa07c73fb184639',1,'imu_driver::g366::RAW_DATA_T::gpio()']]]
+  ['e_5fvel_5fbottom_0',['e_vel_bottom',['../structdvl__driver_1_1path__finder_1_1Data.html#a92daceee53e289d5a9efb9f729f7785a',1,'dvl_driver::path_finder::Data']]],
+  ['entry_5fpoints_1',['entry_points',['../namespacesetup.html#ada7058afc98897f073d3f3b8b9157059',1,'setup']]]
 ];

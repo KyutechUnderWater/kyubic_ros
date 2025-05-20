@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['flush_0',['flush',['../classserial_1_1Serial.html#a45a7676a6e6c775cd549e889e714b5bb',1,'serial::Serial']]]
+  ['error_0',['error',['../namespacedvl__driver_1_1path__finder.html#a173fe1164d1723004799c5643952b5c1',1,'dvl_driver::path_finder']]]
 ];

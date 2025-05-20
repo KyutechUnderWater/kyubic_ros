@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['update_0',['update',['../classdepth__driver_1_1Bar30.html#a2bfd86061bac907949398414a6426c8d',1,'depth_driver::Bar30::update()'],['../classimu__driver_1_1g366_1_1G366.html#af5e1481dc4cf1465cf5a08b016954ea1',1,'imu_driver::g366::G366::update()']]],
-  ['update_5fstatus_5floop_1',['update_status_loop',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a910d7357cd191f3cf4671a6df127a584',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['sender_0',['Sender',['../classdvl__driver_1_1path__finder_1_1Sender.html#a2bdcabf8042c9644b72b09311625e359',1,'dvl_driver::path_finder::Sender']]],
+  ['serial_1',['Serial',['../classserial_1_1Serial.html#ab0764fe0d037a8b46accac8fe2a72999',1,'serial::Serial']]],
+  ['serialexception_2',['SerialException',['../classserial_1_1SerialException.html#a3713871bf41f84d80537388b7e3308a2',1,'serial::SerialException']]],
+  ['setconfig_3',['setConfig',['../classserial_1_1Serial.html#a70c460f4584e3f27eab799bde02e2836',1,'serial::Serial']]],
+  ['settermios_4',['setTermios',['../classserial_1_1Serial.html#a4fea3d0ac96d0def65b942ccb80e5eb0',1,'serial::Serial']]],
+  ['setup_5',['setup',['../classimu__driver_1_1g366_1_1G366.html#a2da8c17300d4c098b01e97e6c4b16436',1,'imu_driver::g366::G366']]],
+  ['stop_5fnode_6',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

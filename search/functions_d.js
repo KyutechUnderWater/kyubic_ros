@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['test_5fcopyright_0',['test_copyright',['../namespacetest__copyright.html#a156f4f961887d49bfb4cc9f6e7f6af0a',1,'test_copyright']]],
-  ['test_5fflake8_1',['test_flake8',['../namespacetest__flake8.html#a19bfcf597a661a366225b7d0cedd123c',1,'test_flake8']]],
-  ['test_5fpep257_2',['test_pep257',['../namespacetest__pep257.html#ac69de1fd6a28f245460be3110acc273f',1,'test_pep257']]],
-  ['thrusterdriver_3',['ThrusterDriver',['../classthruster__driver_1_1ThrusterDriver.html#a4eaf0c67ea919ef3c03623080eb9382b',1,'thruster_driver::ThrusterDriver']]],
-  ['toggle_5fnode_4',['toggle_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ac4ad21c3caa090c03e868a7e75585924',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['read_0',['read',['../classserial_1_1Serial.html#a62ab0612564a90bc1f82eba3c9fc0a68',1,'serial::Serial::read(uint8_t *buf, const size_t len)'],['../classserial_1_1Serial.html#a4574314c5723864c0f319e3a447da0d3',1,'serial::Serial::read(uint8_t *buf, const size_t len, const std::chrono::duration&lt; long, std::ratio&lt; 1, 1000 &gt; &gt; timeout)']]],
+  ['read_5funtil_1',['read_until',['../classserial_1_1Serial.html#aa2b00a921c5295ad818ef917bb6d09d2',1,'serial::Serial']]],
+  ['run_5ftopic_5fecho_2',['run_topic_echo',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a3ee5a0d17f7cef723c250da78ebedb93',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

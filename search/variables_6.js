@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['install_5frequires_0',['install_requires',['../namespacesetup.html#abead4f26b530856f858f0d44c7cf2588',1,'setup']]]
+  ['gpio_0',['gpio',['../structimu__driver_1_1g366_1_1DATA__META.html#acf3aa521ac860442279d4307a54a8af1',1,'imu_driver::g366::DATA_META::gpio()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a19992d54c925c7ebdfa07c73fb184639',1,'imu_driver::g366::RAW_DATA_T::gpio()']]]
 ];
