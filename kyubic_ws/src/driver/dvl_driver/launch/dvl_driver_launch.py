@@ -7,24 +7,17 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory("joy2wrench"), "config", "joy2wrench.param.yaml"
+        get_package_share_directory("dvl_driver"), "config", "dvl_driver.param.yaml"
     )
 
     return LaunchDescription(
         [
             Node(
-                package="joy",
+                package="dvl_driver",
                 namespace="driver",
-                executable="joy_node",
+                executable="dvl_driver",
                 parameters=[config],
                 output="screen",
-            ),
-            Node(
-                package="joy2wrench",
-                namespace="driver",
-                executable="joy2wrench",
-                parameters=[config],
-                output="screen",
-            ),
+            )
         ]
     )
