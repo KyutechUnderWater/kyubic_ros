@@ -10,17 +10,19 @@
 #ifndef _DVL_ODOMETRY_HPP
 #define _DVL_ODOMETRY_HPP
 
+#include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <driver_msgs/msg/dvl.hpp>
 
 #include <array>
 
-namespace localization
+namespace dvl_driver
 {
 class DVLOdometry : public rclcpp::Node
 {
 private:
+  rclcpp::Publisher<driver_msgs::msg::DVL>::SharedPtr pub_;
   rclcpp::Subscription<driver_msgs::msg::DVL>::SharedPtr sub_;
   rclcpp::Time pre_time;
 
@@ -33,7 +35,7 @@ private:
   double pos_z = 0.0;
 
 public:
-  explicit DVLOdometry();
+  explicit DVLOdometry(const rclcpp::NodeOptions & options);
 
   void _update_callback(const driver_msgs::msg::DVL::UniquePtr msg);
 
@@ -41,6 +43,6 @@ public:
 
   void reset();
 };
-}  // namespace localization
+}  // namespace dvl_driver
 
 #endif

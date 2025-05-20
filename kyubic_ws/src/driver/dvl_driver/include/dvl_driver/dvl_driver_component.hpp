@@ -29,7 +29,7 @@ public:
   /**
    * @brief Connect Path Finder and Set Topic
    */
-  explicit DVLDriver();
+  explicit DVLDriver(const rclcpp::NodeOptions & options);
 
 private:
   std::string address;

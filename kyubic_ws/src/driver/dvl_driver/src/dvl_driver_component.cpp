@@ -7,27 +7,28 @@
  * @details DVL(Path Finder) のデータを取得して，Topicを流す
  ************************************************************/
 
-#include "dvl_driver/dvl_driver.hpp"
-
-#include <iostream>
+#include "dvl_driver/dvl_driver_component.hpp"
 
 using namespace std::chrono_literals;
 
 namespace dvl_driver
 {
 
-DVLDriver::DVLDriver() : Node("dvl_driver")
+DVLDriver::DVLDriver(const rclcpp::NodeOptions & options) : Node("dvl_driver", options)
 {
+  // Get parameter from server
   address = this->declare_parameter("ip_address", "0.0.0.0");
   listener_port = this->declare_parameter("listener_port", 8888);
   sender_port = this->declare_parameter("sender_port", 8889);
 
+  // Connect TCP
   listener_ = std::make_shared<path_finder::Listener>(address.c_str(), listener_port, 500);
   sender_ = std::make_shared<path_finder::Sender>(address.c_str(), sender_port, 500);
   RCLCPP_INFO(this->get_logger(), "DVL connection successful");
 
   if (!setup()) exit(1);
 
+  // Create publisher & wall timer
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::DVL>("dvl", qos);
   timer_ = create_wall_timer(100ms, std::bind(&DVLDriver::update, this));
@@ -50,12 +51,11 @@ driver_msgs::msg::DVL::UniquePtr DVLDriver::_create_msg(
 
   msgs->header.frame_id = "/pathfinder";
 
+  msgs->velocity_error = dvl_data_->e_vel_bottom;
   msgs->velocity.x = dvl_data_->x_vel_bottom;
   msgs->velocity.y = dvl_data_->y_vel_bottom;
   msgs->velocity.z = dvl_data_->z_vel_bottom;
-  msgs->velocity_error = dvl_data_->e_vel_bottom;
 
-  msgs->depth = 0.0;
   msgs->altitude = dvl_data_->altitude;
 
   return msgs;
@@ -82,17 +82,20 @@ bool DVLDriver::update()
 
 }  // namespace dvl_driver
 
-int main(int argc, char * argv[])
-{
-  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
-  rclcpp::init(argc, argv);
+#include "rclcpp_components/register_node_macro.hpp"
+RCLCPP_COMPONENTS_REGISTER_NODE(dvl_driver::DVLDriver)
 
-  try {
-    auto node = std::make_shared<dvl_driver::DVLDriver>();
-    rclcpp::spin(node);
-  } catch (std::exception & e) {
-    std::cout << e.what() << std::endl;
-  }
-  rclcpp::shutdown();
-  return 0;
-}
+// int main(int argc, char * argv[])
+// {
+//   setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+//   rclcpp::init(argc, argv);
+//
+//   try {
+//     auto node = std::make_shared<dvl_driver::DVLDriver>();
+//     rclcpp::spin(node);
+//   } catch (std::exception & e) {
+//     std::cout << e.what() << std::endl;
+//   }
+//   rclcpp::shutdown();
+//   return 0;
+// }
