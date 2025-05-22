@@ -10,7 +10,6 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>serial</depend>
-  <depend>status</depend>
   <depend>timer</depend>
   <depend>rclcpp</depend>
   <depend>driver_msgs</depend>

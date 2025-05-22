@@ -57,37 +57,46 @@ void IMUDriver::_setup()
 
 void IMUDriver::_update()
 {
+  auto msg = std::make_unique<driver_msgs::msg::IMU>();
+
   if (g366_->update()) {
     timeout_->reset(this->get_clock()->now());
 
+    // Data acquisition
     std::shared_ptr<g366::DATA> data_ = g366_->get_data();
 
-    auto msg = std::make_unique<driver_msgs::msg::IMU>();
-    msg->status = true;
-    msg->gyro.x = data_->x_gyro;
-    msg->gyro.y = data_->y_gyro;
-    msg->gyro.z = data_->z_gyro;
+    // Prepare message
+    msg->header.stamp = this->get_clock()->now();
+    msg->header.frame_id = "imu";
+
+    msg->status = driver_msgs::msg::IMU::STATUS_NORMAL;
+
     msg->accel.x = data_->x_accl;
     msg->accel.y = data_->y_accl;
     msg->accel.z = data_->z_accl;
+    msg->gyro.x = data_->x_gyro;
+    msg->gyro.y = data_->y_gyro;
+    msg->gyro.z = data_->z_gyro;
     msg->orient.x = data_->roll;
     msg->orient.y = data_->pitch;
     msg->orient.z = data_->yaw;
 
-    pub_->publish(std::move(msg));
     RCLCPP_INFO(this->get_logger(), "Update imu data");
   } else {
+    // Error if timeout, otherwise warning and wait
     if (timeout_->check(this->get_clock()->now())) {
-      auto msg = std::make_unique<driver_msgs::msg::IMU>();
-      msg->status = false;
+      msg->status = driver_msgs::msg::IMU::STATUS_ERROR;
 
       RCLCPP_ERROR(
         this->get_logger(), "IMU driver timeout: %lu [ns]", timeout_->get_elapsed_time());
-      pub_->publish(std::move(msg));
     } else {
       RCLCPP_WARN(this->get_logger(), "Don't update imu data");
+      return;
     }
   }
+
+  // Publish
+  pub_->publish(std::move(msg));
 }
 
 }  // namespace imu_driver

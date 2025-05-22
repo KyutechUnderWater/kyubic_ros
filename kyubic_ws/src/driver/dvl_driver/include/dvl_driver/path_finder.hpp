@@ -87,7 +87,7 @@ struct Data  // PD5
   float x_vel_bottom;
   float y_vel_bottom;
   float z_vel_bottom;
-  float e_vel_bottom;
+  int16_t e_vel_bottom;
   float range_to_bottom_bm1;
   float range_to_bottom_bm2;
   float range_to_bottom_bm3;

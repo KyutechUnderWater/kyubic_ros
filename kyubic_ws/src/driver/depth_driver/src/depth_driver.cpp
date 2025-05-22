@@ -10,6 +10,8 @@
 
 #include "depth_driver/depth_driver.hpp"
 
+#include "driver_msgs/msg/depth.hpp"
+
 using namespace std::chrono_literals;
 
 namespace depth_driver
@@ -32,31 +34,36 @@ DepthDriver::DepthDriver() : Node("depth")
 
 void DepthDriver::_update()
 {
+  auto msg = std::make_unique<driver_msgs::msg::Depth>();
+
   if (bar30_->update()) {
     timeout_->reset(this->get_clock()->now());
 
-    auto msg = std::make_unique<driver_msgs::msg::Depth>();
+    // Data acquisition
     auto data = bar30_->get_data();
 
+    // Prepare message
     msg->header.stamp = this->get_clock()->now();
     msg->header.frame_id = "base_link";
-    msg->status = true;
+    msg->status = driver_msgs::msg::Depth::STATUS_NORMAL;
     msg->depth = data.depth;
 
     RCLCPP_INFO(this->get_logger(), "%f", msg->depth);
-    pub_->publish(std::move(msg));
   } else {
+    // Error if timeout, otherwise warning and wait
     if (timeout_->check(this->get_clock()->now())) {
-      auto msg = std::make_unique<driver_msgs::msg::Depth>();
-      msg->status = false;
+      msg->status = driver_msgs::msg::Depth::STATUS_ERROR;
 
       RCLCPP_ERROR(
         this->get_logger(), "Depth driver timeout: %lu [ns]", timeout_->get_elapsed_time());
-      pub_->publish(std::move(msg));
     } else {
       RCLCPP_WARN(this->get_logger(), "Faild to get depth data");
+      return;
     }
   }
+
+  // Publish
+  pub_->publish(std::move(msg));
 }
 
 }  // namespace depth_driver
