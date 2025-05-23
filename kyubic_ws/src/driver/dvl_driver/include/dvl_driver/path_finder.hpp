@@ -63,14 +63,14 @@ enum DATA_TABLE {
   PITCH = 48,
   ROLL = 50,
   HEADING = 52,
-  calcurated_distance_to_EAST_BOTTOM = 54,
-  CALED_DISTANCE_TO_NORTH = 58,
-  CALED_DISTANCE_TO_UP = 62,
+  CALED_DISTANCE_TO_BOTTOM_EAST = 54,
+  CALED_DISTANCE_TO_BOTTOM_NORTH = 58,
+  CALED_DISTANCE_TO_BOTTOM_UP = 62,
   CALED_DISTANCE_TO_ERROR = 66,
-  CALED_DISTANCE_TO_REF = 70,
-  CALED_DISTANCE_TO_NORTH_REF = 74,
-  CALED_DISTANCE_UP_REF = 78,
-  CALED_DISTANCE_ERROR_REF = 82,
+  CALED_DISTANCE_TO_REF_EAST = 70,
+  CALED_DISTANCE_TO_REF_NORTH = 74,
+  CALED_DISTANCE_TO_REF_UP = 78,
+  CALED_DISTANCE_TO_REF_ERROR = 82,
   CHECKSUM = 86
 };
 
@@ -112,6 +112,7 @@ struct Data  // PD5
   float heading;  //[degree]
   float dmg_distance_bottom_east;
   float dmg_distance_bottom_north;
+  float dmg_distance_bottom_up;
   float dmg_distance_ref_east;
   float dmg_distance_ref_north;
   float dmg_distance_ref_up;
