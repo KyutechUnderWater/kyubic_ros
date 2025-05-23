@@ -18,8 +18,8 @@ export -n KYUBIC_ROS
 sed -i '/alias ros2_start=/d' ~/.bash_aliases
 eval "$(cat ~/.bashrc | tail -n +10)"
 
-# Delete symbolic link for udev rules
-if [ -L /etc/udev/rules.d/99-usb-kyubic.rules ]; then
+# Delete hardlink for udev rules
+if [ -f /etc/udev/rules.d/99-usb-kyubic.rules ]; then
 	sudo unlink /etc/udev/rules.d/99-usb-kyubic.rules
 fi
 
