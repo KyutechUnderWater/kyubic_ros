@@ -29,7 +29,7 @@ DepthDriver::DepthDriver() : Node("depth")
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::Depth>("depth", qos);
-  timer_ = create_wall_timer(100ms, std::bind(&DepthDriver::_update, this));
+  timer_ = create_wall_timer(10ms, std::bind(&DepthDriver::_update, this));
 }
 
 void DepthDriver::_update()
