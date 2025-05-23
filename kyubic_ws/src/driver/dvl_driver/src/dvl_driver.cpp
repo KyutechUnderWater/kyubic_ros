@@ -19,7 +19,7 @@ DVLDriver::DVLDriver() : Node("dvl_driver")
   address = this->declare_parameter("ip_address", "0.0.0.0");
   listener_port = this->declare_parameter("listener_port", 8888);
   sender_port = this->declare_parameter("sender_port", 8889);
-  timeout = this->declare_parameter("sender_port", 8889);
+  timeout = this->declare_parameter("timeout", 0);
   timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout);
 
   listener_ = std::make_shared<path_finder::Listener>(address.c_str(), listener_port, 500);
