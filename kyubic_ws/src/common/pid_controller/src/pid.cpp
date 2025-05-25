@@ -4,7 +4,7 @@
  * @author R.Ohnishi
  * @date 2025/05/12
  *
- * @details PIDライブラリ
+ * @details 位置型・速度型PIDライブラリ
  **************************************************/
 
 #include "pid_controller/pid.hpp"
@@ -12,28 +12,52 @@
 namespace pid_controller
 {
 
-PID::PID(const double kp, const double ki, const double kd) : kp(kp), ki(ki), kd(kd)
+PositionPID::PositionPID(const double kp, const double ki, const double kd) : kp(kp), ki(ki), kd(kd)
 {
 }
 
-double PID::update(double current, double target)
+double PositionPID::update(double current, double target)
 {
   auto now = std::chrono::high_resolution_clock::now();
-  double dt = std::chrono::duration_cast<std::chrono::microseconds>(now - pre_time).count() / 1e6;
+  double dt = std::chrono::duration_cast<std::chrono::microseconds>(now - pre_time).count() * 1e-6;
   pre_time = now;
 
   p = target - current;
   i += p * dt;
-  d = p - pre_p;
+  d = (p - pre_p) / dt;
 
   pre_p = p;
 
-  return p * kp + i * ki + d * kd;
+  return kp * p + ki * i + kd * d;
 }
 
-void PID::reset_i()
+void PositionPID::reset_integral()
 {
   i = 0.0;
+}
+
+VelocityPID::VelocityPID(const double kp, const double ki, const double kd) : kp(kp), ki(ki), kd(kd)
+{
+}
+
+double VelocityPID::update(double current, double target)
+{
+  auto now = std::chrono::high_resolution_clock::now();
+  double dt = std::chrono::duration_cast<std::chrono::microseconds>(now - pre_time).count() * 1e-6;
+  pre_time = now;
+
+  double error = target - current;
+  p = (error - pre_error);
+  i = error * dt;
+  d = (p - pre_p) / dt;
+
+  double u = pre_u + kp * p + ki * i + kd * d;
+
+  pre_error = error;
+  pre_p = p;
+  pre_u = u;
+
+  return u;
 }
 
 }  // namespace pid_controller

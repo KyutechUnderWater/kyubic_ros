@@ -20,8 +20,8 @@ P_PID::P_PID(
   const double hi)
 : k(k), kp(kp), ki(ki), kd(kd), lo(lo), hi(hi)
 {
-  master_pid_ = std::make_shared<PID>(PID(k, 0.0, 0.0));
-  slave_pid_ = std::make_shared<PID>(PID(kp, ki, kd));
+  master_pid_ = std::make_shared<PositionPID>(PositionPID(k, 0.0, 0.0));
+  slave_pid_ = std::make_shared<PositionPID>(PositionPID(kp, ki, kd));
 }
 
 double P_PID::update(double current_slave, double current_master, double target_master)
@@ -34,8 +34,8 @@ double P_PID::update(double current_slave, double current_master, double target_
 
 void P_PID::reset()
 {
-  master_pid_->reset_i();
-  slave_pid_->reset_i();
+  master_pid_->reset_integral();
+  slave_pid_->reset_integral();
 }
 
 }  // namespace pid_controller

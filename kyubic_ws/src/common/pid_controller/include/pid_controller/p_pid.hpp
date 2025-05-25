@@ -27,7 +27,7 @@ private:
   std::chrono::high_resolution_clock::time_point pre_time =
     std::chrono::high_resolution_clock::now();
 
-  std::shared_ptr<PID> master_pid_, slave_pid_;
+  std::shared_ptr<PositionPID> master_pid_, slave_pid_;
 
 public:
   explicit P_PID(
