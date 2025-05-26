@@ -81,14 +81,14 @@ $(function() {
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#ifndef _IMU_DRIVER_HPP</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#define _IMU_DRIVER_HPP</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;<a class="code" href="g366_8hpp.html">imu_driver/g366.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;cstdint&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;driver_msgs/msg/imu.hpp&gt;</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;rclcpp/rclcpp.hpp&gt;</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;<a class="code" href="serial_8hpp.html">serial/serial.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;driver_msgs/msg/imu.hpp&gt;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;<a class="code" href="timeout_8hpp.html">timer/timeout.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &quot;<a class="code" href="g366_8hpp.html">imu_driver/g366.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceimu__driver.html">imu_driver</a></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>{</div>
@@ -103,25 +103,28 @@ $(function() {
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  std::string portname;</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keywordtype">int</span> baudrate;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  std::shared_ptr&lt;g366::G366&gt; g366_;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="comment">// std::shared_ptr&lt;g366::G366HWReseter&gt; g366_hw_resetter_;</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  rclcpp::Publisher&lt;driver_msgs::msg::IMU&gt;::SharedPtr pub_;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  rclcpp::TimerBase::SharedPtr timer_;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="keywordtype">void</span> _setup();</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keywordtype">void</span> _update();</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>};</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>}  <span class="comment">// namespace imu_driver</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  int64_t timeout;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  std::shared_ptr&lt;timer::Timeout&gt; timeout_;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  std::shared_ptr&lt;g366::G366&gt; g366_;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="comment">// std::shared_ptr&lt;g366::G366HWReseter&gt; g366_hw_resetter_;</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  rclcpp::Publisher&lt;driver_msgs::msg::IMU&gt;::SharedPtr pub_;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  rclcpp::TimerBase::SharedPtr timer_;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keywordtype">void</span> _setup();</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="keywordtype">void</span> _update();</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>};</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}  <span class="comment">// namespace imu_driver</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclassimu__driver_1_1IMUDriver_html"><div class="ttname"><a href="classimu__driver_1_1IMUDriver.html">imu_driver::IMUDriver</a></div><div class="ttdoc">IMU driver class.</div><div class="ttdef"><b>Definition:</b> imu_driver.hpp:33</div></div>
-<div class="ttc" id="aclassimu__driver_1_1IMUDriver_html_a51ace4ac37740390c0b99b77e716cf63"><div class="ttname"><a href="classimu__driver_1_1IMUDriver.html#a51ace4ac37740390c0b99b77e716cf63">imu_driver::IMUDriver::IMUDriver</a></div><div class="ttdeci">IMUDriver()</div><div class="ttdoc">G366 &amp; ROS-topic setting.</div><div class="ttdef"><b>Definition:</b> imu_driver.cpp:17</div></div>
-<div class="ttc" id="aclassimu__driver_1_1IMUDriver_html_a7747dfc6d3bf82853977099fec583beb"><div class="ttname"><a href="classimu__driver_1_1IMUDriver.html#a7747dfc6d3bf82853977099fec583beb">imu_driver::IMUDriver::hw_reset</a></div><div class="ttdeci">void hw_reset()</div><div class="ttdoc">Hardware reset of IMU.</div><div class="ttdef"><b>Definition:</b> imu_driver.cpp:34</div></div>
+<div class="ttc" id="aclassimu__driver_1_1IMUDriver_html_a51ace4ac37740390c0b99b77e716cf63"><div class="ttname"><a href="classimu__driver_1_1IMUDriver.html#a51ace4ac37740390c0b99b77e716cf63">imu_driver::IMUDriver::IMUDriver</a></div><div class="ttdeci">IMUDriver()</div><div class="ttdoc">G366 &amp; ROS-topic setting.</div><div class="ttdef"><b>Definition:</b> imu_driver.cpp:21</div></div>
+<div class="ttc" id="aclassimu__driver_1_1IMUDriver_html_a7747dfc6d3bf82853977099fec583beb"><div class="ttname"><a href="classimu__driver_1_1IMUDriver.html#a7747dfc6d3bf82853977099fec583beb">imu_driver::IMUDriver::hw_reset</a></div><div class="ttdeci">void hw_reset()</div><div class="ttdoc">Hardware reset of IMU.</div><div class="ttdef"><b>Definition:</b> imu_driver.cpp:40</div></div>
 <div class="ttc" id="ag366_8hpp_html"><div class="ttname"><a href="g366_8hpp.html">g366.hpp</a></div><div class="ttdoc">G366 library.</div></div>
 <div class="ttc" id="anamespaceimu__driver_html"><div class="ttname"><a href="namespaceimu__driver.html">imu_driver</a></div><div class="ttdoc">For imu driver.</div></div>
 <div class="ttc" id="aserial_8hpp_html"><div class="ttname"><a href="serial_8hpp.html">serial.hpp</a></div><div class="ttdoc">serial library</div></div>
+<div class="ttc" id="atimeout_8hpp_html"><div class="ttname"><a href="timeout_8hpp.html">timeout.hpp</a></div><div class="ttdoc">timeout library</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

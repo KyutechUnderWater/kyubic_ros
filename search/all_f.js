@@ -14,8 +14,9 @@ var searchData=
   ['ref_5flayer_5fstatus_11',['ref_layer_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a4ebacc5623b4615835ee60e9d29c4ad6',1,'dvl_driver::path_finder::Data']]],
   ['ref_5flayer_5fstatus_12',['REF_LAYER_STATUS',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da1802356ad800edcb82057cebcc0ff5f3',1,'dvl_driver::path_finder']]],
   ['request_5fcomm_13',['request_comm',['../namespaceimu__driver_1_1g366.html#a286b0f2fbb8ff3317617559a9f8209fe',1,'imu_driver::g366']]],
-  ['roll_14',['roll',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a1df683254b395731991af82d27931c15',1,'imu_driver::g366::RAW_DATA_T::roll()'],['../structimu__driver_1_1g366_1_1DATA.html#ad8221b9ae94781bb620e159e162bbc24',1,'imu_driver::g366::DATA::roll()'],['../structdvl__driver_1_1path__finder_1_1Data.html#abad80c260ef070eef82def0894ff9ed1',1,'dvl_driver::path_finder::Data::roll()']]],
-  ['roll_15',['ROLL',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830dae72dc0c269448775756cfd6ca2cdb537',1,'dvl_driver::path_finder']]],
-  ['root_16',['root',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a68f7e0cc6e35b9d7df4a06e3895a2208',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['run_5ftopic_5fecho_17',['run_topic_echo',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a3ee5a0d17f7cef723c250da78ebedb93',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['reset_14',['reset',['../classtimer_1_1Timeout.html#aba5c2bab85a7d37ff3208faa7f6f47d4',1,'timer::Timeout']]],
+  ['roll_15',['roll',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a1df683254b395731991af82d27931c15',1,'imu_driver::g366::RAW_DATA_T::roll()'],['../structimu__driver_1_1g366_1_1DATA.html#ad8221b9ae94781bb620e159e162bbc24',1,'imu_driver::g366::DATA::roll()'],['../structdvl__driver_1_1path__finder_1_1Data.html#abad80c260ef070eef82def0894ff9ed1',1,'dvl_driver::path_finder::Data::roll()']]],
+  ['roll_16',['ROLL',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830dae72dc0c269448775756cfd6ca2cdb537',1,'dvl_driver::path_finder']]],
+  ['root_17',['root',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a68f7e0cc6e35b9d7df4a06e3895a2208',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['run_5ftopic_5fecho_18',['run_topic_echo',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a3ee5a0d17f7cef723c250da78ebedb93',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

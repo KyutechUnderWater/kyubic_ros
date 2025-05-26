@@ -78,11 +78,11 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <a href="dvl__driver_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="path__finder_8hpp.html">dvl_driver/path_finder.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;rclcpp/rclcpp.hpp&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;driver_msgs/msg/dvl.hpp&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;rclcpp/rclcpp.hpp&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;<a class="code" href="timeout_8hpp.html">timer/timeout.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;driver_msgs/msg/dvl.hpp&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;<a class="code" href="path__finder_8hpp.html">dvl_driver/path_finder.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacedvl__driver.html">dvl_driver</a></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
@@ -96,26 +96,30 @@ $(function() {
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  std::string address;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keywordtype">int</span> listener_port;</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="keywordtype">int</span> sender_port;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  std::shared_ptr&lt;path_finder::Sender&gt; sender_;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  std::shared_ptr&lt;path_finder::Listener&gt; listener_;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  uint64_t timeout;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  std::shared_ptr&lt;timer::Timeout&gt; timeout_;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  rclcpp::Publisher&lt;driver_msgs::msg::DVL&gt;::SharedPtr pub_;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  rclcpp::TimerBase::SharedPtr timer_;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  std::shared_ptr&lt;path_finder::Sender&gt; sender_;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  std::shared_ptr&lt;path_finder::Listener&gt; listener_;</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keywordtype">bool</span> <a class="code hl_namespace" href="namespacesetup.html">setup</a>();</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  driver_msgs::msg::DVL::UniquePtr _create_msg(std::shared_ptr&lt;path_finder::Data&gt; dvl_data_);</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  <span class="keywordtype">bool</span> update();</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>};</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>}  <span class="comment">// namespace dvl_driver</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  rclcpp::Publisher&lt;driver_msgs::msg::DVL&gt;::SharedPtr pub_;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  rclcpp::TimerBase::SharedPtr timer_;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="keywordtype">bool</span> <a class="code hl_namespace" href="namespacesetup.html">setup</a>();</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keywordtype">bool</span> _update();</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  <span class="keywordtype">void</span> update();</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>};</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>}  <span class="comment">// namespace dvl_driver</span></div>
 <div class="ttc" id="aclassdvl__driver_1_1DVLDriver_html"><div class="ttname"><a href="classdvl__driver_1_1DVLDriver.html">dvl_driver::DVLDriver</a></div><div class="ttdoc">DVL driver class.</div><div class="ttdef"><b>Definition:</b> dvl_driver.hpp:27</div></div>
-<div class="ttc" id="aclassdvl__driver_1_1DVLDriver_html_afd090ce8373b9a0bd70802722e111609"><div class="ttname"><a href="classdvl__driver_1_1DVLDriver.html#afd090ce8373b9a0bd70802722e111609">dvl_driver::DVLDriver::DVLDriver</a></div><div class="ttdeci">DVLDriver()</div><div class="ttdoc">Connect Path Finder and Set Topic.</div><div class="ttdef"><b>Definition:</b> dvl_driver.cpp:19</div></div>
+<div class="ttc" id="aclassdvl__driver_1_1DVLDriver_html_afd090ce8373b9a0bd70802722e111609"><div class="ttname"><a href="classdvl__driver_1_1DVLDriver.html#afd090ce8373b9a0bd70802722e111609">dvl_driver::DVLDriver::DVLDriver</a></div><div class="ttdeci">DVLDriver()</div><div class="ttdoc">Connect Path Finder and Set Topic.</div><div class="ttdef"><b>Definition:</b> dvl_driver.cpp:17</div></div>
 <div class="ttc" id="anamespacedvl__driver_html"><div class="ttname"><a href="namespacedvl__driver.html">dvl_driver</a></div><div class="ttdoc">For dvl driver.</div></div>
 <div class="ttc" id="anamespacesetup_html"><div class="ttname"><a href="namespacesetup.html">setup</a></div><div class="ttdef"><b>Definition:</b> setup.py:1</div></div>
 <div class="ttc" id="apath__finder_8hpp_html"><div class="ttname"><a href="path__finder_8hpp.html">path_finder.hpp</a></div><div class="ttdoc">Path Finder library.</div></div>
+<div class="ttc" id="atimeout_8hpp_html"><div class="ttname"><a href="timeout_8hpp.html">timeout.hpp</a></div><div class="ttdoc">timeout library</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

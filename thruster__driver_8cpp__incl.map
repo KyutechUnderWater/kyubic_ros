@@ -1,14 +1,14 @@
 <map id="src/driver/thruster_driver/src/thruster_driver.cpp" name="src/driver/thruster_driver/src/thruster_driver.cpp">
-<area shape="rect" id="node1" title="thruster driver" alt="" coords="492,5,637,60"/>
-<area shape="rect" id="node2" href="$thruster__driver_8hpp.html" title="thruster driver" alt="" coords="334,108,507,148"/>
-<area shape="rect" id="node11" title=" " alt="" coords="531,115,598,141"/>
-<area shape="rect" id="node12" title=" " alt="" coords="622,115,702,141"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,203,137,229"/>
-<area shape="rect" id="node4" href="$serial_8hpp.html" title="serial library" alt="" coords="161,203,288,229"/>
-<area shape="rect" id="node8" title=" " alt="" coords="313,203,529,229"/>
-<area shape="rect" id="node9" title=" " alt="" coords="553,196,763,236"/>
-<area shape="rect" id="node10" title=" " alt="" coords="787,203,849,229"/>
-<area shape="rect" id="node5" title=" " alt="" coords="83,284,167,309"/>
-<area shape="rect" id="node6" title=" " alt="" coords="191,284,258,309"/>
-<area shape="rect" id="node7" title=" " alt="" coords="282,284,341,309"/>
+<area shape="rect" id="node1" title="thruster driver" alt="" coords="509,5,655,60"/>
+<area shape="rect" id="node2" href="$thruster__driver_8hpp.html" title="thruster driver" alt="" coords="351,108,525,148"/>
+<area shape="rect" id="node11" title=" " alt="" coords="549,115,615,141"/>
+<area shape="rect" id="node12" title=" " alt="" coords="639,115,719,141"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,203,68,229"/>
+<area shape="rect" id="node4" title=" " alt="" coords="93,203,309,229"/>
+<area shape="rect" id="node5" title=" " alt="" coords="333,196,543,236"/>
+<area shape="rect" id="node6" title=" " alt="" coords="568,203,700,229"/>
+<area shape="rect" id="node7" href="$serial_8hpp.html" title="serial library" alt="" coords="724,203,851,229"/>
+<area shape="rect" id="node8" title=" " alt="" coords="645,284,729,309"/>
+<area shape="rect" id="node9" title=" " alt="" coords="754,284,821,309"/>
+<area shape="rect" id="node10" title=" " alt="" coords="845,284,903,309"/>
 </map>

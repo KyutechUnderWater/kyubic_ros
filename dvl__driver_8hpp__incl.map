@@ -1,10 +1,11 @@
 <map id="src/driver/dvl_driver/include/dvl_driver/dvl_driver.hpp" name="src/driver/dvl_driver/include/dvl_driver/dvl_driver.hpp">
-<area shape="rect" id="node1" title="DVL driver." alt="" coords="302,5,469,60"/>
-<area shape="rect" id="node2" href="$path__finder_8hpp.html" title="Path Finder library." alt="" coords="105,108,295,133"/>
-<area shape="rect" id="node7" title=" " alt="" coords="319,108,451,133"/>
-<area shape="rect" id="node8" title=" " alt="" coords="476,108,663,133"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,181,101,207"/>
-<area shape="rect" id="node4" title=" " alt="" coords="125,181,184,207"/>
-<area shape="rect" id="node5" title=" " alt="" coords="208,181,285,207"/>
-<area shape="rect" id="node6" title=" " alt="" coords="310,181,373,207"/>
+<area shape="rect" id="node1" title="DVL driver." alt="" coords="199,5,366,60"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,108,192,133"/>
+<area shape="rect" id="node3" title=" " alt="" coords="191,181,323,207"/>
+<area shape="rect" id="node4" href="$timeout_8hpp.html" title="timeout library" alt="" coords="267,108,407,133"/>
+<area shape="rect" id="node5" href="$path__finder_8hpp.html" title="Path Finder library." alt="" coords="431,108,622,133"/>
+<area shape="rect" id="node6" title=" " alt="" coords="363,181,459,207"/>
+<area shape="rect" id="node7" title=" " alt="" coords="483,181,541,207"/>
+<area shape="rect" id="node8" title=" " alt="" coords="565,181,643,207"/>
+<area shape="rect" id="node9" title=" " alt="" coords="667,181,730,207"/>
 </map>
