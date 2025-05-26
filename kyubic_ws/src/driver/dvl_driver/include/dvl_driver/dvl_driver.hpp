@@ -7,11 +7,11 @@
  * @details DVL(Path Finder) のデータを取得して，Topicを流す
  ************************************************************/
 
-#include "dvl_driver/path_finder.hpp"
-
-#include <rclcpp/rclcpp.hpp>
-
 #include <driver_msgs/msg/dvl.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <timer/timeout.hpp>
+
+#include "dvl_driver/path_finder.hpp"
 
 /**
  * @namespace dvl_driver
@@ -35,6 +35,9 @@ private:
   std::string address;
   int listener_port;
   int sender_port;
+  uint64_t timeout;
+
+  std::shared_ptr<timer::Timeout> timeout_;
 
   std::shared_ptr<path_finder::Sender> sender_;
   std::shared_ptr<path_finder::Listener> listener_;
@@ -49,16 +52,15 @@ private:
   bool setup();
 
   /**
-   * @brief Create Topic msgs from dvl data
-   * @return PathFinder message
-   */
-  driver_msgs::msg::DVL::UniquePtr _create_msg(std::shared_ptr<path_finder::Data> dvl_data_);
-
-  /**
-   * @brief Get dvl data and Publish data
+   * @brief Get dvl data
    * @return True if successful, False otherwise
    */
-  bool update();
+  bool _update();
+
+  /**
+   * @brief Publish data
+   */
+  void update();
 };
 
 }  // namespace dvl_driver

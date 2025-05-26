@@ -30,10 +30,7 @@ ThrusterDriver::ThrusterDriver() : Node("thruster_driver")
     std::bind(&ThrusterDriver::_robot_force_callback, this, std::placeholders::_1));
 }
 
-float ThrusterDriver::_calc_restrict_rate(float total, float limit)
-{
-  return limit / total;
-}
+float ThrusterDriver::_calc_restrict_rate(float total, float limit) { return limit / total; }
 
 void ThrusterDriver::_robot_force_callback(const geometry_msgs::msg::WrenchStamped::SharedPtr msg)
 {
@@ -55,18 +52,23 @@ void ThrusterDriver::_robot_force_callback(const geometry_msgs::msg::WrenchStamp
   thrusts[2] = thrusts[3] = -force_z / (2 * cos_h);             // VL, VR
 
   float total_thrust = 0.0;
-  for (int i = 0; i < 5; ++i) total_thrust += abs(thrusts[i]);
+  for (int i = 0; i < 5; ++i) {
+    total_thrust += abs(thrusts[i]);
+  }
 
   if (total_thrust > max_thrust) {
     RCLCPP_WARN(
       this->get_logger(), "total_thrust(%f[N]) exceeds the max_thrust(%d[N]). Restrict thrust.",
       total_thrust, max_thrust);
 
-    for (int i = 0; i < 6; ++i)
+    for (int i = 0; i < 6; ++i) {
       thrusts[i] = thrusts[i] * _calc_restrict_rate(total_thrust, max_thrust);
+    }
 
     total_thrust = 0.0;
-    for (int i = 0; i < 5; ++i) total_thrust += abs(thrusts[i]);
+    for (int i = 0; i < 5; ++i) {
+      total_thrust += abs(thrusts[i]);
+    }
   }
 
   {
@@ -75,7 +77,9 @@ void ThrusterDriver::_robot_force_callback(const geometry_msgs::msg::WrenchStamp
     std::string s_buf = "";
     s_buf += start_char;
     for (int i = 0; i < 6; ++i) {
-      if (i != 0) s_buf += delim_char;
+      if (i != 0) {
+        s_buf += delim_char;
+      }
 
       std::string s = std::to_string(thrusts[i]);
       s_buf += s.substr(0, s.size() - 4);

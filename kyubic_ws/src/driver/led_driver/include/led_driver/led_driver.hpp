@@ -9,9 +9,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <serial/serial.hpp>
-
 #include <std_msgs/msg/float32.hpp>
-
 #include <string>
 
 /**

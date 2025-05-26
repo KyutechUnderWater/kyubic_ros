@@ -9,6 +9,10 @@
 
 #include "imu_driver/imu_driver.hpp"
 
+#include <cstdlib>
+#include <memory>
+#include <rclcpp/logging.hpp>
+
 using namespace std::chrono_literals;
 
 namespace imu_driver
@@ -18,6 +22,8 @@ IMUDriver::IMUDriver() : Node("imu_driver")
 {
   portname = this->declare_parameter("serial_port", "/dev/ttyACM0");
   baudrate = this->declare_parameter("serial_speed", 115200);
+  timeout = this->declare_parameter("timeout", 0);
+  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout);
 
   g366_ = std::make_shared<g366::G366>(portname.c_str(), baudrate);
   RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
@@ -41,30 +47,55 @@ void IMUDriver::hw_reset()
 void IMUDriver::_setup()
 {
   hw_reset();
-  g366_->setup();
+  if (!g366_->setup()) {
+    RCLCPP_ERROR(this->get_logger(), "Failed to Setup");
+    exit(1);
+  }
+  RCLCPP_INFO(this->get_logger(), "Setup is complete.");
 }
 
 void IMUDriver::_update()
 {
+  auto msg = std::make_unique<driver_msgs::msg::IMU>();
+
   if (g366_->update()) {
+    timeout_->reset(this->get_clock()->now());
+
+    // Data acquisition
     std::shared_ptr<g366::DATA> data_ = g366_->get_data();
 
-    auto msg = std::make_unique<driver_msgs::msg::IMU>();
-    msg->gyro.x = data_->x_gyro;
-    msg->gyro.y = data_->y_gyro;
-    msg->gyro.z = data_->z_gyro;
+    // Prepare message
+    msg->header.stamp = this->get_clock()->now();
+    msg->header.frame_id = "imu";
+
+    msg->status = driver_msgs::msg::IMU::STATUS_NORMAL;
+
     msg->accel.x = data_->x_accl;
     msg->accel.y = data_->y_accl;
     msg->accel.z = data_->z_accl;
+    msg->gyro.x = data_->x_gyro;
+    msg->gyro.y = data_->y_gyro;
+    msg->gyro.z = data_->z_gyro;
     msg->orient.x = data_->roll;
     msg->orient.y = data_->pitch;
     msg->orient.z = data_->yaw;
 
-    pub_->publish(std::move(msg));
     RCLCPP_INFO(this->get_logger(), "Update imu data");
   } else {
-    RCLCPP_WARN(this->get_logger(), "Don't update imu data");
+    // Error if timeout, otherwise warning and wait
+    if (timeout_->check(this->get_clock()->now())) {
+      msg->status = driver_msgs::msg::IMU::STATUS_ERROR;
+
+      RCLCPP_ERROR(
+        this->get_logger(), "IMU driver timeout: %lu [ns]", timeout_->get_elapsed_time());
+    } else {
+      RCLCPP_WARN(this->get_logger(), "Don't update imu data");
+      return;
+    }
   }
+
+  // Publish
+  pub_->publish(std::move(msg));
 }
 
 }  // namespace imu_driver

@@ -10,9 +10,8 @@
 #ifndef _BAR30_HPP
 #define _BAR30_HPP
 
+#include <cstdint>
 #include <serial/serial.hpp>
-
-#include <memory>
 
 /**
  * @namespace depth_driver
@@ -20,6 +19,13 @@
  */
 namespace depth_driver
 {
+#pragma pack(push, 1)
+struct DepthData
+{
+  unsigned int sequence;
+  double depth;
+};
+#pragma pack(pop)
 
 /**
  * @brief Bar30 class
@@ -46,7 +52,7 @@ public:
    * @brief Get depth data
    * @return depth data
    */
-  float get_data();
+  DepthData get_data();
 
 private:
   const char * portname;
@@ -54,7 +60,7 @@ private:
 
   std::shared_ptr<serial::Serial> serial_;
 
-  float depth_data = 0.0;
+  DepthData data;
 };
 
 }  // namespace depth_driver

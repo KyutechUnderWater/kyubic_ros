@@ -10,11 +10,12 @@
 #ifndef _DEPTH_DRIVER_HPP
 #define _DEPTH_DRIVER_HPP
 
-#include "depth_driver/bar30.hpp"
-
-#include <rclcpp/rclcpp.hpp>
-
+#include <cstdint>
 #include <driver_msgs/msg/depth.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <timer/timeout.hpp>
+
+#include "depth_driver/bar30.hpp"
 
 /**
  * @namespace depth_driver
@@ -39,7 +40,9 @@ public:
 private:
   std::string portname;
   int baudrate;
+  uint64_t timeout;
 
+  std::shared_ptr<timer::Timeout> timeout_;
   std::shared_ptr<Bar30> bar30_;
   rclcpp::Publisher<driver_msgs::msg::Depth>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
