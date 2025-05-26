@@ -7,12 +7,11 @@
  * @details DVL(Path Finder) のデータを取得して，Topicを流す
  ************************************************************/
 
-#include "dvl_driver/path_finder.hpp"
-
+#include <driver_msgs/msg/dvl.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <timer/timeout.hpp>
 
-#include <driver_msgs/msg/dvl.hpp>
+#include "dvl_driver/path_finder.hpp"
 
 /**
  * @namespace dvl_driver

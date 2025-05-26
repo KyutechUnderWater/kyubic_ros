@@ -10,14 +10,12 @@
 #ifndef _DEPTH_DRIVER_HPP
 #define _DEPTH_DRIVER_HPP
 
-#include "depth_driver/bar30.hpp"
-
+#include <cstdint>
+#include <driver_msgs/msg/depth.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <timer/timeout.hpp>
 
-#include <driver_msgs/msg/depth.hpp>
-
-#include <cstdint>
+#include "depth_driver/bar30.hpp"
 
 /**
  * @namespace depth_driver

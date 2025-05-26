@@ -34,22 +34,26 @@ Listener::Listener(const char * _address, const int _port, const int _timeout)
 : address(_address), port(_port), timeout(_timeout)
 {
   // AF_INET: IPv4, SOCK_STREAM: TCP
-  if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) error("ERROR opening socket");
+  if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    error("ERROR opening socket");
+  }
 
   server.sin_family = AF_INET;
   server.sin_addr.s_addr = inet_addr(address);
   server.sin_port = htons(port);
 
-  if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) < 0)
+  if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) < 0) {
     error("DVL Listener: ERROR connecting");
+  }
 
   // Set time out
   struct timeval tv;
   tv.tv_sec = static_cast<int>(timeout / 1000);
   tv.tv_usec = (timeout - tv.tv_sec * 1000) * 1000;
   std::cout << tv.tv_sec << " " << tv.tv_usec << std::endl;
-  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
+  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
     std::cout << "ERROR setting socket timeout" << std::endl;
+  }
 
   std::cout << "DVL Listener Start!!!" << std::endl;
 }
@@ -59,12 +63,13 @@ bool Listener::listen()
   memset(buffer, 0, sizeof(buffer));
   ssize_t num_of_listen = read(sockfd, buffer, sizeof(buffer));
 
-  if (num_of_listen == 88)
+  if (num_of_listen == 88) {
     return _parse();
-  else if (num_of_listen < 0)
+  } else if (num_of_listen < 0) {
     std::cout << "Failed to Listen!" << std::endl;
-  else
+  } else {
     std::cout << "Missing Data" << std::endl;
+  }
 
   return false;
 }
@@ -116,8 +121,9 @@ bool Listener::_parse()
     (-0.001);
   dvl_data.z_vel_bottom = concat_bit_int16(buffer[Z_VEL_BTM], buffer[Z_VEL_BTM + 1]) * 0.001;
   dvl_data.e_vel_bottom = concat_bit_int16(buffer[E_VEL_BTM], buffer[E_VEL_BTM + 1]);
-  if (dvl_data.e_vel_bottom == -32768)
+  if (dvl_data.e_vel_bottom == -32768) {
     dvl_data.x_vel_bottom = dvl_data.y_vel_bottom = dvl_data.z_vel_bottom = 0.0;
+  }
 
   // rotate
   dvl_data.pitch = concat_bit_int16(buffer[PITCH], buffer[PITCH + 1]) * 0.01;
@@ -141,10 +147,7 @@ bool Listener::_parse()
   return true;
 }
 
-std::shared_ptr<Data> Listener::get_dvl_data()
-{
-  return std::make_shared<Data>(dvl_data);
-}
+std::shared_ptr<Data> Listener::get_dvl_data() { return std::make_shared<Data>(dvl_data); }
 
 void Listener::print_info()
 {
@@ -181,21 +184,25 @@ Sender::Sender(const char * _address, const int _port, const int _timeout)
 : address(_address), port(_port), timeout(_timeout)
 {
   // AF_INET: IPv4, SOCK_STREAM: TCP
-  if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) error("ERROR opening socket");
+  if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    error("ERROR opening socket");
+  }
 
   server.sin_family = AF_INET;
   server.sin_addr.s_addr = inet_addr(address);
   server.sin_port = htons(port);
 
-  if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) < 0)
+  if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) < 0) {
     error("DVL Sender: ERROR connecting");
+  }
 
   // Set time out
   struct timeval tv;
   tv.tv_sec = static_cast<int>(timeout / 1000);
   tv.tv_usec = (timeout - tv.tv_sec * 1000) * 1000;
-  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
+  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
     error("ERROR setting socket timeout");
+  }
 
   std::cout << "DVL Sender Start!!!" << std::endl;
 }

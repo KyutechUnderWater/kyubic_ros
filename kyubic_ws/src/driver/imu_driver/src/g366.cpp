@@ -36,9 +36,13 @@ bool G366::setup()
   while (buf[2] != 0x05) {
     serial_->write(config_comm3, sizeof(config_comm3));
     ssize_t len = serial_->read(buf, 4, 10ms);
-    for (int i = 0; i < len; i++) printf("%02X ", buf[i]);
+    for (int i = 0; i < len; i++) {
+      printf("%02X ", buf[i]);
+    }
 
-    if (count++ == 3) return false;
+    if (count++ == 3) {
+      return false;
+    }
     sleep(1);
   }
 
@@ -93,10 +97,11 @@ bool G366::update()
     data.yaw = 0.00699411 * raw_data_t.yaw;
 
     // TODO: 計算の確認
-    if (data.yaw > 0)
+    if (data.yaw > 0) {
       data.yaw = 180.0 - data.yaw;
-    else if (data.yaw < 0)
+    } else if (data.yaw < 0) {
       data.yaw = (180.0 + data.yaw) * -1;
+    }
 
     return true;
   }
@@ -105,10 +110,7 @@ bool G366::update()
   return false;
 }
 
-std::shared_ptr<DATA> G366::get_data()
-{
-  return std::make_shared<DATA>(data);
-}
+std::shared_ptr<DATA> G366::get_data() { return std::make_shared<DATA>(data); }
 
 // G366HWReseter::G366HWReseter(const char * _portname, const int _baudrate)
 // : portname(_portname), baudrate(_baudrate)

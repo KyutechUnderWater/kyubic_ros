@@ -10,16 +10,14 @@
 #ifndef _IMU_DRIVER_HPP
 #define _IMU_DRIVER_HPP
 
-#include "imu_driver/g366.hpp"
-
+#include <cstdint>
+#include <driver_msgs/msg/imu.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <serial/serial.hpp>
+#include <string>
 #include <timer/timeout.hpp>
 
-#include <driver_msgs/msg/imu.hpp>
-
-#include <cstdint>
-#include <string>
+#include "imu_driver/g366.hpp"
 
 /**
  * @namespace imu_driver

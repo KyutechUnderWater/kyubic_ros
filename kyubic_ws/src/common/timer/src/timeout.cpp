@@ -9,9 +9,8 @@
 
 #include "timer/timeout.hpp"
 
-#include <rclcpp/duration.hpp>
-
 #include <cstdint>
+#include <rclcpp/duration.hpp>
 
 namespace timer
 {
@@ -21,10 +20,7 @@ Timeout::Timeout(rclcpp::Time start_time, int64_t timeout)
 {
 }
 
-void Timeout::reset(rclcpp::Time start_time)
-{
-  this->start_time = start_time;
-}
+void Timeout::reset(rclcpp::Time start_time) { this->start_time = start_time; }
 
 bool Timeout::check(rclcpp::Time now)
 {
@@ -35,9 +31,6 @@ bool Timeout::check(rclcpp::Time now)
   return false;
 }
 
-int64_t Timeout::get_elapsed_time()
-{
-  return elapsed_time.nanoseconds();
-}
+int64_t Timeout::get_elapsed_time() { return elapsed_time.nanoseconds(); }
 
 }  // namespace timer

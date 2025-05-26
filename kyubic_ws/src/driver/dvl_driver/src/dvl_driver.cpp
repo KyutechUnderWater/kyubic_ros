@@ -26,7 +26,9 @@ DVLDriver::DVLDriver() : Node("dvl_driver")
   sender_ = std::make_shared<path_finder::Sender>(address.c_str(), sender_port, 500);
   RCLCPP_INFO(this->get_logger(), "DVL connection successful");
 
-  if (!setup()) exit(1);
+  if (!setup()) {
+    exit(1);
+  }
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::DVL>("dvl", qos);

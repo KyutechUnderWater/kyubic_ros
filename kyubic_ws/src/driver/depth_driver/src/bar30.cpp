@@ -44,9 +44,6 @@ bool Bar30::update()
   return false;
 }
 
-DepthData Bar30::get_data()
-{
-  return data;
-}
+DepthData Bar30::get_data() { return data; }
 
 }  // namespace depth_driver

@@ -30,7 +30,8 @@ namespace dvl_driver::path_finder
  * @details Bit position of data.
  * DVLのreferenceのバイト番号-1
  */
-enum DATA_TABLE {
+enum DATA_TABLE
+{
   DATA_ID = 0,
   DATA_STRUCTURE = 1,
   NUM_OF_BYTES = 2,

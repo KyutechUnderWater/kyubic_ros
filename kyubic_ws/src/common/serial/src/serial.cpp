@@ -33,10 +33,7 @@ Serial::Serial(const char * portname, const int baudrate)
   setConfig(baudrate);
 }
 
-Serial::~Serial()
-{
-  close(fd);
-}
+Serial::~Serial() { close(fd); }
 
 void Serial::setConfig(const int _baudrate)
 {
@@ -153,7 +150,9 @@ ssize_t Serial::read(
     ssize_t read_len = 0;
     while (!end_flag) {
       read_len += read(buf + read_len, len - read_len);
-      if (static_cast<size_t>(read_len) >= len) return read_len;
+      if (static_cast<size_t>(read_len) >= len) {
+        return read_len;
+      }
     }
     return ssize_t(0);
   });
@@ -162,8 +161,9 @@ ssize_t Serial::read(
   end_flag = true;
   if (status == std::future_status::ready)
     return future.get();
-  else
+  else {
     return (ssize_t)0;
+  }
 }
 
 ssize_t Serial::read_until(
@@ -177,8 +177,12 @@ ssize_t Serial::read_until(
       while (!end_flag) {
         size_t rl = read(buf + read_len, 1);
         read_len += rl;
-        if (buf[read_len - 1] == (uint8_t)end_char) return read_len;
-        if (static_cast<size_t>(read_len) > len) return ssize_t(-1);
+        if (buf[read_len - 1] == (uint8_t)end_char) {
+          return read_len;
+        }
+        if (static_cast<size_t>(read_len) > len) {
+          return ssize_t(-1);
+        }
       }
       return ssize_t(0);
     });
