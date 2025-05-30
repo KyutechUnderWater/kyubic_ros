@@ -9,10 +9,6 @@
 
 #include "localization/localization_component.hpp"
 
-#include "localization_msgs/msg/odometry.hpp"
-
-#include <algorithm>
-
 using namespace std::chrono_literals;
 
 namespace localization
@@ -32,7 +28,7 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
     "depth_odom", qos, std::bind(&Localization::_depth_callback, this, std::placeholders::_1));
   sub_imu_ = create_subscription<localization_msgs::msg::Odometry>(
     "imu_transformed", qos, std::bind(&Localization::_imu_callback, this, std::placeholders::_1));
-  sub_depth_ = create_subscription<localization_msgs::msg::Odometry>(
+  sub_dvl_ = create_subscription<localization_msgs::msg::Odometry>(
     "dvl_odom", qos, std::bind(&Localization::_dvl_callback, this, std::placeholders::_1));
 
   // Create wall timer

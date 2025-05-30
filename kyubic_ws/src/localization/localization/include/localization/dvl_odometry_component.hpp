@@ -10,7 +10,6 @@
 #ifndef _DVL_ODOMETRY_HPP
 #define _DVL_ODOMETRY_HPP
 
-#include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include <driver_msgs/msg/dvl.hpp>

@@ -10,8 +10,6 @@
 #include <localization/dvl_odometry_component.hpp>
 
 #include <cmath>
-#include <memory>
-#include <utility>
 
 namespace localization
 {

@@ -11,7 +11,6 @@
 
 #include "driver_msgs/msg/imu.hpp"
 
-#include <algorithm>
 #include <cmath>
 #include <numbers>
 
