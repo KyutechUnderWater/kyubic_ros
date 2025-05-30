@@ -35,6 +35,15 @@ DVLDriver::DVLDriver() : Node("dvl_driver")
   timer_ = create_wall_timer(100ms, std::bind(&DVLDriver::update, this));
 }
 
+DVLDriver::~DVLDriver()
+{
+  if (sender_->break_cmd()) {
+    RCLCPP_INFO(this->get_logger(), "Send break command.");
+  } else {
+    RCLCPP_ERROR(this->get_logger(), "Failded to send the break command.");
+  }
+}
+
 bool DVLDriver::setup()
 {
   if (!sender_->break_cmd()) {
