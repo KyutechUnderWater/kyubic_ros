@@ -96,7 +96,15 @@ bool G366::update()
     data.pitch = 0.00699411 * raw_data_t.pitch;
     data.yaw = 0.00699411 * raw_data_t.yaw;
 
-    // TODO: 計算の確認
+    // offset
+    data.roll *= -1;
+
+    if (data.pitch > 0) {
+      data.pitch = (180.0 - data.pitch) * -1;
+    } else if (data.pitch < 0) {
+      data.pitch = 180.0 + data.pitch;
+    }
+
     if (data.yaw > 0) {
       data.yaw = 180.0 - data.yaw;
     } else if (data.yaw < 0) {
