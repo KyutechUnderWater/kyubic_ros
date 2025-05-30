@@ -4,19 +4,19 @@ BasedOnStyle: Google
 
 AccessModifierOffset: -2
 AlignAfterOpenBracket: AlwaysBreak
-AllowShortFunctionsOnASingleLine: InlineOnly
 BraceWrapping:
   AfterClass: true
   AfterFunction: true
   AfterNamespace: true
   AfterStruct: true
+  AfterEnum: true
 BreakBeforeBraces: Custom
 ColumnLimit: 100
 ConstructorInitializerIndentWidth: 0
 ContinuationIndentWidth: 2
 DerivePointerAlignment: false
 PointerAlignment: Middle
-ReflowComments: true
+ReflowComments: false
 IncludeCategories:
   # C++ system headers
   - Regex: <[a-z_]*>

@@ -16,6 +16,7 @@ def generate_launch_description():
                 package="joy",
                 namespace="driver",
                 executable="joy_node",
+                parameters=[config],
                 output="screen",
             ),
             Node(
