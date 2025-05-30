@@ -33,7 +33,7 @@ DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odomet
 void DVLOdometry::_update_dvl_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 {
   // return if velocity error, otherwise calculate odometry
-  if (msg->velocity_error == 32768) {
+  if (msg->velocity_error == -32768) {
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
     return;
   }
