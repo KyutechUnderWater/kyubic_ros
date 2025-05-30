@@ -27,7 +27,7 @@ IMUDriver::IMUDriver() : Node("imu_driver")
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::IMU>("imu", qos);
-  timer_ = create_wall_timer(100ms, std::bind(&IMUDriver::_update, this));
+  timer_ = create_wall_timer(10ms, std::bind(&IMUDriver::_update, this));
 }
 
 // TODO: Reset Nodeへの命令を実装

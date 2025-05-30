@@ -7,14 +7,14 @@
  * @details DVL(Path Finder) のデータを取得して，Topicを流す
  ************************************************************/
 
-#include "dvl_driver/dvl_driver_component.hpp"
+#include "dvl_driver/dvl_driver.hpp"
 
 using namespace std::chrono_literals;
 
 namespace dvl_driver
 {
 
-DVLDriver::DVLDriver(const rclcpp::NodeOptions & options) : Node("dvl_driver", options)
+DVLDriver::DVLDriver() : Node("dvl_driver")
 {
   // Get parameter from server
   address = this->declare_parameter("ip_address", "0.0.0.0");
@@ -82,20 +82,17 @@ bool DVLDriver::update()
 
 }  // namespace dvl_driver
 
-#include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(dvl_driver::DVLDriver)
+int main(int argc, char * argv[])
+{
+  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+  rclcpp::init(argc, argv);
 
-// int main(int argc, char * argv[])
-// {
-//   setvbuf(stdout, NULL, _IONBF, BUFSIZ);
-//   rclcpp::init(argc, argv);
-//
-//   try {
-//     auto node = std::make_shared<dvl_driver::DVLDriver>();
-//     rclcpp::spin(node);
-//   } catch (std::exception & e) {
-//     std::cout << e.what() << std::endl;
-//   }
-//   rclcpp::shutdown();
-//   return 0;
-// }
+  try {
+    auto node = std::make_shared<dvl_driver::DVLDriver>();
+    rclcpp::spin(node);
+  } catch (std::exception & e) {
+    std::cout << e.what() << std::endl;
+  }
+  rclcpp::shutdown();
+  return 0;
+}

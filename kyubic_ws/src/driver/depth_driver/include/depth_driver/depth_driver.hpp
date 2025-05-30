@@ -34,7 +34,7 @@ public:
    * @details The bar30 serial setting and Define a callback function to flow the acquired data to
    * the topic at 100ms interval
    */
-  explicit DepthDriver(const rclcpp::NodeOptions & options);
+  explicit DepthDriver();
 
 private:
   std::string portname;

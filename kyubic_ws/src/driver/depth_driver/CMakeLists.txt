@@ -17,101 +17,31 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(serial REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rclcpp_components REQUIRED)
 find_package(driver_msgs REQUIRED)
 
+include_directories(include)
 
-# bar30
-add_library(bar30 SHARED
-  src/bar30.cpp
-)
+# ament_auto_add_library(kyubic_interface SHARED
+#   src/depth_comm_node.cpp
+# )
+function(custom_executable target)
+  add_executable(${target} src/${target}.cpp src/bar30.cpp)
+  ament_target_dependencies(${target}
+    serial
+    rclcpp
+    driver_msgs
+  )
+  install(TARGETS ${target}
+    DESTINATION lib/${PROJECT_NAME})
+endfunction()
 
-target_include_directories(bar30
-  PRIVATE include
-)
-
-ament_target_dependencies(bar30
-  serial
-)
-
-# depth_driver_component
-add_library(depth_driver_component SHARED
-  src/depth_driver_component.cpp
-)
-
-target_include_directories(depth_driver_component
-  PRIVATE include
-)
-
-target_link_libraries(depth_driver_component
-  bar30
-)
-
-ament_target_dependencies(depth_driver_component
-  rclcpp
-  rclcpp_components
-  driver_msgs
-)
-
-# depth_odometry_component
-add_library(depth_odometry_component SHARED
-  src/depth_odometry_component.cpp
-)
-
-target_include_directories(depth_odometry_component
-  PRIVATE include
-)
-
-ament_target_dependencies(depth_odometry_component
-  rclcpp
-  rclcpp_components
-  driver_msgs
-)
-
-# Register components
-rclcpp_components_register_node(depth_driver_component
-  PLUGIN "depth_driver::DepthDriver"
-  EXECUTABLE depth_driver_component_node
-)
-
-rclcpp_components_register_node(depth_odometry_component
-  PLUGIN "depth_driver::DepthOdometry"
-  EXECUTABLE depth_odometry_component_node
-)
-
-
-# # ament_auto_add_executable(depth_driver)
-# function(custom_executable target)
-#   add_executable(${target} src/${target}.cpp src/bar30.cpp)
-#   ament_target_dependencies(${target}
-#     serial
-#     rclcpp
-#     rclcpp_components
-#     driver_msgs
-#   )
-#   install(TARGETS ${target}
-#     DESTINATION lib/${PROJECT_NAME})
-# endfunction()
-#
-# include_directories(include)
-#
-# custom_executable(depth_driver)
-
-# install settings
-install(TARGETS
-  depth_driver_component
-  depth_odometry_component
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-)
+custom_executable(depth_driver)
 
 install(DIRECTORY
   config
   launch
   DESTINATION share/${PROJECT_NAME}/
 )
-
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -121,4 +51,3 @@ if(BUILD_TESTING)
 endif()
 
 ament_package()
-
