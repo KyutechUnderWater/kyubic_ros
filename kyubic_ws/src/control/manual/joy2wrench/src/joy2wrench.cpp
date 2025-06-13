@@ -1,11 +1,15 @@
 #include "joy2wrench/joy2wrench.hpp"
 
+#include <cassert>
+#include <iostream>
+
 using namespace std::chrono_literals;
 
 namespace joy2wrench
 {
 Joy2WrenchStamped::Joy2WrenchStamped() : Node("joy_to_wrench_stamped")
 {
+  device_name = this->declare_parameter("device_name", "");
   force_scale = this->declare_parameter("force_scale", 1.0);
   torque_scale = this->declare_parameter("torque_scale", 1.0);
 
@@ -20,13 +24,23 @@ void Joy2WrenchStamped::_joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
   auto wrench_msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
   wrench_msg->header = msg->header;
 
-  wrench_msg->wrench.force.x = msg->axes[1] * force_scale;
-  wrench_msg->wrench.force.y = msg->axes[0] * force_scale * -1.0;
-  wrench_msg->wrench.force.z = msg->axes[3] * force_scale;
+  if (device_name == "PLAYSTATION(R)3 Controller") {
+    wrench_msg->wrench.force.x = msg->axes[1] * force_scale;
+    wrench_msg->wrench.force.y = msg->axes[0] * force_scale * -1.0;
+    wrench_msg->wrench.force.z = msg->axes[4] * force_scale;
 
+    wrench_msg->wrench.torque.z = msg->axes[3] * torque_scale * -1.0;
+  } else if (device_name == "Logicool Dual Action") {
+    wrench_msg->wrench.force.x = msg->axes[1] * force_scale;
+    wrench_msg->wrench.force.y = msg->axes[0] * force_scale * -1.0;
+    wrench_msg->wrench.force.z = msg->axes[3] * force_scale;
+
+    wrench_msg->wrench.torque.z = msg->axes[2] * torque_scale * -1.0;
+  } else {
+    std::cerr << "Not found device: " << device_name << std::endl;
+  }
   wrench_msg->wrench.torque.x = 0.0;
   wrench_msg->wrench.torque.y = 0.0;
-  wrench_msg->wrench.torque.z = msg->axes[2] * torque_scale * -1.0;
 
   pub_->publish(std::move(wrench_msg));
 }

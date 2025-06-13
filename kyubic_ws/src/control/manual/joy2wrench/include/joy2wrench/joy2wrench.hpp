@@ -1,6 +1,9 @@
-#include <geometry_msgs/msg/wrench_stamped.hpp>
 #include <rclcpp/rclcpp.hpp>
+
+#include <geometry_msgs/msg/wrench_stamped.hpp>
 #include <sensor_msgs/msg/joy.hpp>
+
+#include <string>
 
 namespace joy2wrench
 {
@@ -11,6 +14,7 @@ public:
   explicit Joy2WrenchStamped();
 
 private:
+  std::string device_name;
   double force_scale;
   double torque_scale;
 

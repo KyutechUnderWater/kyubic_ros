@@ -8,4 +8,5 @@ dependencies = [
     "numpy>=2.2.4",
     "vcstools>=0.1.42",
     "lark>=1.2.2",
+    "pyqt5>=5.15.11",
 ]
