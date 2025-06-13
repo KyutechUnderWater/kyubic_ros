@@ -1,6 +1,7 @@
 /**:
   ros__parameters:
-    device_name: "Logicool Dual Action"
+    # device_name: "Logicool Dual Action"
+    device_name: "PLAYSTATION(R)3 Controller"
     deadzone: 0.1
     force_scale: 30.0
     torque_scale: 30.0

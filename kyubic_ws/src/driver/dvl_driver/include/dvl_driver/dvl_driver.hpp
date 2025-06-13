@@ -7,11 +7,12 @@
  * @details DVL(Path Finder) のデータを取得して，Topicを流す
  ************************************************************/
 
-#include <driver_msgs/msg/dvl.hpp>
+#include "dvl_driver/path_finder.hpp"
+
 #include <rclcpp/rclcpp.hpp>
 #include <timer/timeout.hpp>
 
-#include "dvl_driver/path_finder.hpp"
+#include <driver_msgs/msg/dvl.hpp>
 
 /**
  * @namespace dvl_driver
@@ -30,6 +31,7 @@ public:
    * @brief Connect Path Finder and Set Topic
    */
   explicit DVLDriver();
+  ~DVLDriver();
 
 private:
   std::string address;
