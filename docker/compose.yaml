@@ -1,12 +1,12 @@
 services:
-  kyubic-ros:
+  kyubic-ros-humble:
     build:
       context: .
       args:
-        ubuntu_ver: "24.04"
-        ros2_ver: "jazzy"
-    image: kyubic/ros:jazzy
-    container_name: kyubic-ros-jazzy
+        ubuntu_ver: "22.04"
+        ros2_ver: "humble"
+    image: kyubic/ros:humble
+    container_name: kyubic-ros-humble
     hostname: kyubic
     working_dir: /home/ros/kyubic_ros/kyubic_ws
     tty: true
