@@ -10,6 +10,7 @@
 #include <localization/dvl_odometry_component.hpp>
 
 #include <cmath>
+#include <numbers>
 
 namespace localization
 {
@@ -50,8 +51,9 @@ void DVLOdometry::_update_dvl_callback(const driver_msgs::msg::DVL::UniquePtr ms
 
   // Convert to warld coordinate system (right-handed coordinate system, and z-axis downward)
   // DVL coordinate system is right-handed cooordinate system, and z-axis upward.
-  double vel_x = msg->velocity.y * cos(heading) - msg->velocity.x * sin(heading);
-  double vel_y = msg->velocity.y * sin(heading) + msg->velocity.x * cos(heading);
+  double heading_rad = heading * std::numbers::pi / 180;
+  double vel_x = msg->velocity.x * cos(heading_rad) - msg->velocity.y * sin(heading_rad);
+  double vel_y = msg->velocity.x * sin(heading_rad) + msg->velocity.y * cos(heading_rad);
 
   // Integral of velocity
   pos_x += vel_x * dt;
