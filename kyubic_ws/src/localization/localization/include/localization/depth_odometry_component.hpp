@@ -27,6 +27,9 @@ private:
   rclcpp::Time pre_time;
   double pre_pos_z = 0.0;
 
+  std::array<double, 16> pos_z_list;
+  int8_t idx = 0;
+
   void _update_callback(const driver_msgs::msg::Depth::UniquePtr msg);
 
 public:

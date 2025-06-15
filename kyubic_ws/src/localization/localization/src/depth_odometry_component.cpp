@@ -30,11 +30,19 @@ void DepthOdometry::_update_callback(const driver_msgs::msg::Depth::UniquePtr ms
 
   // calculate period (delta t)
   auto now = this->get_clock()->now();
-  uint64_t dt = (now - pre_time).nanoseconds() * 1e-9;
+  double dt = (now - pre_time).nanoseconds() * 1e-9;
   pre_time = now;
 
+  // calculate moving avelage
+  pos_z_list.at(idx) = msg->depth;
+  double pos_z_sum = 0.0;
+  for (u_int8_t i = 0; i < pos_z_list.size(); i++) {
+    pos_z_sum += pos_z_list.at(i);
+  }
+  double pos_z = pos_z_sum / pos_z_list.size();
+
   // calculate depth velocity
-  double pos_z = msg->depth;
+  std::cout << pos_z << " " << pre_pos_z << " " << dt << std::endl;
   double vel_z = (pos_z - pre_pos_z) / dt;
   pre_pos_z = pos_z;
 
