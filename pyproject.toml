@@ -5,6 +5,7 @@ requires-python = ">=3.10"
 dependencies = [
     "argcomplete>=3.6.2",
     "colcon-common-extensions>=0.3.0",
+    "empy==3.3.4",
     "numpy>=2.2.4",
     "vcstools>=0.1.42",
     "lark>=1.2.2",
