@@ -3,7 +3,8 @@
 HOME_DIR=/home/ros
 
 # Install Requirement pkg
-sudo apt update && sudo apt install -y build-essential cmake ripgrep xsel fuse3 cargo zip curl git
+echo $1 | sudo -S apt update
+sudo apt install -y build-essential cmake ripgrep xsel fuse3 cargo zip curl git
 
 # installs NVM (Node Version Manager)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash

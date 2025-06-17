@@ -1,0 +1,5 @@
+/**:
+  ros__parameters:
+    topic_name: ["type1", "type2"]
+    min: [-0.5, -10]
+    max: [0.5, 10]
