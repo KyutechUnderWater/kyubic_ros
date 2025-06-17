@@ -62,11 +62,11 @@ WORKDIR /home/ros
 
 
 ######################################
-## Install vertual env for python 3.12
+## Install vertual env for python 3.10
 ######################################
 RUN gosu ros bash -l -c "curl -LsSf https://astral.sh/uv/install.sh | sh && \
 	source /home/ros/.local/bin/env && \
-	uv python install 3.12 && \
+	uv python install 3.10 && \
 	echo source /home/ros/.local/bin/env >> /home/ros/.bashrc"
 
 
