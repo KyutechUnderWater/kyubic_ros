@@ -97,6 +97,7 @@ RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DI
 	echo "succesfully"
 
 COPY ./entrypoint.sh /usr/bin
-RUN chmod +x /usr/bin/entrypoint.sh
+COPY ./once_entrypoint.sh /usr/bin
+RUN chmod +x /usr/bin/entrypoint.sh /usr/bin/once_entrypoint.sh
 ENTRYPOINT [ "/bin/bash", "-c", "/usr/bin/entrypoint.sh" ]
 

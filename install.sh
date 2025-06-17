@@ -33,11 +33,8 @@ docker compose build $2
 docker compose create
 docker compose start
 
-## Set passward
-docker compose exec kyubic-ros sh -c "echo "ros:$1" | chpasswd"
-
-## Set ROS_DOMAIN_ID
-docker compose exec kyubic-ros gosu ros bash -l -c "echo 'export ROS_DOMAIN_ID=1' >> ~/.bashrc"
+## Run setup
+docker compose exec kyubic-ros bash -c "/usr/bin/once_entrypoint.sh $1"
 
 ## Install nvim
 docker compose exec kyubic-ros gosu ros bash -c "../docker/nvim_setup.sh"
