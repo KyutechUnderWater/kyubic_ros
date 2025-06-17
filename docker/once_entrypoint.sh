@@ -12,7 +12,7 @@ sh -c "echo "ros:$1" | chpasswd"
 sh -c 'echo 192.168.9.100 kyubic >> /etc/hosts'
 
 # Set python-env with uv
-gosu ros bash -l -c 'cd ~/kyubic_ros && uv venv --system-site-packages'
+gosu ros bash -l -c 'cd ~/kyubic_ros && uv venv --system-site-packages && uv sync'
 
 # Add command to .bashrc
 gosu ros bash -c 'cat << EOT >> ~/.bashrc
@@ -21,4 +21,8 @@ source /home/ros/kyubic_ros/.venv/bin/activate
 EOT'
 
 # Set config for git
-gosu ros bash -l -c 'git config --global --add safe.directory /home/ros/kyubic_ros'
+gosu ros bash -c 'git config --global --add safe.directory /home/ros/kyubic_ros'
+
+# Build ROS packages
+gosu ros bash -i -c 'cd ~/kyubic_ros/kyubic_ws &&
+	colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=1'

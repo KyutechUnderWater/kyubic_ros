@@ -37,7 +37,7 @@ docker compose start
 docker compose exec kyubic-ros bash -c "/usr/bin/once_entrypoint.sh $1"
 
 ## Install nvim
-docker compose exec kyubic-ros gosu ros bash -c "../docker/nvim_setup.sh"
+docker compose exec kyubic-ros gosu ros bash -c "../docker/nvim_setup.sh $1"
 
 ## Stop Container
 docker compose stop
