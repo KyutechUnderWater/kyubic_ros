@@ -16,12 +16,14 @@ namespace dvl_driver
 
 DVLDriver::DVLDriver() : Node("dvl_driver")
 {
+  // Get parameter from server
   address = this->declare_parameter("ip_address", "0.0.0.0");
   listener_port = this->declare_parameter("listener_port", 8888);
   sender_port = this->declare_parameter("sender_port", 8889);
   timeout = this->declare_parameter("timeout", 0);
   timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout);
 
+  // Connect TCP
   listener_ = std::make_shared<path_finder::Listener>(address.c_str(), listener_port, 500);
   sender_ = std::make_shared<path_finder::Sender>(address.c_str(), sender_port, 500);
   RCLCPP_INFO(this->get_logger(), "DVL connection successful");
@@ -30,6 +32,7 @@ DVLDriver::DVLDriver() : Node("dvl_driver")
     exit(1);
   }
 
+  // Create publisher & wall timer
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::DVL>("dvl", qos);
   timer_ = create_wall_timer(100ms, std::bind(&DVLDriver::update, this));
