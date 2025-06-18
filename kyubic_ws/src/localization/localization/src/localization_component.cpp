@@ -58,7 +58,7 @@ void Localization::_imu_callback(const localization_msgs::msg::Odometry::UniqueP
 void Localization::_dvl_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
   RCLCPP_INFO(this->get_logger(), "Updated DVL odometry");
-  all_updated |= 1;
+  all_updated |= 3;
 
   this->odom_msg_->header = std::move(msg->header);
 
