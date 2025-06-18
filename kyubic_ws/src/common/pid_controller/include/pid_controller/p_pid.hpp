@@ -20,7 +20,7 @@ namespace pid_controller
 class P_PID
 {
 private:
-  double k, kp, ki, kd;
+  double k, kp, ki, kd, kf;
   double lo, hi;
 
   double pre_p = 0;
@@ -31,10 +31,11 @@ private:
 
 public:
   explicit P_PID(
-    const double k, const double kp, const double ki, const double kd, const double lo,
-    const double hi);
+    const double k, const double kp, const double ki, const double kd, const double kf,
+    const double lo, const double hi);
 
-  double update(double current_slave, double current_master, double target_master);
+  double update(
+    double current_slave, double current_master, double target_master, double last_saturated);
 
   void reset();
 };

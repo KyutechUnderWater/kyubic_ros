@@ -10,6 +10,7 @@
 #ifndef _PID_HPP
 #define _PID_HPP
 
+#include <array>
 #include <chrono>
 
 /**
@@ -25,10 +26,12 @@ namespace pid_controller
 class PositionPID
 {
 private:
-  double kp, ki, kd;
+  double kp, ki, kd, kf;
   double p, i, d;
 
   double pre_p = 0;
+  double pre_i = 0;
+  double pre_d = 0;
   std::chrono::high_resolution_clock::time_point pre_time =
     std::chrono::high_resolution_clock::now();
 
@@ -38,8 +41,9 @@ public:
    * @param kp Proportional gain
    * @param ki integral gain
    * @param kd derivative gain
+   * @param kf lowpass filter coefficient
    */
-  explicit PositionPID(const double kp, const double ki, const double kd);
+  explicit PositionPID(const double kp, const double ki, const double kd, const double kf);
 
   /**
    * @brief reset integral term
@@ -48,13 +52,20 @@ public:
   void reset_integral();
 
   /**
+   * @brief get each term value of pid
+   * @return array(x, y, z)
+   */
+  std::array<double, 3> get_each_term();
+
+  /**
    * @brief update PID cycle
    * @param current process value
    * @param target setting value
+   * @param last_saturated whether the last control input was saturated (for anti-windup)
    * @return manipulated value
    * @details calculate PID
    */
-  double update(double current, double target);
+  double update(double current, double target, double last_saturated);
 };
 
 /**
@@ -63,11 +74,12 @@ public:
 class VelocityPID
 {
 private:
-  double kp, ki, kd;
+  double kp, ki, kd, kf;
   double p, i, d;
 
   double pre_error = 0;
   double pre_p = 0;
+  double pre_d = 0;
   double pre_u = 0;
   std::chrono::high_resolution_clock::time_point pre_time =
     std::chrono::high_resolution_clock::now();
@@ -79,7 +91,13 @@ public:
    * @param ki integral gain
    * @param kd derivative gain
    */
-  explicit VelocityPID(const double kp, const double ki, const double kd);
+  explicit VelocityPID(const double kp, const double ki, const double kd, const double kf);
+
+  /**
+   * @brief get each term value of pid
+   * @return array(x, y, z)
+   */
+  std::array<double, 3> get_each_term();
 
   /**
    * @brief update PID cycle
