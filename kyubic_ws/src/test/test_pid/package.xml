@@ -13,6 +13,7 @@
   <depend>rclcpp_components</depend>
   <depend>std_msgs</depend>
   <depend>geometry_msgs</depend>
+  <depend>localization_msgs</depend>
   <depend>pid_controller</depend>
 
   <test_depend>ament_lint_auto</test_depend>
