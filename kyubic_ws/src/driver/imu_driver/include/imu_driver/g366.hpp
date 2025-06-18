@@ -10,12 +10,11 @@
 #ifndef _G366_HPP
 #define _G366_HPP
 
+#include <memory>
 #include <serial/serial.hpp>
 
-#include <memory>
-
 /**
- * #namespace imu_driver
+ * @namespace imu_driver
  * @brief For imu driver
  */
 namespace imu_driver::g366
@@ -123,7 +122,7 @@ public:
   /**
    * @brief Setting G366 configuration
    */
-  void setup();
+  bool setup();
 
   /**
    * @brief Update g366 data

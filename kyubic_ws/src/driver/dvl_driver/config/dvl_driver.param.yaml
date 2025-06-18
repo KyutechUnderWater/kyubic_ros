@@ -1,0 +1,6 @@
+/**:
+  ros__parameters:
+    ip_address: 172.30.51.100
+    listener_port: 1036
+    sender_port: 1033
+    timeout: 2000000000  # [ns]

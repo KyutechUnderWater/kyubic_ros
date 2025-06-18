@@ -1,7 +1,9 @@
 #include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/joy.hpp>
-#include <geometry_msgs/msg/wrench_stamped.hpp>
 
+#include <geometry_msgs/msg/wrench_stamped.hpp>
+#include <sensor_msgs/msg/joy.hpp>
+
+#include <string>
 
 namespace joy2wrench
 {
@@ -12,8 +14,9 @@ public:
   explicit Joy2WrenchStamped();
 
 private:
-    double force_scale;
-    double torque_scale;
+  std::string device_name;
+  double force_scale;
+  double torque_scale;
 
   rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr pub_;
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr sub_;
@@ -21,4 +24,4 @@ private:
   void _joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg);
 };
 
-}
+}  // namespace joy2wrench

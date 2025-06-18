@@ -9,6 +9,8 @@
 
 #include "depth_driver/bar30.hpp"
 
+#include <cstring>
+
 using namespace std::chrono_literals;
 
 namespace depth_driver
@@ -21,25 +23,27 @@ Bar30::Bar30(const char * _portname, const int _baudrate) : portname(_portname),
 
 bool Bar30::update()
 {
-  uint8_t buf[100] = {};
+  uint8_t buf[255];
+  uint8_t buf_bytes[12];
   serial_->flush();
 
-  // TODO: 開始文字を設定する
-  // serial_->read_until(buf, sizeof(buf), 's', 10ms);
-  ssize_t len = serial_->read_until(buf, sizeof(buf), '\n', 100ms);
-  if (len > 0) {
-    // TODO: binaryで送れるようにする。s->fでエラーが起こると異常終了するので
-    std::string s_depth = std::string(buf, buf + len).substr(0, 6);
-    depth_data = std::stof(s_depth);
+  serial_->read_until(buf, 255, '#', 100ms);
+  ssize_t len = serial_->read_until(buf, sizeof(DepthData) * 2, '%', 100ms);
 
+  if (len > 0) {
+    for (size_t i = 0; i < sizeof(DepthData); i++) {
+      // 2文字を string にしてから 16進数 → 10進数へ変換
+      std::string hex_byte;
+      hex_byte += buf[i * 2];
+      hex_byte += buf[i * 2 + 1];
+      buf_bytes[i] = static_cast<uint8_t>(std::stoi(hex_byte, nullptr, 16));
+    }
+    data = std::bit_cast<DepthData>(buf_bytes);
     return true;
   }
   return false;
 }
 
-float Bar30::get_data()
-{
-  return depth_data;
-}
+DepthData Bar30::get_data() { return data; }
 
 }  // namespace depth_driver

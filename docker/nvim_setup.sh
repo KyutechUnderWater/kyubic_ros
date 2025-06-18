@@ -3,20 +3,21 @@
 HOME_DIR=/home/ros
 
 # Install Requirement pkg
-sudo apt update && sudo apt install -y build-essential cmake ripgrep xsel fuse3 cargo zip git
+echo $1 | sudo -S apt update
+sudo apt install -y build-essential cmake ripgrep xsel fuse3 cargo zip curl git
 
 # installs NVM (Node Version Manager)
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 \. "$HOME/.nvm/nvm.sh"
 
 # download and install Node.js
-nvm install 23
+nvm install 24
 
 # verifies the right Node.js version is in the environment
-node -v # should print `v23.11.0`
+node -v # should print `v24.1.0`
 
 # verifies the right NPM version is in the environment
-npm -v # should print `10.9.2`
+npm -v # should print `11.3.0`
 
 # Install Neovim
 orig_path=$(pwd)

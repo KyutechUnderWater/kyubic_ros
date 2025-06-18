@@ -10,14 +10,14 @@
 #ifndef _IMU_DRIVER_HPP
 #define _IMU_DRIVER_HPP
 
-#include "imu_driver/g366.hpp"
-
+#include <cstdint>
+#include <driver_msgs/msg/imu.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <serial/serial.hpp>
-
-#include <driver_msgs/msg/imu.hpp>
-
 #include <string>
+#include <timer/timeout.hpp>
+
+#include "imu_driver/g366.hpp"
 
 /**
  * @namespace imu_driver
@@ -47,7 +47,9 @@ public:
 private:
   std::string portname;
   int baudrate;
+  int64_t timeout;
 
+  std::shared_ptr<timer::Timeout> timeout_;
   std::shared_ptr<g366::G366> g366_;
   // std::shared_ptr<g366::G366HWReseter> g366_hw_resetter_;
   rclcpp::Publisher<driver_msgs::msg::IMU>::SharedPtr pub_;

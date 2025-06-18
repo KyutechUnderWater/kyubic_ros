@@ -9,6 +9,9 @@
 
 #include "imu_driver/g366.hpp"
 
+#include <unistd.h>
+
+#include <cstdlib>
 #include <iostream>
 
 using namespace std::chrono_literals;
@@ -21,7 +24,7 @@ G366::G366(const char * _portname, const int _baudrate) : portname(_portname), b
   serial_ = std::make_shared<serial::Serial>(portname, baudrate);
 }
 
-void G366::setup()
+bool G366::setup()
 {
   uint8_t buf[12];
   serial_->flush();
@@ -29,13 +32,22 @@ void G366::setup()
   serial_->write(config_comm2, sizeof(config_comm2));
   serial_->read(buf, sizeof(buf), 10ms);
 
+  int count = 1;
   while (buf[2] != 0x05) {
     serial_->write(config_comm3, sizeof(config_comm3));
     ssize_t len = serial_->read(buf, 4, 10ms);
-    for (int i = 0; i < len; i++) printf("%02X ", buf[i]);
+    for (int i = 0; i < len; i++) {
+      printf("%02X ", buf[i]);
+    }
+
+    if (count++ == 3) {
+      return false;
+    }
+    sleep(1);
   }
 
   serial_->write(config_comm6, sizeof(config_comm6));
+  return true;
 }
 
 bool G366::update()
@@ -84,11 +96,20 @@ bool G366::update()
     data.pitch = 0.00699411 * raw_data_t.pitch;
     data.yaw = 0.00699411 * raw_data_t.yaw;
 
-    // TODO: 計算の確認
-    if (data.yaw > 0)
+    // offset
+    data.roll *= -1;
+
+    if (data.pitch > 0) {
+      data.pitch = (180.0 - data.pitch) * -1;
+    } else if (data.pitch < 0) {
+      data.pitch = 180.0 + data.pitch;
+    }
+
+    if (data.yaw > 0) {
       data.yaw = 180.0 - data.yaw;
-    else if (data.yaw < 0)
+    } else if (data.yaw < 0) {
       data.yaw = (180.0 + data.yaw) * -1;
+    }
 
     return true;
   }
@@ -97,10 +118,7 @@ bool G366::update()
   return false;
 }
 
-std::shared_ptr<DATA> G366::get_data()
-{
-  return std::make_shared<DATA>(data);
-}
+std::shared_ptr<DATA> G366::get_data() { return std::make_shared<DATA>(data); }
 
 // G366HWReseter::G366HWReseter(const char * _portname, const int _baudrate)
 // : portname(_portname), baudrate(_baudrate)
