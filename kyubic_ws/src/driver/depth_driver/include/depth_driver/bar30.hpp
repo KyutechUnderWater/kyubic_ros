@@ -10,8 +10,9 @@
 #ifndef _BAR30_HPP
 #define _BAR30_HPP
 
-#include <cstdint>
 #include <serial/serial.hpp>
+
+#include <memory>
 
 /**
  * @namespace depth_driver
