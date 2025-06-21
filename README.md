@@ -80,7 +80,7 @@ exit # or <ctrl + d>
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git -b humble kyubic_ros_humble
-cd $_ && . install.sh {your_password}
+cd $_ && . install.sh -p humble
 ros2_start_humble  # Start container and Run bash
 ```
 
