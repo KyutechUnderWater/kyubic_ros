@@ -1,3 +1,5 @@
+name: kyubic-ros
+
 services:
   kyubic-ros:
     build:
