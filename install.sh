@@ -94,13 +94,14 @@ if [[ $project_name == "" ]]; then
 	if alias ros2_start >/dev/null 2>&1; then
 		printf '\033[33m[ERROR] Already have one or more environments\nRequired to set the project name with the -p option \n' && return 1
 	fi
+	compose_env_var="$compose_path"
 else
 	if alias "ros2_start_$project_name" >/dev/null 2>&1; then
 		printf '\033[33m[ERROR] The project name "%s" exists\n' "$project_name" && return 1
 	fi
+	compose_env_var="-p $project_name $compose_path"
 	project_name="_$project_name"
 fi
-compose_env_var="-p kyubic-ros$project_name $compose_path"
 echo $project_name >.install.project_name
 
 # Set alias
