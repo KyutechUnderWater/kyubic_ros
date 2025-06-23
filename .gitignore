@@ -214,3 +214,5 @@ cython_debug/
 docs
 99-usb-kyubic.rules
 .env
+.install.project_name
+.python-version

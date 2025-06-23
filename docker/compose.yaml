@@ -1,3 +1,5 @@
+name: kyubic-ros
+
 services:
   kyubic-ros:
     build:
@@ -6,7 +8,7 @@ services:
         ubuntu_ver: "24.04"
         ros2_ver: "jazzy"
     image: kyubic/ros:jazzy
-    container_name: kyubic-ros-jazzy
+    # container_name: kyubic-ros-jazzy  # If not explicitly specified, {project name}-{service name}-{index}
     hostname: kyubic
     working_dir: /home/ros/kyubic_ros/kyubic_ws
     tty: true

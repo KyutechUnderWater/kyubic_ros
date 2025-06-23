@@ -1,0 +1,15 @@
+services:
+  kyubic-ros:
+    build:
+      args:
+        base_image: "nvidia/cuda:12.8.0-cudnn-devel-ubuntu24.04"
+    image: kyubic/ros:jazzy-cuda
+    environment:
+      - NVIDIA_DRIVER_CAPABILITIES=graphics,compute,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              # device_ids: ["0"]
+              capabilities: [gpu]
