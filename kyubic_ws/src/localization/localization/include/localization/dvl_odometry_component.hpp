@@ -46,7 +46,19 @@ private:
   double pos_x = 0.0;
   double pos_y = 0.0;
 
+  /**
+   * @brief Update position
+   * @details After getting the dvl data, the position is calculated based on the previous value and send to topic.
+   * @note The calculation cycle depends on the cycle of the topic sent from the depth driver.
+   * @note If no data comes in or the data is invalid, no calculation is performed.
+   */
   void update_callback(const driver_msgs::msg::DVL::UniquePtr msg);
+
+  /**
+   * @brief Update imu data
+   * @details Acquisition the imu data.
+   * @note The calculation cycle depends on the cycle of the topic sent from the imu driver.
+   */
   void update_imu_callback(const localization_msgs::msg::Odometry::UniquePtr msg);
 
   /**
@@ -66,7 +78,7 @@ public:
   explicit DVLOdometry(const rclcpp::NodeOptions & options);
 
   /**
-   * @brief Set previous depth data to 0, and Reset timer
+   * @brief Set position data to 0, and Reset timer
    */
   void reset();
 };

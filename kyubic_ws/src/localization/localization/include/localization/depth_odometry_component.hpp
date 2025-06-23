@@ -42,7 +42,7 @@ private:
   rclcpp::Time pre_time;
   double pre_pos_z = 0.0;
 
-  int8_t idx = 0;
+  uint8_t idx = 0;
   std::array<double, DEPTH_SMA_SUMPLE_NUM> pos_z_list;  /// for simple moving average
 
   /**

@@ -51,7 +51,10 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
 
   // calculate depth velocity
   double vel_z = (pos_z - pre_pos_z) / dt;
+
+  // prepare for next step
   pre_pos_z = pos_z;
+  if (++idx == pos_z_list.size()) idx = 0;
 
   // Publish
   {
@@ -59,7 +62,7 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
 
     // copy msg
     odom_msg->header = msg->header;
-    odom_msg->pose.position.z_depth = msg->depth;
+    odom_msg->pose.position.z_depth = pos_z;
 
     // add velocity
     odom_msg->twist.linear.z_depth = vel_z;
@@ -74,7 +77,7 @@ void DepthOdometry::reset_callback(
   const std_srvs::srv::Trigger::Response::SharedPtr response)
 {
   this->reset();
-  RCLCPP_INFO(this->get_logger(), "Reset");
+  RCLCPP_INFO(this->get_logger(), "Depth odometry reset");
 
   response->success = true;
   response->message = "";

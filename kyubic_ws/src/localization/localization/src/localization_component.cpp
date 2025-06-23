@@ -52,7 +52,7 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   client_dvl_ = create_client<std_srvs::srv::Trigger>("dvl/reset", qos, client_cb_group_);
 
   // Create wall timer
-  timer_ = create_wall_timer(10ms, std::bind(&Localization::merge, this));
+  timer_ = create_wall_timer(10ms, std::bind(&Localization::publisher, this));
 }
 
 void Localization::depth_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
@@ -60,9 +60,9 @@ void Localization::depth_callback(const localization_msgs::msg::Odometry::Unique
   RCLCPP_INFO(this->get_logger(), "Updated Depth odometry");
   all_updated |= 4;
 
-  odom_msg_->header = std::move(msg->header);
-  odom_msg_->pose.position.z_depth = std::move(msg->pose.position.z_depth);
-  odom_msg_->twist.linear.z_depth = std::move(msg->twist.linear.z_depth);
+  odom_msg_->header = msg->header;
+  odom_msg_->pose.position.z_depth = msg->pose.position.z_depth;
+  odom_msg_->twist.linear.z_depth = msg->twist.linear.z_depth;
 }
 
 void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
@@ -70,9 +70,9 @@ void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePt
   RCLCPP_INFO(this->get_logger(), "Updated IMU transformed");
   all_updated |= 2;
 
-  odom_msg_->header = std::move(msg->header);
-  odom_msg_->pose.orientation = std::move(msg->pose.orientation);
-  odom_msg_->twist.angular = std::move(msg->twist.angular);
+  odom_msg_->header = msg->header;
+  odom_msg_->pose.orientation = msg->pose.orientation;
+  odom_msg_->twist.angular = msg->twist.angular;
 }
 
 void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
@@ -80,34 +80,31 @@ void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePt
   RCLCPP_INFO(this->get_logger(), "Updated DVL odometry");
   all_updated |= 3;
 
-  this->odom_msg_->header = std::move(msg->header);
+  this->odom_msg_->header = msg->header;
 
-  this->odom_msg_->pose.position.x = std::move(msg->pose.position.x);
-  this->odom_msg_->pose.position.y = std::move(msg->pose.position.y);
-  this->odom_msg_->pose.position.z_altitude = std::move(msg->pose.position.z_altitude);
+  this->odom_msg_->pose.position.x = msg->pose.position.x;
+  this->odom_msg_->pose.position.y = msg->pose.position.y;
+  this->odom_msg_->pose.position.z_altitude = msg->pose.position.z_altitude;
 
-  this->odom_msg_->pose.orientation = std::move(msg->pose.orientation);
-  this->odom_msg_->twist.angular = std::move(msg->twist.angular);
+  this->odom_msg_->pose.orientation = msg->pose.orientation;
+  this->odom_msg_->twist.angular = msg->twist.angular;
 
-  this->odom_msg_->twist.linear.x = std::move(msg->twist.linear.x);
-  this->odom_msg_->twist.linear.y = std::move(msg->twist.linear.y);
-  this->odom_msg_->twist.linear.z_altitude = std::move(msg->twist.linear.z_altitude);
+  this->odom_msg_->twist.linear.x = msg->twist.linear.x;
+  this->odom_msg_->twist.linear.y = msg->twist.linear.y;
+  this->odom_msg_->twist.linear.z_altitude = msg->twist.linear.z_altitude;
 }
 
-void Localization::merge()
+void Localization::publisher()
 {
-  auto msg = std::make_unique<localization_msgs::msg::Odometry>();
-
   if (all_updated != 255) return;
-
   RCLCPP_INFO(this->get_logger(), "Updated localization");
 
-  msg->header = odom_msg_->header;
-  msg->status = odom_msg_->status;
-  msg->pose = odom_msg_->pose;
-  msg->twist = odom_msg_->twist;
-
+  // Reset flag
   all_updated = 0b11111000;
+
+  // Copy object (shared_ptr -> unique_ptr)
+  auto msg = std::make_unique<localization_msgs::msg::Odometry>(*odom_msg_);
+
   pub_->publish(std::move(msg));
 }
 

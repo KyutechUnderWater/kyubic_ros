@@ -13,6 +13,8 @@
 #include <functional>
 #include <numbers>
 
+using namespace std::chrono_literals;
+
 namespace localization
 {
 
@@ -24,7 +26,8 @@ DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odomet
 
   pub_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
   sub_imu_ = create_subscription<localization_msgs::msg::Odometry>(
-    "transformed", qos, std::bind(&DVLOdometry::update_imu_callback, this, std::placeholders::_1));
+    "transformed_imu", qos,
+    std::bind(&DVLOdometry::update_imu_callback, this, std::placeholders::_1));
   sub_dvl_ = create_subscription<driver_msgs::msg::DVL>(
     "dvl", qos, std::bind(&DVLOdometry::update_callback, this, std::placeholders::_1));
   srv_ = create_service<std_srvs::srv::Trigger>(

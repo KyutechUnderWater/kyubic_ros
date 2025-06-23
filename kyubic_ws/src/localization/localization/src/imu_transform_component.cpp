@@ -34,6 +34,7 @@ IMUTransform::IMUTransform(const rclcpp::NodeOptions & options) : Node("imu_tran
 
 void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 {
+  // define
   const double sin180 = sin(std::numbers::pi);
   const double cos180 = cos(std::numbers::pi);
 

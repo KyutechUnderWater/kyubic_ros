@@ -37,7 +37,10 @@ def generate_launch_description():
                 plugin="localization::DVLOdometry",
                 remappings=[
                     ("/localization/dvl/dvl", "/driver/dvl"),
-                    ("/localization/dvl/transformed", "/localization/imu/transformed"),
+                    (
+                        "/localization/dvl/transformed_imu",
+                        "/localization/imu/transformed",
+                    ),
                 ],
                 extra_arguments=[
                     {"use_intra_process_comms": True}

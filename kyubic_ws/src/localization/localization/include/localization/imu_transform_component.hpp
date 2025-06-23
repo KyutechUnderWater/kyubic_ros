@@ -15,9 +15,16 @@
 
 #include <array>
 
+/**
+ * @namespace localization
+ * @brief localization
+ */
 namespace localization
 {
 
+/**
+ * @brief IMU transform class
+ */
 class IMUTransform : public rclcpp::Node
 {
 private:
@@ -30,14 +37,32 @@ private:
   double pitch = 0.0;
   double yaw = 0.0;
 
+  /**
+   * @brief Update imu data
+   * @details After getting the imu data, transform from imu coordinate system to map coordinate system
+   * @note The calculation cycle depends on the cycle of the topic sent from the imu driver.
+   */
   void update_callback(const driver_msgs::msg::IMU::UniquePtr msg);
+
+  /**
+   * @brief Call reset func
+   * @details Execute a reset function when requested by the client.
+   */
   void reset_callback(
     const std_srvs::srv::Trigger::Request::SharedPtr request,
     const std_srvs::srv::Trigger::Response::SharedPtr response);
 
 public:
+  /**
+   * @brief Set topic and Reset timer
+   * @details Instantiate topic(pub-sub), Call to reset function
+   * @note The calculation cycle depends on the cycle of the topic sent from the imu driver.
+   */
   explicit IMUTransform(const rclcpp::NodeOptions & options);
 
+  /**
+   * @brief Set offset_angle
+   */
   void reset();
 };
 
