@@ -11,10 +11,6 @@
 
 #include "std_msgs/msg/float32.hpp"
 
-#include <functional>
-#include <iostream>
-#include <memory>
-
 using namespace std::chrono_literals;
 
 namespace test
@@ -40,9 +36,9 @@ TestPID::TestPID(const rclcpp::NodeOptions & options) : Node("test_pid", options
 
   pub_ = create_publisher<geometry_msgs::msg::WrenchStamped>("robot_force", qos);
   sub_target_ = create_subscription<std_msgs::msg::Float32>(
-    "target_pid", qos, std::bind(&TestPID::_callback_target, this, std::placeholders::_1));
+    "target_pid", qos, std::bind(&TestPID::callback_target, this, std::placeholders::_1));
   sub_odom_ = create_subscription<localization_msgs::msg::Odometry>(
-    "odom", qos, std::bind(&TestPID::_callback_odom, this, std::placeholders::_1));
+    "odom", qos, std::bind(&TestPID::callback_odom, this, std::placeholders::_1));
   timer_ = create_wall_timer(10ms, std::bind(&TestPID::update, this));
 }
 
@@ -50,30 +46,44 @@ void TestPID::update()
 {
   if (updated) {
     updated = false;
-    current = odom_->twist.linear.x;
 
-    double ppid = ppid_->update(current, target, 0.0);
-    double vpid = vpid_->update(current, target);
-    // double p_pid = p_pid_->update(current, current_master target, 0.0);
-    std::cout << "target: " << target << " current: " << current << " ppid: " << ppid
-              << "  vpid: " << vpid << std::endl;
-    std::cout << "pid: " << ppid_->get_each_term().at(0) << std::endl;
+    double vpid_x, vpid_y, vpid_z, vpid_yaw;
+    vpid_x = vpid_y = vpid_z = vpid_yaw = 0.0;
+    // // x-axis
+    // vpid_x = vpid_->update(odom_->twist.linear.x, target);
+    //
+    // // y-axis
+    // vpid_y = vpid_->update(odom_->twist.linear.y, target);
+    //
+    // // z-axis
+    // vpid_z = vpid_->update(odom_->twist.linear.z_depth, target);
+    // // vpid_z = vpid_->update(odom_->twist.linear.z_altitude, target);
 
+    // yaw-axis
+    vpid_yaw = vpid_->update(odom_->twist.angular.z, target);
+
+    // double ppid = ppid_->update(, target, 0.0);
+    // double p_pid = p_pid_->update(, current_master target, 0.0);
+    std::cout << "target: " << target << " current: " << current << " vpid: " << vpid_x
+              << std::endl;
+
+    // Create message from pid
     auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
-    msg->wrench.force.x = vpid;
-    msg->wrench.force.y = 0.0;
-    msg->wrench.force.z = 0.0;
-    msg->wrench.torque.z = 0.0;
+    msg->wrench.force.x = vpid_x;
+    msg->wrench.force.y = vpid_y;
+    msg->wrench.force.z = vpid_z;
+    msg->wrench.torque.z = vpid_yaw;
+
     pub_->publish(std::move(msg));
   }
 }
 
-void TestPID::_callback_target(const std_msgs::msg::Float32::UniquePtr msg) { target = msg->data; }
+void TestPID::callback_target(const std_msgs::msg::Float32::UniquePtr msg) { target = msg->data; }
 
-void TestPID::_callback_odom(const localization_msgs::msg::Odometry::UniquePtr msg)
+void TestPID::callback_odom(localization_msgs::msg::Odometry::UniquePtr msg)
 {
   updated = true;
-  odom_->twist = msg->twist;
+  odom_ = std::move(msg);
 }
 
 }  // namespace test

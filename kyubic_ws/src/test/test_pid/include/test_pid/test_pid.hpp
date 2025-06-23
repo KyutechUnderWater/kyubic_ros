@@ -21,9 +21,16 @@
 
 #include <memory>
 
+/**
+ * @namespace test
+ * @brief For test
+ */
 namespace test
 {
 
+/**
+ * @brief Test PID class
+ */
 class TestPID : public rclcpp::Node
 {
 private:
@@ -44,13 +51,31 @@ private:
   double current = 0;
   bool updated = false;
 
+  /**
+   * @brief Get target value
+   * @details Get target value via topic communication
+   */
+  void callback_target(const std_msgs::msg::Float32::UniquePtr msg);
+
+  /**
+   * @brief Acquire odometry data
+   * @details Acquire odometry data via topic communication
+   */
+  void callback_odom(localization_msgs::msg::Odometry::UniquePtr msg);
+
 public:
-  TestPID(const rclcpp::NodeOptions & options);
+  /**
+   * @brief Declare pid parameters, Instantiate each pid controller and topic
+   * @details Declare pid gain, and filter coeficient. Instantiate position form pid, velocity form pid, and p-pid.
+   * Instantiate topic(pub-sub).
+   */
+  explicit TestPID(const rclcpp::NodeOptions & options);
 
+  /**
+   * @brief calculate PID Controller
+   * @details If odometru data is updated, update pid step.
+   */
   void update();
-
-  void _callback_target(const std_msgs::msg::Float32::UniquePtr msg);
-  void _callback_odom(const localization_msgs::msg::Odometry::UniquePtr msg);
 };
 
 }  // namespace test
