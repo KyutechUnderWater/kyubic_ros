@@ -27,7 +27,7 @@ TestPID::TestPID(const rclcpp::NodeOptions & options) : Node("test_pid", options
   hi = this->declare_parameter("hi", 0.0);
 
   ppid_ = std::make_shared<pid_controller::PositionPID>(kp, ki, kd, kf);
-  vpid_ = std::make_shared<pid_controller::VelocityPID>(kp, ki, kd, kf);
+  vpid_ = std::make_shared<pid_controller::VelocityPID>(kp, ki, kd, kf, lo, hi);
   p_pid_ = std::make_shared<pid_controller::P_PID>(k, kp, ki, kd, kf, lo, hi);
 
   odom_ = std::make_shared<localization_msgs::msg::Odometry>();
@@ -55,17 +55,20 @@ void TestPID::update()
     // // y-axis
     // vpid_y = vpid_->update(odom_->twist.linear.y, target);
     //
-    // // z-axis
+    // z-axis
     // vpid_z = vpid_->update(odom_->twist.linear.z_depth, target);
-    // // vpid_z = vpid_->update(odom_->twist.linear.z_altitude, target);
+    vpid_z = -vpid_->update(odom_->twist.linear.z_altitude, target);
+    if (odom_->pose.position.z_altitude < 2) {
+      vpid_z = 0.0;
+    }
 
     // yaw-axis
-    vpid_yaw = vpid_->update(odom_->twist.angular.z, target);
+    // vpid_yaw = vpid_->update(odom_->twist.angular.z, target);
 
     // double ppid = ppid_->update(, target, 0.0);
     // double p_pid = p_pid_->update(, current_master target, 0.0);
-    std::cout << "target: " << target << " current: " << current << " vpid: " << vpid_x
-              << std::endl;
+    std::cout << "target: " << target << " current: " << odom_->twist.linear.z_altitude
+              << " vpid: " << vpid_z << std::endl;
 
     // Create message from pid
     auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
