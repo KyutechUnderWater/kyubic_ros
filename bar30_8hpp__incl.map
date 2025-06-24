@@ -1,8 +1,8 @@
 <map id="src/driver/depth_driver/include/depth_driver/bar30.hpp" name="src/driver/depth_driver/include/depth_driver/bar30.hpp">
-<area shape="rect" id="node1" title="bar30 library" alt="" coords="14,5,183,60"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,108,72,133"/>
-<area shape="rect" id="node3" href="$serial_8hpp.html" title="serial library" alt="" coords="97,108,223,133"/>
-<area shape="rect" id="node4" title=" " alt="" coords="18,181,102,207"/>
-<area shape="rect" id="node5" title=" " alt="" coords="127,181,193,207"/>
-<area shape="rect" id="node6" title=" " alt="" coords="217,181,276,207"/>
+<area shape="rect" id="node1" title="bar30 library" alt="" coords="125,5,295,60"/>
+<area shape="rect" id="node2" href="$serial_8hpp.html" title="serial library" alt="" coords="84,108,211,133"/>
+<area shape="rect" id="node6" title=" " alt="" coords="235,108,313,133"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,181,89,207"/>
+<area shape="rect" id="node4" title=" " alt="" coords="114,181,181,207"/>
+<area shape="rect" id="node5" title=" " alt="" coords="205,181,263,207"/>
 </map>

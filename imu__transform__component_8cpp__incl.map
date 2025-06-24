@@ -1,0 +1,13 @@
+<map id="src/localization/localization/src/imu_transform_component.cpp" name="src/localization/localization/src/imu_transform_component.cpp">
+<area shape="rect" id="node1" title="convert from imu frame to map frame" alt="" coords="452,5,704,45"/>
+<area shape="rect" id="node2" href="$imu__transform__component_8hpp.html" title="convert from imu frame to map frame" alt="" coords="275,93,473,133"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,189,196,214"/>
+<area shape="rect" id="node8" title=" " alt="" coords="497,101,560,126"/>
+<area shape="rect" id="node9" title=" " alt="" coords="584,101,671,126"/>
+<area shape="rect" id="node10" title=" " alt="" coords="695,101,773,126"/>
+<area shape="rect" id="node11" title=" " alt="" coords="798,93,1001,133"/>
+<area shape="rect" id="node3" title=" " alt="" coords="220,189,352,214"/>
+<area shape="rect" id="node5" title=" " alt="" coords="377,181,547,221"/>
+<area shape="rect" id="node6" title=" " alt="" coords="572,189,747,214"/>
+<area shape="rect" id="node7" title=" " alt="" coords="771,189,827,214"/>
+</map>

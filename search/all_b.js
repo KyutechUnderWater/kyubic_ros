@@ -10,5 +10,12 @@ var searchData=
   ['leddriver_7',['LEDDriver',['../classled__driver_1_1LEDDriver.html',1,'led_driver::LEDDriver'],['../classled__driver_1_1LEDDriver.html#a716b3497e637abce728b1caee9a18fbc',1,'led_driver::LEDDriver::LEDDriver()']]],
   ['license_8',['license',['../namespacesetup.html#a8ed6f50a28bd6a8794f8e1153baa6de9',1,'setup']]],
   ['listen_9',['listen',['../classdvl__driver_1_1path__finder_1_1Listener.html#a9a51564039bdfce231aba8e7bdb692a2',1,'dvl_driver::path_finder::Listener']]],
-  ['listener_10',['Listener',['../classdvl__driver_1_1path__finder_1_1Listener.html',1,'dvl_driver::path_finder::Listener'],['../classdvl__driver_1_1path__finder_1_1Listener.html#acfa788e1a3e5d1d236c1f4b1877beb34',1,'dvl_driver::path_finder::Listener::Listener()']]]
+  ['listener_10',['Listener',['../classdvl__driver_1_1path__finder_1_1Listener.html',1,'dvl_driver::path_finder::Listener'],['../classdvl__driver_1_1path__finder_1_1Listener.html#acfa788e1a3e5d1d236c1f4b1877beb34',1,'dvl_driver::path_finder::Listener::Listener()']]],
+  ['localization_11',['Localization',['../classlocalization_1_1Localization.html#a4ab32aee8bf66b7f719e0cf862fb597c',1,'localization::Localization']]],
+  ['localization_12',['localization',['../namespacelocalization.html',1,'']]],
+  ['localization_13',['Localization',['../classlocalization_1_1Localization.html',1,'localization']]],
+  ['localization_5fcomponent_2ecpp_14',['localization_component.cpp',['../localization__component_8cpp.html',1,'']]],
+  ['localization_5fcomponent_2ehpp_15',['localization_component.hpp',['../localization__component_8hpp.html',1,'']]],
+  ['localization_5fcomponents_5flaunch_16',['localization_components_launch',['../namespacelocalization__components__launch.html',1,'']]],
+  ['localization_5fcomponents_5flaunch_2epy_17',['localization_components_launch.py',['../localization__components__launch_8py.html',1,'']]]
 ];
