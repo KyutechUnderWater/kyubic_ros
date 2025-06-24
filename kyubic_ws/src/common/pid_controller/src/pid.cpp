@@ -53,8 +53,10 @@ std::array<double, 3> PositionPID::get_each_term()
 
 void PositionPID::reset_integral() { i = 0.0; }
 
-VelocityPID::VelocityPID(const double kp, const double ki, const double kd, const double kf)
-: kp(kp), ki(ki), kd(kd), kf(kf)
+VelocityPID::VelocityPID(
+  const double kp, const double ki, const double kd, const double kf, const double lo,
+  const double hi)
+: kp(kp), ki(ki), kd(kd), kf(kf), lo(lo), hi(hi)
 {
 }
 
@@ -73,6 +75,12 @@ double VelocityPID::update(double current, double target)
   d = kf * pre_d + (1 - kf) * d;
 
   double u = pre_u + kp * p + ki * i + kd * d;
+  if (u < lo) {
+    u = lo;
+  }
+  if (u > hi) {
+    u = hi;
+  }
 
   pre_error = error;
   pre_p = p;

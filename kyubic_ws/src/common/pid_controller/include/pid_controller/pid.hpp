@@ -75,6 +75,7 @@ class VelocityPID
 {
 private:
   double kp, ki, kd, kf;
+  double lo, hi;
   double p, i, d;
 
   double pre_error = 0;
@@ -91,7 +92,9 @@ public:
    * @param ki integral gain
    * @param kd derivative gain
    */
-  explicit VelocityPID(const double kp, const double ki, const double kd, const double kf);
+  explicit VelocityPID(
+    const double kp, const double ki, const double kd, const double kf, const double lo,
+    const double hi);
 
   /**
    * @brief get each term value of pid
