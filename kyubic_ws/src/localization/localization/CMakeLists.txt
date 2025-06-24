@@ -33,6 +33,7 @@ ament_target_dependencies(depth_odometry_component
   rclcpp_components
   driver_msgs
   localization_msgs
+  std_srvs
 )
 
 ## imu_transform_component
