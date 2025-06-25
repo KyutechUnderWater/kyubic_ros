@@ -14,12 +14,15 @@
 #include <pid_controller/pid.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include "localization_msgs/msg/odometry.hpp"
+#include "geometry_msgs/msg/wrench_stamped.hpp"
 #include <geometry_msgs/msg/wrench_stamped.hpp>
 #include <localization_msgs/msg/odometry.hpp>
-#include <std_msgs/msg/float32.hpp>
+#include <test_pid_msgs/msg/targets.hpp>
 
+#include <array>
+#include <map>
 #include <memory>
+#include <string>
 
 /**
  * @namespace test
@@ -35,27 +38,42 @@ class TestPID : public rclcpp::Node
 {
 private:
   rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr pub_;
-  rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr sub_target_;
+  rclcpp::Subscription<test_pid_msgs::msg::Targets>::SharedPtr sub_target_;
+  rclcpp::Subscription<geometry_msgs::msg::WrenchStamped>::SharedPtr sub_joy_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_odom_;
 
   rclcpp::TimerBase::SharedPtr timer_;
 
-  std::shared_ptr<pid_controller::PositionPID> ppid_;
-  std::shared_ptr<pid_controller::VelocityPID> vpid_;
-  std::shared_ptr<pid_controller::P_PID> p_pid_;
+  // Define unique name(axes)
+  std::array<std::string, 4> name = {"x", "y", "z", "yaw"};
 
+  std::map<std::string, std::shared_ptr<pid_controller::VelocityP_PIDParameter>> p_pid_params;
+  std::map<std::string, std::shared_ptr<pid_controller::VelocityP_PID>> vp_pids;
+
+  std::shared_ptr<test_pid_msgs::msg::Targets> targets_;
+  std::shared_ptr<geometry_msgs::msg::WrenchStamped> joy_;
   std::shared_ptr<localization_msgs::msg::Odometry> odom_;
 
-  double k, kp, ki, kd, kf, lo, hi;
-  double target = 0;
   double current = 0;
   bool updated = false;
 
   /**
-   * @brief Get target value
+   * @brief Declare parameters from param.yaml
+   * @details ROS 2 parameters
+   */
+  void _declare_parameter();
+
+  /**
+   * @brief Get target value (x, y, z, yaw)
    * @details Get target value via topic communication
    */
-  void callback_target(const std_msgs::msg::Float32::UniquePtr msg);
+  void callback_target(const test_pid_msgs::msg::Targets::UniquePtr msg);
+
+  /**
+   * @brief Acquire joy data
+   * @details Acquire joy data via topic communication
+   */
+  void callback_joy(geometry_msgs::msg::WrenchStamped::UniquePtr msg);
 
   /**
    * @brief Acquire odometry data
