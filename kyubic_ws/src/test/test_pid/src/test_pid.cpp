@@ -23,12 +23,14 @@ TestPID::TestPID(const rclcpp::NodeOptions & options) : Node("test_pid", options
   ki = this->declare_parameter("ki", 0.0);
   kd = this->declare_parameter("kd", 0.0);
   kf = this->declare_parameter("kf", 0.0);
-  lo = this->declare_parameter("lo", 0.0);
-  hi = this->declare_parameter("hi", 0.0);
+  mlo = this->declare_parameter("mlo", 0.0);
+  mhi = this->declare_parameter("mhi", 0.0);
+  slo = this->declare_parameter("slo", 0.0);
+  shi = this->declare_parameter("shi", 0.0);
 
   ppid_ = std::make_shared<pid_controller::PositionPID>(kp, ki, kd, kf);
-  vpid_ = std::make_shared<pid_controller::VelocityPID>(kp, ki, kd, kf, lo, hi);
-  p_pid_ = std::make_shared<pid_controller::P_PID>(k, kp, ki, kd, kf, lo, hi);
+  vpid_ = std::make_shared<pid_controller::VelocityPID>(kp, ki, kd, kf, slo, shi);
+  p_pid_ = std::make_shared<pid_controller::VelocityP_PID>(k, kp, ki, kd, kf, mlo, mhi, slo, shi);
 
   odom_ = std::make_shared<localization_msgs::msg::Odometry>();
 
@@ -57,25 +59,31 @@ void TestPID::update()
     //
     // z-axis
     // vpid_z = vpid_->update(odom_->twist.linear.z_depth, target);
-    vpid_z = -vpid_->update(odom_->twist.linear.z_altitude, target);
-    if (odom_->pose.position.z_altitude < 2) {
-      vpid_z = 0.0;
-    }
+    // vpid_z = -vpid_->update(odom_->twist.linear.z_altitude, target);
+    // if (odom_->pose.position.z_altitude < 2) {
+    //   vpid_z = 0.0;
+    // }
 
     // yaw-axis
     // vpid_yaw = vpid_->update(odom_->twist.angular.z, target);
 
     // double ppid = ppid_->update(, target, 0.0);
-    // double p_pid = p_pid_->update(, current_master target, 0.0);
-    std::cout << "target: " << target << " current: " << odom_->twist.linear.z_altitude
-              << " vpid: " << vpid_z << std::endl;
+    // double p_pid_yaw = p_pid_->update(odom_->twist.angular.z, odom_->pose.orientation.z, target);
+
+    if (target - odom_->pose.orientation.z < 180) target += 360;
+    if (target - odom_->pose.orientation.z > 180) target -= 360;
+    double p_pid_yaw = p_pid_->update(odom_->twist.angular.z, odom_->pose.orientation.z, target);
+
+    std::cout << "target: " << target << " current: " << odom_->twist.angular.z
+              << " current_t: " << odom_->pose.orientation.z << " p_pid: " << p_pid_yaw
+              << std::endl;
 
     // Create message from pid
     auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
     msg->wrench.force.x = vpid_x;
     msg->wrench.force.y = vpid_y;
     msg->wrench.force.z = vpid_z;
-    msg->wrench.torque.z = vpid_yaw;
+    msg->wrench.torque.z = p_pid_yaw;
 
     pub_->publish(std::move(msg));
   }

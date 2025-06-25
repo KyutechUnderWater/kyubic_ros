@@ -42,11 +42,11 @@ private:
 
   std::shared_ptr<pid_controller::PositionPID> ppid_;
   std::shared_ptr<pid_controller::VelocityPID> vpid_;
-  std::shared_ptr<pid_controller::P_PID> p_pid_;
+  std::shared_ptr<pid_controller::VelocityP_PID> p_pid_;
 
   std::shared_ptr<localization_msgs::msg::Odometry> odom_;
 
-  double k, kp, ki, kd, kf, lo, hi;
+  double k, kp, ki, kd, kf, mlo, mhi, slo, shi;
   double target = 0;
   double current = 0;
   bool updated = false;

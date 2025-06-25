@@ -12,6 +12,7 @@
 #include "driver_msgs/msg/imu.hpp"
 
 #include <cmath>
+#include <cstdlib>
 #include <functional>
 #include <numbers>
 
@@ -44,7 +45,11 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 
   roll = msg->orient.x * cos180 - msg->orient.y * sin180;
   pitch = msg->orient.x * sin180 + msg->orient.y * cos180;
+
   yaw = msg->orient.z;
+  double yaw_offset = msg->orient.z - offset_angle.at(2);
+  if (yaw < -180) yaw_offset += 360;
+  if (180 < yaw) yaw_offset -= 360;
 
   // Publish
   {
@@ -56,7 +61,8 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 
     odom_msg->pose.orientation.x = roll - offset_angle.at(0);
     odom_msg->pose.orientation.y = pitch - offset_angle.at(1);
-    odom_msg->pose.orientation.z = yaw - offset_angle.at(2);
+
+    odom_msg->pose.orientation.z = yaw_offset;
 
     pub_->publish(std::move(odom_msg));
   }

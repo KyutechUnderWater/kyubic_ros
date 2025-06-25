@@ -25,6 +25,7 @@ def generate_launch_description():
                 remappings=[
                     ("/test_pid/odom", "/localization/odom"),
                     ("/test_pid/robot_force", "/driver/robot_force"),
+                    ("/test_pid/target_pid", "/test_pid/target_yaw"),
                 ],
                 parameters=[config],
                 extra_arguments=[
