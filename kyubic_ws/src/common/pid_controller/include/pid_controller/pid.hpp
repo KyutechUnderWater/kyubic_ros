@@ -20,6 +20,14 @@
 namespace pid_controller
 {
 
+struct PositionPIDParameter
+{
+  double kp;
+  double ki;
+  double kd;
+  double kf;
+};
+
 /**
  * @brief Position Form PID Controller class
  */
@@ -43,7 +51,7 @@ public:
    * @param kd derivative gain
    * @param kf lowpass filter coefficient
    */
-  explicit PositionPID(const double kp, const double ki, const double kd, const double kf);
+  explicit PositionPID(const PositionPIDParameter param);
 
   /**
    * @brief reset integral term
@@ -66,6 +74,16 @@ public:
    * @details calculate PID
    */
   double update(double current, double target, double last_saturated);
+};
+
+struct VelocityPIDParameter
+{
+  double kp;
+  double ki;
+  double kd;
+  double kf;
+  double lo;
+  double hi;
 };
 
 /**
@@ -92,9 +110,7 @@ public:
    * @param ki integral gain
    * @param kd derivative gain
    */
-  explicit VelocityPID(
-    const double kp, const double ki, const double kd, const double kf, const double lo,
-    const double hi);
+  explicit VelocityPID(const VelocityPIDParameter param);
 
   /**
    * @brief get each term value of pid

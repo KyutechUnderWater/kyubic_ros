@@ -15,8 +15,8 @@
 namespace pid_controller
 {
 
-PositionPID::PositionPID(const double kp, const double ki, const double kd, double kf = 0.0)
-: kp(kp), ki(ki), kd(kd), kf(kf)
+PositionPID::PositionPID(const PositionPIDParameter param)
+: kp(param.kp), ki(param.ki), kd(param.kd), kf(param.kf)
 {
 }
 
@@ -53,10 +53,8 @@ std::array<double, 3> PositionPID::get_each_term()
 
 void PositionPID::reset_integral() { i = 0.0; }
 
-VelocityPID::VelocityPID(
-  const double kp, const double ki, const double kd, const double kf, const double lo,
-  const double hi)
-: kp(kp), ki(ki), kd(kd), kf(kf), lo(lo), hi(hi)
+VelocityPID::VelocityPID(const VelocityPIDParameter param)
+: kp(param.kp), ki(param.ki), kd(param.kd), kf(param.kf), lo(param.lo), hi(param.hi)
 {
 }
 
@@ -75,12 +73,7 @@ double VelocityPID::update(double current, double target)
   d = kf * pre_d + (1 - kf) * d;
 
   double u = pre_u + kp * p + ki * i + kd * d;
-  if (u < lo) {
-    u = lo;
-  }
-  if (u > hi) {
-    u = hi;
-  }
+  u = std::clamp(u, lo, hi);
 
   pre_error = error;
   pre_p = p;

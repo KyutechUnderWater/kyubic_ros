@@ -9,51 +9,34 @@
 
 #include "pid_controller/p_pid.hpp"
 
-#include <algorithm>
-#include <iostream>
-#include <memory>
-
 namespace pid_controller
 {
 
-PositionP_PID::PositionP_PID(
-  const double k, const double kp, const double ki, const double kd, const double kf,
-  const double lo, const double hi)
-: k(k), kp(kp), ki(ki), kd(kd), kf(kf), lo(lo), hi(hi)
+PositionP_PID::PositionP_PID(const std::shared_ptr<PositionP_PIDParameter> param_)
+: k(param_->k), lo(param_->lo), hi(param_->hi), ppid_param(param_->ppid_param)
 {
-  master_pid_ = std::make_shared<PositionPID>(k, 0.0, 0.0, 0.0);
-  slave_pid_ = std::make_shared<PositionPID>(kp, ki, kd, kf);
+  slave_pid_ = std::make_shared<PositionPID>(ppid_param);
 }
 
 double PositionP_PID::update(
   double current_slave, double current_master, double target_master, double last_saturated)
 {
-  double vel_ref = master_pid_->update(current_master, target_master, 0.0);
-  vel_ref = std::clamp(vel_ref, lo, hi);
-
-  return slave_pid_->update(current_slave, vel_ref, last_saturated);
+  double vel_ref = k * (target_master - current_master);
+  return slave_pid_->update(current_slave, std::clamp(vel_ref, lo, hi), last_saturated);
 }
 
-void PositionP_PID::reset()
-{
-  master_pid_->reset_integral();
-  slave_pid_->reset_integral();
-}
+void PositionP_PID::reset() { slave_pid_->reset_integral(); }
 
-VelocityP_PID::VelocityP_PID(
-  const double k, const double kp, const double ki, const double kd, const double kf,
-  const double mlo, const double mhi, const double slo, const double shi)
-: k(k), kp(kp), ki(ki), kd(kd), kf(kf), mlo(mlo), mhi(mhi), slo(slo), shi(shi)
+VelocityP_PID::VelocityP_PID(const std::shared_ptr<VelocityP_PIDParameter> param_)
+: k(param_->k), lo(param_->lo), hi(param_->hi), vpid_param(param_->vpid_param)
 {
-  master_pid_ = std::make_shared<VelocityPID>(k, 0.0, 0.0, 0.0, mlo, mhi);
-  slave_pid_ = std::make_shared<VelocityPID>(kp, ki, kd, kf, slo, shi);
+  slave_pid_ = std::make_shared<VelocityPID>(vpid_param);
 }
 
 double VelocityP_PID::update(double current_slave, double current_master, double target_master)
 {
-  double vel_ref = (target_master - current_master) * k;
-  vel_ref = std::clamp(vel_ref, mlo, mhi);
-  return slave_pid_->update(current_slave, vel_ref);
+  double vel_ref = k * (target_master - current_master);
+  return slave_pid_->update(current_slave, std::clamp(vel_ref, lo, hi));
 }
 
 }  // namespace pid_controller
