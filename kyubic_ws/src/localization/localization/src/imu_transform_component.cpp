@@ -48,8 +48,8 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 
   yaw = msg->orient.z;
   double yaw_offset = msg->orient.z - offset_angle.at(2);
-  if (yaw < -180) yaw_offset += 360;
-  if (180 < yaw) yaw_offset -= 360;
+  if (yaw_offset < -180) yaw_offset += 360;
+  if (180 < yaw_offset) yaw_offset -= 360;
 
   // Publish
   {
