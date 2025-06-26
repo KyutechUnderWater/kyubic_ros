@@ -8,8 +8,7 @@ from launch import LaunchDescription
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory(
-            "test_pid"), "config", "test_pid.param.yaml"
+        get_package_share_directory("test_pid"), "config", "test_pid.param.yaml"
     )
 
     action_component_container = ComposableNodeContainer(
@@ -25,7 +24,7 @@ def generate_launch_description():
                 plugin="test::TestPID",
                 remappings=[
                     # ("/test_pid/target_pid", "/test_pid/target_pid"),
-                    ("/joy2wrench/robot_force", "/driver/robot_force"),
+                    ("/test_pid/joy_robot_force", "/joy2wrench/robot_force"),
                     ("/test_pid/odom", "/localization/odom"),
                     ("/test_pid/robot_force", "/driver/robot_force"),
                 ],
