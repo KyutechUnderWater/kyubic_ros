@@ -16,6 +16,7 @@ gosu ros bash -l -c 'cd ~/kyubic_ros && uv venv --system-site-packages && uv syn
 
 # Add command to .bashrc
 gosu ros bash -c 'cat << EOT >> ~/.bashrc
+export HISTTIMEFORMAT="%F %T  "
 export ROS_DOMAIN_ID=1
 source /home/ros/kyubic_ros/.venv/bin/activate
 EOT'
