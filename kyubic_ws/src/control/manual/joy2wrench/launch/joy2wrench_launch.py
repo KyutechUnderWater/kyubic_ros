@@ -7,22 +7,26 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     config = os.path.join(
-        get_package_share_directory("joy2wrench"), "config", "joy2wrench.param.yaml"
+        get_package_share_directory(
+            "joy2wrench"), "config", "joy2wrench.param.yaml"
     )
 
     return LaunchDescription(
         [
             Node(
                 package="joy",
-                namespace="driver",
+                namespace="joy2wrench",
                 executable="joy_node",
                 parameters=[config],
                 output="screen",
             ),
             Node(
                 package="joy2wrench",
-                namespace="driver",
+                namespace="joy2wrench",
                 executable="joy2wrench",
+                remappings=[
+                    ("/joy2wrench/robot_force", "/driver/robot_force"),
+                ],
                 parameters=[config],
                 output="screen",
             ),
