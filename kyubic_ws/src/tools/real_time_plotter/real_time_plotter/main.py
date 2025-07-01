@@ -9,7 +9,7 @@ from functools import partial
 import rclpy
 from rclpy.node import Node
 from localization_msgs.msg import Odometry
-from std_msgs.msg import Float32
+from test_pid_msgs.msg import Targets
 
 # PyQt5/PyQtGraph関連
 from PyQt5.QtWidgets import (
@@ -172,7 +172,7 @@ class MultiDimSubscriber(Node):
         self.lock = threading.Lock()
 
         # 4つの目標値を辞書で管理
-        self.latest_targets = {"vel_x": 0.0, "vel_y": 0.0, "vel_z": 0.0, "ang_z": 0.0}
+        self.latest_targets: Targets = Targets()
 
         # サブスクライバの定義
         self.odom_subscription = self.create_subscription(
@@ -186,20 +186,20 @@ class MultiDimSubscriber(Node):
             "ang_z": "/target_ang_z",
         }
 
-        for key, topic_name in target_topics.items():
-            self.create_subscription(
-                Float32,
-                topic_name,
-                # partialを使って、どのターゲットを更新するかをコールバックに伝える
-                partial(self.target_callback, target_key=key),
-                10,
-            )
+        self.create_subscription(
+            Targets,
+            "targets",
+            # partialを使って、どのターゲットを更新するかをコールバックに伝える
+            partial(self.target_callback),
+            10,
+        )
 
         self.get_logger().info("Multi-dimensional subscriber node has been started.")
 
-    def target_callback(self, msg: Float32, target_key: str):
+    def target_callback(self, msg: Targets):
         with self.lock:
-            self.latest_targets[target_key] = msg.data
+            print(msg.y)
+            self.latest_targets = msg
 
     def odom_callback(self, msg: Odometry):
         timestamp = time.time()
@@ -217,10 +217,10 @@ class MultiDimSubscriber(Node):
             )
             # 現在の目標値をタプルとして取得
             current_targets = (
-                self.latest_targets["vel_x"],
-                self.latest_targets["vel_y"],
-                self.latest_targets["vel_z"],
-                self.latest_targets["ang_z"],
+                self.latest_targets.z,
+                self.latest_targets.x,
+                self.latest_targets.y,
+                self.latest_targets.yaw,
             )
             # (タイムスタンプ, 値のタプル, 目標値のタプル) の形式でキューに追加
             self.data_queue.append((timestamp, current_values, current_targets))

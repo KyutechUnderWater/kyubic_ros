@@ -12,15 +12,10 @@ def generate_launch_description():
         default_value="/localization/odom",
         description="Topic name for odometry messages",
     )
-    target_z_topic_arg = DeclareLaunchArgument(
-        "target_z_topic",
-        default_value="/test_pid/target_z",
+    targets_topic_arg = DeclareLaunchArgument(
+        "targets_topic",
+        default_value="/test_pid/targets",
         description="Topic name for the target Z position",
-    )
-    target_yaw_topic_arg = DeclareLaunchArgument(
-        "target_yaw_topic",
-        default_value="/test_pid/target_yaw",
-        description="Topic name for the target Yaw angle",
     )
 
     # --- Nodeの定義 ---
@@ -33,13 +28,10 @@ def generate_launch_description():
         remappings=[
             # (スクリプト内のトピック名, Launch引数で受け取った値)
             ("odom", LaunchConfiguration("odom_topic")),
-            ("target_z", LaunchConfiguration("target_z_topic")),
-            ("target_yaw", LaunchConfiguration("target_yaw_topic")),
+            ("targets", LaunchConfiguration("targets_topic")),
         ],
     )
 
     # --- LaunchDescriptionの生成 ---
     # 宣言した引数とノードをLaunchDescriptionに渡して返す
-    return LaunchDescription(
-        [odom_topic_arg, target_z_topic_arg, target_yaw_topic_arg, viewer_node]
-    )
+    return LaunchDescription([odom_topic_arg, targets_topic_arg, viewer_node])

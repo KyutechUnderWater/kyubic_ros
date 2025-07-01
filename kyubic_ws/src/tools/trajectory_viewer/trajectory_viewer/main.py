@@ -8,7 +8,7 @@ import rclpy
 from rclpy.node import Node
 
 from localization_msgs.msg import Odometry
-from std_msgs.msg import Float32  # Float32メッセージ型を追加
+from test_pid_msgs.msg import Targets
 
 # PyQtとPyQtGraph関連のインポート
 from PyQt6.QtWidgets import (
@@ -44,8 +44,7 @@ class RosCommunicator(Node, QObject):
         )
 
         # --- Publisher設定 ---
-        self.target_z_pub = self.create_publisher(Float32, "target_z", 10)
-        self.target_yaw_pub = self.create_publisher(Float32, "target_yaw", 10)
+        self.targets_pub = self.create_publisher(Targets, "targets", 10)
 
         # --- 配信データとタイマー ---
         self.target_z_value = None
@@ -56,21 +55,21 @@ class RosCommunicator(Node, QObject):
     def odom_callback(self, msg):
         """'odom' トピックのコールバック"""
         pos = msg.pose.position
-        self.new_position_signal.emit(pos.x, pos.y, -pos.z_depth)
+        self.new_position_signal.emit(pos.x, -pos.y, -pos.z_depth)
 
     def publish_targets(self):
         """タイマーによって1Hzで呼び出される関数"""
+        msg = Targets()
+
         # z軸目標値が設定されていれば配信
         if self.target_z_value is not None:
-            msg = Float32()
-            msg.data = self.target_z_value
-            self.target_z_pub.publish(msg)
+            msg.z = self.target_z_value
 
         # yaw軸目標値が設定されていれば配信
         if self.target_yaw_value is not None:
-            msg = Float32()
-            msg.data = self.target_yaw_value
-            self.target_yaw_pub.publish(msg)
+            msg.yaw = self.target_yaw_value
+
+        self.targets_pub.publish(msg)
 
     @pyqtSlot(float, float)
     def update_targets(self, z, yaw):
@@ -96,6 +95,28 @@ class TrajectoryPlotter(gl.GLViewWidget):
         grid.setSpacing(1, 1)
         self.addItem(grid)
 
+        self.x_axis_item = gl.GLLinePlotItem(
+            pos=[[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]],
+            color=(1.0, 0.0, 0.0, 1.0),
+            width=5,
+            antialias=True,
+        )
+        self.y_axis_item = gl.GLLinePlotItem(
+            pos=[[0.0, 0.0, 0.0], [0.0, -1.0, 0.0]],
+            color=(0.0, 1.0, 0.0, 1.0),
+            width=5,
+            antialias=True,
+        )
+        self.z_axis_item = gl.GLLinePlotItem(
+            pos=[[0.0, 0.0, 0.0], [0.0, 0.0, -1.0]],
+            color=(0.0, 0.0, 1.0, 1.0),
+            width=5,
+            antialias=True,
+        )
+        self.addItem(self.x_axis_item)
+        self.addItem(self.y_axis_item)
+        self.addItem(self.z_axis_item)
+
         self.trajectory_points = np.empty((0, 3))
         self.trajectory_points = np.vstack(
             [self.trajectory_points, np.array([0.0, 0.0, 0.0])]
@@ -116,8 +137,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
 
         # 前回と今回の値の差分ベクトルのL2ノルムが 0.2[m] より大きいときに更新
         if np.linalg.norm(self.trajectory_points[-1] - new_point, ord=2) > 0.1:
-            self.trajectory_points = np.vstack(
-                [self.trajectory_points, new_point])
+            self.trajectory_points = np.vstack([self.trajectory_points, new_point])
             self.plot_item.setData(pos=self.trajectory_points)
 
 
@@ -152,7 +172,7 @@ class MainWindow(QMainWindow):
         self.z_input = QDoubleSpinBox()
         self.z_input.setRange(0.0, 15.0)
         self.z_input.setSingleStep(0.1)
-        self.z_input.setValue(-1.0)
+        self.z_input.setValue(0.0)
         control_layout.addWidget(self.z_input)
 
         # yaw軸角度入力
@@ -160,7 +180,7 @@ class MainWindow(QMainWindow):
         self.yaw_input = QDoubleSpinBox()
         self.yaw_input.setRange(-180.0, 180.0)
         self.yaw_input.setSingleStep(1.0)
-        self.yaw_input.setValue(90.0)
+        self.yaw_input.setValue(0.0)
         control_layout.addWidget(self.yaw_input)
 
         control_layout.addSpacing(20)

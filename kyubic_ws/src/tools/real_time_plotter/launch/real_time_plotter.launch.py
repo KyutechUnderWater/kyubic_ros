@@ -15,25 +15,10 @@ def generate_launch_description():
         default_value="/localization/odom",
         description="Topic name for the odometry message",
     )
-    target_vx_topic_arg = DeclareLaunchArgument(
-        "target_vx_topic",
-        default_value="/test_pid/target_x",
+    targets_topic_arg = DeclareLaunchArgument(
+        "targets_topic",
+        default_value="/test_pid/targets",
         description="Topic name for the target X-velocity",
-    )
-    target_vy_topic_arg = DeclareLaunchArgument(
-        "target_vy_topic",
-        default_value="/test_pid/target_y",
-        description="Topic name for the target Y-velocity",
-    )
-    target_vz_topic_arg = DeclareLaunchArgument(
-        "target_vz_topic",
-        default_value="/test_pid/target_z",
-        description="Topic name for the target Z-velocity",
-    )
-    target_wz_topic_arg = DeclareLaunchArgument(
-        "target_wz_topic",
-        default_value="/test_pid/target_yaw",
-        description="Topic name for the target Z-angular velocity",
     )
 
     # --- ノードの定義 ---
@@ -46,10 +31,7 @@ def generate_launch_description():
         # トピック名のリマッピング設定
         remappings=[
             ("/odom", LaunchConfiguration("odom_topic")),
-            ("/target_vel_x", LaunchConfiguration("target_vx_topic")),
-            ("/target_vel_y", LaunchConfiguration("target_vy_topic")),
-            ("/target_vel_z", LaunchConfiguration("target_vz_topic")),
-            ("/target_ang_z", LaunchConfiguration("target_wz_topic")),
+            ("/targets", LaunchConfiguration("targets_topic")),
         ],
     )
 
@@ -58,10 +40,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             odom_topic_arg,
-            target_vx_topic_arg,
-            target_vy_topic_arg,
-            target_vz_topic_arg,
-            target_wz_topic_arg,
+            targets_topic_arg,
             plotter_node,
         ]
     )
