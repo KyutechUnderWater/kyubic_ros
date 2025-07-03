@@ -26,6 +26,7 @@ double PositionPID::update(double current, double target, double last_saturated 
   double dt = std::chrono::duration_cast<std::chrono::microseconds>(now - pre_time).count() * 1e-6;
   pre_time = now;
 
+  // Calculate Position form PID
   p = target - current;
   i += p * dt;
   d = (p - pre_p) / dt;
@@ -38,6 +39,7 @@ double PositionPID::update(double current, double target, double last_saturated 
   // lowpass filter for derivation term
   d = kf * pre_d + (1 - kf) * d;
 
+  // Store current value
   pre_p = p;
   pre_i = i;
   pre_d = d;
@@ -64,6 +66,7 @@ double VelocityPID::update(double current, double target)
   double dt = std::chrono::duration_cast<std::chrono::microseconds>(now - pre_time).count() * 1e-6;
   pre_time = now;
 
+  // Calculate velocity form PID
   double error = target - current;
   p = (error - pre_error);
   i = error * dt;
@@ -75,6 +78,7 @@ double VelocityPID::update(double current, double target)
   double u = pre_u + kp * p + ki * i + kd * d;
   u = std::clamp(u, lo, hi);
 
+  // Store current value
   pre_error = error;
   pre_p = p;
   pre_d = d;
