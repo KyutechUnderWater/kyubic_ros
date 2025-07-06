@@ -28,14 +28,14 @@ Create docker container and Setup continer (user password, enviroment variable, 
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git
-cd $_ && . install.sh
+cd kyubic_ros && . install.sh
 ```
 
 (Optional) If you want to use CUDA
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git
-cd $_ && . install.sh --nvidia
+cd kyubic_ros && . install.sh --nvidia
 ```
 
 > [!NOTE]
