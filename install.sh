@@ -6,7 +6,8 @@ Usage:  install.sh [OPTIONS]
 Options:
 	-h, --help                   show command help
 	-p, --project-name string    Name of patckage to install
-	    --nvidia                 if nvidia drivers are available, they are used\n
+	    --nvidia                 if nvidia drivers are available, they are used
+	    --no-cache               Whether to build Dockerfile without cache  \n
 EOF
 
 # Argument Parser
@@ -16,6 +17,7 @@ ArgumentParser() {
 
 	local project_name=""
 	local nvidia=false
+	local no_cache=""
 
 	while (($# > 0)); do
 
@@ -40,6 +42,11 @@ ArgumentParser() {
 			shift
 			;;
 
+		--no-cache)
+			no_cache="--no-cache"
+			shift
+			;;
+
 		*)
 			printf "\033[33m[ERROR] Usage: install.sh [-h] [-p] [--no-nvidia]\n"
 			return 1
@@ -51,6 +58,7 @@ ArgumentParser() {
 	eval "$ARGS=(
 		["project_name"]=\"${project_name}\"
 		["nvidia"]=$nvidia
+		["no_cache"]=$no_cache
 	)"
 }
 
@@ -64,6 +72,7 @@ fi
 
 project_name=${args["project_name"]}
 nvidia=${args["nvidia"]}
+no_cache=${args["no_cache"]}
 
 path=$(pwd)
 sudo -v
@@ -129,7 +138,8 @@ cd ./docker || exit
 docker compose $compose_env_var config
 
 # Create and Start container
-docker compose $compose_env_var build >>${path}/.install.log
+echo '💿 Dockerfile Build. Logfile path is ${path}/.install.log. Wait for the build to complete...'
+docker compose $compose_env_var build ${no_cache} >>${path}/.install.log
 docker compose $compose_env_var create
 docker compose $compose_env_var start
 
