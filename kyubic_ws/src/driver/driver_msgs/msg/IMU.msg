@@ -9,3 +9,4 @@ uint8 status
 geometry_msgs/Vector3 accel   # [m/s^2]
 geometry_msgs/Vector3 gyro    # [rad/s]
 geometry_msgs/Vector3 orient  # [rad]
+geometry_msgs/Quaternion qtn  # [-]
