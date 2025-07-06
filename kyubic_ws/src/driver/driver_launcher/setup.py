@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = "launcher"
+package_name = "driver_launcher"
 
 setup(
     name=package_name,
@@ -14,9 +14,9 @@ setup(
     install_requires=["setuptools"],
     zip_safe=True,
     maintainer="ros",
-    maintainer_email="ros@todo.todo",
+    maintainer_email="kyutech.robosub@gmail.com",
     description="launcher to launch driver packages",
-    license="TODO: License declaration",
+    license="Apache License 2.0",
     tests_require=["pytest"],
     entry_points={
         "console_scripts": [],

@@ -15,25 +15,25 @@ def generate_launch_description():
     return LaunchDescription(
         [
             IncludeLaunchDescription(
-                PathJoinSubstitution([depth_driver_dir, "depth_driver_launch.py"]),
+                PathJoinSubstitution([depth_driver_dir, "depth_driver.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),
             ),
             IncludeLaunchDescription(
-                PathJoinSubstitution([imu_driver_dir, "imu_driver_launch.py"]),
+                PathJoinSubstitution([imu_driver_dir, "imu_driver.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),
             ),
             IncludeLaunchDescription(
-                PathJoinSubstitution([dvl_driver_dir, "dvl_driver_launch.py"]),
+                PathJoinSubstitution([dvl_driver_dir, "dvl_driver.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),
             ),
             IncludeLaunchDescription(
-                PathJoinSubstitution([led_driver_dir, "led_driver_launch.py"]),
+                PathJoinSubstitution([led_driver_dir, "led_driver.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),
