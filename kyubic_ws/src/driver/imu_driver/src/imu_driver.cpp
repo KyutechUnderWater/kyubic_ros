@@ -70,6 +70,7 @@ void IMUDriver::_update()
 
     msg->status = driver_msgs::msg::IMU::STATUS_NORMAL;
 
+    msg->temperature = data_->temp;
     msg->accel.x = data_->x_accl;
     msg->accel.y = data_->y_accl;
     msg->accel.z = data_->z_accl;
