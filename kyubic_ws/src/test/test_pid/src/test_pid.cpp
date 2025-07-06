@@ -20,12 +20,15 @@ namespace test
 
 TestPID::TestPID(const rclcpp::NodeOptions & options) : Node("test_pid", options)
 {
+  // Declere parameters
   _declare_parameter();
 
+  // Create PID controller instance
   for (uint8_t i = 0; i < name.size(); i++) {
     vp_pids[name.at(i)] = std::make_shared<pid_controller::VelocityP_PID>(p_pid_params[name.at(i)]);
   }
 
+  // Create messages instance
   odom_ = std::make_shared<localization_msgs::msg::Odometry>();
   joy_ = std::make_shared<geometry_msgs::msg::WrenchStamped>();
   targets_ = std::make_shared<test_pid_msgs::msg::Targets>();
@@ -34,10 +37,10 @@ TestPID::TestPID(const rclcpp::NodeOptions & options) : Node("test_pid", options
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   pub_ = create_publisher<geometry_msgs::msg::WrenchStamped>("robot_force", qos);
-  sub_target_ = create_subscription<test_pid_msgs::msg::Targets>(
-    "target", qos, std::bind(&TestPID::callback_target, this, std::placeholders::_1));
+  sub_targets_ = create_subscription<test_pid_msgs::msg::Targets>(
+    "targets", qos, std::bind(&TestPID::callback_target, this, std::placeholders::_1));
   sub_joy_ = create_subscription<geometry_msgs::msg::WrenchStamped>(
-    "robot_force", qos, std::bind(&TestPID::callback_joy, this, std::placeholders::_1));
+    "joy_robot_force", qos, std::bind(&TestPID::callback_joy, this, std::placeholders::_1));
   sub_odom_ = create_subscription<localization_msgs::msg::Odometry>(
     "odom", qos, std::bind(&TestPID::callback_odom, this, std::placeholders::_1));
   timer_ = create_wall_timer(10ms, std::bind(&TestPID::update, this));
@@ -65,40 +68,48 @@ void TestPID::update()
   if (updated) {
     updated = false;
 
+    // Define valiable
     double p_pid_x, p_pid_y, p_pid_z, p_pid_yaw;
     p_pid_x = p_pid_y = p_pid_z = p_pid_yaw = 0.0;
+
+    // Abbreviation of name
+    auto pose = odom_->pose.position;
+    auto orient = odom_->pose.orientation;
+    auto linear = odom_->twist.linear;
+    auto angular = odom_->twist.angular;
+
     // x-axis
-    p_pid_x =
-      vp_pids[name.at(0)]->update(odom_->twist.linear.x, odom_->pose.position.x, targets_->x);
+    p_pid_x = vp_pids[name.at(0)]->update(linear.x, pose.x, targets_->x);
 
     // y-axis
-    p_pid_y =
-      vp_pids[name.at(1)]->update(odom_->twist.linear.y, odom_->pose.position.y, targets_->y);
+    p_pid_y = vp_pids[name.at(1)]->update(linear.y, pose.y, targets_->y);
 
     // z-axis
-    // vpid_z = vpid_->update(odom_->twist.linear.z_depth, target);
-    p_pid_z = -vp_pids[name.at(2)]->update(
-      odom_->twist.linear.z_altitude, odom_->pose.position.z_altitude, targets_->z);
+    p_pid_z = -vp_pids[name.at(2)]->update(linear.z_altitude, pose.z_altitude, targets_->z);
 
     // yaw-axis
     double target_yaw = targets_->yaw;
-    if (targets_->yaw - odom_->pose.orientation.z < 180) target_yaw += 360;
-    if (target_yaw - odom_->pose.orientation.z > 180) target_yaw -= 360;
-    p_pid_yaw =
-      vp_pids[name.at(3)]->update(odom_->twist.angular.z, odom_->pose.orientation.z, target_yaw);
+    if (targets_->yaw - orient.z < -180) target_yaw += 360;
+    if (targets_->yaw - orient.z > 180) target_yaw -= 360;
+    p_pid_yaw = vp_pids[name.at(3)]->update(angular.z, orient.z, target_yaw);
 
-    std::cout << "target: " << target_yaw << " current: " << odom_->twist.angular.z
-              << " current_t: " << odom_->pose.orientation.z << " p_pid: " << p_pid_yaw
-              << std::endl;
+    // Print data
+    double target_p = targets_->z;
+    double current_p = pose.z_altitude;
+    double current_vel_p = linear.z_altitude;
+    double p_pid_p = p_pid_z;
+    std::cout << "target: " << target_p << " current: " << current_p
+              << " current_vel: " << current_vel_p << " p_pid: " << p_pid_p << std::endl;
 
     // Create message from pid
     auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
     // msg->wrench.force.x = p_pid_x;
     // msg->wrench.force.y = p_pid_y;
+    msg->wrench.force.z = p_pid_z;
     msg->wrench.force.x = joy_->wrench.force.x;
     msg->wrench.force.y = joy_->wrench.force.y;
-    msg->wrench.force.z = p_pid_z;
-    msg->wrench.torque.z = p_pid_yaw;
+    // msg->wrench.force.z = joy_->wrench.force.z;
+    msg->wrench.torque.z = joy_->wrench.torque.z;
 
     pub_->publish(std::move(msg));
   }

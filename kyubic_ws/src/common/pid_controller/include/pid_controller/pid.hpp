@@ -20,12 +20,16 @@
 namespace pid_controller
 {
 
+/**
+ * @struct PositionPIDParameter
+ * @brief Hyperparameter for PositionPID
+ */
 struct PositionPIDParameter
 {
-  double kp;
-  double ki;
-  double kd;
-  double kf;
+  double kp;  /// Proportional gain
+  double ki;  /// Integral gain
+  double kd;  /// Derivative gain
+  double kf;  /// Low-pass filter coefficient
 };
 
 /**
@@ -45,45 +49,46 @@ private:
 
 public:
   /**
-   * @brief controller gain setting
-   * @param kp Proportional gain
-   * @param ki integral gain
-   * @param kd derivative gain
-   * @param kf lowpass filter coefficient
+   * @brief Controller gain setting
+   * @param param Hyperparameter for velocity pid
    */
   explicit PositionPID(const PositionPIDParameter param);
 
   /**
-   * @brief reset integral term
+   * @brief Reset integral term
    * @return none
    */
   void reset_integral();
 
   /**
-   * @brief get each term value of pid
+   * @brief Get each term value of pid
    * @return array(x, y, z)
    */
   std::array<double, 3> get_each_term();
 
   /**
-   * @brief update PID cycle
-   * @param current process value
-   * @param target setting value
-   * @param last_saturated whether the last control input was saturated (for anti-windup)
-   * @return manipulated value
-   * @details calculate PID
+   * @brief Update PID cycle
+   * @param current Process value
+   * @param target Setting value
+   * @param last_saturated Whether the last control input was saturated (for anti-windup)
+   * @return Manipulated value
+   * @details Calculate PID
    */
   double update(double current, double target, double last_saturated);
 };
 
+/**
+ * @struct VelocityPIDParameter
+ * @brief Hyperparameter for VelocityPID
+ */
 struct VelocityPIDParameter
 {
-  double kp;
-  double ki;
-  double kd;
-  double kf;
-  double lo;
-  double hi;
+  double kp;  /// Proportional gain
+  double ki;  /// Integral gain
+  double kd;  /// Derivative gain
+  double kf;  /// Low-pass filter coefficient
+  double lo;  /// Minimal value
+  double hi;  /// Maximun value
 };
 
 /**
@@ -105,25 +110,23 @@ private:
 
 public:
   /**
-   * @brief controller gain setting
-   * @param kp Proportional gain
-   * @param ki integral gain
-   * @param kd derivative gain
+   * @brief Controller gain setting
+   * @param param Hyperparameter for velocity pid
    */
   explicit VelocityPID(const VelocityPIDParameter param);
 
   /**
-   * @brief get each term value of pid
+   * @brief Get each term value of pid
    * @return array(x, y, z)
    */
   std::array<double, 3> get_each_term();
 
   /**
-   * @brief update PID cycle
-   * @param current process value
-   * @param target setting value
-   * @return manipulated value
-   * @details calculate PID
+   * @brief Update PID cycle
+   * @param current Process value
+   * @param target Setting value
+   * @return Manipulated value
+   * @details Calculate PID
    */
   double update(double current, double target);
 };

@@ -21,7 +21,10 @@ PositionP_PID::PositionP_PID(const std::shared_ptr<PositionP_PIDParameter> param
 double PositionP_PID::update(
   double current_slave, double current_master, double target_master, double last_saturated)
 {
+  // Calculate master P contorller
   double vel_ref = k * (target_master - current_master);
+
+  // Clamped between lo and hi value, and Calculate slave PID controller
   return slave_pid_->update(current_slave, std::clamp(vel_ref, lo, hi), last_saturated);
 }
 
@@ -35,7 +38,10 @@ VelocityP_PID::VelocityP_PID(const std::shared_ptr<VelocityP_PIDParameter> param
 
 double VelocityP_PID::update(double current_slave, double current_master, double target_master)
 {
+  // Calculate master P contorller
   double vel_ref = k * (target_master - current_master);
+
+  // Clamped between lo and hi value, and Calculate slave PID controller
   return slave_pid_->update(current_slave, std::clamp(vel_ref, lo, hi));
 }
 

@@ -38,7 +38,7 @@ class TestPID : public rclcpp::Node
 {
 private:
   rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr pub_;
-  rclcpp::Subscription<test_pid_msgs::msg::Targets>::SharedPtr sub_target_;
+  rclcpp::Subscription<test_pid_msgs::msg::Targets>::SharedPtr sub_targets_;
   rclcpp::Subscription<geometry_msgs::msg::WrenchStamped>::SharedPtr sub_joy_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_odom_;
 

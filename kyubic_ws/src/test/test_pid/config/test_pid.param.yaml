@@ -2,10 +2,10 @@
   ros__parameters:
     x:
       k: 1.0
-      lo: -0.3
-      hi: 0.3
+      lo: -1.0
+      hi: 1.0
       vpid:
-        kp: 0.0
+        kp: 10.0
         ki: 0.0
         kd: 0.0
         kf: 0.2
@@ -23,7 +23,7 @@
         lo: -30.0
         hi: 30.0
     z:
-      k: 1.0
+      k: 0.3
       lo: -0.3
       hi: 0.3
       vpid:
