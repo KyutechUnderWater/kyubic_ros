@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>plotjugger_msgs</name>
+  <name>plotjuggler_msgs</name>
   <version>0.1.0</version>
-  <description>msgs for plotjugger tools</description>
+  <description>msgs for plotjuggler tools</description>
   <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
   <license>Apache License 2.0</license>
 
