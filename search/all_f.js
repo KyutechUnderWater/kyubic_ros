@@ -1,22 +1,8 @@
 var searchData=
 [
-  ['range_5fto_5fbottom_5fbm1_0',['range_to_bottom_bm1',['../structdvl__driver_1_1path__finder_1_1Data.html#ad16429d0f02a3cf5d764a9f54354f3b1',1,'dvl_driver::path_finder::Data']]],
-  ['range_5fto_5fbottom_5fbm2_1',['range_to_bottom_bm2',['../structdvl__driver_1_1path__finder_1_1Data.html#a3e31782b6fddd4aeaa5890231a7a6b69',1,'dvl_driver::path_finder::Data']]],
-  ['range_5fto_5fbottom_5fbm3_2',['range_to_bottom_bm3',['../structdvl__driver_1_1path__finder_1_1Data.html#a292e2c96c3a6c12e27020e53d1ff865a',1,'dvl_driver::path_finder::Data']]],
-  ['range_5fto_5fbottom_5fbm4_3',['range_to_bottom_bm4',['../structdvl__driver_1_1path__finder_1_1Data.html#ac280feb6e3d7b3f03711f462fdeec784',1,'dvl_driver::path_finder::Data']]],
-  ['raw_5fdata_5ft_4',['RAW_DATA_T',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html',1,'imu_driver::g366']]],
-  ['read_5',['read',['../classserial_1_1Serial.html#a62ab0612564a90bc1f82eba3c9fc0a68',1,'serial::Serial::read(uint8_t *buf, const size_t len)'],['../classserial_1_1Serial.html#a4574314c5723864c0f319e3a447da0d3',1,'serial::Serial::read(uint8_t *buf, const size_t len, const std::chrono::duration&lt; long, std::ratio&lt; 1, 1000 &gt; &gt; timeout)']]],
-  ['read_5funtil_6',['read_until',['../classserial_1_1Serial.html#aa2b00a921c5295ad818ef917bb6d09d2',1,'serial::Serial']]],
-  ['ref_5flayer_5fend_7',['ref_layer_end',['../structdvl__driver_1_1path__finder_1_1Data.html#a06098b4f9233f5a5a3585708f618a81c',1,'dvl_driver::path_finder::Data']]],
-  ['ref_5flayer_5fend_8',['REF_LAYER_END',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da9339e8a40ddabb51cf9e9f8e34efe11b',1,'dvl_driver::path_finder']]],
-  ['ref_5flayer_5fstart_9',['ref_layer_start',['../structdvl__driver_1_1path__finder_1_1Data.html#a24c8519fb95b7cf11a9730d37d8d0c22',1,'dvl_driver::path_finder::Data']]],
-  ['ref_5flayer_5fstart_10',['REF_LAYER_START',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da924bd951ab761285c180d0f907096315',1,'dvl_driver::path_finder']]],
-  ['ref_5flayer_5fstatus_11',['ref_layer_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a4ebacc5623b4615835ee60e9d29c4ad6',1,'dvl_driver::path_finder::Data']]],
-  ['ref_5flayer_5fstatus_12',['REF_LAYER_STATUS',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da1802356ad800edcb82057cebcc0ff5f3',1,'dvl_driver::path_finder']]],
-  ['request_5fcomm_13',['request_comm',['../namespaceimu__driver_1_1g366.html#a286b0f2fbb8ff3317617559a9f8209fe',1,'imu_driver::g366']]],
-  ['reset_14',['reset',['../classlocalization_1_1DVLOdometry.html#a127b7ba45ac0f088185bb8e21442e534',1,'localization::DVLOdometry::reset()'],['../classlocalization_1_1Localization.html#a8cd609163fe089f33321e8c42f78edcc',1,'localization::Localization::reset()'],['../classlocalization_1_1IMUTransform.html#afd5df655d64d5d7e9a1d32d5a2329f42',1,'localization::IMUTransform::reset()'],['../classlocalization_1_1DepthOdometry.html#a6695e475f5fd195d0773c338073389fb',1,'localization::DepthOdometry::reset()'],['../classtimer_1_1Timeout.html#aba5c2bab85a7d37ff3208faa7f6f47d4',1,'timer::Timeout::reset()']]],
-  ['roll_15',['roll',['../structdvl__driver_1_1path__finder_1_1Data.html#abad80c260ef070eef82def0894ff9ed1',1,'dvl_driver::path_finder::Data::roll()'],['../structimu__driver_1_1g366_1_1DATA.html#ad8221b9ae94781bb620e159e162bbc24',1,'imu_driver::g366::DATA::roll()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a1df683254b395731991af82d27931c15',1,'imu_driver::g366::RAW_DATA_T::roll()']]],
-  ['roll_16',['ROLL',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830dae72dc0c269448775756cfd6ca2cdb537',1,'dvl_driver::path_finder']]],
-  ['root_17',['root',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a68f7e0cc6e35b9d7df4a06e3895a2208',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['run_5ftopic_5fecho_18',['run_topic_echo',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a3ee5a0d17f7cef723c250da78ebedb93',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['qtn0_0',['qtn0',['../structimu__driver_1_1g366_1_1DATA.html#a051c6f87b4b12d89a74f22034d0d7ded',1,'imu_driver::g366::DATA::qtn0()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a792922b9d01f0c27c24b0a44df58afb2',1,'imu_driver::g366::RAW_DATA_T::qtn0()']]],
+  ['qtn1_1',['qtn1',['../structimu__driver_1_1g366_1_1DATA.html#af1fd84fe56ec2de60871f9f5fb183836',1,'imu_driver::g366::DATA::qtn1()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a57f400b60ad07339e6df2cfafc0228c7',1,'imu_driver::g366::RAW_DATA_T::qtn1()']]],
+  ['qtn2_2',['qtn2',['../structimu__driver_1_1g366_1_1DATA.html#aa6e190ceb1d547bcf12ed4f7cdd190e3',1,'imu_driver::g366::DATA::qtn2()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#ada3ebb8bb9a36ab95bc2f4f98b8b716c',1,'imu_driver::g366::RAW_DATA_T::qtn2()']]],
+  ['qtn3_3',['qtn3',['../structimu__driver_1_1g366_1_1DATA.html#abb6032ad2d582f8f3f00e0e14c53490b',1,'imu_driver::g366::DATA::qtn3()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a27c2d13738fdc847a146e2edb9d6f425',1,'imu_driver::g366::RAW_DATA_T::qtn3()']]],
+  ['qtn_5fsf_4',['qtn_sf',['../namespaceimu__driver_1_1g366.html#ab165068b03ae58b2c5afb6b1a1f33e41',1,'imu_driver::g366']]]
 ];

@@ -10,14 +10,13 @@ var searchData=
   ['caled_5fdistance_5fto_5fref_5fup_7',['CALED_DISTANCE_TO_REF_UP',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da4c803f770f147b99ecc95b66278f4321',1,'dvl_driver::path_finder']]],
   ['check_8',['check',['../classtimer_1_1Timeout.html#a024053a5695370b80d7d3de8b7987cd8',1,'timer::Timeout']]],
   ['check_5fnum_9',['check_num',['../namespacefix__axis__plotjugger__launch.html#a2649002f9e21bc6b0597b8b783079a27',1,'fix_axis_plotjugger_launch']]],
-  ['checksum_10',['CHECKSUM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da5f3c90e5be58235131ae4fae1cdf86a9',1,'dvl_driver::path_finder']]],
-  ['close_5fapplication_11',['close_application',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a7e5627907791a7cb561e88aa38c33720',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['config_5fcomm1_12',['config_comm1',['../namespaceimu__driver_1_1g366.html#a2e7821cad87d9f7be4799fd46ee99ae7',1,'imu_driver::g366']]],
-  ['config_5fcomm2_13',['config_comm2',['../namespaceimu__driver_1_1g366.html#a6e20ba689c7993efd4532f18a01de0ee',1,'imu_driver::g366']]],
-  ['config_5fcomm3_14',['config_comm3',['../namespaceimu__driver_1_1g366.html#ac4b0b290653f8f475671793c5dd69bab',1,'imu_driver::g366']]],
-  ['config_5fcomm4_15',['config_comm4',['../namespaceimu__driver_1_1g366.html#a1478e4b1ef54fbc6d2db5b654719f6c6',1,'imu_driver::g366']]],
-  ['config_5fcomm5_16',['config_comm5',['../namespaceimu__driver_1_1g366.html#a2e3378cbda30b87b2908f795c2a7f3fb',1,'imu_driver::g366']]],
-  ['config_5fcomm6_17',['config_comm6',['../namespaceimu__driver_1_1g366.html#a6b7249d5c29f524198b48630725b9464',1,'imu_driver::g366']]],
-  ['cos_5fh_18',['cos_h',['../namespacethruster__driver.html#ae0624cf49fc7845ce3a046c45cd8c789',1,'thruster_driver']]],
-  ['count_19',['count',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()'],['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()']]]
+  ['check_5fready_5frcomm1_10',['check_ready_rcomm1',['../namespaceimu__driver_1_1g366.html#a30cbf806c0ef77c1675f578c733525c6',1,'imu_driver::g366']]],
+  ['checksum_11',['CHECKSUM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da5f3c90e5be58235131ae4fae1cdf86a9',1,'dvl_driver::path_finder']]],
+  ['close_5fapplication_12',['close_application',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a7e5627907791a7cb561e88aa38c33720',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['command_13',['command',['../namespaceimu__driver_1_1g366.html#a60d3b4296cf3be998973a83903032db7',1,'imu_driver::g366']]],
+  ['concat_5f8bit_14',['concat_8bit',['../classimu__driver_1_1g366_1_1G366.html#ac74840e9332ba5d6883e1aaabdfe583b',1,'imu_driver::g366::G366']]],
+  ['config_5fcomm_15',['config_comm',['../namespaceimu__driver_1_1g366.html#a13dc3acd6c6c37a70192f5ede1806633',1,'imu_driver::g366']]],
+  ['config_5fmode_5fwcomm0_16',['config_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#a3ae26f3b7ad93205dbfc5b0938729ee9',1,'imu_driver::g366']]],
+  ['cos_5fh_17',['cos_h',['../namespacethruster__driver.html#ae0624cf49fc7845ce3a046c45cd8c789',1,'thruster_driver']]],
+  ['count_18',['count',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()'],['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()']]]
 ];
