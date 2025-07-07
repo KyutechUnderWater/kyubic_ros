@@ -9,9 +9,10 @@
 
 #include "imu_driver/imu_driver.hpp"
 
+#include <rclcpp/logging.hpp>
+
 #include <cstdlib>
 #include <memory>
-#include <rclcpp/logging.hpp>
 
 using namespace std::chrono_literals;
 
@@ -51,7 +52,6 @@ void IMUDriver::_setup()
     RCLCPP_ERROR(this->get_logger(), "Failed to Setup");
     exit(1);
   }
-  RCLCPP_INFO(this->get_logger(), "Setup is complete.");
 }
 
 void IMUDriver::_update()
@@ -70,12 +70,17 @@ void IMUDriver::_update()
 
     msg->status = driver_msgs::msg::IMU::STATUS_NORMAL;
 
+    msg->temperature = data_->temp;
     msg->accel.x = data_->x_accl;
     msg->accel.y = data_->y_accl;
     msg->accel.z = data_->z_accl;
     msg->gyro.x = data_->x_gyro;
     msg->gyro.y = data_->y_gyro;
     msg->gyro.z = data_->z_gyro;
+    msg->qtn.w = data_->qtn0;
+    msg->qtn.x = data_->qtn1;
+    msg->qtn.y = data_->qtn2;
+    msg->qtn.z = data_->qtn3;
     msg->orient.x = data_->roll;
     msg->orient.y = data_->pitch;
     msg->orient.z = data_->yaw;
