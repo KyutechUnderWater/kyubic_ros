@@ -34,6 +34,9 @@ bool G366::setup()
     std::this_thread::sleep_for(1s);
   }
 
+  // Reset
+  software_reset();
+
   // Check hardware error
   uint16_t hard_error = self_test() & 0b0000000001100000;
   if (hard_error != 0) {
@@ -45,10 +48,10 @@ bool G366::setup()
   serial_->write(config_comm, sizeof(config_comm));
 
   // Set filter
-  // set_filter();
+  set_filter();
 
   // Set attitude motion profile
-  // set_atti_motion_profile();
+  set_atti_motion_profile();
 
   // Run a self-test and Ckeck diagnostic
   uint16_t test_stat = self_test();
@@ -72,30 +75,6 @@ bool G366::setup()
   }
 
   return true;
-
-  // TODO: 削除する
-  // uint8_t buf[12];
-  // serial_->flush();
-  // serial_->write(config_comm1, sizeof(config_comm1));
-  // serial_->write(config_comm2, sizeof(config_comm2));
-  // serial_->read(buf, sizeof(buf), 10ms);
-  //
-  // int count = 1;
-  // while (buf[2] != 0x05) {
-  //   serial_->write(config_comm3, sizeof(config_comm3));
-  //   ssize_t len = serial_->read(buf, 4, 10ms);
-  //   for (int i = 0; i < len; i++) {
-  //     printf("%02X ", buf[i]);
-  //   }
-  //
-  //   if (count++ == 3) {
-  //     return false;
-  //   }
-  //   sleep(1);
-  // }
-  //
-  // serial_->write(config_comm6, sizeof(config_comm6));
-  // return true;
 }
 
 bool G366::update()
@@ -107,7 +86,7 @@ bool G366::update()
   ssize_t len = serial_->read(buf, 36, 10ms);
 
   // Decord data
-  if (len == 36 && buf[0] == 0x80 && buf[25] == 0x0d) {
+  if (len == 36 && buf[0] == 0x80 && buf[35] == 0x0d) {
     RAW_DATA_T raw_data_t;
     raw_data_t.head = buf[0];
     raw_data_t.flag = concat_8bit(buf[1], buf[2]);
@@ -278,13 +257,13 @@ uint16_t G366::self_test()
 
     //Read the running status
     serial_->flush();
-    serial_->write(self_test_wcomm1, sizeof(self_test_wcomm1));
+    serial_->write(self_test_rcomm1, sizeof(self_test_rcomm1));
     uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 10ms);
 
     if (len == 4) {
       running = stat_buf[1] & 0b00000100;
     } else {
-      std::cout << "Error [self_test]: Don't read runing status.";
+      std::cout << "Error [self_test]: Don't read runing status." << std::endl;
     }
   } while (running);
   std::cout << "Info [self_test]: End self-test" << std::endl;

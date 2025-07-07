@@ -88,7 +88,7 @@ struct RAW_DATA_T
  */
 using command = const unsigned char;
 command window0_select_wcomm[3] = {0xFE, 0x00, 0x0d};  /// Select Window 0
-command window1_select_wcomm[3] = {0xFE, 0x00, 0x0d};  /// Select Window 1
+command window1_select_wcomm[3] = {0xFE, 0x01, 0x0d};  /// Select Window 1
 
 command burst_request_wcomm0[3] = {0x80, 0x00, 0x0d};   /// Burst command (BURST Mode). Read data
 command config_mode_wcomm0[3] = {0x83, 0x00, 0x0d};     /// Select configuration mode
@@ -100,8 +100,8 @@ command software_reset_wcomm1[3] = {0x8A, 0x80, 0x0d};  /// Software reset comma
 command check_ready_rcomm1[3] = {0x0A, 0x00, 0x0d};     /// Read ready status
 command filter_ctrl_wcomm1[3] = {0x86, 0x00, 0x0d};     /// Set Filter command
 command filter_ctrl_rcomm1[3] = {0x06, 0x00, 0x0d};     /// Read set filter status
-command atti_motion_wcomm1[3] = {0x86, 0x00, 0x0d};     /// Set attitude mortion profile
-command atti_motion_rcomm1[3] = {0x06, 0x00, 0x0d};     /// Read set profile status
+command atti_motion_wcomm1[3] = {0x96, 0x00, 0x0d};     /// Set attitude mortion profile
+command atti_motion_rcomm1[3] = {0x16, 0x00, 0x0d};     /// Read set profile status
 
 command config_comm[33] = {
   0xFE, 0x01, 0x0d,  /// WINDOW = 1
@@ -114,13 +114,6 @@ command config_comm[33] = {
   0x94, 0x00, 0x0d,  /// axis mode is XYZ-XYZ
   0x95, 0x0c, 0x0d,  /// eular mode, enable ATTI_ON
 };
-// const unsigned char config_comm1[12] = {0xfe, 0x01, 0x0d, 0x0a, 0x00, 0x0d,
-//                                         0xfe, 0x00, 0x0d, 0x04, 0x00, 0x0d};
-// const unsigned char config_comm2[9] = {0xfe, 0x01, 0x0d, 0x86, 0x05, 0x0d, 0x06, 0x00, 0x0d};
-// const unsigned char config_comm3[3] = {0x06, 0x00, 0x0d};
-// const unsigned char config_comm4[15] = {0xfe, 0x01, 0x0d, 0x8A, 0x10, 0x0d, 0x0A, 0x00,
-//                                         0x0d, 0xfe, 0x00, 0x0d, 0x04, 0x00, 0x0d};
-// const unsigned char config_comm5[6] = {0xfe, 0x01, 0x0d, 0x8A, 0x80, 0x0d};
 
 /**
  * @brief The scale factor for each data
