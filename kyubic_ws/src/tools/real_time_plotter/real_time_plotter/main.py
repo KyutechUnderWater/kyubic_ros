@@ -1,7 +1,6 @@
 import sys
 import threading
 import collections
-import numpy as np
 import time
 from functools import partial
 
@@ -32,7 +31,7 @@ pg.setConfigOption("background", "w")
 pg.setConfigOption("foreground", "k")
 
 # プロットするデータの最大保持数
-MAX_DATA_POINTS = 50  # subscriber 5Hz -> buffer 10s
+MAX_DATA_POINTS = 100  # subscriber 5Hz -> buffer 20s
 
 
 class PlotUnitWidget(QWidget):
@@ -112,12 +111,14 @@ class MultiGraphViewer(QMainWindow):
 
         # --- 4つのグラフエリアを作成 ---
         plot_configs = [
+            {"title": "Position X", "unit": "m"},
+            {"title": "Position Y", "unit": "m"},
+            {"title": "Position Z", "unit": "m"},
+            {"title": "Angle Z", "unit": "deg"},
             # {"title": "Velocity X", "unit": "m/s"},
             # {"title": "Velocity Y", "unit": "m/s"},
-            {"title": "Position Z", "unit": "m"},
-            {"title": "Direction Z", "unit": "deg"},
-            {"title": "Velocity Z", "unit": "m/s"},
-            {"title": "Angular Vel Z", "unit": "deg/s"},
+            # {"title": "Velocity Z", "unit": "m/s"},
+            # {"title": "Angular Vel Z", "unit": "deg/s"},
         ]
 
         self.plot_units = []
@@ -130,8 +131,10 @@ class MultiGraphViewer(QMainWindow):
         # --- データ保持用バッファ ---
         self.time_data = collections.deque(maxlen=MAX_DATA_POINTS)
         # 0:vel_x, 1:vel_y, 2:vel_z, 3:ang_z
-        self.value_data = [collections.deque(maxlen=MAX_DATA_POINTS) for _ in range(4)]
-        self.target_data = [collections.deque(maxlen=MAX_DATA_POINTS) for _ in range(4)]
+        self.value_data = [collections.deque(
+            maxlen=MAX_DATA_POINTS) for _ in range(4)]
+        self.target_data = [collections.deque(
+            maxlen=MAX_DATA_POINTS) for _ in range(4)]
 
         # --- グラフ更新用タイマー ---
         self.timer = QTimer()
@@ -179,13 +182,6 @@ class MultiDimSubscriber(Node):
             Odometry, "odom", self.odom_callback, 10
         )
 
-        target_topics = {
-            "vel_x": "/target_vel_x",
-            "vel_y": "/target_vel_y",
-            "vel_z": "/target_vel_z",
-            "ang_z": "/target_ang_z",
-        }
-
         self.create_subscription(
             Targets,
             "targets",
@@ -206,24 +202,25 @@ class MultiDimSubscriber(Node):
         with self.lock:
             # 現在の値をタプルとして取得
             current_values = (
-                # msg.pose.position.x,
-                # msg.pose.position.y,
+                msg.pose.position.x,
+                msg.pose.position.y,
                 msg.pose.position.z_altitude,
                 msg.pose.orientation.z,
-                # msg.twist.linear.x,/
+                # msg.twist.linear.x,
                 # msg.twist.linear.y,
-                msg.twist.linear.z_altitude,
-                msg.twist.angular.z,
+                # msg.twist.linear.z_altitude,
+                # msg.twist.angular.z,
             )
             # 現在の目標値をタプルとして取得
             current_targets = (
-                self.latest_targets.z,
                 self.latest_targets.x,
                 self.latest_targets.y,
+                self.latest_targets.z,
                 self.latest_targets.yaw,
             )
             # (タイムスタンプ, 値のタプル, 目標値のタプル) の形式でキューに追加
-            self.data_queue.append((timestamp, current_values, current_targets))
+            self.data_queue.append(
+                (timestamp, current_values, current_targets))
 
     def get_data_points(self):
         points = []
@@ -237,7 +234,8 @@ def main(args=None):
     rclpy.init(args=args)
     ros_node = MultiDimSubscriber()
 
-    ros_thread = threading.Thread(target=rclpy.spin, args=(ros_node,), daemon=True)
+    ros_thread = threading.Thread(
+        target=rclpy.spin, args=(ros_node,), daemon=True)
     ros_thread.start()
 
     app = QApplication(sys.argv)

@@ -47,6 +47,8 @@ class RosCommunicator(Node, QObject):
         self.targets_pub = self.create_publisher(Targets, "targets", 10)
 
         # --- 配信データとタイマー ---
+        self.target_x_value = 0.0
+        self.target_y_value = 0.0
         self.target_z_value = None
         self.target_yaw_value = None
         # 1Hz (1.0秒ごと) で publish_targets を呼び出すタイマー
@@ -60,6 +62,8 @@ class RosCommunicator(Node, QObject):
     def publish_targets(self):
         """タイマーによって1Hzで呼び出される関数"""
         msg = Targets()
+        msg.x = self.target_x_value
+        msg.y = self.target_y_value
 
         # z軸目標値が設定されていれば配信
         if self.target_z_value is not None:
@@ -71,9 +75,11 @@ class RosCommunicator(Node, QObject):
 
         self.targets_pub.publish(msg)
 
-    @pyqtSlot(float, float)
-    def update_targets(self, z, yaw):
+    @pyqtSlot(float, float, float, float)
+    def update_targets(self, x, y, z, yaw):
         """GUIから呼び出されるスロット。配信する値を更新する。"""
+        self.target_x_value = x
+        self.target_y_value = y
         self.target_z_value = z
         self.target_yaw_value = yaw
         self.get_logger().info(
@@ -137,7 +143,8 @@ class TrajectoryPlotter(gl.GLViewWidget):
 
         # 前回と今回の値の差分ベクトルのL2ノルムが 0.2[m] より大きいときに更新
         if np.linalg.norm(self.trajectory_points[-1] - new_point, ord=2) > 0.1:
-            self.trajectory_points = np.vstack([self.trajectory_points, new_point])
+            self.trajectory_points = np.vstack(
+                [self.trajectory_points, new_point])
             self.plot_item.setData(pos=self.trajectory_points)
 
 
@@ -146,8 +153,8 @@ class MainWindow(QMainWindow):
     メインウィンドウ。プロッタと制御パネルをレイアウトする。
     """
 
-    # 決定ボタンが押されたときに発行されるシグナル (z, yaw)
-    targets_submitted = pyqtSignal(float, float)
+    # 決定ボタンが押されたときに発行されるシグナル (x, y, z, yaw)
+    targets_submitted = pyqtSignal(float, float, float, float)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -167,8 +174,24 @@ class MainWindow(QMainWindow):
         control_layout = QVBoxLayout(control_panel)
         main_layout.addWidget(control_panel, 1)  # レイアウト比率を1に設定
 
+        # x軸位置入力
+        control_layout.addWidget(QLabel("<b>Target Pos X [m]</b>"))
+        self.x_input = QDoubleSpinBox()
+        self.x_input.setRange(0.0, 15.0)
+        self.x_input.setSingleStep(0.1)
+        self.x_input.setValue(0.0)
+        control_layout.addWidget(self.x_input)
+
+        # y軸位置入力
+        control_layout.addWidget(QLabel("<b>Target Pos Y [m]</b>"))
+        self.y_input = QDoubleSpinBox()
+        self.y_input.setRange(0.0, 15.0)
+        self.y_input.setSingleStep(0.1)
+        self.y_input.setValue(0.0)
+        control_layout.addWidget(self.y_input)
+
         # z軸位置入力
-        control_layout.addWidget(QLabel("<b>Target Pos [m]</b>"))
+        control_layout.addWidget(QLabel("<b>Target Pos Z [m]</b>"))
         self.z_input = QDoubleSpinBox()
         self.z_input.setRange(0.0, 15.0)
         self.z_input.setSingleStep(0.1)
@@ -196,9 +219,11 @@ class MainWindow(QMainWindow):
 
     def on_submit(self):
         """決定ボタンがクリックされたときの処理"""
+        x = self.x_input.value()
+        y = self.y_input.value()
         z = self.z_input.value()
         yaw = self.yaw_input.value()
-        self.targets_submitted.emit(z, yaw)
+        self.targets_submitted.emit(x, y, z, yaw)
 
 
 def main(args=None):
