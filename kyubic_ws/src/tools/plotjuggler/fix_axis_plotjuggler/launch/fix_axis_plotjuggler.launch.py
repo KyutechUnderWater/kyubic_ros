@@ -18,9 +18,9 @@ def check_num(config: dict) -> int:
 def generate_launch_description():
     # Get config path
     config_path = os.path.join(
-        get_package_share_directory("fix_axis_plotjugger"),
+        get_package_share_directory("fix_axis_plotjuggler"),
         "config",
-        "fix_axis_plotjugger.param.yaml",
+        "fix_axis_plotjuggler.param.yaml",
     )
 
     # Load config
@@ -33,10 +33,10 @@ def generate_launch_description():
     for i in range(num):
         nodes.append(
             ComposableNode(
-                name=f"fix_axis_plotjugger_{i}",
-                namespace="tools/plotjugger",
-                package="fix_axis_plotjugger",
-                plugin="tools::plotjugger::FixAxisPlotjugger",
+                name=f"fix_axis_plotjuggler_{i}",
+                namespace="tools/plotjuggler",
+                package="fix_axis_plotjuggler",
+                plugin="tools::plotjuggler::FixAxisPlotjuggler",
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
@@ -51,8 +51,8 @@ def generate_launch_description():
         )
 
     action_component_container = ComposableNodeContainer(
-        name="fix_axis_plotjugger_component_container",
-        namespace="tools/plotjugger",
+        name="fix_axis_plotjuggler_component_container",
+        namespace="tools/plotjuggler",
         package="rclcpp_components",
         executable="component_container",
         composable_node_descriptions=nodes,

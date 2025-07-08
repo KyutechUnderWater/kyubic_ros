@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>fix_axis_plotjugger</name>
+  <name>fix_axis_plotjuggler</name>
   <version>0.1.0</version>
-  <description>fix axis range(min, max) for plotjugger</description>
+  <description>fix axis range(min, max) for plotjuggler</description>
   <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
   <license>Apache License 2.0</license>
 
@@ -11,7 +11,7 @@
 
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
-  <depend>plotjugger_msgs</depend>
+  <depend>plotjuggler_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

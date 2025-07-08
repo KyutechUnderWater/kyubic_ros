@@ -1,5 +1,5 @@
 [project]
-name = "kyubic-ros"
+name = "kyubic_ros"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
@@ -9,4 +9,10 @@ dependencies = [
     "vcstools>=0.1.42",
     "lark>=1.2.2",
     "pyqt5>=5.15.11",
+    "pyqtgraph>=0.13.7",
+    "pyqt6>=6.9.1",
+    "pyopengl>=3.1.9",
 ]
+
+[tool.uv.pip]
+system = true
