@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['salinity_0',['SALINITY',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da70e1d45f716d1ea1d95b4be8cae1a06c',1,'dvl_driver::path_finder']]],
-  ['salinity_1',['salinity',['../structdvl__driver_1_1path__finder_1_1Data.html#a989d96fdbaaba06a681342e0fe18326c',1,'dvl_driver::path_finder::Data']]],
+  ['salinity_0',['salinity',['../structdvl__driver_1_1path__finder_1_1Data.html#a989d96fdbaaba06a681342e0fe18326c',1,'dvl_driver::path_finder::Data']]],
+  ['salinity_1',['SALINITY',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da70e1d45f716d1ea1d95b4be8cae1a06c',1,'dvl_driver::path_finder']]],
   ['sampling_5fmode_5fwcomm0_2',['sampling_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#ae63d433aa418b58858af750cbf959fa7',1,'imu_driver::g366']]],
   ['self_5ftest_3',['self_test',['../classimu__driver_1_1g366_1_1G366.html#a36ccab1a1399925b5b62c4f6022b105c',1,'imu_driver::g366::G366']]],
   ['self_5ftest_5frcomm1_4',['self_test_rcomm1',['../namespaceimu__driver_1_1g366.html#a452969577dfcc8545ed42ef799216556',1,'imu_driver::g366']]],
@@ -18,7 +18,7 @@ var searchData=
   ['setconfig_15',['setConfig',['../classserial_1_1Serial.html#a70c460f4584e3f27eab799bde02e2836',1,'serial::Serial']]],
   ['settermios_16',['setTermios',['../classserial_1_1Serial.html#a4fea3d0ac96d0def65b942ccb80e5eb0',1,'serial::Serial']]],
   ['setup_17',['setup',['../classimu__driver_1_1g366_1_1G366.html#a7269ddb01c1546c1ba64c3a6753a8e75',1,'imu_driver::g366::G366::setup()'],['../namespacesetup.html',1,'setup']]],
-  ['setup_2epy_18',['setup.py',['../setup_8py.html',1,'']]],
+  ['setup_2epy_18',['setup.py',['../driver__node__manager_2setup_8py.html',1,'(Global Namespace)'],['../driver__launcher_2setup_8py.html',1,'(Global Namespace)']]],
   ['sin_5fh_19',['sin_h',['../namespacethruster__driver.html#ad996a462479e639f02185841a7020d4b',1,'thruster_driver']]],
   ['sin_5fv_20',['sin_v',['../namespacethruster__driver.html#aeb15b67065c300af59de2cbdd29d7989',1,'thruster_driver']]],
   ['software_5freset_21',['software_reset',['../classimu__driver_1_1g366_1_1G366.html#acd5743c08fcfc0673372cfbec720022c',1,'imu_driver::g366::G366']]],

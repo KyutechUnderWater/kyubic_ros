@@ -1,16 +1,17 @@
 <map id="src/driver" name="src/driver">
 <area shape="rect" id="node1" href="dir_fdedb0aba14d44ce9d99bc100e026e6a.html" title="common" alt="" coords="297,136,375,161"/>
-<area shape="rect" id="node3" href="dir_d18fc6aa2ae5abfff20bec8bd8620f81.html" title="depth_driver" alt="" coords="705,63,809,88"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000002_000000.html" title="2" alt="" coords="390,144,399,159"/>
-<area shape="rect" id="node4" href="dir_6323fa0fbcaf075db64f104ac921ee74.html" title="driver_node_manager" alt="" coords="517,63,681,88"/>
-<area shape="rect" id="node5" href="dir_fd57099d6d4f98bd10b0581dfd51ad4e.html" title="dvl_driver" alt="" coords="406,63,493,88"/>
-<area shape="rect" id="edge2-headlabel" href="dir_000007_000000.html" title="1" alt="" coords="370,126,379,141"/>
-<area shape="rect" id="node6" href="dir_de1b72ec9a3eeee1f05f853215e48888.html" title="imu_driver" alt="" coords="290,63,382,88"/>
-<area shape="rect" id="edge3-headlabel" href="dir_000011_000000.html" title="3" alt="" coords="340,110,349,125"/>
-<area shape="rect" id="node7" href="dir_4fab0b005b5b74b3d1bbb12ffbf0f3a1.html" title="led_driver" alt="" coords="179,63,266,88"/>
-<area shape="rect" id="edge4-headlabel" href="dir_000036_000000.html" title="1" alt="" coords="302,112,311,126"/>
-<area shape="rect" id="node8" href="dir_a53e6be48c34fd136feac8b07039b378.html" title="thruster_driver" alt="" coords="37,63,155,88"/>
-<area shape="rect" id="edge5-headlabel" href="dir_000064_000000.html" title="1" alt="" coords="277,116,286,130"/>
-<area shape="rect" id="clust2" href="dir_4db3a2f7aa3a8b9901e70dfeb2571af9.html" alt="" coords="27,52,905,99"/>
-<area shape="rect" id="clust1" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" title="src" alt="" coords="16,16,916,172"/>
+<area shape="rect" id="node3" href="dir_d18fc6aa2ae5abfff20bec8bd8620f81.html" title="depth_driver" alt="" coords="852,63,956,88"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000002_000000.html" title="2" alt="" coords="389,147,399,162"/>
+<area shape="rect" id="node4" href="dir_c72545850bb7705b8bba34944738c19e.html" title="driver_launcher" alt="" coords="705,63,828,88"/>
+<area shape="rect" id="node5" href="dir_6323fa0fbcaf075db64f104ac921ee74.html" title="driver_node_manager" alt="" coords="517,63,681,88"/>
+<area shape="rect" id="node6" href="dir_fd57099d6d4f98bd10b0581dfd51ad4e.html" title="dvl_driver" alt="" coords="406,63,493,88"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000008_000000.html" title="1" alt="" coords="370,126,379,141"/>
+<area shape="rect" id="node7" href="dir_de1b72ec9a3eeee1f05f853215e48888.html" title="imu_driver" alt="" coords="290,63,382,88"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000012_000000.html" title="3" alt="" coords="340,110,349,125"/>
+<area shape="rect" id="node8" href="dir_4fab0b005b5b74b3d1bbb12ffbf0f3a1.html" title="led_driver" alt="" coords="179,63,266,88"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000037_000000.html" title="1" alt="" coords="302,112,311,126"/>
+<area shape="rect" id="node9" href="dir_a53e6be48c34fd136feac8b07039b378.html" title="thruster_driver" alt="" coords="37,63,155,88"/>
+<area shape="rect" id="edge5-headlabel" href="dir_000066_000000.html" title="1" alt="" coords="277,116,286,130"/>
+<area shape="rect" id="clust2" href="dir_4db3a2f7aa3a8b9901e70dfeb2571af9.html" alt="" coords="27,52,1052,99"/>
+<area shape="rect" id="clust1" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" title="src" alt="" coords="16,16,1063,172"/>
 </map>
