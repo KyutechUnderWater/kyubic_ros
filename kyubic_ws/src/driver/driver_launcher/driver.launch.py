@@ -8,20 +8,16 @@ def generate_launch_description():
     depth_driver_dir = PathJoinSubstitution(
         [FindPackageShare("depth_driver"), "launch"]
     )
-    imu_driver_dir = PathJoinSubstitution([FindPackageShare("imu_driver"), "launch"])
     dvl_driver_dir = PathJoinSubstitution([FindPackageShare("dvl_driver"), "launch"])
     led_driver_dir = PathJoinSubstitution([FindPackageShare("led_driver"), "launch"])
+    thruster_driver_dir = PathJoinSubstitution(
+        [FindPackageShare("thruster_driver"), "launch"]
+    )
 
     return LaunchDescription(
         [
             IncludeLaunchDescription(
                 PathJoinSubstitution([depth_driver_dir, "depth_driver.launch.py"]),
-                launch_arguments={
-                    "log_level": "warn",
-                }.items(),
-            ),
-            IncludeLaunchDescription(
-                PathJoinSubstitution([imu_driver_dir, "imu_driver.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),
@@ -38,5 +34,14 @@ def generate_launch_description():
                     "log_level": "warn",
                 }.items(),
             ),
+            # TODO: ソフトウェア非常停止が搭載されれば，開放
+            # IncludeLaunchDescription(
+            #     PathJoinSubstitution(
+            #         [thruster_driver_dir, "thruster_driver.launch.py"]
+            #     ),
+            #     launch_arguments={
+            #         "log_level": "warn",
+            #     }.items(),
+            # ),
         ]
     )
