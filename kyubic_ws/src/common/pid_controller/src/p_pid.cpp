@@ -9,34 +9,40 @@
 
 #include "pid_controller/p_pid.hpp"
 
-#include <algorithm>
-#include <memory>
-
 namespace pid_controller
 {
 
-P_PID::P_PID(
-  const double k, const double kp, const double ki, const double kd, const double kf,
-  const double lo, const double hi)
-: k(k), kp(kp), ki(ki), kd(kd), kf(kf), lo(lo), hi(hi)
+PositionP_PID::PositionP_PID(const std::shared_ptr<PositionP_PIDParameter> param_)
+: k(param_->k), lo(param_->lo), hi(param_->hi), ppid_param(param_->ppid_param)
 {
-  master_pid_ = std::make_shared<PositionPID>(k, 0.0, 0.0, 0.0);
-  slave_pid_ = std::make_shared<PositionPID>(kp, ki, kd, kf);
+  slave_pid_ = std::make_shared<PositionPID>(ppid_param);
 }
 
-double P_PID::update(
+double PositionP_PID::update(
   double current_slave, double current_master, double target_master, double last_saturated)
 {
-  double vel_ref = master_pid_->update(current_master, target_master, 0.0);
-  vel_ref = std::clamp(vel_ref, lo, hi);
+  // Calculate master P contorller
+  double vel_ref = k * (target_master - current_master);
 
-  return slave_pid_->update(current_slave, vel_ref, last_saturated);
+  // Clamped between lo and hi value, and Calculate slave PID controller
+  return slave_pid_->update(current_slave, std::clamp(vel_ref, lo, hi), last_saturated);
 }
 
-void P_PID::reset()
+void PositionP_PID::reset() { slave_pid_->reset_integral(); }
+
+VelocityP_PID::VelocityP_PID(const std::shared_ptr<VelocityP_PIDParameter> param_)
+: k(param_->k), lo(param_->lo), hi(param_->hi), vpid_param(param_->vpid_param)
 {
-  master_pid_->reset_integral();
-  slave_pid_->reset_integral();
+  slave_pid_ = std::make_shared<VelocityPID>(vpid_param);
+}
+
+double VelocityP_PID::update(double current_slave, double current_master, double target_master)
+{
+  // Calculate master P contorller
+  double vel_ref = k * (target_master - current_master);
+
+  // Clamped between lo and hi value, and Calculate slave PID controller
+  return slave_pid_->update(current_slave, std::clamp(vel_ref, lo, hi));
 }
 
 }  // namespace pid_controller
