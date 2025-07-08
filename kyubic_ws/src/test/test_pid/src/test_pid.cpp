@@ -94,22 +94,23 @@ void TestPID::update()
     p_pid_yaw = vp_pids[name.at(3)]->update(angular.z, orient.z, target_yaw);
 
     // Print data
-    double target_p = targets_->z;
-    double current_p = pose.z_altitude;
-    double current_vel_p = linear.z_altitude;
-    double p_pid_p = p_pid_z;
+    double target_p = targets_->x;
+    double current_p = pose.x;
+    double current_vel_p = linear.x;
+    double p_pid_p = p_pid_x;
     std::cout << "target: " << target_p << " current: " << current_p
               << " current_vel: " << current_vel_p << " p_pid: " << p_pid_p << std::endl;
 
     // Create message from pid
     auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
-    // msg->wrench.force.x = p_pid_x;
-    // msg->wrench.force.y = p_pid_y;
+    msg->wrench.force.x = p_pid_x;
+    msg->wrench.force.y = p_pid_y;
     msg->wrench.force.z = p_pid_z;
-    msg->wrench.force.x = joy_->wrench.force.x;
-    msg->wrench.force.y = joy_->wrench.force.y;
+    msg->wrench.torque.z = p_pid_yaw;
+    // msg->wrench.force.x = joy_->wrench.force.x;
+    // msg->wrench.force.y = joy_->wrench.force.y;
     // msg->wrench.force.z = joy_->wrench.force.z;
-    msg->wrench.torque.z = joy_->wrench.torque.z;
+    // msg->wrench.torque.z = joy_->wrench.torque.z;
 
     pub_->publish(std::move(msg));
   }
