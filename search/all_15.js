@@ -1,10 +1,9 @@
 var searchData=
 [
-  ['velocity_0',['velocity',['../structdvl__driver_1_1path__finder_1_1Data.html#a60a0c41eb08f73e349fe5021c7da7f68',1,'dvl_driver::path_finder::Data']]],
-  ['velocityp_5fpid_1',['VelocityP_PID',['../classpid__controller_1_1VelocityP__PID.html',1,'pid_controller::VelocityP_PID'],['../classpid__controller_1_1VelocityP__PID.html#a6045c42e38311a8947fb5d60ab7805e8',1,'pid_controller::VelocityP_PID::VelocityP_PID()']]],
-  ['velocityp_5fpidparameter_2',['VelocityP_PIDParameter',['../structpid__controller_1_1VelocityP__PIDParameter.html',1,'pid_controller']]],
-  ['velocitypid_3',['VelocityPID',['../classpid__controller_1_1VelocityPID.html',1,'pid_controller::VelocityPID'],['../classpid__controller_1_1VelocityPID.html#a066d539b6e00d7df13b63d1c12681a42',1,'pid_controller::VelocityPID::VelocityPID()']]],
-  ['velocitypidparameter_4',['VelocityPIDParameter',['../structpid__controller_1_1VelocityPIDParameter.html',1,'pid_controller']]],
-  ['version_5',['version',['../namespacesetup.html#a2aa722b36a933088812b50ea79b97a5c',1,'setup']]],
-  ['vpid_5fparam_6',['vpid_param',['../structpid__controller_1_1VelocityP__PIDParameter.html#a712f786a2458b70610596d1b870a2693',1,'pid_controller::VelocityP_PIDParameter']]]
+  ['update_0',['update',['../classpid__controller_1_1PositionP__PID.html#a4cb27333f0d5cc1537ae79eebce69e89',1,'pid_controller::PositionP_PID::update()'],['../classpid__controller_1_1VelocityP__PID.html#a50d5e534e94fe33e89a96b07634a237d',1,'pid_controller::VelocityP_PID::update()'],['../classpid__controller_1_1PositionPID.html#a38cc0d09cd6a9951e6a82db900f3dfc7',1,'pid_controller::PositionPID::update()'],['../classpid__controller_1_1VelocityPID.html#a9b7188402f22a7a41d4379ab978e002b',1,'pid_controller::VelocityPID::update()'],['../classdepth__driver_1_1Bar30.html#a2bfd86061bac907949398414a6426c8d',1,'depth_driver::Bar30::update()'],['../classimu__driver_1_1g366_1_1G366.html#af5e1481dc4cf1465cf5a08b016954ea1',1,'imu_driver::g366::G366::update()'],['../classtest_1_1TestPID.html#a6f62b7897787069cebd1289b3755cab8',1,'test::TestPID::update()']]],
+  ['update_5fplots_1',['update_plots',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a0f47bbb08f13d4ce165b0e2c60b1813a',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['update_5fstatus_5floop_2',['update_status_loop',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a910d7357cd191f3cf4671a6df127a584',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['update_5fstatus_5fthread_3',['update_status_thread',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ac35b12515041926d001790e6319561db',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['update_5ftargets_4',['update_targets',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#ad0a962376f4b0e999cdd4172b35f5eb4',1,'trajectory_viewer::main::RosCommunicator']]],
+  ['update_5fyrange_5',['update_yrange',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#a6fff72c911052b0d8600f94cd03ad72d',1,'real_time_plotter::main::PlotUnitWidget']]]
 ];

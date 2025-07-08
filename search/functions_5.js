@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['fixaxisplotjugger_0',['FixAxisPlotjugger',['../classtools_1_1plotjugger_1_1FixAxisPlotjugger.html#a03a90d0cf818c63892a086dacb5e4766',1,'tools::plotjugger::FixAxisPlotjugger']]],
-  ['flush_1',['flush',['../classserial_1_1Serial.html#a45a7676a6e6c775cd549e889e714b5bb',1,'serial::Serial']]]
+  ['error_0',['error',['../namespacedvl__driver_1_1path__finder.html#a173fe1164d1723004799c5643952b5c1',1,'dvl_driver::path_finder']]]
 ];

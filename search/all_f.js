@@ -1,24 +1,6 @@
 var searchData=
 [
-  ['p_5fpid_2ecpp_0',['p_pid.cpp',['../p__pid_8cpp.html',1,'']]],
-  ['p_5fpid_2ehpp_1',['p_pid.hpp',['../p__pid_8hpp.html',1,'']]],
-  ['package_5fname_2',['package_name',['../namespacesetup.html#ae1914c6379853aac13554579d9b6b4ec',1,'setup']]],
-  ['packages_3',['packages',['../namespacesetup.html#aff2375a361fd5865c77bd9aa093be747',1,'setup']]],
-  ['path_5ffinder_2ecpp_4',['path_finder.cpp',['../path__finder_8cpp.html',1,'']]],
-  ['path_5ffinder_2ehpp_5',['path_finder.hpp',['../path__finder_8hpp.html',1,'']]],
-  ['pathfinder_5fid_6',['pathfinder_id',['../structdvl__driver_1_1path__finder_1_1Data.html#a9b5ceee7cde2606d55e8e5cf0f660ae5',1,'dvl_driver::path_finder::Data']]],
-  ['pid_2ecpp_7',['pid.cpp',['../pid_8cpp.html',1,'']]],
-  ['pid_2ehpp_8',['pid.hpp',['../pid_8hpp.html',1,'']]],
-  ['pid_5fcontroller_9',['pid_controller',['../namespacepid__controller.html',1,'']]],
-  ['ping_5fcmd_10',['ping_cmd',['../classdvl__driver_1_1path__finder_1_1Sender.html#af4a66b06255404e2e90259b07abba05f',1,'dvl_driver::path_finder::Sender']]],
-  ['pitch_11',['PITCH',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da277d6e26eefde44e56e9a95c3841ec5a',1,'dvl_driver::path_finder']]],
-  ['pitch_12',['pitch',['../structdvl__driver_1_1path__finder_1_1Data.html#acd2ef7ed593d99c6bb16785aa9400a6c',1,'dvl_driver::path_finder::Data::pitch()'],['../structimu__driver_1_1g366_1_1DATA.html#a8cb31406dfa239dc3e1906a813813234',1,'imu_driver::g366::DATA::pitch()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#ab9d93b8c42d3c176900d362215ff58c8',1,'imu_driver::g366::RAW_DATA_T::pitch()']]],
-  ['positionp_5fpid_13',['PositionP_PID',['../classpid__controller_1_1PositionP__PID.html',1,'pid_controller::PositionP_PID'],['../classpid__controller_1_1PositionP__PID.html#a29ce237ecd8d79f21bc1d47235da170b',1,'pid_controller::PositionP_PID::PositionP_PID()']]],
-  ['positionp_5fpidparameter_14',['PositionP_PIDParameter',['../structpid__controller_1_1PositionP__PIDParameter.html',1,'pid_controller']]],
-  ['positionpid_15',['PositionPID',['../classpid__controller_1_1PositionPID.html',1,'pid_controller::PositionPID'],['../classpid__controller_1_1PositionPID.html#a6bb3a4dff74bb6601751727f5265ca99',1,'pid_controller::PositionPID::PositionPID()']]],
-  ['positionpidparameter_16',['PositionPIDParameter',['../structpid__controller_1_1PositionPIDParameter.html',1,'pid_controller']]],
-  ['ppid_5fparam_17',['ppid_param',['../structpid__controller_1_1PositionP__PIDParameter.html#adb12d40440b5da6cee04c0ba95f8c93f',1,'pid_controller::PositionP_PIDParameter']]],
-  ['print_5finfo_18',['print_info',['../classdvl__driver_1_1path__finder_1_1Listener.html#aac8f10ef6cf61256ca128a40cb0cff89',1,'dvl_driver::path_finder::Listener']]],
-  ['processes_19',['processes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a11742ed5aa6d05fe13377caa2f2dd6bd',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['py_5fmodules_20',['py_modules',['../namespacesetup.html#ad6a0f278ba38b7ed3595fd6896196fb3',1,'setup']]]
+  ['odom_5fcallback_0',['odom_callback',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#a27eca1fd2e23e64e8882af7f5bf5431d',1,'real_time_plotter.main.MultiDimSubscriber.odom_callback()'],['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a5bbf4372c12158c26d686afbad476860',1,'trajectory_viewer.main.RosCommunicator.odom_callback()']]],
+  ['odom_5fsubscription_1',['odom_subscription',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#afa914caec04043dd404991cd3ea79a44',1,'real_time_plotter::main::MultiDimSubscriber']]],
+  ['on_5fsubmit_2',['on_submit',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a2fe3470227d1f8e9d39600c44c594ffb',1,'trajectory_viewer::main::MainWindow']]]
 ];

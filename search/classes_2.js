@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fixaxisplotjugger_0',['FixAxisPlotjugger',['../classtools_1_1plotjugger_1_1FixAxisPlotjugger.html',1,'tools::plotjugger']]]
+  ['fixaxisplotjuggler_0',['FixAxisPlotjuggler',['../classtools_1_1plotjuggler_1_1FixAxisPlotjuggler.html',1,'tools::plotjuggler']]]
 ];

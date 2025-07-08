@@ -1,5 +1,15 @@
 var searchData=
 [
-  ['update_0',['update',['../classpid__controller_1_1PositionP__PID.html#a4cb27333f0d5cc1537ae79eebce69e89',1,'pid_controller::PositionP_PID::update()'],['../classpid__controller_1_1VelocityP__PID.html#a50d5e534e94fe33e89a96b07634a237d',1,'pid_controller::VelocityP_PID::update()'],['../classpid__controller_1_1PositionPID.html#a38cc0d09cd6a9951e6a82db900f3dfc7',1,'pid_controller::PositionPID::update()'],['../classpid__controller_1_1VelocityPID.html#a9b7188402f22a7a41d4379ab978e002b',1,'pid_controller::VelocityPID::update()'],['../classdepth__driver_1_1Bar30.html#a2bfd86061bac907949398414a6426c8d',1,'depth_driver::Bar30::update()'],['../classimu__driver_1_1g366_1_1G366.html#af5e1481dc4cf1465cf5a08b016954ea1',1,'imu_driver::g366::G366::update()'],['../classtest_1_1TestPID.html#a6f62b7897787069cebd1289b3755cab8',1,'test::TestPID::update()']]],
-  ['update_5fstatus_5floop_1',['update_status_loop',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a910d7357cd191f3cf4671a6df127a584',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['self_5ftest_0',['self_test',['../classimu__driver_1_1g366_1_1G366.html#a36ccab1a1399925b5b62c4f6022b105c',1,'imu_driver::g366::G366']]],
+  ['sender_1',['Sender',['../classdvl__driver_1_1path__finder_1_1Sender.html#a2bdcabf8042c9644b72b09311625e359',1,'dvl_driver::path_finder::Sender']]],
+  ['serial_2',['Serial',['../classserial_1_1Serial.html#ab0764fe0d037a8b46accac8fe2a72999',1,'serial::Serial']]],
+  ['serialexception_3',['SerialException',['../classserial_1_1SerialException.html#a3713871bf41f84d80537388b7e3308a2',1,'serial::SerialException']]],
+  ['set_5fatti_5fmotion_5fprofile_4',['set_atti_motion_profile',['../classimu__driver_1_1g366_1_1G366.html#acbb449f814bc2f2b3c73992037b7944e',1,'imu_driver::g366::G366']]],
+  ['set_5ffilter_5',['set_filter',['../classimu__driver_1_1g366_1_1G366.html#ad5e8bde5ef0f5919fc601cbe346d8fae',1,'imu_driver::g366::G366']]],
+  ['setconfig_6',['setConfig',['../classserial_1_1Serial.html#a70c460f4584e3f27eab799bde02e2836',1,'serial::Serial']]],
+  ['setdata_7',['setData',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#ac6c4330521feb19653c0083d52d149bd',1,'real_time_plotter::main::PlotUnitWidget']]],
+  ['settermios_8',['setTermios',['../classserial_1_1Serial.html#a4fea3d0ac96d0def65b942ccb80e5eb0',1,'serial::Serial']]],
+  ['setup_9',['setup',['../classimu__driver_1_1g366_1_1G366.html#a7269ddb01c1546c1ba64c3a6753a8e75',1,'imu_driver::g366::G366']]],
+  ['software_5freset_10',['software_reset',['../classimu__driver_1_1g366_1_1G366.html#acd5743c08fcfc0673372cfbec720022c',1,'imu_driver::g366::G366']]],
+  ['stop_5fnode_11',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];
