@@ -1,21 +1,8 @@
 var searchData=
 [
-  ['leak_5fsensor_0',['LEAK_SENSOR',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830daafa78d8f62d2307f90990616229ffa3c',1,'dvl_driver::path_finder']]],
-  ['leak_5fstatus_1',['leak_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a3f6e67ef9053385376a3b5d83cc6d480',1,'dvl_driver::path_finder::Data']]],
-  ['led_5fdriver_2',['led_driver',['../namespaceled__driver.html',1,'']]],
-  ['led_5fdriver_2ecpp_3',['led_driver.cpp',['../led__driver_8cpp.html',1,'']]],
-  ['led_5fdriver_2ehpp_4',['led_driver.hpp',['../led__driver_8hpp.html',1,'']]],
-  ['led_5fdriver_5flaunch_5',['led_driver_launch',['../namespaceled__driver__launch.html',1,'']]],
-  ['led_5fdriver_5flaunch_2epy_6',['led_driver_launch.py',['../led__driver__launch_8py.html',1,'']]],
-  ['leddriver_7',['LEDDriver',['../classled__driver_1_1LEDDriver.html',1,'led_driver::LEDDriver'],['../classled__driver_1_1LEDDriver.html#a716b3497e637abce728b1caee9a18fbc',1,'led_driver::LEDDriver::LEDDriver()']]],
-  ['license_8',['license',['../namespacesetup.html#a8ed6f50a28bd6a8794f8e1153baa6de9',1,'setup']]],
-  ['listen_9',['listen',['../classdvl__driver_1_1path__finder_1_1Listener.html#a9a51564039bdfce231aba8e7bdb692a2',1,'dvl_driver::path_finder::Listener']]],
-  ['listener_10',['Listener',['../classdvl__driver_1_1path__finder_1_1Listener.html',1,'dvl_driver::path_finder::Listener'],['../classdvl__driver_1_1path__finder_1_1Listener.html#acfa788e1a3e5d1d236c1f4b1877beb34',1,'dvl_driver::path_finder::Listener::Listener()']]],
-  ['localization_11',['Localization',['../classlocalization_1_1Localization.html#a4ab32aee8bf66b7f719e0cf862fb597c',1,'localization::Localization']]],
-  ['localization_12',['localization',['../namespacelocalization.html',1,'']]],
-  ['localization_13',['Localization',['../classlocalization_1_1Localization.html',1,'localization']]],
-  ['localization_5fcomponent_2ecpp_14',['localization_component.cpp',['../localization__component_8cpp.html',1,'']]],
-  ['localization_5fcomponent_2ehpp_15',['localization_component.hpp',['../localization__component_8hpp.html',1,'']]],
-  ['localization_5fcomponents_5flaunch_16',['localization_components_launch',['../namespacelocalization__components__launch.html',1,'']]],
-  ['localization_5fcomponents_5flaunch_2epy_17',['localization_components_launch.py',['../localization__components__launch_8py.html',1,'']]]
+  ['k_0',['k',['../structpid__controller_1_1PositionP__PIDParameter.html#af302311042efc5fdca2a80759eacd6d4',1,'pid_controller::PositionP_PIDParameter::k()'],['../structpid__controller_1_1VelocityP__PIDParameter.html#a2312aa89750d6c2766bb20850383e554',1,'pid_controller::VelocityP_PIDParameter::k()']]],
+  ['kd_1',['kd',['../structpid__controller_1_1PositionPIDParameter.html#a1332031b4a2e39300ff59ca849c91dac',1,'pid_controller::PositionPIDParameter::kd()'],['../structpid__controller_1_1VelocityPIDParameter.html#ac5e562c2d7d04cbeb2931f087583d995',1,'pid_controller::VelocityPIDParameter::kd()']]],
+  ['kf_2',['kf',['../structpid__controller_1_1PositionPIDParameter.html#add6a47e9b6cd14c19402e421ab8fe9b7',1,'pid_controller::PositionPIDParameter::kf()'],['../structpid__controller_1_1VelocityPIDParameter.html#a92f714d01772f67bfd1da12d7a0bd65e',1,'pid_controller::VelocityPIDParameter::kf()']]],
+  ['ki_3',['ki',['../structpid__controller_1_1PositionPIDParameter.html#a64864ebc3ff82d0b14aacfc0589b4c3c',1,'pid_controller::PositionPIDParameter::ki()'],['../structpid__controller_1_1VelocityPIDParameter.html#a67d8bf60c28c165676c403ce4577bdc5',1,'pid_controller::VelocityPIDParameter::ki()']]],
+  ['kp_4',['kp',['../structpid__controller_1_1PositionPIDParameter.html#a9ba6b3e60e7aa9193f54a743246364e7',1,'pid_controller::PositionPIDParameter::kp()'],['../structpid__controller_1_1VelocityPIDParameter.html#ae7bd6a2e71319836d173b61d78d25f3a',1,'pid_controller::VelocityPIDParameter::kp()']]]
 ];

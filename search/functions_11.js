@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['what_0',['what',['../classserial_1_1SerialException.html#a0a484a58326359c49ee535b23a71d328',1,'serial::SerialException']]],
-  ['write_1',['write',['../classserial_1_1Serial.html#a6d02ff6d208cf44c70c1339da44a20fd',1,'serial::Serial']]]
+  ['velocityp_5fpid_0',['VelocityP_PID',['../classpid__controller_1_1VelocityP__PID.html#a6045c42e38311a8947fb5d60ab7805e8',1,'pid_controller::VelocityP_PID']]],
+  ['velocitypid_1',['VelocityPID',['../classpid__controller_1_1VelocityPID.html#a066d539b6e00d7df13b63d1c12681a42',1,'pid_controller::VelocityPID']]]
 ];

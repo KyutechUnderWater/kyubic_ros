@@ -1,9 +1,7 @@
 var searchData=
 [
-  ['name_0',['name',['../namespacesetup.html#ab3a7a0638d76a01367c5bc3cc699447f',1,'setup']]],
-  ['node_5fstatus_1',['node_status',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#abce255ead68a038acae9fe6bd1d04f44',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['nodemanager_2',['NodeManager',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html',1,'driver_node_manager::driver_node_manager']]],
-  ['nodes_3',['nodes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ae64c07aaa135224e453985d7b1d3c5ca',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['num_5fof_5fbytes_4',['num_of_bytes',['../structdvl__driver_1_1path__finder_1_1Data.html#a854220bc0dd5b0d891923f9c9b2c140a',1,'dvl_driver::path_finder::Data']]],
-  ['num_5fof_5fbytes_5',['NUM_OF_BYTES',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830daccfe1e7aca9e0bad57637f13d5aa6276',1,'dvl_driver::path_finder']]]
+  ['main_0',['main',['../joy2wrench_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;joy2wrench.cpp'],['../depth__driver_8cpp.html#a3c04138a5bfe5d72780bb7e82a18e627',1,'main(int argc, char **argv):&#160;depth_driver.cpp'],['../namespacedriver__node__manager_1_1driver__node__manager.html#aa0961e141bda24aefbb162a6f28848c7',1,'driver_node_manager.driver_node_manager.main()'],['../dvl__driver_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;dvl_driver.cpp'],['../imu__driver_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;imu_driver.cpp'],['../led__driver_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;led_driver.cpp'],['../thruster__driver_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;thruster_driver.cpp']]],
+  ['maintainer_1',['maintainer',['../namespacesetup.html#aa1a7cf9bbf76004bb72697dc00bbee9d',1,'setup']]],
+  ['maintainer_5femail_2',['maintainer_email',['../namespacesetup.html#a92a81adbfdd219564d5246ce8d77f869',1,'setup']]],
+  ['meta_3',['meta',['../structimu__driver_1_1g366_1_1DATA.html#a77f29a73cdd29edfae8697c5875ef8dd',1,'imu_driver::g366::DATA']]]
 ];

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['serial_0',['serial',['../namespaceserial.html',1,'']]],
-  ['setup_1',['setup',['../namespacesetup.html',1,'']]]
+  ['pid_5fcontroller_0',['pid_controller',['../namespacepid__controller.html',1,'']]]
 ];

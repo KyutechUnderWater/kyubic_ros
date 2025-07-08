@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['velocity_0',['velocity',['../structdvl__driver_1_1path__finder_1_1Data.html#a60a0c41eb08f73e349fe5021c7da7f68',1,'dvl_driver::path_finder::Data']]],
-  ['version_1',['version',['../namespacesetup.html#a2aa722b36a933088812b50ea79b97a5c',1,'setup']]]
+  ['update_0',['update',['../classpid__controller_1_1PositionP__PID.html#a4cb27333f0d5cc1537ae79eebce69e89',1,'pid_controller::PositionP_PID::update()'],['../classpid__controller_1_1VelocityP__PID.html#a50d5e534e94fe33e89a96b07634a237d',1,'pid_controller::VelocityP_PID::update()'],['../classpid__controller_1_1PositionPID.html#a38cc0d09cd6a9951e6a82db900f3dfc7',1,'pid_controller::PositionPID::update()'],['../classpid__controller_1_1VelocityPID.html#a9b7188402f22a7a41d4379ab978e002b',1,'pid_controller::VelocityPID::update()'],['../classdepth__driver_1_1Bar30.html#a2bfd86061bac907949398414a6426c8d',1,'depth_driver::Bar30::update()'],['../classimu__driver_1_1g366_1_1G366.html#af5e1481dc4cf1465cf5a08b016954ea1',1,'imu_driver::g366::G366::update()'],['../classtest_1_1TestPID.html#a6f62b7897787069cebd1289b3755cab8',1,'test::TestPID::update()']]],
+  ['update_5fstatus_5floop_1',['update_status_loop',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a910d7357cd191f3cf4671a6df127a584',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['update_5fstatus_5fthread_2',['update_status_thread',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ac35b12515041926d001790e6319561db',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];
