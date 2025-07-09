@@ -96,6 +96,15 @@ RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DI
 	rm -rf /var/lib/apt/lists/* && \
 	echo "succesfully"
 
+######################################
+## Install zellij
+######################################
+RUN gosu ros bash -c "mkdir -p /home/ros/Apps/Zellij && cd /home/ros/Apps/Zellij && \
+	curl -OL https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz && \
+	tar -xvf zellij*.tar.gz" && \
+	chmod +x /home/ros/Apps/Zellij/zellij && \
+	ln -s /home/ros/Apps/Zellij/zellij /usr/bin/zellij
+
 COPY ./entrypoint.sh /usr/bin
 COPY ./once_entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh /usr/bin/once_entrypoint.sh
