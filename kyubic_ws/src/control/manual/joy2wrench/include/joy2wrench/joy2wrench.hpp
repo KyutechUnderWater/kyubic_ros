@@ -15,8 +15,8 @@ public:
 
 private:
   std::string device_name;
-  double force_scale;
-  double torque_scale;
+  double force_x_scale, force_y_scale, force_z_scale;
+  double torque_x_scale, torque_z_scale;
 
   rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr pub_;
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr sub_;
