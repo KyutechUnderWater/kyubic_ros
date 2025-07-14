@@ -24,6 +24,11 @@ namespace localization
 
 Localization::Localization(const rclcpp::NodeOptions & options) : Node("localization", options)
 {
+  bool depth_enable = this->declare_parameter("depth", false);
+  bool imu_enable = this->declare_parameter("imu", false);
+  bool dvl_enable = this->declare_parameter("dvl", false);
+  enabled_sensor |= depth_enable << 2 | imu_enable << 1 | (imu_enable ? dvl_enable : 0);
+
   odom_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
@@ -52,7 +57,7 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   client_dvl_ = create_client<std_srvs::srv::Trigger>("dvl/reset", qos, client_cb_group_);
 
   // Create wall timer
-  timer_ = create_wall_timer(10ms, std::bind(&Localization::publisher, this));
+  timer_ = create_wall_timer(100ms, std::bind(&Localization::publisher, this));
 }
 
 void Localization::depth_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
@@ -78,7 +83,7 @@ void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePt
 void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
   RCLCPP_INFO(this->get_logger(), "Updated DVL odometry");
-  all_updated |= 3;
+  all_updated |= 1;
 
   this->odom_msg_->header = msg->header;
 
@@ -96,7 +101,10 @@ void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePt
 
 void Localization::publisher()
 {
-  if (all_updated != 255) return;
+  if (all_updated != enabled_sensor) {
+    RCLCPP_WARN(this->get_logger(), "Don't update. Wait data comming.");
+    return;
+  }
   RCLCPP_INFO(this->get_logger(), "Updated localization");
 
   // Reset flag
@@ -104,7 +112,6 @@ void Localization::publisher()
 
   // Copy object (shared_ptr -> unique_ptr)
   auto msg = std::make_unique<localization_msgs::msg::Odometry>(*odom_msg_);
-
   pub_->publish(std::move(msg));
 }
 
