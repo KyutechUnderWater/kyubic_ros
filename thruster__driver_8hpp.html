@@ -84,25 +84,27 @@ $(function() {
 
 <p>thruster driver  
 <a href="#details">More...</a></p>
-<div class="textblock"><code>#include &lt;cmath&gt;</code><br />
+<div class="textblock"><code>#include &lt;rclcpp/rclcpp.hpp&gt;</code><br />
+<code>#include &lt;<a class="el" href="serial_8hpp_source.html">serial/serial.hpp</a>&gt;</code><br />
 <code>#include &lt;driver_msgs/msg/thruster.hpp&gt;</code><br />
 <code>#include &lt;geometry_msgs/msg/wrench_stamped.hpp&gt;</code><br />
-<code>#include &lt;rclcpp/rclcpp.hpp&gt;</code><br />
-<code>#include &lt;<a class="el" href="serial_8hpp_source.html">serial/serial.hpp</a>&gt;</code><br />
+<code>#include &lt;array&gt;</code><br />
+<code>#include &lt;cmath&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for thruster_driver.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="thruster__driver_8hpp__incl.png" border="0" usemap="#asrc_2driver_2thruster__driver_2include_2thruster__driver_2thruster__driver_8hpp" alt=""/></div>
 <map name="asrc_2driver_2thruster__driver_2include_2thruster__driver_2thruster__driver_8hpp" id="asrc_2driver_2thruster__driver_2include_2thruster__driver_2thruster__driver_8hpp">
-<area shape="rect" title="thruster driver" alt="" coords="341,5,535,60"/>
-<area shape="rect" title=" " alt="" coords="5,115,68,141"/>
-<area shape="rect" title=" " alt="" coords="93,115,309,141"/>
-<area shape="rect" title=" " alt="" coords="333,108,543,148"/>
-<area shape="rect" title=" " alt="" coords="568,115,700,141"/>
-<area shape="rect" href="serial_8hpp.html" title="serial library" alt="" coords="724,115,851,141"/>
-<area shape="rect" title=" " alt="" coords="645,196,729,221"/>
-<area shape="rect" title=" " alt="" coords="754,196,821,221"/>
-<area shape="rect" title=" " alt="" coords="845,196,903,221"/>
+<area shape="rect" title="thruster driver" alt="" coords="442,5,637,60"/>
+<area shape="rect" title=" " alt="" coords="5,115,137,141"/>
+<area shape="rect" href="serial_8hpp.html" title="serial library" alt="" coords="161,115,288,141"/>
+<area shape="rect" title=" " alt="" coords="313,115,529,141"/>
+<area shape="rect" title=" " alt="" coords="553,108,763,148"/>
+<area shape="rect" title=" " alt="" coords="787,115,843,141"/>
+<area shape="rect" title=" " alt="" coords="868,115,931,141"/>
+<area shape="rect" title=" " alt="" coords="83,196,167,221"/>
+<area shape="rect" title=" " alt="" coords="191,196,258,221"/>
+<area shape="rect" title=" " alt="" coords="282,196,341,221"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -131,16 +133,38 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a638b0226ee3770d3d42b64506a6b4a29"><td class="memItemLeft" align="right" valign="top">constexpr uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a638b0226ee3770d3d42b64506a6b4a29">thruster_driver::theta_h</a> = 30</td></tr>
-<tr class="separator:a638b0226ee3770d3d42b64506a6b4a29"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb3e519bfcf67ddb5c603ce96b7343a1"><td class="memItemLeft" align="right" valign="top">constexpr uint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#adb3e519bfcf67ddb5c603ce96b7343a1">thruster_driver::theta_v</a> = 30</td></tr>
-<tr class="separator:adb3e519bfcf67ddb5c603ce96b7343a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad996a462479e639f02185841a7020d4b"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#ad996a462479e639f02185841a7020d4b">thruster_driver::sin_h</a> = sin(theta_h * M_PI / 180)</td></tr>
-<tr class="separator:ad996a462479e639f02185841a7020d4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0624cf49fc7845ce3a046c45cd8c789"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#ae0624cf49fc7845ce3a046c45cd8c789">thruster_driver::cos_h</a> = cos(theta_h * M_PI / 180)</td></tr>
-<tr class="separator:ae0624cf49fc7845ce3a046c45cd8c789"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb15b67065c300af59de2cbdd29d7989"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#aeb15b67065c300af59de2cbdd29d7989">thruster_driver::sin_v</a> = sin(theta_v * M_PI / 180)</td></tr>
-<tr class="separator:aeb15b67065c300af59de2cbdd29d7989"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40b78d418a841360a75203d131c6ddfb"><td class="memItemLeft" align="right" valign="top">constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a40b78d418a841360a75203d131c6ddfb">thruster_driver::theta_h</a> = 30 * M_PI / 180</td></tr>
+<tr class="separator:a40b78d418a841360a75203d131c6ddfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e5fc330b07b0910b234d21158bccb43"><td class="memItemLeft" align="right" valign="top">constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a4e5fc330b07b0910b234d21158bccb43">thruster_driver::theta_v</a> = 30 * M_PI / 180</td></tr>
+<tr class="separator:a4e5fc330b07b0910b234d21158bccb43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8af5fb016aaa6fc2a2a7e4d0e610d497"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a8af5fb016aaa6fc2a2a7e4d0e610d497">thruster_driver::dist_hx</a> = 0.19</td></tr>
+<tr class="separator:a8af5fb016aaa6fc2a2a7e4d0e610d497"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bfb64bea230881cdb5bd71cd22fb793"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a6bfb64bea230881cdb5bd71cd22fb793">thruster_driver::dist_hy</a> = 0.14</td></tr>
+<tr class="memdesc:a6bfb64bea230881cdb5bd71cd22fb793"><td class="mdescLeft">&#160;</td><td class="mdescRight">x-axis (horizontal)  <br /></td></tr>
+<tr class="separator:a6bfb64bea230881cdb5bd71cd22fb793"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adaffecdddd45e2fe44cb85c6cacdab75"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#adaffecdddd45e2fe44cb85c6cacdab75">thruster_driver::dist_vy</a> = 0.19</td></tr>
+<tr class="memdesc:adaffecdddd45e2fe44cb85c6cacdab75"><td class="mdescLeft">&#160;</td><td class="mdescRight">y-axis (horizontal)  <br /></td></tr>
+<tr class="separator:adaffecdddd45e2fe44cb85c6cacdab75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76d6fb06512926cd515d6c7ec0edee6d"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a76d6fb06512926cd515d6c7ec0edee6d">thruster_driver::dist_vz</a> = 0.14</td></tr>
+<tr class="memdesc:a76d6fb06512926cd515d6c7ec0edee6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">x-axis (vertical)  <br /></td></tr>
+<tr class="separator:a76d6fb06512926cd515d6c7ec0edee6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe01c79ef1c3ad024babc77d68b7803a"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#afe01c79ef1c3ad024babc77d68b7803a">thruster_driver::theta_dist_h</a> = atan(dist_hy / dist_hx)</td></tr>
+<tr class="memdesc:afe01c79ef1c3ad024babc77d68b7803a"><td class="mdescLeft">&#160;</td><td class="mdescRight">y-axis (vertical)  <br /></td></tr>
+<tr class="separator:afe01c79ef1c3ad024babc77d68b7803a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a845859d34fc585f94f08cc278f62430c"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a845859d34fc585f94f08cc278f62430c">thruster_driver::theta_dist_v</a> = atan(dist_vy / dist_vz)</td></tr>
+<tr class="separator:a845859d34fc585f94f08cc278f62430c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a655da293868d541b6e7c166d30abe399"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a655da293868d541b6e7c166d30abe399">thruster_driver::f_x_scale</a> = 1 / (4 * cos(theta_h))</td></tr>
+<tr class="separator:a655da293868d541b6e7c166d30abe399"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d878f7bdd4571d5c053e05f0b81f9c0"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a0d878f7bdd4571d5c053e05f0b81f9c0">thruster_driver::f_y_scale</a> = 1 / (4 * sin(theta_h))</td></tr>
+<tr class="separator:a0d878f7bdd4571d5c053e05f0b81f9c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8c5ee940fd4dd67ebc2faf36527f3d3"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#ab8c5ee940fd4dd67ebc2faf36527f3d3">thruster_driver::f_z_scale</a> = 1 / (2 * cos(theta_v))</td></tr>
+<tr class="separator:ab8c5ee940fd4dd67ebc2faf36527f3d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f18c4edadeec6d39b773768713b7d6e"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a1f18c4edadeec6d39b773768713b7d6e">thruster_driver::t_x_scale</a></td></tr>
+<tr class="separator:a1f18c4edadeec6d39b773768713b7d6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaec11fdfcad49cfe4c3e3e496e854217"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#aaec11fdfcad49cfe4c3e3e496e854217">thruster_driver::t_z_scale</a></td></tr>
+<tr class="separator:aaec11fdfcad49cfe4c3e3e496e854217"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d452c32f77f86e57bc5c31ae77466a6"><td class="memItemLeft" align="right" valign="top">const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacethruster__driver.html#a9d452c32f77f86e57bc5c31ae77466a6">thruster_driver::NUM_THRUSTERS</a> = 6</td></tr>
+<tr class="separator:a9d452c32f77f86e57bc5c31ae77466a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>thruster driver </p>

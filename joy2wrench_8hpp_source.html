@@ -94,8 +94,8 @@ $(function() {
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  std::string device_name;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keywordtype">double</span> force_scale;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keywordtype">double</span> torque_scale;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keywordtype">double</span> force_x_scale, force_y_scale, force_z_scale;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keywordtype">double</span> torque_x_scale, torque_z_scale;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  rclcpp::Publisher&lt;geometry_msgs::msg::WrenchStamped&gt;::SharedPtr pub_;</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  rclcpp::Subscription&lt;sensor_msgs::msg::Joy&gt;::SharedPtr sub_;</div>

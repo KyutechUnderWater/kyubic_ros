@@ -17,6 +17,5 @@ var searchData=
   ['concat_5f8bit_14',['concat_8bit',['../classimu__driver_1_1g366_1_1G366.html#ac74840e9332ba5d6883e1aaabdfe583b',1,'imu_driver::g366::G366']]],
   ['config_5fcomm_15',['config_comm',['../namespaceimu__driver_1_1g366.html#a13dc3acd6c6c37a70192f5ede1806633',1,'imu_driver::g366']]],
   ['config_5fmode_5fwcomm0_16',['config_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#a3ae26f3b7ad93205dbfc5b0938729ee9',1,'imu_driver::g366']]],
-  ['cos_5fh_17',['cos_h',['../namespacethruster__driver.html#ae0624cf49fc7845ce3a046c45cd8c789',1,'thruster_driver']]],
-  ['count_18',['count',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()'],['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()']]]
+  ['count_17',['count',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()'],['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()']]]
 ];
