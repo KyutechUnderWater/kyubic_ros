@@ -55,6 +55,8 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
   {
     auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
+    odom_msg->header = msg->header;
+
     odom_msg->twist.angular.x = gyro_x;
     odom_msg->twist.angular.y = gyro_y;
     odom_msg->twist.angular.z = msg->gyro.z;

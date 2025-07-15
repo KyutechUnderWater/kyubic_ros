@@ -69,7 +69,7 @@ void TestPID::update()
     updated = false;
 
     // Define valiable
-    double p_pid_x, p_pid_y, p_pid_z, p_pid_yaw;
+    double p_pid_x, p_pid_y, p_pid_z, p_pid_roll, p_pid_yaw;
     p_pid_x = p_pid_y = p_pid_z = p_pid_yaw = 0.0;
 
     // Abbreviation of name
@@ -85,19 +85,31 @@ void TestPID::update()
     p_pid_y = vp_pids[name.at(1)]->update(linear.y, pose.y, targets_->y);
 
     // z-axis
-    p_pid_z = -vp_pids[name.at(2)]->update(linear.z_altitude, pose.z_altitude, targets_->z);
+    p_pid_z = vp_pids[name.at(2)]->update(linear.z_depth, pose.z_depth, targets_->z);
+    // p_pid_z = -vp_pids[name.at(2)]->update(linear.z_altitude, pose.z_altitude, targets_->z);
+
+    // roll-axis
+    double target_roll = targets_->roll;
+    p_pid_roll = vp_pids[name.at(3)]->update(angular.x, orient.x, target_roll);
 
     // yaw-axis
     double target_yaw = targets_->yaw;
     if (targets_->yaw - orient.z < -180) target_yaw += 360;
     if (targets_->yaw - orient.z > 180) target_yaw -= 360;
-    p_pid_yaw = vp_pids[name.at(3)]->update(angular.z, orient.z, target_yaw);
+    p_pid_yaw = vp_pids[name.at(4)]->update(angular.z, orient.z, target_yaw);
+
+    // z-axis transform
+    double z_rad = -orient.z * std::numbers::pi / 180;
+    double _p_pid_x = p_pid_x;
+    double _p_pid_y = p_pid_y;
+    p_pid_x = _p_pid_x * cos(z_rad) - _p_pid_y * sin(z_rad);
+    p_pid_y = _p_pid_x * sin(z_rad) + _p_pid_y * cos(z_rad);
 
     // Print data
-    double target_p = targets_->x;
-    double current_p = pose.x;
-    double current_vel_p = linear.x;
-    double p_pid_p = p_pid_x;
+    double target_p = targets_->z;
+    double current_p = pose.z_depth;
+    double current_vel_p = linear.z_depth;
+    double p_pid_p = p_pid_z;
     std::cout << "target: " << target_p << " current: " << current_p
               << " current_vel: " << current_vel_p << " p_pid: " << p_pid_p << std::endl;
 
@@ -106,10 +118,12 @@ void TestPID::update()
     msg->wrench.force.x = p_pid_x;
     msg->wrench.force.y = p_pid_y;
     msg->wrench.force.z = p_pid_z;
+    msg->wrench.torque.x = p_pid_roll;
     msg->wrench.torque.z = p_pid_yaw;
     // msg->wrench.force.x = joy_->wrench.force.x;
     // msg->wrench.force.y = joy_->wrench.force.y;
     // msg->wrench.force.z = joy_->wrench.force.z;
+    // msg->wrench.torque.x = joy_->wrench.torque.x;
     // msg->wrench.torque.z = joy_->wrench.torque.z;
 
     pub_->publish(std::move(msg));
