@@ -26,8 +26,11 @@
 namespace localization
 {
 
-/** @brief Sample size of simple moving average */
+/** @brief Number of TAP for simple moving average */
 const int DEPTH_SMA_SUMPLE_NUM = 16;
+
+/** @brief Convert to sea to fresh density */
+const float sea2fresh_scale = 1029.0 / 1000.0;
 
 /**
  * @brief Depth odometry class
@@ -39,11 +42,15 @@ private:
   rclcpp::Subscription<driver_msgs::msg::Depth>::SharedPtr sub_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_;
 
+  bool fresh_water;
+
   rclcpp::Time pre_time;
   double pre_pos_z = 0.0;
 
   uint8_t idx = 0;
   std::array<double, DEPTH_SMA_SUMPLE_NUM> pos_z_list;  /// for simple moving average
+  double offset_pos_z = 0.0;
+  double pos_z = 0.0;
 
   /**
    * @brief Update z-axis velocity

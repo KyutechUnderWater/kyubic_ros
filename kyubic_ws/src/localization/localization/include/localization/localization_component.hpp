@@ -45,6 +45,7 @@ private:
 
   std::shared_ptr<localization_msgs::msg::Odometry> odom_msg_;
 
+  uint8_t enabled_sensor = 0b11111000;
   uint8_t all_updated = 0b11111000;
 
   /**
