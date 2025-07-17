@@ -7,9 +7,10 @@ var searchData=
   ['plot_5fitem_4',['plot_item',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#aedaa0eee1148e814d49a0d32c8a146a5',1,'trajectory_viewer::main::TrajectoryPlotter']]],
   ['plot_5funits_5',['plot_units',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#afdbb2f65e38e8b02daf6d10df54784b9',1,'real_time_plotter::main::MultiGraphViewer']]],
   ['plot_5fwidget_6',['plot_widget',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#a535d486ec7960ccd3f8f61e711ef9ac4',1,'real_time_plotter::main::PlotUnitWidget']]],
-  ['plotter_7',['plotter',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a62b85a12451a6a98a3241f811926d12c',1,'trajectory_viewer::main::MainWindow']]],
-  ['ppid_5fparam_8',['ppid_param',['../structpid__controller_1_1PositionP__PIDParameter.html#adb12d40440b5da6cee04c0ba95f8c93f',1,'pid_controller::PositionP_PIDParameter']]],
-  ['processes_9',['processes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a11742ed5aa6d05fe13377caa2f2dd6bd',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['publisher_5ftimer_10',['publisher_timer',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a32722b273dfc336c1eec6aca04166d2b',1,'trajectory_viewer::main::RosCommunicator']]],
-  ['py_5fmodules_11',['py_modules',['../namespacesetup.html#ad6a0f278ba38b7ed3595fd6896196fb3',1,'setup']]]
+  ['plot_5fwidget2_7',['plot_widget2',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#acea37b4f1c6fbc9dc4db743bb5cb2240',1,'real_time_plotter::main::PlotUnitWidget']]],
+  ['plotter_8',['plotter',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a62b85a12451a6a98a3241f811926d12c',1,'trajectory_viewer::main::MainWindow']]],
+  ['ppid_5fparam_9',['ppid_param',['../structpid__controller_1_1PositionP__PIDParameter.html#adb12d40440b5da6cee04c0ba95f8c93f',1,'pid_controller::PositionP_PIDParameter']]],
+  ['processes_10',['processes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a11742ed5aa6d05fe13377caa2f2dd6bd',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['publisher_5ftimer_11',['publisher_timer',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a32722b273dfc336c1eec6aca04166d2b',1,'trajectory_viewer::main::RosCommunicator']]],
+  ['py_5fmodules_12',['py_modules',['../namespacesetup.html#ad6a0f278ba38b7ed3595fd6896196fb3',1,'setup']]]
 ];

@@ -11,11 +11,14 @@ var searchData=
   ['check_8',['check',['../classtimer_1_1Timeout.html#a024053a5695370b80d7d3de8b7987cd8',1,'timer::Timeout']]],
   ['check_5fnum_9',['check_num',['../namespacefix__axis__plotjuggler.html#a47cc53fb7775aac45b822a4cf30edcd7',1,'fix_axis_plotjuggler']]],
   ['check_5fready_5frcomm1_10',['check_ready_rcomm1',['../namespaceimu__driver_1_1g366.html#a30cbf806c0ef77c1675f578c733525c6',1,'imu_driver::g366']]],
-  ['checksum_11',['CHECKSUM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da5f3c90e5be58235131ae4fae1cdf86a9',1,'dvl_driver::path_finder']]],
-  ['close_5fapplication_12',['close_application',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a7e5627907791a7cb561e88aa38c33720',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['command_13',['command',['../namespaceimu__driver_1_1g366.html#a60d3b4296cf3be998973a83903032db7',1,'imu_driver::g366']]],
-  ['concat_5f8bit_14',['concat_8bit',['../classimu__driver_1_1g366_1_1G366.html#ac74840e9332ba5d6883e1aaabdfe583b',1,'imu_driver::g366::G366']]],
-  ['config_5fcomm_15',['config_comm',['../namespaceimu__driver_1_1g366.html#a13dc3acd6c6c37a70192f5ede1806633',1,'imu_driver::g366']]],
-  ['config_5fmode_5fwcomm0_16',['config_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#a3ae26f3b7ad93205dbfc5b0938729ee9',1,'imu_driver::g366']]],
-  ['count_17',['count',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()'],['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()']]]
+  ['checkbox_5fcurve1_11',['checkbox_curve1',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a9aa59d50c64d7538a5b566cf5f918864',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['checkbox_5fcurve2_12',['checkbox_curve2',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a21d6f55aa3e6db652ea0e34a63564695',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['checkbox_5ftarget_13',['checkbox_target',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a0624b18f60e47e4f8c44987dc746b634',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['checksum_14',['CHECKSUM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da5f3c90e5be58235131ae4fae1cdf86a9',1,'dvl_driver::path_finder']]],
+  ['close_5fapplication_15',['close_application',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a7e5627907791a7cb561e88aa38c33720',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['command_16',['command',['../namespaceimu__driver_1_1g366.html#a60d3b4296cf3be998973a83903032db7',1,'imu_driver::g366']]],
+  ['concat_5f8bit_17',['concat_8bit',['../classimu__driver_1_1g366_1_1G366.html#ac74840e9332ba5d6883e1aaabdfe583b',1,'imu_driver::g366::G366']]],
+  ['config_5fcomm_18',['config_comm',['../namespaceimu__driver_1_1g366.html#a13dc3acd6c6c37a70192f5ede1806633',1,'imu_driver::g366']]],
+  ['config_5fmode_5fwcomm0_19',['config_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#a3ae26f3b7ad93205dbfc5b0938729ee9',1,'imu_driver::g366']]],
+  ['count_20',['count',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()'],['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()']]]
 ];

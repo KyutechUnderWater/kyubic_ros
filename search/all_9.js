@@ -9,6 +9,7 @@ var searchData=
   ['imu_5ftransform_5fcomponent_2ehpp_6',['imu_transform_component.hpp',['../imu__transform__component_8hpp.html',1,'']]],
   ['imudriver_7',['IMUDriver',['../classimu__driver_1_1IMUDriver.html',1,'imu_driver::IMUDriver'],['../classimu__driver_1_1IMUDriver.html#a51ace4ac37740390c0b99b77e716cf63',1,'imu_driver::IMUDriver::IMUDriver()']]],
   ['imutransform_8',['IMUTransform',['../classlocalization_1_1IMUTransform.html#a63b01fa81d158c219f37fecd660c6368',1,'localization::IMUTransform::IMUTransform()'],['../classlocalization_1_1IMUTransform.html',1,'localization::IMUTransform']]],
-  ['install_5frequires_9',['install_requires',['../namespacesetup.html#abead4f26b530856f858f0d44c7cf2588',1,'setup']]],
-  ['is_5fready_10',['is_ready',['../classimu__driver_1_1g366_1_1G366.html#a34a38d32580ec20ca7cf322caf55bd96',1,'imu_driver::g366::G366']]]
+  ['init_9',['init',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#af2f768de82f730cee057b88a32de4f43',1,'real_time_plotter::main::PlotUnitWidget']]],
+  ['install_5frequires_10',['install_requires',['../namespacesetup.html#abead4f26b530856f858f0d44c7cf2588',1,'setup']]],
+  ['is_5fready_11',['is_ready',['../classimu__driver_1_1g366_1_1G366.html#a34a38d32580ec20ca7cf322caf55bd96',1,'imu_driver::g366::G366']]]
 ];

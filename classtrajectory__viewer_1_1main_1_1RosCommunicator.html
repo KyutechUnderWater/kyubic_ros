@@ -112,8 +112,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a5bbf4372c12158c26d686afbad476860"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac546eaba7dbeecae3296e4d6a43e38a8"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1RosCommunicator.html#ac546eaba7dbeecae3296e4d6a43e38a8">publish_targets</a> (self)</td></tr>
 <tr class="separator:ac546eaba7dbeecae3296e4d6a43e38a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0a962376f4b0e999cdd4172b35f5eb4"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1RosCommunicator.html#ad0a962376f4b0e999cdd4172b35f5eb4">update_targets</a> (self, x, y, z, yaw)</td></tr>
-<tr class="separator:ad0a962376f4b0e999cdd4172b35f5eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b2812c703a8f6527d0c3b62024fdee0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a3b2812c703a8f6527d0c3b62024fdee0">update_targets</a> (self, x, y, z, roll, yaw)</td></tr>
+<tr class="separator:a3b2812c703a8f6527d0c3b62024fdee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -127,6 +127,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a92cb9afb54395d7dc4efac0a2598370b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a161187c7e5364e1c3c4ff42898526382"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a161187c7e5364e1c3c4ff42898526382">target_z_value</a></td></tr>
 <tr class="separator:a161187c7e5364e1c3c4ff42898526382"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f63f40d839e48f992c4770fbcd701d7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a0f63f40d839e48f992c4770fbcd701d7">target_roll_value</a></td></tr>
+<tr class="separator:a0f63f40d839e48f992c4770fbcd701d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01609a8ddd04a0257bfc280af31857de"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a01609a8ddd04a0257bfc280af31857de">target_yaw_value</a></td></tr>
 <tr class="separator:a01609a8ddd04a0257bfc280af31857de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32722b273dfc336c1eec6aca04166d2b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a32722b273dfc336c1eec6aca04166d2b">publisher_timer</a></td></tr>
@@ -134,7 +136,7 @@ Public Attributes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a31c5cf1effbe007a4fda8e4e6a8ee167"><td class="memItemLeft" align="right" valign="top">pyqtSignal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a31c5cf1effbe007a4fda8e4e6a8ee167">new_position_signal</a> = pyqtSignal(float, float, float)</td></tr>
+<tr class="memitem:a31c5cf1effbe007a4fda8e4e6a8ee167"><td class="memItemLeft" align="right" valign="top">pyqtSignal&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a31c5cf1effbe007a4fda8e4e6a8ee167">new_position_signal</a> = pyqtSignal(float, float, float, float, float, float)</td></tr>
 <tr class="separator:a31c5cf1effbe007a4fda8e4e6a8ee167"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -205,8 +207,8 @@ Static Public Attributes</h2></td></tr>
 <pre class="fragment">タイマーによって1Hzで呼び出される関数</pre> 
 </div>
 </div>
-<a id="ad0a962376f4b0e999cdd4172b35f5eb4" name="ad0a962376f4b0e999cdd4172b35f5eb4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad0a962376f4b0e999cdd4172b35f5eb4">&#9670;&#160;</a></span>update_targets()</h2>
+<a id="a3b2812c703a8f6527d0c3b62024fdee0" name="a3b2812c703a8f6527d0c3b62024fdee0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b2812c703a8f6527d0c3b62024fdee0">&#9670;&#160;</a></span>update_targets()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -239,6 +241,12 @@ Static Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>roll</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
           <td class="paramname"><em>yaw</em>&#160;</td>
         </tr>
         <tr>
@@ -262,7 +270,7 @@ Static Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">pyqtSignal trajectory_viewer.main.RosCommunicator.new_position_signal = pyqtSignal(float, float, float)</td>
+          <td class="memname">pyqtSignal trajectory_viewer.main.RosCommunicator.new_position_signal = pyqtSignal(float, float, float, float, float, float)</td>
         </tr>
       </table>
   </td>
@@ -296,6 +304,20 @@ Static Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">trajectory_viewer.main.RosCommunicator.subscription</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0f63f40d839e48f992c4770fbcd701d7" name="a0f63f40d839e48f992c4770fbcd701d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f63f40d839e48f992c4770fbcd701d7">&#9670;&#160;</a></span>target_roll_value</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">trajectory_viewer.main.RosCommunicator.target_roll_value</td>
         </tr>
       </table>
 </div><div class="memdoc">

@@ -104,8 +104,12 @@ Collaboration diagram for trajectory_viewer.main.TrajectoryPlotter:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5d4c73bb022863f36ca3552aeb434e67"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a5d4c73bb022863f36ca3552aeb434e67">__init__</a> (self, parent=None)</td></tr>
 <tr class="separator:a5d4c73bb022863f36ca3552aeb434e67"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e7b35be657a70e492f6b9aa84468730"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a3e7b35be657a70e492f6b9aa84468730">add_point</a> (self, x, y, z)</td></tr>
-<tr class="separator:a3e7b35be657a70e492f6b9aa84468730"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bcc9c6b346877d0b746940757c48263"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a3bcc9c6b346877d0b746940757c48263">loadSTL</a> (self, filename)</td></tr>
+<tr class="separator:a3bcc9c6b346877d0b746940757c48263"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa25809861cfa8b12e8028cc647a9923b"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#aa25809861cfa8b12e8028cc647a9923b">showSTL</a> (self, filename)</td></tr>
+<tr class="separator:aa25809861cfa8b12e8028cc647a9923b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7f963b1d48713feabb8be00ff5ab739"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#af7f963b1d48713feabb8be00ff5ab739">add_point</a> (self, x, y, z, roll, pitch, yaw)</td></tr>
+<tr class="separator:af7f963b1d48713feabb8be00ff5ab739"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -117,8 +121,12 @@ Public Attributes</h2></td></tr>
 <tr class="separator:afa753c54b78b58cbd2463a9a2d6d6d27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8b9a072bfcd2a3e1054d3d008621987"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#aa8b9a072bfcd2a3e1054d3d008621987">trajectory_points</a></td></tr>
 <tr class="separator:aa8b9a072bfcd2a3e1054d3d008621987"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a953d07eb3e34c8d2ecdbe4cc87ab0d0e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a953d07eb3e34c8d2ecdbe4cc87ab0d0e">attitude</a></td></tr>
+<tr class="separator:a953d07eb3e34c8d2ecdbe4cc87ab0d0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedaa0eee1148e814d49a0d32c8a146a5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#aedaa0eee1148e814d49a0d32c8a146a5">plot_item</a></td></tr>
 <tr class="separator:aedaa0eee1148e814d49a0d32c8a146a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a717e76f97a0b401ab96e83461da75161"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a717e76f97a0b401ab96e83461da75161">mesh</a></td></tr>
+<tr class="separator:a717e76f97a0b401ab96e83461da75161"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><pre class="fragment">3Dプロット用ウィジェット（変更なし）</pre> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -151,8 +159,8 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3e7b35be657a70e492f6b9aa84468730" name="a3e7b35be657a70e492f6b9aa84468730"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e7b35be657a70e492f6b9aa84468730">&#9670;&#160;</a></span>add_point()</h2>
+<a id="af7f963b1d48713feabb8be00ff5ab739" name="af7f963b1d48713feabb8be00ff5ab739"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7f963b1d48713feabb8be00ff5ab739">&#9670;&#160;</a></span>add_point()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -179,7 +187,25 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>z</em>&#160;</td>
+          <td class="paramname"><em>z</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>roll</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>pitch</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>yaw</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -191,7 +217,91 @@ Public Attributes</h2></td></tr>
 <pre class="fragment">軌跡に新しい点を追加してプロットを更新するスロット</pre> 
 </div>
 </div>
+<a id="a3bcc9c6b346877d0b746940757c48263" name="a3bcc9c6b346877d0b746940757c48263"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bcc9c6b346877d0b746940757c48263">&#9670;&#160;</a></span>loadSTL()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def trajectory_viewer.main.TrajectoryPlotter.loadSTL </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>filename</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa25809861cfa8b12e8028cc647a9923b" name="aa25809861cfa8b12e8028cc647a9923b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa25809861cfa8b12e8028cc647a9923b">&#9670;&#160;</a></span>showSTL()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def trajectory_viewer.main.TrajectoryPlotter.showSTL </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>filename</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a953d07eb3e34c8d2ecdbe4cc87ab0d0e" name="a953d07eb3e34c8d2ecdbe4cc87ab0d0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a953d07eb3e34c8d2ecdbe4cc87ab0d0e">&#9670;&#160;</a></span>attitude</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">trajectory_viewer.main.TrajectoryPlotter.attitude</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a717e76f97a0b401ab96e83461da75161" name="a717e76f97a0b401ab96e83461da75161"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a717e76f97a0b401ab96e83461da75161">&#9670;&#160;</a></span>mesh</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">trajectory_viewer.main.TrajectoryPlotter.mesh</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aedaa0eee1148e814d49a0d32c8a146a5" name="aedaa0eee1148e814d49a0d32c8a146a5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aedaa0eee1148e814d49a0d32c8a146a5">&#9670;&#160;</a></span>plot_item</h2>
 

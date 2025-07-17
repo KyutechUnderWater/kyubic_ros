@@ -7,9 +7,11 @@ var searchData=
   ['set_5fatti_5fmotion_5fprofile_4',['set_atti_motion_profile',['../classimu__driver_1_1g366_1_1G366.html#acbb449f814bc2f2b3c73992037b7944e',1,'imu_driver::g366::G366']]],
   ['set_5ffilter_5',['set_filter',['../classimu__driver_1_1g366_1_1G366.html#ad5e8bde5ef0f5919fc601cbe346d8fae',1,'imu_driver::g366::G366']]],
   ['setconfig_6',['setConfig',['../classserial_1_1Serial.html#a70c460f4584e3f27eab799bde02e2836',1,'serial::Serial']]],
-  ['setdata_7',['setData',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#ac6c4330521feb19653c0083d52d149bd',1,'real_time_plotter::main::PlotUnitWidget']]],
-  ['settermios_8',['setTermios',['../classserial_1_1Serial.html#a4fea3d0ac96d0def65b942ccb80e5eb0',1,'serial::Serial']]],
-  ['setup_9',['setup',['../classimu__driver_1_1g366_1_1G366.html#a7269ddb01c1546c1ba64c3a6753a8e75',1,'imu_driver::g366::G366']]],
-  ['software_5freset_10',['software_reset',['../classimu__driver_1_1g366_1_1G366.html#acd5743c08fcfc0673372cfbec720022c',1,'imu_driver::g366::G366']]],
-  ['stop_5fnode_11',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['setdata_7',['setData',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#a149e93a45967033fc106c37bc33fdac0',1,'real_time_plotter::main::PlotUnitWidget']]],
+  ['setplotvisible_8',['setPlotVisible',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a158884091ab9bee0da9a4d77810b0456',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['settermios_9',['setTermios',['../classserial_1_1Serial.html#a4fea3d0ac96d0def65b942ccb80e5eb0',1,'serial::Serial']]],
+  ['setup_10',['setup',['../classimu__driver_1_1g366_1_1G366.html#a7269ddb01c1546c1ba64c3a6753a8e75',1,'imu_driver::g366::G366']]],
+  ['showstl_11',['showSTL',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#aa25809861cfa8b12e8028cc647a9923b',1,'trajectory_viewer::main::TrajectoryPlotter']]],
+  ['software_5freset_12',['software_reset',['../classimu__driver_1_1g366_1_1G366.html#acd5743c08fcfc0673372cfbec720022c',1,'imu_driver::g366::G366']]],
+  ['stop_5fnode_13',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

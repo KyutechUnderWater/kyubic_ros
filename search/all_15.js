@@ -4,6 +4,7 @@ var searchData=
   ['update_5fplots_1',['update_plots',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a0f47bbb08f13d4ce165b0e2c60b1813a',1,'real_time_plotter::main::MultiGraphViewer']]],
   ['update_5fstatus_5floop_2',['update_status_loop',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a910d7357cd191f3cf4671a6df127a584',1,'driver_node_manager::driver_node_manager::NodeManager']]],
   ['update_5fstatus_5fthread_3',['update_status_thread',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ac35b12515041926d001790e6319561db',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['update_5ftargets_4',['update_targets',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#ad0a962376f4b0e999cdd4172b35f5eb4',1,'trajectory_viewer::main::RosCommunicator']]],
-  ['update_5fyrange_5',['update_yrange',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#a6fff72c911052b0d8600f94cd03ad72d',1,'real_time_plotter::main::PlotUnitWidget']]]
+  ['update_5ftargets_4',['update_targets',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a3b2812c703a8f6527d0c3b62024fdee0',1,'trajectory_viewer::main::RosCommunicator']]],
+  ['update_5fviews_5',['update_views',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#ad544c6fe5f0f8920d081a9595fbc8f18',1,'real_time_plotter::main::PlotUnitWidget']]],
+  ['update_5fyrange_6',['update_yrange',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#a6fff72c911052b0d8600f94cd03ad72d',1,'real_time_plotter::main::PlotUnitWidget']]]
 ];
