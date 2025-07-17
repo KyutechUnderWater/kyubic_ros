@@ -1,7 +1,9 @@
 #!/home/ros/kyubic_ros/.venv/bin/python
 import sys
+import os
 import threading
 import numpy as np
+from stl import mesh
 
 # ROS2関連のインポート
 import rclpy
@@ -31,7 +33,7 @@ class RosCommunicator(Node, QObject):
     """
 
     # 軌跡プロット用の位置データシグナル
-    new_position_signal = pyqtSignal(float, float, float)
+    new_position_signal = pyqtSignal(float, float, float, float, float, float)
 
     def __init__(self):
         # 親クラスのコンストラクタをそれぞれ呼び出す
@@ -49,42 +51,42 @@ class RosCommunicator(Node, QObject):
         # --- 配信データとタイマー ---
         self.target_x_value = 0.0
         self.target_y_value = 0.0
-        self.target_z_value = None
-        self.target_yaw_value = None
+        self.target_z_value = 0.0
+        self.target_roll_value = 0.0
+        self.target_yaw_value = 0.0
         # 1Hz (1.0秒ごと) で publish_targets を呼び出すタイマー
         self.publisher_timer = self.create_timer(1.0, self.publish_targets)
 
     def odom_callback(self, msg):
         """'odom' トピックのコールバック"""
         pos = msg.pose.position
-        self.new_position_signal.emit(pos.x, -pos.y, -pos.z_depth)
+        orient = msg.pose.orientation
+        self.new_position_signal.emit(
+            pos.x, -pos.y, -pos.z_depth, orient.x, orient.y, orient.z
+        )
 
     def publish_targets(self):
         """タイマーによって1Hzで呼び出される関数"""
         msg = Targets()
         msg.x = self.target_x_value
         msg.y = self.target_y_value
-
-        # z軸目標値が設定されていれば配信
-        if self.target_z_value is not None:
-            msg.z = self.target_z_value
-
-        # yaw軸目標値が設定されていれば配信
-        if self.target_yaw_value is not None:
-            msg.yaw = self.target_yaw_value
+        msg.z = self.target_z_value
+        msg.roll = self.target_roll_value
+        msg.yaw = self.target_yaw_value
 
         self.targets_pub.publish(msg)
 
-    @pyqtSlot(float, float, float, float)
-    def update_targets(self, x, y, z, yaw):
+    @pyqtSlot(float, float, float, float, float)
+    def update_targets(self, x, y, z, roll, yaw):
         """GUIから呼び出されるスロット。配信する値を更新する。"""
         self.target_x_value = x
         self.target_y_value = y
         self.target_z_value = z
+        self.target_roll_value = roll
         self.target_yaw_value = yaw
         self.get_logger().info(
-            f"Target values updated: z={z:.2f}, yaw={
-                yaw:.2f}. Publishing will start/continue."
+            f"Target values updated: x={x:.2f}, y={y:.2f}, z={z:.2f}, roll={
+                roll:.2f}, yaw={yaw:.2f}. Publishing will start/continue."
         )
 
 
@@ -127,6 +129,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
         self.trajectory_points = np.vstack(
             [self.trajectory_points, np.array([0.0, 0.0, 0.0])]
         )
+        self.attitude = np.zeros(3)
 
         self.plot_item = gl.GLLinePlotItem(
             pos=self.trajectory_points,
@@ -136,16 +139,87 @@ class TrajectoryPlotter(gl.GLViewWidget):
         )
         self.addItem(self.plot_item)
 
-    @pyqtSlot(float, float, float)
-    def add_point(self, x, y, z):
+        self.mesh = None
+        self.showSTL(f"{os.path.dirname(__file__)
+                        }/../assets/KYUBIC_transformed.stl")
+
+    def loadSTL(self, filename):
+        m = mesh.Mesh.from_file(filename)
+
+        # Scale
+        scale = 1.0
+        m.x = m.x * scale
+        m.y = m.y * scale
+        m.z = m.z * scale
+
+        # Position
+        # offset_z = m.max_ - m.min_
+        # m.z = m.z - offset_z
+
+        print(f"point.shape: {m.points.shape}")
+
+        # Rotation
+        rot = 0
+        rot_z_matrix = np.array(
+            [
+                [np.cos(np.deg2rad(rot)), -np.sin(np.deg2rad(rot)), 0],
+                [np.sin(np.deg2rad(rot)), np.cos(np.deg2rad(rot)), 0],
+                [0, 0, 1],
+            ]
+        )
+        R = np.zeros((4, 4))
+        R[:3, :3] = rot_z_matrix
+        m.transform(R)
+
+        points = m.points.reshape(-1, 3)
+        faces = np.arange(points.shape[0]).reshape(-1, 3)
+        return points, faces
+
+    def showSTL(self, filename):
+        points, faces = self.loadSTL(filename)
+        meshdata = gl.MeshData(vertexes=points, faces=faces)
+        self.mesh = gl.GLMeshItem(
+            meshdata=meshdata,
+            smooth=True,
+            drawFaces=True,
+            drawEdges=True,
+            color=(0.8, 0.8, 0.8, 1),
+            edgeColor=(0.5, 0.5, 0.5, 1),
+        )
+        self.addItem(self.mesh)
+
+    @pyqtSlot(float, float, float, float, float, float)
+    def add_point(self, x, y, z, roll, pitch, yaw):
         """軌跡に新しい点を追加してプロットを更新するスロット"""
         new_point = np.array([[x, y, z]])
+        new_attitude = np.array((roll, pitch, yaw))
 
-        # 前回と今回の値の差分ベクトルのL2ノルムが 0.2[m] より大きいときに更新
-        if np.linalg.norm(self.trajectory_points[-1] - new_point, ord=2) > 0.1:
+        # 前回と今回の値の差分ベクトルのL2ノルムが 0.2[m] より大きいとき，5度よりの大きい回転があったとき更新
+        if np.linalg.norm(self.trajectory_points[-1] - new_point, ord=2) > 0.01 or any(
+            np.abs(new_attitude - self.attitude) > 1
+        ):
             self.trajectory_points = np.vstack(
                 [self.trajectory_points, new_point])
             self.plot_item.setData(pos=self.trajectory_points)
+
+            self.attitude = new_attitude
+
+            # Transform3Dオブジェクトを作成
+            tr = pg.Transform3D()
+
+            # 移動を適用
+            tr.translate(*new_point.reshape(-1))
+
+            # 回転を適用 (Z-Y-X順で適用するため、メソッドはX-Y-Zの逆順で呼び出す)
+            # 1. ロール (X軸周り)
+            tr.rotate(roll, 1, 0, 0)
+            # 2. ピッチ (Y軸周り)
+            tr.rotate(pitch, 0, 1, 0)
+            # 3. ヨー (Z軸周り)
+            tr.rotate(yaw, 0, 0, 1)
+
+            # メッシュにTransform3Dを適用
+            self.mesh.setTransform(tr)
 
 
 class MainWindow(QMainWindow):
@@ -153,8 +227,8 @@ class MainWindow(QMainWindow):
     メインウィンドウ。プロッタと制御パネルをレイアウトする。
     """
 
-    # 決定ボタンが押されたときに発行されるシグナル (x, y, z, yaw)
-    targets_submitted = pyqtSignal(float, float, float, float)
+    # 決定ボタンが押されたときに発行されるシグナル (x, y, z, roll, yaw)
+    targets_submitted = pyqtSignal(float, float, float, float, float)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -177,7 +251,7 @@ class MainWindow(QMainWindow):
         # x軸位置入力
         control_layout.addWidget(QLabel("<b>Target Pos X [m]</b>"))
         self.x_input = QDoubleSpinBox()
-        self.x_input.setRange(0.0, 15.0)
+        self.x_input.setRange(-15.0, 15.0)
         self.x_input.setSingleStep(0.1)
         self.x_input.setValue(0.0)
         control_layout.addWidget(self.x_input)
@@ -185,7 +259,7 @@ class MainWindow(QMainWindow):
         # y軸位置入力
         control_layout.addWidget(QLabel("<b>Target Pos Y [m]</b>"))
         self.y_input = QDoubleSpinBox()
-        self.y_input.setRange(0.0, 15.0)
+        self.y_input.setRange(-15.0, 15.0)
         self.y_input.setSingleStep(0.1)
         self.y_input.setValue(0.0)
         control_layout.addWidget(self.y_input)
@@ -197,6 +271,14 @@ class MainWindow(QMainWindow):
         self.z_input.setSingleStep(0.1)
         self.z_input.setValue(0.0)
         control_layout.addWidget(self.z_input)
+
+        # roll軸角度入力
+        control_layout.addWidget(QLabel("<b>Target Roll[deg]</b>"))
+        self.roll_input = QDoubleSpinBox()
+        self.roll_input.setRange(-30.0, 30.0)
+        self.roll_input.setSingleStep(1.0)
+        self.roll_input.setValue(0.0)
+        control_layout.addWidget(self.roll_input)
 
         # yaw軸角度入力
         control_layout.addWidget(QLabel("<b>Target Heading[deg]</b>"))
@@ -222,8 +304,9 @@ class MainWindow(QMainWindow):
         x = self.x_input.value()
         y = self.y_input.value()
         z = self.z_input.value()
+        roll = self.roll_input.value()
         yaw = self.yaw_input.value()
-        self.targets_submitted.emit(x, y, z, yaw)
+        self.targets_submitted.emit(x, y, z, roll, yaw)
 
 
 def main(args=None):
