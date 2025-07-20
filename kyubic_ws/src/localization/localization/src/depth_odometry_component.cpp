@@ -19,6 +19,8 @@ namespace localization
 
 DepthOdometry::DepthOdometry(const rclcpp::NodeOptions & options) : Node("depth_odometry", options)
 {
+  fresh_water = this->declare_parameter("fresh_water", false);
+
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   pub_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
@@ -45,9 +47,9 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
   pre_time = now;
 
   // calculate moving avelage
-  pos_z_list.at(idx) = msg->depth;
+  pos_z_list.at(idx) = fresh_water ? msg->depth * sea2fresh_scale : msg->depth;
   double pos_z_sum = std::accumulate(pos_z_list.begin(), pos_z_list.end(), 0.0);
-  double pos_z = pos_z_sum / static_cast<double>(pos_z_list.size());
+  pos_z = pos_z_sum / static_cast<double>(pos_z_list.size());
 
   // calculate depth velocity
   double vel_z = (pos_z - pre_pos_z) / dt;
@@ -62,7 +64,7 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
 
     // copy msg
     odom_msg->header = msg->header;
-    odom_msg->pose.position.z_depth = pos_z;
+    odom_msg->pose.position.z_depth = pos_z - offset_pos_z;
 
     // add velocity
     odom_msg->twist.linear.z_depth = vel_z;
@@ -85,6 +87,7 @@ void DepthOdometry::reset_callback(
 
 void DepthOdometry::reset()
 {
+  offset_pos_z = pos_z;
   pre_pos_z = 0.0;
   pre_time = this->get_clock()->now();
 }

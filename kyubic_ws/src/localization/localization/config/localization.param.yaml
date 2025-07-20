@@ -1,0 +1,9 @@
+/localization/depth/depth_odometry_component:
+  ros__parameters:
+    fresh_water: true # True if fresh water, otherwise false
+
+/localization/localization_component:
+  ros__parameters:
+    depth: true # If true, depth enable
+    imu: true # If true, imu enable
+    dvl: true # If true, dvl enable. Required imu is true.
