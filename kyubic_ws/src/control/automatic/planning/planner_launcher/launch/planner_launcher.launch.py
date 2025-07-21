@@ -8,10 +8,6 @@ from launch import LaunchDescription
 
 
 def generate_launch_description():
-    # config = os.path.join(
-    #     get_package_share_directory("planner_launcher"), "config", "localization.param.yaml"
-    # )
-
     cfg_pdla_planner = os.path.join(
         get_package_share_directory("projection_dynamic_look_ahead_planner"),
         "config",
