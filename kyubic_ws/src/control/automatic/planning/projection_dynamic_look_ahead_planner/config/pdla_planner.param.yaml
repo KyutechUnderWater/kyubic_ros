@@ -1,0 +1,19 @@
+/**:
+  ros__parameters:
+    # path_csv: "assets/test_generated.csv"
+    path_csv: "assets/sample.csv"
+    look_ahead_scale: 1.0
+
+    # abs(target - current) < tolerance
+    reach_tolerance:
+      x: 0.1
+      y: 0.1
+      z: 0.1
+      roll: 2.0
+      yaw: 1.0
+    waypoint_tolerance:
+      x: 0.1
+      y: 0.1
+      z: 0.1
+      roll: 2.0
+      yaw: 1.0
