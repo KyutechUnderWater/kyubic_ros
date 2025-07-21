@@ -1,12 +1,12 @@
-from dataclasses import asdict, dataclass
 import argparse
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Literal
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 
 import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 matplotlib.use("qt5agg")
 pd.set_option("future.no_silent_downcasting", True)
@@ -272,7 +272,7 @@ def main():
             ax.plot(*zip(*np.array(points)[:, :3]), c="blue")
             ax.plot(*zip(*nd_ckpts.tolist()), c="red", linestyle="none", marker="o")
             ax.set_aspect("equal")
-            # plt.show()
+            plt.show()
 
         points_list = flatten(points_list)
         param.catmull_rom = 1
@@ -286,7 +286,7 @@ def main():
 
         df = pd.concat([df_param, df_checkpoints, df_blank, df_points], axis=1)
         df.to_csv(
-            args.csv_path.with_name(f"{args.csv_path.stem}_generated"), index=False
+            args.csv_path.with_name(f"{args.csv_path.stem}_generated.csv"), index=False
         )
         print(df)
 
