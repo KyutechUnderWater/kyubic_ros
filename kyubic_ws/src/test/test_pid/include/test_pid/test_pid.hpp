@@ -47,7 +47,7 @@ private:
   // Define unique name(axes)
   std::array<std::string, 5> name = {"x", "y", "z", "roll", "yaw"};
 
-  std::map<std::string, std::shared_ptr<pid_controller::VelocityP_PIDParameter>> p_pid_params;
+  std::map<std::string, pid_controller::VelocityP_PIDParameter> p_pid_params;
   std::map<std::string, std::shared_ptr<pid_controller::VelocityP_PID>> vp_pids;
 
   std::shared_ptr<test_pid_msgs::msg::Targets> targets_;
