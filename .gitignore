@@ -216,3 +216,4 @@ docs
 .env
 .install.project_name
 .python-version
+rosbag2_*
