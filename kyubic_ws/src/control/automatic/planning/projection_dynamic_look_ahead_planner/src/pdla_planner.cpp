@@ -16,7 +16,6 @@
 
 #include <cstddef>
 #include <functional>
-#include <iostream>
 #include <memory>
 
 namespace planner
@@ -69,10 +68,13 @@ void PDLAPlanner::_updateGoal()
     }
   } else {
     if (_checkReached(target_pose_.at(step_idx), waypoint_tolerance)) {
-      RCLCPP_INFO(this->get_logger(), "Reached %d/%lu waypoint.", step_idx, target_pose_.size());
       step_idx++;
+      RCLCPP_INFO(this->get_logger(), "Reached %d/%lu waypoint.", step_idx, target_pose_.size());
       _print_waypoint("Current", step_idx);
-      _print_waypoint("Next   ", step_idx + 1);
+
+      if (step_idx < target_pose_.size() - 1) {
+        _print_waypoint("Next   ", step_idx + 1);
+      }
     }
   }
 
@@ -80,8 +82,8 @@ void PDLAPlanner::_updateGoal()
   if (step_idx == 0) {
     virtual_goal_point << target_pose_.at(0).x, target_pose_.at(0).y, target_pose_.at(0).z;
   } else if (step_idx == target_pose_.size() - 1) {
-    size_t idx = target_pose_.size() - 1;
-    virtual_goal_point << target_pose_[idx].x, target_pose_[idx].y, target_pose_[idx].z;
+    virtual_goal_point << target_pose_[step_idx].x, target_pose_[step_idx].y,
+      target_pose_[step_idx].z;
   } else {
     PoseData pre_step_pose = target_pose_.at(step_idx - 1);
     PoseData current_step_pose = target_pose_.at(step_idx);
@@ -128,7 +130,7 @@ void PDLAPlanner::_updateGoal()
     if (target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
       msg->target.position.z_depth = virtual_goal_point.z();
     } else if (target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-      msg->target.position.z_depth = virtual_goal_point.z();
+      msg->target.position.z_altitude = virtual_goal_point.z();
     }
 
     msg->target.orientation.x = target_pose_.at(step_idx).roll;
