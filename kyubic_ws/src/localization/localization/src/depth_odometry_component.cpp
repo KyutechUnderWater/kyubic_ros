@@ -35,43 +35,42 @@ DepthOdometry::DepthOdometry(const rclcpp::NodeOptions & options) : Node("depth_
 
 void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg)
 {
+  auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
+
   // return if msg is invalid, otherwaise calculate depth velocity
   if (msg->status == driver_msgs::msg::Depth::STATUS_ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The depth data is invalid");
-    return;
+    odom_msg->status = localization_msgs::msg::Odometry::STATUS_ERROR;
+  } else {
+    // calculate period (delta t)
+    auto now = this->get_clock()->now();
+    double dt = (now - pre_time).nanoseconds() * 1e-9;
+    pre_time = now;
+
+    // calculate moving avelage
+    pos_z_list.at(idx) = fresh_water ? msg->depth * sea2fresh_scale : msg->depth;
+    double pos_z_sum = std::accumulate(pos_z_list.begin(), pos_z_list.end(), 0.0);
+    pos_z = pos_z_sum / static_cast<double>(pos_z_list.size());
+
+    // calculate depth velocity
+    double vel_z = (pos_z - pre_pos_z) / dt;
+
+    // prepare for next step
+    pre_pos_z = pos_z;
+    if (++idx == pos_z_list.size()) idx = 0;
+
+    // Publish
+    {
+      // copy msg
+      odom_msg->header = msg->header;
+      odom_msg->pose.position.z_depth = pos_z - offset_pos_z;
+
+      // add velocity
+      odom_msg->twist.linear.z_depth = vel_z;
+    }
+    RCLCPP_INFO(this->get_logger(), "Calculated depth odometry");
   }
-
-  // calculate period (delta t)
-  auto now = this->get_clock()->now();
-  double dt = (now - pre_time).nanoseconds() * 1e-9;
-  pre_time = now;
-
-  // calculate moving avelage
-  pos_z_list.at(idx) = fresh_water ? msg->depth * sea2fresh_scale : msg->depth;
-  double pos_z_sum = std::accumulate(pos_z_list.begin(), pos_z_list.end(), 0.0);
-  pos_z = pos_z_sum / static_cast<double>(pos_z_list.size());
-
-  // calculate depth velocity
-  double vel_z = (pos_z - pre_pos_z) / dt;
-
-  // prepare for next step
-  pre_pos_z = pos_z;
-  if (++idx == pos_z_list.size()) idx = 0;
-
-  // Publish
-  {
-    auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
-
-    // copy msg
-    odom_msg->header = msg->header;
-    odom_msg->pose.position.z_depth = pos_z - offset_pos_z;
-
-    // add velocity
-    odom_msg->twist.linear.z_depth = vel_z;
-
-    pub_->publish(std::move(odom_msg));
-  }
-  RCLCPP_INFO(this->get_logger(), "Calculated depth odometry");
+  pub_->publish(std::move(odom_msg));
 }
 
 void DepthOdometry::reset_callback(

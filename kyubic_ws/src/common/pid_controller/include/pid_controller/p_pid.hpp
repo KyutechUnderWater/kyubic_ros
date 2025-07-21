@@ -49,7 +49,7 @@ public:
    * @brief Controller gain setting
    * @param param Hyperparameter for position p-pid
    */
-  explicit PositionP_PID(const std::shared_ptr<PositionP_PIDParameter> param_);
+  explicit PositionP_PID(const PositionP_PIDParameter & param_);
 
   /**
    * @brief Update PID cycle
@@ -98,7 +98,7 @@ public:
    * @brief Controller gain setting
    * @param param Hyperparameter for velocity p-pid
    */
-  explicit VelocityP_PID(const std::shared_ptr<VelocityP_PIDParameter> param_);
+  explicit VelocityP_PID(const VelocityP_PIDParameter & param_);
 
   /**
    * @brief Update PID cycle

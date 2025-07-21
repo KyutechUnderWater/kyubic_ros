@@ -50,16 +50,16 @@ void TestPID::_declare_parameter()
 {
   // Set parameters
   for (uint8_t i = 0; i < name.size(); i++) {
-    p_pid_params[name.at(i)] = std::make_shared<pid_controller::VelocityP_PIDParameter>();
-    p_pid_params[name.at(i)]->k = this->declare_parameter(name.at(i) + ".k", 0.0);
-    p_pid_params[name.at(i)]->lo = this->declare_parameter(name.at(i) + ".lo", 0.0);
-    p_pid_params[name.at(i)]->hi = this->declare_parameter(name.at(i) + ".hi", 0.0);
-    p_pid_params[name.at(i)]->vpid_param.kp = this->declare_parameter(name.at(i) + ".vpid.kp", 0.0);
-    p_pid_params[name.at(i)]->vpid_param.ki = this->declare_parameter(name.at(i) + ".vpid.ki", 0.0);
-    p_pid_params[name.at(i)]->vpid_param.kd = this->declare_parameter(name.at(i) + ".vpid.kd", 0.0);
-    p_pid_params[name.at(i)]->vpid_param.kf = this->declare_parameter(name.at(i) + ".vpid.kf", 0.0);
-    p_pid_params[name.at(i)]->vpid_param.lo = this->declare_parameter(name.at(i) + ".vpid.lo", 0.0);
-    p_pid_params[name.at(i)]->vpid_param.hi = this->declare_parameter(name.at(i) + ".vpid.hi", 0.0);
+    p_pid_params[name.at(i)] = pid_controller::VelocityP_PIDParameter();
+    p_pid_params[name.at(i)].k = this->declare_parameter(name.at(i) + ".k", 0.0);
+    p_pid_params[name.at(i)].lo = this->declare_parameter(name.at(i) + ".lo", 0.0);
+    p_pid_params[name.at(i)].hi = this->declare_parameter(name.at(i) + ".hi", 0.0);
+    p_pid_params[name.at(i)].vpid_param.kp = this->declare_parameter(name.at(i) + ".vpid.kp", 0.0);
+    p_pid_params[name.at(i)].vpid_param.ki = this->declare_parameter(name.at(i) + ".vpid.ki", 0.0);
+    p_pid_params[name.at(i)].vpid_param.kd = this->declare_parameter(name.at(i) + ".vpid.kd", 0.0);
+    p_pid_params[name.at(i)].vpid_param.kf = this->declare_parameter(name.at(i) + ".vpid.kf", 0.0);
+    p_pid_params[name.at(i)].vpid_param.lo = this->declare_parameter(name.at(i) + ".vpid.lo", 0.0);
+    p_pid_params[name.at(i)].vpid_param.hi = this->declare_parameter(name.at(i) + ".vpid.hi", 0.0);
   }
 }
 

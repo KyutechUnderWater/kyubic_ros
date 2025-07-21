@@ -12,8 +12,8 @@
 namespace pid_controller
 {
 
-PositionP_PID::PositionP_PID(const std::shared_ptr<PositionP_PIDParameter> param_)
-: k(param_->k), lo(param_->lo), hi(param_->hi), ppid_param(param_->ppid_param)
+PositionP_PID::PositionP_PID(const PositionP_PIDParameter & param_)
+: k(param_.k), lo(param_.lo), hi(param_.hi), ppid_param(param_.ppid_param)
 {
   slave_pid_ = std::make_shared<PositionPID>(ppid_param);
 }
@@ -30,8 +30,8 @@ double PositionP_PID::update(
 
 void PositionP_PID::reset() { slave_pid_->reset_integral(); }
 
-VelocityP_PID::VelocityP_PID(const std::shared_ptr<VelocityP_PIDParameter> param_)
-: k(param_->k), lo(param_->lo), hi(param_->hi), vpid_param(param_->vpid_param)
+VelocityP_PID::VelocityP_PID(const VelocityP_PIDParameter & param_)
+: k(param_.k), lo(param_.lo), hi(param_.hi), vpid_param(param_.vpid_param)
 {
   slave_pid_ = std::make_shared<VelocityPID>(vpid_param);
 }

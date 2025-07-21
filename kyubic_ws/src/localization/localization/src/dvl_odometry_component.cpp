@@ -39,51 +39,50 @@ DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odomet
 
 void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 {
+  auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
+
   // return if velocity error, otherwise calculate odometry
   if (msg->velocity_error == -32768) {
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
-    return;
+    odom_msg->status = localization_msgs::msg::Odometry::STATUS_ERROR;
+  } else {
+    // Calculate update period (delta t)
+    auto now = this->get_clock()->now();
+    double dt = (now - pre_time).nanoseconds() * 1e-9;
+    pre_time = now;
+
+    // Convert to warld coordinate system (right-handed coordinate system, and z-axis downward)
+    // DVL coordinate system is right-handed cooordinate system, and z-axis upward.
+    double heading_rad = imu_msg_->pose.orientation.z * std::numbers::pi / 180;
+    double vel_x = msg->velocity.x * cos(heading_rad) - msg->velocity.y * sin(heading_rad);
+    double vel_y = msg->velocity.x * sin(heading_rad) + msg->velocity.y * cos(heading_rad);
+
+    // Integral of velocity
+    pos_x += vel_x * dt;
+    pos_y += vel_y * dt;
+
+    // Publish
+    {
+      // Copy msg
+      odom_msg->header = msg->header;
+      odom_msg->twist.angular = imu_msg_->twist.angular;  // angle velocity
+
+      // Add position
+      odom_msg->pose.position.x = pos_x;
+      odom_msg->pose.position.y = pos_y;
+      odom_msg->pose.position.z_altitude = msg->altitude;
+
+      // Add orientation
+      odom_msg->pose.orientation = imu_msg_->pose.orientation;
+
+      // Add linear velocity
+      odom_msg->twist.linear.x = vel_x;
+      odom_msg->twist.linear.y = vel_y;
+      odom_msg->twist.linear.z_altitude = msg->velocity.z;
+    }
+    RCLCPP_INFO(this->get_logger(), "Calculated DVL odometry");
   }
-
-  // Calculate update period (delta t)
-  auto now = this->get_clock()->now();
-  double dt = (now - pre_time).nanoseconds() * 1e-9;
-  pre_time = now;
-
-  // Convert to warld coordinate system (right-handed coordinate system, and z-axis downward)
-  // DVL coordinate system is right-handed cooordinate system, and z-axis upward.
-  double heading_rad = imu_msg_->pose.orientation.z * std::numbers::pi / 180;
-  double vel_x = msg->velocity.x * cos(heading_rad) - msg->velocity.y * sin(heading_rad);
-  double vel_y = msg->velocity.x * sin(heading_rad) + msg->velocity.y * cos(heading_rad);
-
-  // Integral of velocity
-  pos_x += vel_x * dt;
-  pos_y += vel_y * dt;
-
-  // Publish
-  {
-    auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
-
-    // Copy msg
-    odom_msg->header = msg->header;
-    odom_msg->twist.angular = imu_msg_->twist.angular;  // angle velocity
-
-    // Add position
-    odom_msg->pose.position.x = pos_x;
-    odom_msg->pose.position.y = pos_y;
-    odom_msg->pose.position.z_altitude = msg->altitude;
-
-    // Add orientation
-    odom_msg->pose.orientation = imu_msg_->pose.orientation;
-
-    // Add linear velocity
-    odom_msg->twist.linear.x = vel_x;
-    odom_msg->twist.linear.y = vel_y;
-    odom_msg->twist.linear.z_altitude = msg->velocity.z;
-
-    pub_->publish(std::move(odom_msg));
-  }
-  RCLCPP_INFO(this->get_logger(), "Calculated DVL odometry");
+  pub_->publish(std::move(odom_msg));
 }
 
 void DVLOdometry::update_imu_callback(localization_msgs::msg::Odometry::UniquePtr msg)
