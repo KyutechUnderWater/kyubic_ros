@@ -47,44 +47,55 @@ void WrenchPlanner::_update_wrench()
   const auto & current_pose = goal_current_odom_->odom.pose;
   const auto & current_twst = goal_current_odom_->odom.twist;
 
-  double force_x = p_pid_ctrl_->pid_x_update(
-    current_twst.linear.x, current_pose.position.x, target_pose.position.x);
-  double force_y = p_pid_ctrl_->pid_y_update(
-    current_twst.linear.y, current_pose.position.y, target_pose.position.y);
+  auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
 
-  double force_z = 0.0;
-  if (z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-    force_z = p_pid_ctrl_->pid_z_update(
-      current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.position.z_depth);
-  } else if (z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-    force_z = p_pid_ctrl_->pid_z_update(
-      current_twst.linear.z_altitude, current_pose.position.z_altitude,
-      target_pose.position.z_altitude);
+  if (goal_current_odom_->odom.status == localization_msgs::msg::Odometry::STATUS_ERROR) {
+    RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
   } else {
-    RCLCPP_ERROR(this->get_logger(), "z_mode is failure");
-    return;
+    double force_x = p_pid_ctrl_->pid_x_update(
+      current_twst.linear.x, current_pose.position.x, target_pose.position.x);
+    double force_y = p_pid_ctrl_->pid_y_update(
+      current_twst.linear.y, current_pose.position.y, target_pose.position.y);
+
+    double force_z = 0.0;
+    if (z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
+      force_z = p_pid_ctrl_->pid_z_update(
+        current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.position.z_depth);
+    } else if (z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
+      force_z = p_pid_ctrl_->pid_z_update(
+        current_twst.linear.z_altitude, current_pose.position.z_altitude,
+        target_pose.position.z_altitude);
+    } else {
+      RCLCPP_ERROR(this->get_logger(), "z_mode is failure");
+      return;
+    }
+
+    double torque_x = p_pid_ctrl_->pid_roll_update(
+      current_twst.angular.x, current_pose.orientation.x, target_pose.orientation.x);
+
+    double torque_z = p_pid_ctrl_->pid_yaw_update(
+      current_twst.angular.z, current_pose.orientation.z, target_pose.orientation.z);
+
+    // z-axis transform
+    double z_rad = -current_pose.orientation.z * std::numbers::pi / 180;
+    double _force_x = force_x;
+    double _force_y = force_y;
+    force_x = _force_x * cos(z_rad) - _force_y * sin(z_rad);
+    force_y = _force_x * sin(z_rad) + _force_y * cos(z_rad);
+
+    RCLCPP_DEBUG(
+      this->get_logger(), "P-PID -> x: %f, y: %f, z: %f, roll: %f, yaw: %f", force_x, force_y,
+      force_z, torque_x, torque_z);
+
+    {
+      msg->wrench.force.x = force_x;
+      msg->wrench.force.y = force_y;
+      msg->wrench.force.z = force_z;
+      msg->wrench.torque.x = torque_x;
+      msg->wrench.torque.z = torque_z;
+    }
   }
-
-  double torque_x = p_pid_ctrl_->pid_roll_update(
-    current_twst.angular.x, current_pose.orientation.x, target_pose.orientation.x);
-
-  double torque_z = p_pid_ctrl_->pid_yaw_update(
-    current_twst.angular.z, current_pose.orientation.z, target_pose.orientation.z);
-
-  RCLCPP_DEBUG(
-    this->get_logger(), "P-PID -> x: %f, y: %f, z: %f, roll: %f, yaw: %f", force_x, force_y,
-    force_z, torque_x, torque_z);
-
-  {
-    auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
-    msg->wrench.force.x = force_x;
-    msg->wrench.force.y = force_y;
-    msg->wrench.force.z = force_z;
-    msg->wrench.torque.x = torque_x;
-    msg->wrench.torque.z = torque_z;
-
-    pub_->publish(std::move(msg));
-  }
+  pub_->publish(std::move(msg));
 }
 
 void WrenchPlanner::goalCurrentOdomCallback(const planner_msgs::msg::WrenchPlan::SharedPtr msg)
