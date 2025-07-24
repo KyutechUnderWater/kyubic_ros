@@ -147,7 +147,11 @@ bool G366::update()
     return true;
   }
 
-  std::cout << "Error reading" << std::endl;
+  std::cout << "Error reading: len(" << len << ")";
+  for (auto x : buf) {
+    std::cout << " " << (int)x;
+  }
+  std::cout << std::endl;
   print_diag_status(diagnostic_status());
   return false;
 }
