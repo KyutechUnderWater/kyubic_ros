@@ -14,7 +14,9 @@
 #include <netinet/in.h>
 
 #include <bitset>
+#include <cstdint>
 #include <memory>
+#include <string>
 #include <vector>
 
 /**
@@ -185,6 +187,12 @@ public:
   bool listen();
 
   /**
+   * @brief read data from Path Finder
+   * @return Number of bytes of data received
+   */
+  ssize_t read(unsigned char * buffer, size_t size);
+
+  /**
    * @brief Get various Path Finder data listend
    * @return various dvl data of DVLData type
    */
@@ -205,9 +213,8 @@ class Sender
   int sockfd;
   struct sockaddr_in server;
 
-  char ping_char[4] = {'C', 'S', '\r', '\n'};
-  char break_char[3] = {'=', '=', '='};
-  char topic_message[256] = {0};
+  const std::string ping_cmd = "CS\r\n";
+  const std::string break_cmd = "===";
 
 public:
   /**
@@ -220,14 +227,25 @@ public:
   explicit Sender(const char * _address, const int _port, const int _timeout = 1000);
 
   /**
+   * @brief read data from Path Finder
+   * @return Number of bytes of data received
+   */
+  ssize_t read(unsigned char * buffer, size_t size);
+
+  /**
+   * @brief Send command to Path Finder
+   */
+  bool send_cmd(const std::string & cmd, const uint & wait_time = 0);
+
+  /**
    * @brief Send break command to Path Finder
    */
-  bool break_cmd();
+  bool send_break_cmd();
 
   /**
    * @brief Send ping command to Path Finder
    */
-  bool ping_cmd();
+  bool send_ping_cmd();
 };
 
 }  // namespace dvl_driver::path_finder
