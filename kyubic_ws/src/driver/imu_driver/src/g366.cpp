@@ -261,23 +261,27 @@ void G366::print_diag_status(uint16_t status)
   bool st_err_all = status >> 1 & 1;
   bool flash_bu_err = status & 1;
 
+  std::cout << "diag status: " << status << std::endl;
+
   if (st_err_all) {
     std::cout << "Error: Self-Test ->"
               << " X-Gyro(" << (st_err_xgyro ? "NG" : "OK") << ")"
               << " Y-Gyro(" << (st_err_ygyro ? "NG" : "OK") << ")"
               << " Z-Gyro(" << (st_err_zgyro ? "NG" : "OK") << ")"
-              << " ACCl(" << (st_err_accl ? "NG" : "OK") << ")";
+              << " ACCl(" << (st_err_accl ? "NG" : "OK") << ")" << std::endl;
   }
-  if (set_err) std::cout << "Error: Settings";
-  if (dlta_ovf) std::cout << "Error: Delta Angle over-flow";
-  if (dltv_ovf) std::cout << "Error: Delta Velocity over-flow";
-  if (hard_err) std::cout << "Error: IMU malfunction";
+  if (set_err) std::cout << "Error: Settings" << std::endl;
+  if (dlta_ovf) std::cout << "Error: Delta Angle over-flow" << std::endl;
+  if (dltv_ovf) std::cout << "Error: Delta Velocity over-flow" << std::endl;
+  if (hard_err) std::cout << "Error: IMU malfunction" << std::endl;
   if (spi_ovf)
     std::cout
-      << "Error: SPI over-flow. Make sure to check the transmission interval and clock settings.";
-  if (uart_ovf) std::cout << "Error: UART over-flow. Make sure to check the baudrate settings.";
-  if (flash_err) std::cout << "Error: Flash-Test";
-  if (flash_bu_err) std::cout << "Error: Flash-Backup";
+      << "Error: SPI over-flow. Make sure to check the transmission interval and clock settings."
+      << std::endl;
+  if (uart_ovf)
+    std::cout << "Error: UART over-flow. Make sure to check the baudrate settings." << std::endl;
+  if (flash_err) std::cout << "Error: Flash-Test" << std::endl;
+  if (flash_bu_err) std::cout << "Error: Flash-Backup" << std::endl;
 }
 
 uint16_t G366::self_test()
