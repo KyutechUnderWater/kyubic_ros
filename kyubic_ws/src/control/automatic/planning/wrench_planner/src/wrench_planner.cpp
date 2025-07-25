@@ -62,7 +62,7 @@ void WrenchPlanner::_update_wrench()
       force_z = p_pid_ctrl_->pid_z_update(
         current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.position.z_depth);
     } else if (z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-      force_z = p_pid_ctrl_->pid_z_update(
+      force_z = -p_pid_ctrl_->pid_z_update(
         current_twst.linear.z_altitude, current_pose.position.z_altitude,
         target_pose.position.z_altitude);
     } else {
