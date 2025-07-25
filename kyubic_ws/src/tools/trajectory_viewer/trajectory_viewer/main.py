@@ -140,8 +140,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
         self.addItem(self.plot_item)
 
         self.mesh = None
-        self.showSTL(f"{os.path.dirname(__file__)
-                        }/../assets/KYUBIC_transformed.stl")
+        self.showSTL(f"{os.path.dirname(__file__)}/../assets/KYUBIC_transformed.stl")
 
     def loadSTL(self, filename):
         m = mesh.Mesh.from_file(filename)
@@ -198,8 +197,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
         if np.linalg.norm(self.trajectory_points[-1] - new_point, ord=2) > 0.01 or any(
             np.abs(new_attitude - self.attitude) > 1
         ):
-            self.trajectory_points = np.vstack(
-                [self.trajectory_points, new_point])
+            self.trajectory_points = np.vstack([self.trajectory_points, new_point])
             self.plot_item.setData(pos=self.trajectory_points)
 
             self.attitude = new_attitude
@@ -216,7 +214,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
             # 2. ピッチ (Y軸周り)
             tr.rotate(pitch, 0, 1, 0)
             # 3. ヨー (Z軸周り)
-            tr.rotate(yaw, 0, 0, 1)
+            tr.rotate(-yaw, 0, 0, 1)
 
             # メッシュにTransform3Dを適用
             self.mesh.setTransform(tr)
