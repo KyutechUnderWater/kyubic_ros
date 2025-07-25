@@ -9,6 +9,8 @@
 
 #include "dvl_driver/dvl_driver.hpp"
 
+#include <functional>
+
 using namespace std::chrono_literals;
 
 namespace dvl_driver
@@ -36,11 +38,16 @@ DVLDriver::DVLDriver() : Node("dvl_driver")
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::DVL>("dvl", qos);
   timer_ = create_wall_timer(100ms, std::bind(&DVLDriver::update, this));
+
+  // Create service server
+  srv_ = create_service<driver_msgs::srv::Command>(
+    "dvl_command",
+    std::bind(&DVLDriver::sendCommandCallback, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 DVLDriver::~DVLDriver()
 {
-  if (sender_->break_cmd()) {
+  if (sender_->send_break_cmd()) {
     RCLCPP_INFO(this->get_logger(), "Send break command.");
   } else {
     RCLCPP_ERROR(this->get_logger(), "Failded to send the break command.");
@@ -49,17 +56,20 @@ DVLDriver::~DVLDriver()
 
 bool DVLDriver::setup()
 {
-  if (!sender_->break_cmd()) {
+  if (!sender_->send_break_cmd()) {
     RCLCPP_ERROR(this->get_logger(), "Failded to send the break command.");
     return false;
   }
-  RCLCPP_INFO(this->get_logger(), "Send break command.");
+  unsigned char buffer[512] = {'\0'};
+  sender_->read(buffer, sizeof(buffer));
+
+  RCLCPP_INFO(this->get_logger(), "%s", buffer);
   return true;
 }
 
 bool DVLDriver::_update()
 {
-  if (!sender_->ping_cmd()) {
+  if (!sender_->send_ping_cmd()) {
     RCLCPP_ERROR(this->get_logger(), "ping faild");
     return false;
   }
@@ -74,6 +84,11 @@ bool DVLDriver::_update()
 
 void DVLDriver::update()
 {
+  if (command_mode) {
+    RCLCPP_INFO(this->get_logger(), "Command Mode Now");
+    return;
+  }
+
   auto msg = std::make_unique<driver_msgs::msg::DVL>();
 
   if (DVLDriver::_update()) {
@@ -96,6 +111,8 @@ void DVLDriver::update()
     // Set status based on error-velocity-bottom
     if (dvl_data_->e_vel_bottom == 0) {
       msg->status = driver_msgs::msg::DVL::STATUS_NORMAL;
+    } else if (dvl_data_->e_vel_bottom == -32768) {
+      msg->status = driver_msgs::msg::DVL::STATUS_ERROR;
     } else {
       msg->status = driver_msgs::msg::DVL::STATUS_WARNING;
     }
@@ -114,6 +131,38 @@ void DVLDriver::update()
 
   // Publish
   pub_->publish(std::move(msg));
+}
+
+void DVLDriver::sendCommandCallback(
+  const driver_msgs::srv::Command::Request::SharedPtr request,
+  driver_msgs::srv::Command::Response::SharedPtr response)
+{
+  command_mode = true;
+  RCLCPP_INFO(this->get_logger(), "Service request command: '%s'", request->command.c_str());
+
+  if (request->command != "") {
+    if (sender_->send_cmd(request->command + CRCF, 1)) {
+      unsigned char buffer[4096] = {'\0'};
+      size_t len = sender_->read(buffer, sizeof(buffer));
+
+      if (0 < len) {
+        std::string data(reinterpret_cast<const char *>(buffer), len);
+
+        // Remove unneeded newline codes and strings
+        size_t pos = data.find(request->command + CRCF);
+        if (pos != std::string::npos) {
+          data = data.substr(pos + request->command.size() + 2);
+          if ((pos = data.find(">")) != std::string::npos) {
+            data.erase(data.begin() + pos, data.end());
+          };
+        }
+        response->output = data;
+      }
+    } else {
+      response->output = "Don't send command(" + request->command + ")";
+    }
+  }
+  command_mode = false;
 }
 
 }  // namespace dvl_driver
