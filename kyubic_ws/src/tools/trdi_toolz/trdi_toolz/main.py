@@ -59,7 +59,9 @@ class DVLCommandClient(Node):
         if self._future.result() is not None:
             response = self._future.result()
             self.get_logger().info(
-                f'Service response: success={True if response else False}, output="{response.output}"'
+                f'Service response: success={True if response else False}, output="{
+                    response.output
+                }"'
             )
             return response.output
         else:
@@ -80,7 +82,8 @@ def main():
 
     dvl_client = DVLCommandClient()
 
-    ros_thread = threading.Thread(target=rclpy_thread_function, args=(dvl_client,))
+    ros_thread = threading.Thread(
+        target=rclpy_thread_function, args=(dvl_client,))
     ros_thread.daemon = True  # メインスレッド終了時に一緒に終了
     ros_thread.start()
 
@@ -96,17 +99,18 @@ def main():
         DVL Command Console
         ====================================================
         
-        ROS2サービス 'dvl_command' を介してDVLに設定コマンドを送信する
+        Send setting command to DVL via ROS2 Service 'dvl_command'
         
-        例:
+        Example:
         >>> print(send("?"))
         
         ====================================================
         """,
     )
+    console.resize(1280, 720)
     console.show()
 
-    sys.exit(app.exec())
+    sys.exit(pg.exec())
 
 
 if __name__ == "__main__":
