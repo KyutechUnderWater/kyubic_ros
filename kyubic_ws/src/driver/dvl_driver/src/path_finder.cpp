@@ -18,6 +18,8 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <ostream>
+#include <thread>
 
 namespace dvl_driver::path_finder
 {
@@ -58,10 +60,12 @@ Listener::Listener(const char * _address, const int _port, const int _timeout)
   std::cout << "DVL Listener Start!!!" << std::endl;
 }
 
+ssize_t Listener::read(unsigned char * buffer, size_t size) { return ::read(sockfd, buffer, size); }
+
 bool Listener::listen()
 {
   memset(buffer, 0, sizeof(buffer));
-  ssize_t num_of_listen = read(sockfd, buffer, sizeof(buffer));
+  ssize_t num_of_listen = this->read(buffer, sizeof(buffer));
 
   if (num_of_listen == 88) {
     return _parse();
@@ -207,21 +211,19 @@ Sender::Sender(const char * _address, const int _port, const int _timeout)
   std::cout << "DVL Sender Start!!!" << std::endl;
 }
 
-bool Sender::break_cmd()
+ssize_t Sender::read(unsigned char * buffer, size_t size) { return ::read(sockfd, buffer, size); }
+
+bool Sender::send_cmd(const std::string & cmd, const uint & wait_time)
 {
-  if (send(sockfd, break_char, sizeof(break_char), 0) != sizeof(break_char)) {
+  if (send(sockfd, cmd.c_str(), cmd.size(), 0) != (ssize_t)cmd.size()) {
     return false;
   }
-  sleep(2);
+  std::this_thread::sleep_for(std::chrono::seconds(wait_time));
   return true;
 }
 
-bool Sender::ping_cmd()
-{
-  if (send(sockfd, ping_char, sizeof(ping_char), 0) != sizeof(ping_char)) {
-    return false;
-  }
-  return true;
-}
+bool Sender::send_break_cmd() { return send_cmd(break_cmd, 4); }
+
+bool Sender::send_ping_cmd() { return send_cmd(ping_cmd); }
 
 }  // namespace dvl_driver::path_finder
