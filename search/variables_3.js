@@ -1,22 +1,11 @@
 var searchData=
 [
-  ['data_5ffiles_0',['data_files',['../namespacesetup.html#ad027a8e9452da003dca32bf7467bd16e',1,'setup']]],
-  ['data_5fqueue_1',['data_queue',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#a628225e9d64aa8c6bfa37579f232a900',1,'real_time_plotter::main::MultiDimSubscriber']]],
-  ['data_5fstructure_2',['data_structure',['../structdvl__driver_1_1path__finder_1_1Data.html#a0b3536d702c93b62074affa2361e194f',1,'dvl_driver::path_finder::Data']]],
-  ['depth_3',['depth',['../structdepth__driver_1_1DepthData.html#a7265a6a43a17a2d4b24eb11dc07ecabe',1,'depth_driver::DepthData::depth()'],['../structdvl__driver_1_1path__finder_1_1Data.html#a354cbefb4f97988261d57da200cfe97d',1,'dvl_driver::path_finder::Data::depth()']]],
-  ['depth_5fsma_5fsumple_5fnum_4',['DEPTH_SMA_SUMPLE_NUM',['../namespacelocalization.html#afb72184cf64e23af3745ecf74ef5fd10',1,'localization']]],
-  ['description_5',['description',['../namespacesetup.html#aedf461ec52a946bda975938ba0b93ec0',1,'setup']]],
-  ['diag_5fstat_5frcomm0_6',['diag_stat_rcomm0',['../namespaceimu__driver_1_1g366.html#adf9bb01c9f38eb2c65267f2fc03e2fe4',1,'imu_driver::g366']]],
-  ['dist_5fhx_7',['dist_hx',['../namespacethruster__driver.html#a8af5fb016aaa6fc2a2a7e4d0e610d497',1,'thruster_driver']]],
-  ['dist_5fhy_8',['dist_hy',['../namespacethruster__driver.html#a6bfb64bea230881cdb5bd71cd22fb793',1,'thruster_driver']]],
-  ['dist_5fvy_9',['dist_vy',['../namespacethruster__driver.html#adaffecdddd45e2fe44cb85c6cacdab75',1,'thruster_driver']]],
-  ['dist_5fvz_10',['dist_vz',['../namespacethruster__driver.html#a76d6fb06512926cd515d6c7ec0edee6d',1,'thruster_driver']]],
-  ['dmg_5fdistance_5fbottom_5feast_11',['dmg_distance_bottom_east',['../structdvl__driver_1_1path__finder_1_1Data.html#a29b56cef20705e2a1d2623b4f91e1a44',1,'dvl_driver::path_finder::Data']]],
-  ['dmg_5fdistance_5fbottom_5fnorth_12',['dmg_distance_bottom_north',['../structdvl__driver_1_1path__finder_1_1Data.html#ac81a0842e7aa4190c4febf00c4523d50',1,'dvl_driver::path_finder::Data']]],
-  ['dmg_5fdistance_5fbottom_5fup_13',['dmg_distance_bottom_up',['../structdvl__driver_1_1path__finder_1_1Data.html#a06a889b8ce32f8cdb145a0dff9714b33',1,'dvl_driver::path_finder::Data']]],
-  ['dmg_5fdistance_5fref_5feast_14',['dmg_distance_ref_east',['../structdvl__driver_1_1path__finder_1_1Data.html#ae114a6ab3b0446e38e7f6d31d3f2621d',1,'dvl_driver::path_finder::Data']]],
-  ['dmg_5fdistance_5fref_5ferror_15',['dmg_distance_ref_error',['../structdvl__driver_1_1path__finder_1_1Data.html#aeeeb19e67fc82e6e2cace2565a9e57f2',1,'dvl_driver::path_finder::Data']]],
-  ['dmg_5fdistance_5fref_5fnorth_16',['dmg_distance_ref_north',['../structdvl__driver_1_1path__finder_1_1Data.html#ae4ee1128332e81fab571f0ac5459f559',1,'dvl_driver::path_finder::Data']]],
-  ['dmg_5fdistance_5fref_5fup_17',['dmg_distance_ref_up',['../structdvl__driver_1_1path__finder_1_1Data.html#a8a6dcc63d14d5485b8495ac18ef95a65',1,'dvl_driver::path_finder::Data']]],
-  ['dvl_5fvel_5ferror_18',['DVL_VEL_ERROR',['../structdvl__driver_1_1path__finder_1_1Data.html#a51bca68583390111d0cfe0a312734ac2',1,'dvl_driver::path_finder::Data']]]
+  ['check_5fready_5frcomm1_0',['check_ready_rcomm1',['../namespaceimu__driver_1_1g366.html#a30cbf806c0ef77c1675f578c733525c6',1,'imu_driver::g366']]],
+  ['checkbox_5fcurve1_1',['checkbox_curve1',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a9aa59d50c64d7538a5b566cf5f918864',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['checkbox_5fcurve2_2',['checkbox_curve2',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a21d6f55aa3e6db652ea0e34a63564695',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['checkbox_5ftarget_3',['checkbox_target',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a0624b18f60e47e4f8c44987dc746b634',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['cli_4',['cli',['../classtrdi__toolz_1_1main_1_1DVLCommandClient.html#a96a3014be7e9ae143b0723e6699c5c65',1,'trdi_toolz::main::DVLCommandClient']]],
+  ['config_5fcomm_5',['config_comm',['../namespaceimu__driver_1_1g366.html#a13dc3acd6c6c37a70192f5ede1806633',1,'imu_driver::g366']]],
+  ['config_5fmode_5fwcomm0_6',['config_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#a3ae26f3b7ad93205dbfc5b0938729ee9',1,'imu_driver::g366']]],
+  ['count_7',['count',['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()']]]
 ];

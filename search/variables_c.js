@@ -1,10 +1,13 @@
 var searchData=
 [
-  ['n_5fgraph_0',['n_graph',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a9a4b059a7ea4ac0bb76ab14561f82b59',1,'real_time_plotter::main::MultiGraphViewer']]],
-  ['name_1',['name',['../namespacesetup.html#ab3a7a0638d76a01367c5bc3cc699447f',1,'setup']]],
-  ['new_5fposition_5fsignal_2',['new_position_signal',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a31c5cf1effbe007a4fda8e4e6a8ee167',1,'trajectory_viewer::main::RosCommunicator']]],
-  ['node_5fstatus_3',['node_status',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#abce255ead68a038acae9fe6bd1d04f44',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['nodes_4',['nodes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ae64c07aaa135224e453985d7b1d3c5ca',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['num_5fof_5fbytes_5',['num_of_bytes',['../structdvl__driver_1_1path__finder_1_1Data.html#a854220bc0dd5b0d891923f9c9b2c140a',1,'dvl_driver::path_finder::Data']]],
-  ['num_5fthrusters_6',['NUM_THRUSTERS',['../namespacethruster__driver.html#a9d452c32f77f86e57bc5c31ae77466a6',1,'thruster_driver']]]
+  ['maintainer_0',['maintainer',['../namespacesetup.html#aa1a7cf9bbf76004bb72697dc00bbee9d',1,'setup']]],
+  ['maintainer_5femail_1',['maintainer_email',['../namespacesetup.html#a92a81adbfdd219564d5246ce8d77f869',1,'setup']]],
+  ['max1_5fy_5finput_2',['max1_y_input',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#adbc5cd97181a34bc01da3cb4f1a9410c',1,'real_time_plotter::main::PlotUnitWidget']]],
+  ['max2_5fy_5finput_3',['max2_y_input',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#abc4d996215d0d5188084348c3db1d5f3',1,'real_time_plotter::main::PlotUnitWidget']]],
+  ['max_5fdata_5fpoints_4',['MAX_DATA_POINTS',['../namespacereal__time__plotter_1_1main.html#a415f8f641dd1ea2050ded15bee44c515',1,'real_time_plotter::main']]],
+  ['max_5fview_5fpoints_5',['MAX_VIEW_POINTS',['../namespacereal__time__plotter_1_1main.html#afeccd82956315c39a394158f7824b569',1,'real_time_plotter::main']]],
+  ['mesh_6',['mesh',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a717e76f97a0b401ab96e83461da75161',1,'trajectory_viewer::main::TrajectoryPlotter']]],
+  ['meta_7',['meta',['../structimu__driver_1_1g366_1_1DATA.html#a77f29a73cdd29edfae8697c5875ef8dd',1,'imu_driver::g366::DATA']]],
+  ['min1_5fy_5finput_8',['min1_y_input',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#af4493918c5d07778aca91cdf5f73587f',1,'real_time_plotter::main::PlotUnitWidget']]],
+  ['min2_5fy_5finput_9',['min2_y_input',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#adf7cbc3d9c64660db2c2949cbef6e84e',1,'real_time_plotter::main::PlotUnitWidget']]]
 ];

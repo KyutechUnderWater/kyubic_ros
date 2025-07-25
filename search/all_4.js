@@ -9,8 +9,8 @@ var searchData=
   ['data_5fstructure_6',['data_structure',['../structdvl__driver_1_1path__finder_1_1Data.html#a0b3536d702c93b62074affa2361e194f',1,'dvl_driver::path_finder::Data']]],
   ['data_5fstructure_7',['DATA_STRUCTURE',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da6e07a48b0edb08bec4cb981157120a2f',1,'dvl_driver::path_finder']]],
   ['data_5ftable_8',['DATA_TABLE',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830d',1,'dvl_driver::path_finder']]],
-  ['depth_9',['DEPTH',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da5234b5f6950745498d8d1591933f5415',1,'dvl_driver::path_finder']]],
-  ['depth_10',['depth',['../structdvl__driver_1_1path__finder_1_1Data.html#a354cbefb4f97988261d57da200cfe97d',1,'dvl_driver::path_finder::Data::depth()'],['../structdepth__driver_1_1DepthData.html#a7265a6a43a17a2d4b24eb11dc07ecabe',1,'depth_driver::DepthData::depth()']]],
+  ['depth_9',['depth',['../structdepth__driver_1_1DepthData.html#a7265a6a43a17a2d4b24eb11dc07ecabe',1,'depth_driver::DepthData::depth()'],['../structdvl__driver_1_1path__finder_1_1Data.html#a354cbefb4f97988261d57da200cfe97d',1,'dvl_driver::path_finder::Data::depth()']]],
+  ['depth_10',['DEPTH',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da5234b5f6950745498d8d1591933f5415',1,'dvl_driver::path_finder']]],
   ['depth_5fdriver_11',['depth_driver',['../namespacedepth__driver.html',1,'']]],
   ['depth_5fdriver_2ecpp_12',['depth_driver.cpp',['../depth__driver_8cpp.html',1,'']]],
   ['depth_5fdriver_2ehpp_13',['depth_driver.hpp',['../depth__driver_8hpp.html',1,'']]],
@@ -45,7 +45,8 @@ var searchData=
   ['dvl_5fodometry_5fcomponent_2ecpp_42',['dvl_odometry_component.cpp',['../dvl__odometry__component_8cpp.html',1,'']]],
   ['dvl_5fodometry_5fcomponent_2ehpp_43',['dvl_odometry_component.hpp',['../dvl__odometry__component_8hpp.html',1,'']]],
   ['dvl_5fvel_5ferror_44',['DVL_VEL_ERROR',['../structdvl__driver_1_1path__finder_1_1Data.html#a51bca68583390111d0cfe0a312734ac2',1,'dvl_driver::path_finder::Data']]],
-  ['dvldriver_45',['DVLDriver',['../classdvl__driver_1_1DVLDriver.html',1,'dvl_driver::DVLDriver'],['../classdvl__driver_1_1DVLDriver.html#afd090ce8373b9a0bd70802722e111609',1,'dvl_driver::DVLDriver::DVLDriver()']]],
-  ['dvlodometry_46',['DVLOdometry',['../classlocalization_1_1DVLOdometry.html#a23ac3bb9d575359c45df885545ab429e',1,'localization::DVLOdometry::DVLOdometry()'],['../classlocalization_1_1DVLOdometry.html',1,'localization::DVLOdometry']]],
-  ['path_5ffinder_47',['path_finder',['../namespacedvl__driver_1_1path__finder.html',1,'dvl_driver']]]
+  ['dvlcommandclient_45',['DVLCommandClient',['../classtrdi__toolz_1_1main_1_1DVLCommandClient.html',1,'trdi_toolz::main']]],
+  ['dvldriver_46',['DVLDriver',['../classdvl__driver_1_1DVLDriver.html',1,'dvl_driver::DVLDriver'],['../classdvl__driver_1_1DVLDriver.html#afd090ce8373b9a0bd70802722e111609',1,'dvl_driver::DVLDriver::DVLDriver()']]],
+  ['dvlodometry_47',['DVLOdometry',['../classlocalization_1_1DVLOdometry.html#a23ac3bb9d575359c45df885545ab429e',1,'localization::DVLOdometry::DVLOdometry()'],['../classlocalization_1_1DVLOdometry.html',1,'localization::DVLOdometry']]],
+  ['path_5ffinder_48',['path_finder',['../namespacedvl__driver_1_1path__finder.html',1,'dvl_driver']]]
 ];

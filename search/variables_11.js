@@ -1,15 +1,16 @@
 var searchData=
 [
-  ['salinity_0',['salinity',['../structdvl__driver_1_1path__finder_1_1Data.html#a989d96fdbaaba06a681342e0fe18326c',1,'dvl_driver::path_finder::Data']]],
-  ['sampling_5fmode_5fwcomm0_1',['sampling_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#ae63d433aa418b58858af750cbf959fa7',1,'imu_driver::g366']]],
-  ['sea2fresh_5fscale_2',['sea2fresh_scale',['../namespacelocalization.html#aa1a9eefe89401aa072d56a48603b45bd',1,'localization']]],
-  ['self_5ftest_5frcomm1_3',['self_test_rcomm1',['../namespaceimu__driver_1_1g366.html#a452969577dfcc8545ed42ef799216556',1,'imu_driver::g366']]],
-  ['self_5ftest_5fwcomm1_4',['self_test_wcomm1',['../namespaceimu__driver_1_1g366.html#a4c473a05927d4168a38db044a6a455c1',1,'imu_driver::g366']]],
-  ['sequence_5',['sequence',['../structdepth__driver_1_1DepthData.html#acdd193e36d3fca2cb766d5931260b731',1,'depth_driver::DepthData']]],
-  ['software_5freset_5fwcomm1_6',['software_reset_wcomm1',['../namespaceimu__driver_1_1g366.html#a10a79f621ce39691a59311bbf5e0e41b',1,'imu_driver::g366']]],
-  ['speed_5fof_5fsound_7',['speed_of_sound',['../structdvl__driver_1_1path__finder_1_1Data.html#a82f344c6eb15321be71ce48064ff02ec',1,'dvl_driver::path_finder::Data']]],
-  ['start_5ftime_8',['start_time',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#ad2317badc8c568e3a3b3c2958c64047b',1,'real_time_plotter::main::MultiGraphViewer']]],
-  ['submit_5fbutton_9',['submit_button',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a3d2a92b989a3806cc7e90066751f16c4',1,'trajectory_viewer::main::MainWindow']]],
-  ['subscription_10',['subscription',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#aae69033448d6d0f00ff58369da5b0655',1,'trajectory_viewer::main::RosCommunicator']]],
-  ['system_5fconfig_11',['system_config',['../structdvl__driver_1_1path__finder_1_1Data.html#a62e3ffd0664a849e5a8f2e2498cac27c',1,'dvl_driver::path_finder::Data']]]
+  ['range_5fto_5fbottom_5fbm1_0',['range_to_bottom_bm1',['../structdvl__driver_1_1path__finder_1_1Data.html#ad16429d0f02a3cf5d764a9f54354f3b1',1,'dvl_driver::path_finder::Data']]],
+  ['range_5fto_5fbottom_5fbm2_1',['range_to_bottom_bm2',['../structdvl__driver_1_1path__finder_1_1Data.html#a3e31782b6fddd4aeaa5890231a7a6b69',1,'dvl_driver::path_finder::Data']]],
+  ['range_5fto_5fbottom_5fbm3_2',['range_to_bottom_bm3',['../structdvl__driver_1_1path__finder_1_1Data.html#a292e2c96c3a6c12e27020e53d1ff865a',1,'dvl_driver::path_finder::Data']]],
+  ['range_5fto_5fbottom_5fbm4_3',['range_to_bottom_bm4',['../structdvl__driver_1_1path__finder_1_1Data.html#ac280feb6e3d7b3f03711f462fdeec784',1,'dvl_driver::path_finder::Data']]],
+  ['ref_5flayer_5fend_4',['ref_layer_end',['../structdvl__driver_1_1path__finder_1_1Data.html#a06098b4f9233f5a5a3585708f618a81c',1,'dvl_driver::path_finder::Data']]],
+  ['ref_5flayer_5fstart_5',['ref_layer_start',['../structdvl__driver_1_1path__finder_1_1Data.html#a24c8519fb95b7cf11a9730d37d8d0c22',1,'dvl_driver::path_finder::Data']]],
+  ['ref_5flayer_5fstatus_6',['ref_layer_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a4ebacc5623b4615835ee60e9d29c4ad6',1,'dvl_driver::path_finder::Data']]],
+  ['reset_5fbutton_7',['reset_button',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#acea32fb9358c62c3efc12fd14d33cf2f',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['reset_5fbutton_5fstate_8',['reset_button_state',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a505dff84e82269d8f2654a66343a1730',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['roll_9',['roll',['../structdvl__driver_1_1path__finder_1_1Data.html#abad80c260ef070eef82def0894ff9ed1',1,'dvl_driver::path_finder::Data::roll()'],['../structimu__driver_1_1g366_1_1DATA.html#ad8221b9ae94781bb620e159e162bbc24',1,'imu_driver::g366::DATA::roll()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a1df683254b395731991af82d27931c15',1,'imu_driver::g366::RAW_DATA_T::roll()']]],
+  ['roll_5finput_10',['roll_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a84a954a43777d7a5cec0e6e63548e1aa',1,'trajectory_viewer::main::MainWindow']]],
+  ['root_11',['root',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a68f7e0cc6e35b9d7df4a06e3895a2208',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['ros_5fnode_12',['ros_node',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#ac252714a657238f7b1d49bdcb4f358bf',1,'real_time_plotter::main::MultiGraphViewer']]]
 ];

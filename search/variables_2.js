@@ -1,10 +1,13 @@
 var searchData=
 [
-  ['check_5fready_5frcomm1_0',['check_ready_rcomm1',['../namespaceimu__driver_1_1g366.html#a30cbf806c0ef77c1675f578c733525c6',1,'imu_driver::g366']]],
-  ['checkbox_5fcurve1_1',['checkbox_curve1',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a9aa59d50c64d7538a5b566cf5f918864',1,'real_time_plotter::main::MultiGraphViewer']]],
-  ['checkbox_5fcurve2_2',['checkbox_curve2',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a21d6f55aa3e6db652ea0e34a63564695',1,'real_time_plotter::main::MultiGraphViewer']]],
-  ['checkbox_5ftarget_3',['checkbox_target',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a0624b18f60e47e4f8c44987dc746b634',1,'real_time_plotter::main::MultiGraphViewer']]],
-  ['config_5fcomm_4',['config_comm',['../namespaceimu__driver_1_1g366.html#a13dc3acd6c6c37a70192f5ede1806633',1,'imu_driver::g366']]],
-  ['config_5fmode_5fwcomm0_5',['config_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#a3ae26f3b7ad93205dbfc5b0938729ee9',1,'imu_driver::g366']]],
-  ['count_6',['count',['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()']]]
+  ['beam_5f1_5flow_5fcorrelation_0',['BEAM_1_LOW_CORRELATION',['../structdvl__driver_1_1path__finder_1_1Data.html#a42cc2e4434d3a052609fe7d6d9590dcd',1,'dvl_driver::path_finder::Data']]],
+  ['beam_5f1_5flow_5fecho_1',['BEAM_1_LOW_ECHO',['../structdvl__driver_1_1path__finder_1_1Data.html#ad7c4a57d31667a216e1744da25157cd8',1,'dvl_driver::path_finder::Data']]],
+  ['beam_5f2_5flow_5fcorrelation_2',['BEAM_2_LOW_CORRELATION',['../structdvl__driver_1_1path__finder_1_1Data.html#aafee821b0754e65706f230ab7b4b185d',1,'dvl_driver::path_finder::Data']]],
+  ['beam_5f2_5flow_5fecho_3',['BEAM_2_LOW_ECHO',['../structdvl__driver_1_1path__finder_1_1Data.html#a4b8eee261c3df1c5f542f84859d741d3',1,'dvl_driver::path_finder::Data']]],
+  ['beam_5f3_5flow_5fcorrelation_4',['BEAM_3_LOW_CORRELATION',['../structdvl__driver_1_1path__finder_1_1Data.html#ab95edaab1866a4dca3c38f2787070fb8',1,'dvl_driver::path_finder::Data']]],
+  ['beam_5f3_5flow_5fecho_5',['BEAM_3_LOW_ECHO',['../structdvl__driver_1_1path__finder_1_1Data.html#ae01321b71e16addb0592aaf37802347b',1,'dvl_driver::path_finder::Data']]],
+  ['beam_5f4_5flow_5fcorrelation_6',['BEAM_4_LOW_CORRELATION',['../structdvl__driver_1_1path__finder_1_1Data.html#a27b39c5ee7986a1209d6728d3749d957',1,'dvl_driver::path_finder::Data']]],
+  ['beam_5f4_5flow_5fecho_7',['BEAM_4_LOW_ECHO',['../structdvl__driver_1_1path__finder_1_1Data.html#a300cf3f9dfcb1700ed2d794de2be0184',1,'dvl_driver::path_finder::Data']]],
+  ['bottom_5fstatus_8',['bottom_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a35c007aedb83e0609e3c37c24d478fec',1,'dvl_driver::path_finder::Data']]],
+  ['burst_5frequest_5fwcomm0_9',['burst_request_wcomm0',['../namespaceimu__driver_1_1g366.html#a1fed97eb3b95a3a50dfa2ede5bda5c23',1,'imu_driver::g366']]]
 ];

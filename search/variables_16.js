@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['x_5faccl_0',['x_accl',['../structimu__driver_1_1g366_1_1DATA.html#a997c4692bbfab105572b5732db429c15',1,'imu_driver::g366::DATA::x_accl()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a4f7318de242e343b43cf717a96a89104',1,'imu_driver::g366::RAW_DATA_T::x_accl()']]],
-  ['x_5faxis_5fitem_1',['x_axis_item',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a9cf3f4b569da01b8ca6937d56d79806f',1,'trajectory_viewer::main::TrajectoryPlotter']]],
-  ['x_5fgyro_2',['x_gyro',['../structimu__driver_1_1g366_1_1DATA.html#ab5ad551a1b707c343bf75dc6902cb329',1,'imu_driver::g366::DATA::x_gyro()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a1ca62226d7aa097436c903f30cbf3810',1,'imu_driver::g366::RAW_DATA_T::x_gyro()']]],
-  ['x_5finput_3',['x_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a22aaa08101137c72c782111a0e21b076',1,'trajectory_viewer::main::MainWindow']]],
-  ['x_5fvel_5fbottom_4',['x_vel_bottom',['../structdvl__driver_1_1path__finder_1_1Data.html#a04d802e1907f4b3e59eef2efcfeac96a',1,'dvl_driver::path_finder::Data']]]
+  ['window0_5fselect_5fwcomm_0',['window0_select_wcomm',['../namespaceimu__driver_1_1g366.html#a249575d093e22ed669192828aa209c49',1,'imu_driver::g366']]],
+  ['window1_5fselect_5fwcomm_1',['window1_select_wcomm',['../namespaceimu__driver_1_1g366.html#ac842af01b36abb2d489a2d75a272bfb3',1,'imu_driver::g366']]]
 ];

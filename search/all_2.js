@@ -17,7 +17,6 @@ var searchData=
   ['bm4_5frng_5fto_5fbtm_14',['BM4_RNG_TO_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da2f136e8923e0f3d6374f19ed5b21bfec',1,'dvl_driver::path_finder']]],
   ['bottom_5fstatus_15',['bottom_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a35c007aedb83e0609e3c37c24d478fec',1,'dvl_driver::path_finder::Data']]],
   ['bottom_5fstatus_16',['BOTTOM_STATUS',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da508b3adf3582e913fd988e23f0cab730',1,'dvl_driver::path_finder']]],
-  ['break_5fcmd_17',['break_cmd',['../classdvl__driver_1_1path__finder_1_1Sender.html#a0018ff177b29878a5f1cf3a2d07e8730',1,'dvl_driver::path_finder::Sender']]],
-  ['build_5fui_18',['build_ui',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#af1a988239afd76b0650a2607a43c9528',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['burst_5frequest_5fwcomm0_19',['burst_request_wcomm0',['../namespaceimu__driver_1_1g366.html#a1fed97eb3b95a3a50dfa2ede5bda5c23',1,'imu_driver::g366']]]
+  ['build_5fui_17',['build_ui',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#af1a988239afd76b0650a2607a43c9528',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['burst_5frequest_5fwcomm0_18',['burst_request_wcomm0',['../namespaceimu__driver_1_1g366.html#a1fed97eb3b95a3a50dfa2ede5bda5c23',1,'imu_driver::g366']]]
 ];
