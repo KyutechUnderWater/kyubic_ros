@@ -149,38 +149,41 @@ class GnssPublisher(Node):
                                 # その他の型エラーが起きた場合は、このブロックが実行される。
                                 pass
 
-                            if (
-                                msg.horizontal_dil is not None
-                                and msg.horizontal_dil > 0
-                            ):
-                                h_variance = (
-                                    self.hdop_error_factor * msg.horizontal_dil
-                                ) ** 2
-                                v_variance = (
-                                    self.hdop_error_factor * msg.horizontal_dil * 1.5
-                                ) ** 2
+                            # 共分散の計算
+                            try:
+                                hdop = float(msg.horizontal_dil)
+                                if hdop > 0:
+                                    # ★★★ 元の`msg.horizontal_dil`ではなく、変換後の`hdop`を使用 ★★★
+                                    h_variance = (self.hdop_error_factor * hdop) ** 2
+                                    v_variance = (self.hdop_error_factor * hdop * 1.5) ** 2
 
-                                fix_msg.position_covariance[0] = h_variance
-                                fix_msg.position_covariance[4] = h_variance
-                                fix_msg.position_covariance[8] = v_variance
-                                fix_msg.position_covariance_type = (
-                                    NavSatFix.COVARIANCE_TYPE_DIAGONAL_KNOWN
-                                )
+                                    fix_msg.position_covariance[0] = h_variance
+                                    fix_msg.position_covariance[4] = h_variance
+                                    fix_msg.position_covariance[8] = v_variance
+                                    fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_DIAGONAL_KNOWN
+                                    
+                                    # ★★★ ログ出力はifブロックの内側に移動 ★★★
+                                    self.get_logger().info(
+                                        f"Publishing: time={fix_msg.header.stamp.sec}, "
+                                        f"qual={fix_msg.status.status}, lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, "
+                                        f"cov_x={h_variance:.2f}, cov_y={h_variance:.2f}, cov_z={v_variance:.2f}"
+                                    )
+                                else:
+                                    # hdopが0以下だった場合
+                                    fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
+                                    self.get_logger().info(
+                                        f"Publishing: time={fix_msg.header.stamp.sec}, "
+                                        f"qual={fix_msg.status.status}, lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, "
+                                    )
+                            except (ValueError, TypeError, AttributeError):
+                                # hdopがNone, 空文字列, または不正な値だった場合
+                                fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
                                 self.get_logger().info(
-                                    f"Publishing: time={
-                                        fix_msg.header.stamp
-                                    }, 品質フラグ={fix_msg.status.status},使用衛星={
-                                        fix_msg.status.service
-                                    }  , 緯度={msg.latitude}, 経度={
-                                        msg.longitude
-                                    }, xの共分散={h_variance} ,yの共分散={
-                                        h_variance
-                                    }, zの共分散={v_variance}"
+                                    f"Publishing: time={fix_msg.header.stamp.sec}, "
+                                    f"qual={fix_msg.status.status}, lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, "
                                 )
-                            else:
-                                fix_msg.position_covariance_type = (
-                                    NavSatFix.COVARIANCE_TYPE_UNKNOWN
-                                )
+                                    
+
 
                             self.fix_publisher_.publish(fix_msg)
 
