@@ -107,7 +107,7 @@ class GnssPublisher(Node):
                                 if prn is not None and snr is not None:
                                     # pynmea2では空のSNRは空文字列になるため、intに変換
                                     try:
-                                        self.gsv_sats[prn] = int(snr)
+                                        self.gsv_sats[msg.talker,prn] = int(snr)#msg.talkerを追加
                                     except (ValueError, TypeError):
                                         pass  # 変換できない場合は無視
 
@@ -121,8 +121,8 @@ class GnssPublisher(Node):
                                 self.snr_publisher_.publish(snr_msg)
                                 self.get_logger().info(
                                     f"Published satellite SNRs ({
-                                        len(snr_values)
-                                    } sats): {snr_values}"
+                                        len(self.gsv_sats)
+                                    } sats): {self.gsv_sats}"
                                 )
 
                         elif (
