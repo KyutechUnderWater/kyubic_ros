@@ -12,7 +12,6 @@
 #include <unistd.h>
 
 #include <algorithm>
-#include <cstdlib>
 #include <iostream>
 #include <thread>
 
@@ -37,7 +36,7 @@ bool G366::setup()
   // Reset
   software_reset();
 
-  // Check hardware error
+  // Check hardware error (malfanction)
   uint16_t hard_error = self_test() & 0b0000000001100000;
   if (hard_error != 0) {
     std::cout << "Error [setup]: Hardware error" << std::endl;
@@ -59,6 +58,7 @@ bool G366::setup()
     std::cout << "Info [setup]: Self-test is clear" << std::endl;
   } else {
     std::cout << "Error [setup]: Self-test is faild. Error number is " << test_stat << std::endl;
+    print_diag_status(test_stat);
     return false;
   }
 
@@ -147,7 +147,12 @@ bool G366::update()
     return true;
   }
 
-  std::cout << "Error reading" << std::endl;
+  std::cout << "Error reading: len(" << len << ")";
+  for (auto x : buf) {
+    std::cout << " " << (int)x;
+  }
+  std::cout << std::endl;
+  print_diag_status(diagnostic_status());
   return false;
 }
 
@@ -177,7 +182,7 @@ void G366::set_filter(uint8_t filter_type)
     //Read the running status
     serial_->flush();
     serial_->write(filter_ctrl_rcomm1, sizeof(filter_ctrl_rcomm1));
-    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 10ms);
+    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 1s);
 
     if (len == 4) {
       running = stat_buf[2] & 0b00100000;
@@ -209,7 +214,7 @@ void G366::set_atti_motion_profile(uint8_t motion_type)
     //Read the running status
     serial_->flush();
     serial_->write(atti_motion_rcomm1, sizeof(atti_motion_rcomm1));
-    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 10ms);
+    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 1s);
 
     if (len == 4) {
       running = stat_buf[2] & 0b01000000;
@@ -229,7 +234,7 @@ uint16_t G366::diagnostic_status()
   serial_->flush();
   serial_->write(window0_select_wcomm, sizeof(window0_select_wcomm));
   serial_->write(diag_stat_rcomm0, sizeof(diag_stat_rcomm0));
-  uint8_t len = serial_->read(result_buf, sizeof(result_buf), 10ms);
+  uint8_t len = serial_->read(result_buf, sizeof(result_buf), 1s);
 
   if (len == 4) {
     std::cout << "Info [diagnostic_status]: Successful" << std::endl;
@@ -238,6 +243,45 @@ uint16_t G366::diagnostic_status()
     std::cout << "Error [diagnostic_status]: Don't read diag status.";
     return 65535;
   }
+}
+
+void G366::print_diag_status(uint16_t status)
+{
+  bool st_err_xgyro = status >> 14;
+  bool st_err_ygyro = status >> 13 & 1;
+  bool st_err_zgyro = status >> 12 & 1;
+  bool st_err_accl = status >> 11 & 1;
+  bool set_err = status >> 10 & 1;
+  bool dlta_ovf = status >> 9 & 1;
+  bool dltv_ovf = status >> 8 & 1;
+  bool hard_err = status >> 5 & 2;
+  bool spi_ovf = status >> 4 & 1;
+  bool uart_ovf = status >> 3 & 1;
+  bool flash_err = status >> 2 & 1;
+  bool st_err_all = status >> 1 & 1;
+  bool flash_bu_err = status & 1;
+
+  std::cout << "diag status: " << status << std::endl;
+
+  if (st_err_all) {
+    std::cout << "Error: Self-Test ->"
+              << " X-Gyro(" << (st_err_xgyro ? "NG" : "OK") << ")"
+              << " Y-Gyro(" << (st_err_ygyro ? "NG" : "OK") << ")"
+              << " Z-Gyro(" << (st_err_zgyro ? "NG" : "OK") << ")"
+              << " ACCl(" << (st_err_accl ? "NG" : "OK") << ")" << std::endl;
+  }
+  if (set_err) std::cout << "Error: Settings" << std::endl;
+  if (dlta_ovf) std::cout << "Error: Delta Angle over-flow" << std::endl;
+  if (dltv_ovf) std::cout << "Error: Delta Velocity over-flow" << std::endl;
+  if (hard_err) std::cout << "Error: IMU malfunction" << std::endl;
+  if (spi_ovf)
+    std::cout
+      << "Error: SPI over-flow. Make sure to check the transmission interval and clock settings."
+      << std::endl;
+  if (uart_ovf)
+    std::cout << "Error: UART over-flow. Make sure to check the baudrate settings." << std::endl;
+  if (flash_err) std::cout << "Error: Flash-Test" << std::endl;
+  if (flash_bu_err) std::cout << "Error: Flash-Backup" << std::endl;
 }
 
 uint16_t G366::self_test()
@@ -258,7 +302,7 @@ uint16_t G366::self_test()
     //Read the running status
     serial_->flush();
     serial_->write(self_test_rcomm1, sizeof(self_test_rcomm1));
-    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 10ms);
+    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 1s);
 
     if (len == 4) {
       running = stat_buf[1] & 0b00000100;
@@ -287,7 +331,7 @@ bool G366::is_ready()
   serial_->flush();
   serial_->write(window1_select_wcomm, sizeof(window1_select_wcomm));
   serial_->write(check_ready_rcomm1, sizeof(check_ready_rcomm1));
-  uint8_t len = serial_->read(buf, sizeof(buf), 10ms);
+  uint8_t len = serial_->read(buf, sizeof(buf), 1s);
 
   uint8_t mask = 0b00000100;
   if (len == 4 && (buf[1] & mask) == false) {
