@@ -182,7 +182,7 @@ void G366::set_filter(uint8_t filter_type)
     //Read the running status
     serial_->flush();
     serial_->write(filter_ctrl_rcomm1, sizeof(filter_ctrl_rcomm1));
-    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 10ms);
+    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 1s);
 
     if (len == 4) {
       running = stat_buf[2] & 0b00100000;
@@ -214,7 +214,7 @@ void G366::set_atti_motion_profile(uint8_t motion_type)
     //Read the running status
     serial_->flush();
     serial_->write(atti_motion_rcomm1, sizeof(atti_motion_rcomm1));
-    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 10ms);
+    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 1s);
 
     if (len == 4) {
       running = stat_buf[2] & 0b01000000;
@@ -234,7 +234,7 @@ uint16_t G366::diagnostic_status()
   serial_->flush();
   serial_->write(window0_select_wcomm, sizeof(window0_select_wcomm));
   serial_->write(diag_stat_rcomm0, sizeof(diag_stat_rcomm0));
-  uint8_t len = serial_->read(result_buf, sizeof(result_buf), 10ms);
+  uint8_t len = serial_->read(result_buf, sizeof(result_buf), 1s);
 
   if (len == 4) {
     std::cout << "Info [diagnostic_status]: Successful" << std::endl;
@@ -302,7 +302,7 @@ uint16_t G366::self_test()
     //Read the running status
     serial_->flush();
     serial_->write(self_test_rcomm1, sizeof(self_test_rcomm1));
-    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 10ms);
+    uint8_t len = serial_->read(stat_buf, sizeof(stat_buf), 1s);
 
     if (len == 4) {
       running = stat_buf[1] & 0b00000100;
@@ -331,7 +331,7 @@ bool G366::is_ready()
   serial_->flush();
   serial_->write(window1_select_wcomm, sizeof(window1_select_wcomm));
   serial_->write(check_ready_rcomm1, sizeof(check_ready_rcomm1));
-  uint8_t len = serial_->read(buf, sizeof(buf), 10ms);
+  uint8_t len = serial_->read(buf, sizeof(buf), 1s);
 
   uint8_t mask = 0b00000100;
   if (len == 4 && (buf[1] & mask) == false) {
