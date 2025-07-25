@@ -260,7 +260,7 @@ def main(args=None):
 
     script_dir = os.path.dirname(__file__)
     csv_file_path = os.path.join(
-        script_dir, "data.csv"
+        script_dir, "../../path_generator/assets/sample3_generated.csv"
     )  # スクリプトと同じディレクトリのdata.csvを想定
 
     # 0.1秒間隔でパブリッシュする
