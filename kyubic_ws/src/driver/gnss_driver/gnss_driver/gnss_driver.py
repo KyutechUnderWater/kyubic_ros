@@ -142,8 +142,12 @@ class GnssPublisher(Node):
                             fix_msg.latitude = msg.latitude
                             fix_msg.longitude = msg.longitude
 
-                            if msg.altitude is not None and msg.geo_sep is not None:
+                            try:
                                 fix_msg.altitude = msg.altitude + msg.geo_sep
+                            except (ValueError, TypeError):
+                                # 値が空文字列などでfloatに変換できない場合や、
+                                # その他の型エラーが起きた場合は、このブロックが実行される。
+                                pass
 
                             if (
                                 msg.horizontal_dil is not None
@@ -180,7 +184,7 @@ class GnssPublisher(Node):
 
                             self.fix_publisher_.publish(fix_msg)
 
-                            # この部分はログ出力が長くなるので、必要に応じてコメントアウトを外してください
+                            
                             # self.get_logger().info(
                             #     f'Published NavSatFix: lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, '
                             #     f'alt={fix_msg.altitude:.2f}, sats={msg.num_sats}, qual={msg.gps_qual}, hdop={msg.horizontal_dil}'
