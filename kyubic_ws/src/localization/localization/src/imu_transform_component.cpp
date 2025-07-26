@@ -39,7 +39,7 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 
   if (msg->status == driver_msgs::msg::IMU::STATUS_ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The imu data is invalid");
-    odom_msg->status = localization_msgs::msg::Odometry::STATUS_ERROR;
+    odom_msg->status.imu = localization_msgs::msg::Status::ERROR;
   } else {
     // define
     const double sin180 = sin(std::numbers::pi);

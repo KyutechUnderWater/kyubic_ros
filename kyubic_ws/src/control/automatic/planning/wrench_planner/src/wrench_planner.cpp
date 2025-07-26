@@ -51,8 +51,30 @@ void WrenchPlanner::_update_wrench()
 
   auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
 
-  if (goal_current_odom_->odom.status == localization_msgs::msg::Odometry::STATUS_ERROR) {
+  if (
+    goal_current_odom_->odom.status.depth == localization_msgs::msg::Status::ERROR ||
+    goal_current_odom_->odom.status.imu == localization_msgs::msg::Status::ERROR ||
+    goal_current_odom_->odom.status.dvl == localization_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
+
+    double force_z = 0.0;
+    if (
+      goal_current_odom_->odom.status.depth != localization_msgs::msg::Status::ERROR &&
+      z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
+      force_z = p_pid_ctrl_->pid_z_update(
+        current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.position.z_depth);
+    } else if (
+      goal_current_odom_->odom.status.dvl != localization_msgs::msg::Status::ERROR &&
+      z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
+      force_z = -p_pid_ctrl_->pid_z_update(
+        current_twst.linear.z_altitude, current_pose.position.z_altitude,
+        target_pose.position.z_altitude);
+    }
+
+    {
+      msg->wrench.force.z = force_z;
+      RCLCPP_WARN(this->get_logger(), "only z-axis control: %lf[N]", force_z);
+    }
   } else {
     double force_x = p_pid_ctrl_->pid_x_update(
       current_twst.linear.x, current_pose.position.x, target_pose.position.x);
