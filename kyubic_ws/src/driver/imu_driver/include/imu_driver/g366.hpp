@@ -12,6 +12,7 @@
 
 #include <serial/serial.hpp>
 
+#include <cstdint>
 #include <memory>
 
 /**
@@ -204,6 +205,11 @@ private:
    * @return 65535 is faild to read diagnostic status, other is diagnostic status
    */
   uint16_t diagnostic_status();
+
+  /**
+   * @brief Print a details of diagnostic status
+   */
+  void print_diag_status(uint16_t status);
 };
 
 // class G366HWReseter

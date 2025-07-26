@@ -25,6 +25,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 	"msg/IMU.msg"
 	"msg/Thruster.msg"
 	"msg/Gnss.msg"
+	"srv/Command.srv"
 	DEPENDENCIES std_msgs
 	DEPENDENCIES geometry_msgs
 	DEPENDENCIES sensor_msgs

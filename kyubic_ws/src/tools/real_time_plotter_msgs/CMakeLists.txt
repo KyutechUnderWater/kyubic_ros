@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(test_pid_msgs)
+project(real_time_plotter_msgs)
 
 if (NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)
@@ -18,6 +18,7 @@ find_package(std_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+ "msg/BaseAxes.msg"
  "msg/Targets.msg"
  DEPENDENCIES std_msgs
 )

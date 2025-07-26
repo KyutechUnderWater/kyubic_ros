@@ -13,6 +13,9 @@
 #include <timer/timeout.hpp>
 
 #include <driver_msgs/msg/dvl.hpp>
+#include <driver_msgs/srv/command.hpp>
+
+#include <string>
 
 /**
  * @namespace dvl_driver
@@ -39,12 +42,15 @@ private:
   int sender_port;
   uint64_t timeout;
 
+  const std::string CRCF = "\r\n";
+  bool command_mode = false;
   std::shared_ptr<timer::Timeout> timeout_;
 
   std::shared_ptr<path_finder::Sender> sender_;
   std::shared_ptr<path_finder::Listener> listener_;
 
   rclcpp::Publisher<driver_msgs::msg::DVL>::SharedPtr pub_;
+  rclcpp::Service<driver_msgs::srv::Command>::SharedPtr srv_;
   rclcpp::TimerBase::SharedPtr timer_;
 
   /**
@@ -63,6 +69,10 @@ private:
    * @brief Publish data
    */
   void update();
+
+  void sendCommandCallback(
+    const driver_msgs::srv::Command::Request::SharedPtr request,
+    driver_msgs::srv::Command::Response::SharedPtr response);
 };
 
 }  // namespace dvl_driver

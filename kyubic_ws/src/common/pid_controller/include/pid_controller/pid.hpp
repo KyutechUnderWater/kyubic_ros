@@ -26,10 +26,11 @@ namespace pid_controller
  */
 struct PositionPIDParameter
 {
-  double kp;  /// Proportional gain
-  double ki;  /// Integral gain
-  double kd;  /// Derivative gain
-  double kf;  /// Low-pass filter coefficient
+  double kp;            /// Proportional gain
+  double ki;            /// Integral gain
+  double kd;            /// Derivative gain
+  double kf;            /// Low-pass filter coefficient
+  double offset = 0.0;  /// offset of output value
 };
 
 /**
@@ -39,6 +40,7 @@ class PositionPID
 {
 private:
   double kp, ki, kd, kf;
+  double offset;
   double p, i, d;
 
   double pre_p = 0;
@@ -83,12 +85,13 @@ public:
  */
 struct VelocityPIDParameter
 {
-  double kp;  /// Proportional gain
-  double ki;  /// Integral gain
-  double kd;  /// Derivative gain
-  double kf;  /// Low-pass filter coefficient
-  double lo;  /// Minimal value
-  double hi;  /// Maximun value
+  double kp;            /// Proportional gain
+  double ki;            /// Integral gain
+  double kd;            /// Derivative gain
+  double kf;            /// Low-pass filter coefficient
+  double lo;            /// Minimal value
+  double hi;            /// Maximun value
+  double offset = 0.0;  /// offset of output value
 };
 
 /**
@@ -99,6 +102,7 @@ class VelocityPID
 private:
   double kp, ki, kd, kf;
   double lo, hi;
+  double offset;
   double p, i, d;
 
   double pre_error = 0;
@@ -129,6 +133,12 @@ public:
    * @details Calculate PID
    */
   double update(double current, double target);
+
+  /**
+   * @brief Reset previous output
+   * @return none
+   */
+  void reset();
 };
 
 }  // namespace pid_controller

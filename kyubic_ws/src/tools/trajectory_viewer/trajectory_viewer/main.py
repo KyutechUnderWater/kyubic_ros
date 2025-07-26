@@ -10,7 +10,7 @@ import rclpy
 from rclpy.node import Node
 
 from localization_msgs.msg import Odometry
-from test_pid_msgs.msg import Targets
+from real_time_plotter_msgs.msg import Targets
 
 # PyQtとPyQtGraph関連のインポート
 from PyQt6.QtWidgets import (
@@ -68,11 +68,12 @@ class RosCommunicator(Node, QObject):
     def publish_targets(self):
         """タイマーによって1Hzで呼び出される関数"""
         msg = Targets()
-        msg.x = self.target_x_value
-        msg.y = self.target_y_value
-        msg.z = self.target_z_value
-        msg.roll = self.target_roll_value
-        msg.yaw = self.target_yaw_value
+        msg.pose.x = self.target_x_value
+        msg.pose.y = self.target_y_value
+        msg.pose.z_depth = self.target_z_value
+        msg.pose.z_altitude = self.target_z_value
+        msg.pose.roll = self.target_roll_value
+        msg.pose.yaw = self.target_yaw_value
 
         self.targets_pub.publish(msg)
 
@@ -140,8 +141,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
         self.addItem(self.plot_item)
 
         self.mesh = None
-        self.showSTL(f"{os.path.dirname(__file__)
-                        }/../assets/KYUBIC_transformed.stl")
+        self.showSTL(f"{os.path.dirname(__file__)}/../assets/KYUBIC_transformed.stl")
 
     def loadSTL(self, filename):
         m = mesh.Mesh.from_file(filename)
@@ -198,8 +198,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
         if np.linalg.norm(self.trajectory_points[-1] - new_point, ord=2) > 0.01 or any(
             np.abs(new_attitude - self.attitude) > 1
         ):
-            self.trajectory_points = np.vstack(
-                [self.trajectory_points, new_point])
+            self.trajectory_points = np.vstack([self.trajectory_points, new_point])
             self.plot_item.setData(pos=self.trajectory_points)
 
             self.attitude = new_attitude
@@ -216,7 +215,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
             # 2. ピッチ (Y軸周り)
             tr.rotate(pitch, 0, 1, 0)
             # 3. ヨー (Z軸周り)
-            tr.rotate(yaw, 0, 0, 1)
+            tr.rotate(-yaw, 0, 0, 1)
 
             # メッシュにTransform3Dを適用
             self.mesh.setTransform(tr)
