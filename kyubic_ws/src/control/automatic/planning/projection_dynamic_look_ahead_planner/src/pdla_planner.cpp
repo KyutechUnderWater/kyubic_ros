@@ -163,12 +163,12 @@ bool PDLAPlanner::_checkReached(PoseData & target, Tolerance tolerance)
 
 void PDLAPlanner::_print_waypoint(std::string label, size_t step_idx)
 {
-  PoseData next_pose = target_pose_.at(step_idx);
+  PoseData pose = target_pose_.at(step_idx);
   RCLCPP_INFO(
     this->get_logger(),
-    "%s %lu/%lu waypoint. x: %7.3f, y: %7.3f, z: %7.3f, roll: %7.1f, yaw: %6.1f", label.c_str(),
-    step_idx + 1, target_pose_.size(), next_pose.x, next_pose.y, next_pose.z, next_pose.roll,
-    next_pose.yaw);
+    "%s %lu/%lu waypoint. x: %7.3f  y: %7.3f  z: %7.3f  z_mode: %u  roll: %7.1f  yaw: %6.1f",
+    label.c_str(), step_idx + 1, target_pose_.size(), pose.x, pose.y, pose.z, pose.z_mode,
+    pose.roll, pose.yaw);
 }
 
 void PDLAPlanner::odometryCallback(const localization_msgs::msg::Odometry::SharedPtr msg)
