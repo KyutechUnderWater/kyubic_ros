@@ -6,6 +6,7 @@ Usage:  install.sh [OPTIONS]
 Options:
 	-h, --help                   show command help
 	-p, --project-name string    Name of patckage to install
+	-c, --cmd-tools4client       Registering commands to shut down and ping kyubic remotely
 	    --nvidia                 if nvidia drivers are available, they are used
 	    --no-cache               Whether to build Dockerfile without cache  \n
 EOF
@@ -18,6 +19,7 @@ ArgumentParser() {
 	local project_name=""
 	local nvidia=false
 	local no_cache=""
+	local cmd_tools4client=false
 
 	while (($# > 0)); do
 
@@ -47,6 +49,11 @@ ArgumentParser() {
 			shift
 			;;
 
+		-c | --cmd-tools4client)
+			cmd_tools4client=true
+			shift
+			;;
+
 		*)
 			printf "\033[33m[ERROR] Usage: install.sh [-h] [-p] [--no-nvidia]\n"
 			return 1
@@ -59,6 +66,7 @@ ArgumentParser() {
 		["project_name"]=\"${project_name}\"
 		["nvidia"]=$nvidia
 		["no_cache"]=$no_cache
+		["cmd_tools4client"]=$cmd_tools4client
 	)"
 }
 
@@ -73,6 +81,7 @@ fi
 project_name=${args["project_name"]}
 nvidia=${args["nvidia"]}
 no_cache=${args["no_cache"]}
+cmd_tools4client=${args["cmd_tools4client"]}
 
 path=$(pwd)
 sudo -v
@@ -116,6 +125,9 @@ echo $project_name >.install.project_name
 # Set alias
 echo "alias ros2_start${project_name}='$path/ros2_start.sh $project_name'" >>~/.bash_aliases
 sudo chmod +x ./ros2_start.sh
+if [[ $cmd_tools4client == true ]]; then
+	source ./docker/cmd_tools4client.sh
+fi
 
 # Set Environment Variables (UID and GID)
 echo "export USER_ID=$(id -u)" >>~/.bashrc

@@ -15,23 +15,18 @@ def generate_launch_description():
         default_value="/localization/odom",
         description="Topic name for the odometry message",
     )
-    targets_topic_arg = DeclareLaunchArgument(
-        "targets_topic",
-        default_value="/test_pid/targets",
-        description="Topic name for the target X-velocity",
-    )
 
     # --- ノードの定義 ---
     plotter_node = Node(
+        name="real_time_plotter",
+        namespace="real_time_plotter",
         package="real_time_plotter",
         # setup.pyで設定する実行可能ファイル名
         executable="real_time_plotter",
-        name="real_time_plotter",
         output="screen",
         # トピック名のリマッピング設定
         remappings=[
-            ("/odom", LaunchConfiguration("odom_topic")),
-            ("/targets", LaunchConfiguration("targets_topic")),
+            ("/real_time_plotter/odom", LaunchConfiguration("odom_topic")),
         ],
     )
 
@@ -40,7 +35,6 @@ def generate_launch_description():
     return LaunchDescription(
         [
             odom_topic_arg,
-            targets_topic_arg,
             plotter_node,
         ]
     )

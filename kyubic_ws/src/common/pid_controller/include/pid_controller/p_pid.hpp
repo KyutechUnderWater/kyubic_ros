@@ -44,6 +44,8 @@ private:
 
   std::shared_ptr<PositionPID> slave_pid_;
 
+  double master_out = 0.0;
+
 public:
   /**
    * @brief Controller gain setting
@@ -62,6 +64,12 @@ public:
    */
   double update(
     double current_slave, double current_master, double target_master, double last_saturated);
+
+  /**
+  * @brief Get calculated master output
+  * @return master ouput
+  */
+  double get_master_out();
 
   /**
    * @brief Reset integral term
@@ -93,6 +101,8 @@ private:
 
   std::shared_ptr<VelocityPID> slave_pid_;
 
+  double master_out = 0.0;
+
 public:
   /**
    * @brief Controller gain setting
@@ -109,6 +119,18 @@ public:
    * @details Calculate PID
    */
   double update(double current_slave, double current_master, double target_master);
+
+  /**
+   * @brief Reset previous slave output
+   * @return none
+   */
+  void reset();
+
+  /**
+  * @brief Get calculated master output
+  * @return master ouput
+  */
+  double get_master_out();
 };
 
 }  // namespace pid_controller

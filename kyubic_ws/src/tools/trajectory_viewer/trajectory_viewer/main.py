@@ -10,7 +10,7 @@ import rclpy
 from rclpy.node import Node
 
 from localization_msgs.msg import Odometry
-from test_pid_msgs.msg import Targets
+from real_time_plotter_msgs.msg import Targets
 
 # PyQtとPyQtGraph関連のインポート
 from PyQt6.QtWidgets import (
@@ -68,11 +68,12 @@ class RosCommunicator(Node, QObject):
     def publish_targets(self):
         """タイマーによって1Hzで呼び出される関数"""
         msg = Targets()
-        msg.x = self.target_x_value
-        msg.y = self.target_y_value
-        msg.z = self.target_z_value
-        msg.roll = self.target_roll_value
-        msg.yaw = self.target_yaw_value
+        msg.pose.x = self.target_x_value
+        msg.pose.y = self.target_y_value
+        msg.pose.z_depth = self.target_z_value
+        msg.pose.z_altitude = self.target_z_value
+        msg.pose.roll = self.target_roll_value
+        msg.pose.yaw = self.target_yaw_value
 
         self.targets_pub.publish(msg)
 

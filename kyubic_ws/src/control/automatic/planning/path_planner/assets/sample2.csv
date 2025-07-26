@@ -1,8 +1,0 @@
-parameter_label,value,x,y,z,z_mode,roll,yaw,blank,catmull_x,catmull_y,catmull_z,catmull_z_mode,catmull_roll,catmull_yaw
-checkpoint_end_row,7,0,0,0,0,0,0,,0,0,0,0,0,0
-catmull_rom,1,0,0,0,0,0,45,,0,0,0,0,0,45
-catmull_end_row,7,1,0,0.2,0,0,45,,1,0,0.2,0,0,45
-catmull_density,100,2,0,0.2,0,0,0,,2,0,0.2,0,0,0
-catmull_min_distance,0.4,1,-1,0.2,0,0,0,,1,-1,0.2,0,0,0
-catmull_orient_LERP,1,2,0,0.2,0,0,0,,2,0,0.2,0,0,0
-,,1,1,0.1,0,0,90,,1,1,0.1,0,0,90

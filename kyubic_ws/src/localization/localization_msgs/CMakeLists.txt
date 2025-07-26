@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.8)
 project(localization_msgs)
 
 if (NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 20)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
+    add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 # find dependencies
@@ -22,6 +22,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
  "msg/Odometry.msg"
  "msg/Point.msg"
  "msg/Pose.msg"
+ "msg/Status.msg"
  "msg/Twist.msg"
  DEPENDENCIES std_msgs
  DEPENDENCIES geometry_msgs

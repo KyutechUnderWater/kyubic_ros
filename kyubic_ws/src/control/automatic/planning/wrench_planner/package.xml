@@ -13,6 +13,7 @@
   <depend>rclcpp_components</depend>
   <depend>geometry_msgs</depend>
   <depend>planner_msgs</depend>
+  <depend>real_time_plotter_msgs</depend>
   <depend>p_pid_controller</depend>
 
   <test_depend>ament_lint_auto</test_depend>

@@ -9,12 +9,12 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>pid_controller</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
   <depend>geometry_msgs</depend>
   <depend>localization_msgs</depend>
-  <depend>test_pid_msgs</depend>
-  <depend>pid_controller</depend>
+  <depend>real_time_plotter_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

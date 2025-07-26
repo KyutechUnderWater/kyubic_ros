@@ -44,7 +44,7 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
   // return if velocity error, otherwise calculate odometry
   if (msg->velocity_error == -32768) {
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
-    odom_msg->status = localization_msgs::msg::Odometry::STATUS_ERROR;
+    odom_msg->status.dvl = localization_msgs::msg::Status::ERROR;
   } else {
     // Calculate update period (delta t)
     auto now = this->get_clock()->now();

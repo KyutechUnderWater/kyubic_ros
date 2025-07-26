@@ -60,6 +60,10 @@ bool P_PIDController::_load_gain_from_yaml(const std::string & yaml_path)
       param.vpid_param.lo = vpid_node["lo"].as<double>();
       param.vpid_param.hi = vpid_node["hi"].as<double>();
 
+      if (vpid_node["offset"]) {
+        param.vpid_param.offset = vpid_node["offset"].as<double>();
+      }
+
       // Store
       pid_params[key] = param;
     }
@@ -117,4 +121,11 @@ std::array<double, 5> P_PIDController::update(std::array<std::array<double, 3>, 
   }
   return u;
 }
+
+void P_PIDController::pid_x_reset() { return pid_x_->reset(); }
+void P_PIDController::pid_y_reset() { return pid_y_->reset(); }
+void P_PIDController::pid_z_reset() { return pid_z_->reset(); }
+void P_PIDController::pid_roll_reset() { return pid_roll_->reset(); }
+void P_PIDController::pid_yaw_reset() { return pid_yaw_->reset(); }
+
 }  // namespace controller

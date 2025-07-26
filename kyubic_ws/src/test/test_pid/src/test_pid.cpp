@@ -31,13 +31,13 @@ TestPID::TestPID(const rclcpp::NodeOptions & options) : Node("test_pid", options
   // Create messages instance
   odom_ = std::make_shared<localization_msgs::msg::Odometry>();
   joy_ = std::make_shared<geometry_msgs::msg::WrenchStamped>();
-  targets_ = std::make_shared<test_pid_msgs::msg::Targets>();
+  targets_ = std::make_shared<real_time_plotter_msgs::msg::Targets>();
 
   // ROS 2 communication
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   pub_ = create_publisher<geometry_msgs::msg::WrenchStamped>("robot_force", qos);
-  sub_targets_ = create_subscription<test_pid_msgs::msg::Targets>(
+  sub_targets_ = create_subscription<real_time_plotter_msgs::msg::Targets>(
     "targets", qos, std::bind(&TestPID::callback_target, this, std::placeholders::_1));
   sub_joy_ = create_subscription<geometry_msgs::msg::WrenchStamped>(
     "joy_robot_force", qos, std::bind(&TestPID::callback_joy, this, std::placeholders::_1));
@@ -61,6 +61,7 @@ void TestPID::_declare_parameter()
     p_pid_params[name.at(i)].vpid_param.lo = this->declare_parameter(name.at(i) + ".vpid.lo", 0.0);
     p_pid_params[name.at(i)].vpid_param.hi = this->declare_parameter(name.at(i) + ".vpid.hi", 0.0);
   }
+  p_pid_params["z"].vpid_param.offset = this->declare_parameter("z.vpid.offset", 0.0);
 }
 
 void TestPID::update()
@@ -79,23 +80,22 @@ void TestPID::update()
     auto angular = odom_->twist.angular;
 
     // x-axis
-    p_pid_x = vp_pids[name.at(0)]->update(linear.x, pose.x, targets_->x);
+    p_pid_x = vp_pids[name.at(0)]->update(linear.x, pose.x, targets_->pose.x);
 
     // y-axis
-    p_pid_y = vp_pids[name.at(1)]->update(linear.y, pose.y, targets_->y);
+    p_pid_y = vp_pids[name.at(1)]->update(linear.y, pose.y, targets_->pose.y);
 
     // z-axis
-    p_pid_z = vp_pids[name.at(2)]->update(linear.z_depth, pose.z_depth, targets_->z);
-    // p_pid_z = -vp_pids[name.at(2)]->update(linear.z_altitude, pose.z_altitude, targets_->z);
+    p_pid_z = vp_pids[name.at(2)]->update(linear.z_depth, pose.z_depth, targets_->pose.z_depth);
+    // p_pid_z = -vp_pids[name.at(2)]->update(linear.z_altitude, pose.z_altitude, targets_->pose.z_altitude);
 
     // roll-axis
-    double target_roll = targets_->roll;
-    p_pid_roll = vp_pids[name.at(3)]->update(angular.x, orient.x, target_roll);
+    p_pid_roll = vp_pids[name.at(3)]->update(angular.x, orient.x, targets_->pose.roll);
 
     // yaw-axis
-    double target_yaw = targets_->yaw;
-    if (targets_->yaw - orient.z < -180) target_yaw += 360;
-    if (targets_->yaw - orient.z > 180) target_yaw -= 360;
+    double target_yaw = targets_->pose.yaw;
+    if (targets_->pose.yaw - orient.z < -180) target_yaw += 360;
+    if (targets_->pose.yaw - orient.z > 180) target_yaw -= 360;
     p_pid_yaw = vp_pids[name.at(4)]->update(angular.z, orient.z, target_yaw);
 
     // z-axis transform
@@ -106,7 +106,7 @@ void TestPID::update()
     p_pid_y = _p_pid_x * sin(z_rad) + _p_pid_y * cos(z_rad);
 
     // Print data
-    double target_p = targets_->z;
+    double target_p = targets_->pose.z_depth;
     double current_p = pose.z_depth;
     double current_vel_p = linear.z_depth;
     double p_pid_p = p_pid_z;
@@ -130,7 +130,7 @@ void TestPID::update()
   }
 }
 
-void TestPID::callback_target(test_pid_msgs::msg::Targets::UniquePtr msg)
+void TestPID::callback_target(real_time_plotter_msgs::msg::Targets::UniquePtr msg)
 {
   targets_ = std::move(msg);
 }
