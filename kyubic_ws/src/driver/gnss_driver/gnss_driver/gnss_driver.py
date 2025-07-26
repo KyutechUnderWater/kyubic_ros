@@ -16,7 +16,7 @@ class GnssPublisher(Node):
         # パラメータを宣言
         self.declare_parameter("tcp_ip", "172.30.51.180")
         self.declare_parameter("tcp_port", 5050)
-        self.declare_parameter("hdop_error_factor", 5.0)  # HDOPを分散に変換する係数
+        self.declare_parameter("hdop_error_factor", 2.0)  # HDOPを分散に変換する係数
 
         # パラメータを取得
         self.tcp_ip = self.get_parameter("tcp_ip").get_parameter_value().string_value
