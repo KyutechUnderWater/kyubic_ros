@@ -12,6 +12,7 @@
 #include <rclcpp/logging.hpp>
 
 #include "geometry_msgs/msg/wrench_stamped.hpp"
+#include "real_time_plotter_msgs/msg/targets.hpp"
 
 #include <functional>
 #include <memory>
@@ -35,6 +36,7 @@ WrenchPlanner::WrenchPlanner(const rclcpp::NodeOptions & options) : Node("wrench
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
   pub_ = create_publisher<geometry_msgs::msg::WrenchStamped>("robot_force", qos);
+  pub_target_ = create_publisher<real_time_plotter_msgs::msg::Targets>("target", qos);
   sub_ = create_subscription<planner_msgs::msg::WrenchPlan>(
     "goal_current_odom", qos,
     std::bind(&WrenchPlanner::goalCurrentOdomCallback, this, std::placeholders::_1));
@@ -73,8 +75,11 @@ void WrenchPlanner::_update_wrench()
     double torque_x = p_pid_ctrl_->pid_roll_update(
       current_twst.angular.x, current_pose.orientation.x, target_pose.orientation.x);
 
-    double torque_z = p_pid_ctrl_->pid_yaw_update(
-      current_twst.angular.z, current_pose.orientation.z, target_pose.orientation.z);
+    double target_yaw = target_pose.orientation.z;
+    if (target_pose.orientation.z - current_pose.orientation.z < -180) target_yaw += 360;
+    if (target_pose.orientation.z - current_pose.orientation.z > 180) target_yaw -= 360;
+    double torque_z =
+      p_pid_ctrl_->pid_yaw_update(current_twst.angular.z, current_pose.orientation.z, target_yaw);
 
     // z-axis transform
     double z_rad = -current_pose.orientation.z * std::numbers::pi / 180;
@@ -96,6 +101,18 @@ void WrenchPlanner::_update_wrench()
     }
   }
   pub_->publish(std::move(msg));
+
+  {
+    auto targets = std::make_unique<real_time_plotter_msgs::msg::Targets>();
+
+    targets->pose.x = target_pose.position.x;
+    targets->pose.y = target_pose.position.y;
+    targets->pose.z_depth = target_pose.position.z_depth;
+    targets->pose.z_altitude = target_pose.position.z_altitude;
+    targets->pose.roll = target_pose.orientation.x;
+    targets->pose.yaw = target_pose.orientation.z;
+    pub_target_->publish(std::move(targets));
+  }
 }
 
 void WrenchPlanner::goalCurrentOdomCallback(const planner_msgs::msg::WrenchPlan::SharedPtr msg)

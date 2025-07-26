@@ -15,6 +15,7 @@
 
 #include <geometry_msgs/msg/wrench_stamped.hpp>
 #include <planner_msgs/msg/wrench_plan.hpp>
+#include <real_time_plotter_msgs/msg/targets.hpp>
 
 #include <memory>
 
@@ -25,6 +26,7 @@ class WrenchPlanner : public rclcpp::Node
 {
 private:
   rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr pub_;
+  rclcpp::Publisher<real_time_plotter_msgs::msg::Targets>::SharedPtr pub_target_;
   rclcpp::Subscription<planner_msgs::msg::WrenchPlan>::SharedPtr sub_;
 
   std::shared_ptr<planner_msgs::msg::WrenchPlan> goal_current_odom_;
