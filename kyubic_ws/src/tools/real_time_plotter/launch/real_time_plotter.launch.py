@@ -15,11 +15,6 @@ def generate_launch_description():
         default_value="/localization/odom",
         description="Topic name for the odometry message",
     )
-    targets_topic_arg = DeclareLaunchArgument(
-        "targets_topic",
-        default_value="/test_pid/targets",
-        description="Topic name for the target X-velocity",
-    )
 
     # --- ノードの定義 ---
     plotter_node = Node(
@@ -31,7 +26,6 @@ def generate_launch_description():
         # トピック名のリマッピング設定
         remappings=[
             ("/odom", LaunchConfiguration("odom_topic")),
-            ("/targets", LaunchConfiguration("targets_topic")),
         ],
     )
 

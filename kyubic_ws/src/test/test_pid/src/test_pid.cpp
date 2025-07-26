@@ -89,8 +89,7 @@ void TestPID::update()
     // p_pid_z = -vp_pids[name.at(2)]->update(linear.z_altitude, pose.z_altitude, targets_->pose.z_altitude);
 
     // roll-axis
-    double target_roll = targets_->pose.roll;
-    p_pid_roll = vp_pids[name.at(3)]->update(angular.x, orient.x, target_roll);
+    p_pid_roll = vp_pids[name.at(3)]->update(angular.x, orient.x, targets_->pose.roll);
 
     // yaw-axis
     double target_yaw = targets_->pose.yaw;
