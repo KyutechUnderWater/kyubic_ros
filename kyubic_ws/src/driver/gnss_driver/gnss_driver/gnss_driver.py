@@ -114,7 +114,7 @@ class GnssPublisher(Node):
                                     except (ValueError, TypeError):
                                         pass  # 変換できない場合は無視
 
-                            # 分割メッセージの最後なら、トピックを配信
+                            # 分割メッセージの最後なら、トピックに保存
                             if msg.msg_num == msg.num_messages:
                                 #snr_msg = Float32MultiArray()
                                 # 辞書から信号強度のリストを作成

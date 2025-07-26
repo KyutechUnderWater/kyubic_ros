@@ -13,6 +13,7 @@ def generate_launch_description():
     thruster_driver_dir = PathJoinSubstitution(
         [FindPackageShare("thruster_driver"), "launch"]
     )
+    gnss_driver_dir = PathJoinSubstitution([FindPackageShare("gnss_driver"), "launch"])
 
     return LaunchDescription(
         [
@@ -30,6 +31,12 @@ def generate_launch_description():
             ),
             IncludeLaunchDescription(
                 PathJoinSubstitution([led_driver_dir, "led_driver.launch.py"]),
+                launch_arguments={
+                    "log_level": "warn",
+                }.items(),
+            ),
+            IncludeLaunchDescription(
+                PathJoinSubstitution([gnss_driver_dir, "gnss_driver.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),
