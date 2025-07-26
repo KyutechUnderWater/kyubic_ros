@@ -88,12 +88,15 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a29ce237ecd8d79f21bc1d47235da170b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionP__PID.html#a29ce237ecd8d79f21bc1d47235da170b">PositionP_PID</a> (const std::shared_ptr&lt; <a class="el" href="structpid__controller_1_1PositionP__PIDParameter.html">PositionP_PIDParameter</a> &gt; param_)</td></tr>
-<tr class="memdesc:a29ce237ecd8d79f21bc1d47235da170b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller gain setting.  <br /></td></tr>
-<tr class="separator:a29ce237ecd8d79f21bc1d47235da170b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3eb0fe4a1e84f274eaf96a65054121cc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionP__PID.html#a3eb0fe4a1e84f274eaf96a65054121cc">PositionP_PID</a> (const <a class="el" href="structpid__controller_1_1PositionP__PIDParameter.html">PositionP_PIDParameter</a> &amp;param_)</td></tr>
+<tr class="memdesc:a3eb0fe4a1e84f274eaf96a65054121cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller gain setting.  <br /></td></tr>
+<tr class="separator:a3eb0fe4a1e84f274eaf96a65054121cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cb27333f0d5cc1537ae79eebce69e89"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionP__PID.html#a4cb27333f0d5cc1537ae79eebce69e89">update</a> (double current_slave, double current_master, double target_master, double last_saturated)</td></tr>
 <tr class="memdesc:a4cb27333f0d5cc1537ae79eebce69e89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update PID cycle.  <br /></td></tr>
 <tr class="separator:a4cb27333f0d5cc1537ae79eebce69e89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a387aa83724f1e2112858afff4d13aacd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionP__PID.html#a387aa83724f1e2112858afff4d13aacd">get_master_out</a> ()</td></tr>
+<tr class="memdesc:a387aa83724f1e2112858afff4d13aacd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get calculated master output.  <br /></td></tr>
+<tr class="separator:a387aa83724f1e2112858afff4d13aacd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2856f82625b52015c9834779572b5c44"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionP__PID.html#a2856f82625b52015c9834779572b5c44">reset</a> ()</td></tr>
 <tr class="memdesc:a2856f82625b52015c9834779572b5c44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset integral term.  <br /></td></tr>
 <tr class="separator:a2856f82625b52015c9834779572b5c44"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -101,8 +104,8 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Position Form P-PID Controller class. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a29ce237ecd8d79f21bc1d47235da170b" name="a29ce237ecd8d79f21bc1d47235da170b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a29ce237ecd8d79f21bc1d47235da170b">&#9670;&#160;</a></span>PositionP_PID()</h2>
+<a id="a3eb0fe4a1e84f274eaf96a65054121cc" name="a3eb0fe4a1e84f274eaf96a65054121cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3eb0fe4a1e84f274eaf96a65054121cc">&#9670;&#160;</a></span>PositionP_PID()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -113,7 +116,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">pid_controller::PositionP_PID::PositionP_PID </td>
           <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="structpid__controller_1_1PositionP__PIDParameter.html">PositionP_PIDParameter</a> &gt;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structpid__controller_1_1PositionP__PIDParameter.html">PositionP_PIDParameter</a> &amp;&#160;</td>
           <td class="paramname"><em>param_</em></td><td>)</td>
           <td></td>
         </tr>
@@ -136,6 +139,26 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a387aa83724f1e2112858afff4d13aacd" name="a387aa83724f1e2112858afff4d13aacd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a387aa83724f1e2112858afff4d13aacd">&#9670;&#160;</a></span>get_master_out()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double pid_controller::PositionP_PID::get_master_out </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get calculated master output. </p>
+<dl class="section return"><dt>Returns</dt><dd>master ouput </dd></dl>
+
+</div>
+</div>
 <a id="a2856f82625b52015c9834779572b5c44" name="a2856f82625b52015c9834779572b5c44"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2856f82625b52015c9834779572b5c44">&#9670;&#160;</a></span>reset()</h2>
 

@@ -5,6 +5,7 @@ var searchData=
   ['new_5fposition_5fsignal_2',['new_position_signal',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a31c5cf1effbe007a4fda8e4e6a8ee167',1,'trajectory_viewer::main::RosCommunicator']]],
   ['node_5fstatus_3',['node_status',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#abce255ead68a038acae9fe6bd1d04f44',1,'driver_node_manager::driver_node_manager::NodeManager']]],
   ['nodes_4',['nodes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ae64c07aaa135224e453985d7b1d3c5ca',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['num_5fof_5fbytes_5',['num_of_bytes',['../structdvl__driver_1_1path__finder_1_1Data.html#a854220bc0dd5b0d891923f9c9b2c140a',1,'dvl_driver::path_finder::Data']]],
-  ['num_5fthrusters_6',['NUM_THRUSTERS',['../namespacethruster__driver.html#a9d452c32f77f86e57bc5c31ae77466a6',1,'thruster_driver']]]
+  ['num_5fcsv_5fcolumns_5',['NUM_CSV_COLUMNS',['../namespaceplanner.html#a1c78d05d26006be8159eb26d61852c94',1,'planner']]],
+  ['num_5fof_5fbytes_6',['num_of_bytes',['../structdvl__driver_1_1path__finder_1_1Data.html#a854220bc0dd5b0d891923f9c9b2c140a',1,'dvl_driver::path_finder::Data']]],
+  ['num_5fthrusters_7',['NUM_THRUSTERS',['../namespacethruster__driver.html#a9d452c32f77f86e57bc5c31ae77466a6',1,'thruster_driver']]]
 ];

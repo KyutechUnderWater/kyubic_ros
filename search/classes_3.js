@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['g366_0',['G366',['../classimu__driver_1_1g366_1_1G366.html',1,'imu_driver::g366']]]
+  ['fixaxisplotjuggler_0',['FixAxisPlotjuggler',['../classtools_1_1plotjuggler_1_1FixAxisPlotjuggler.html',1,'tools::plotjuggler']]]
 ];

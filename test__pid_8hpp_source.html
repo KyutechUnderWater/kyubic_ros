@@ -88,7 +88,7 @@ $(function() {
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;geometry_msgs/msg/wrench_stamped.hpp&quot;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;geometry_msgs/msg/wrench_stamped.hpp&gt;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;localization_msgs/msg/odometry.hpp&gt;</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;test_pid_msgs/msg/targets.hpp&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;real_time_plotter_msgs/msg/targets.hpp&gt;</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;array&gt;</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;map&gt;</span></div>
@@ -102,7 +102,7 @@ $(function() {
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>{</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  rclcpp::Publisher&lt;geometry_msgs::msg::WrenchStamped&gt;::SharedPtr pub_;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  rclcpp::Subscription&lt;test_pid_msgs::msg::Targets&gt;::SharedPtr sub_targets_;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  rclcpp::Subscription&lt;real_time_plotter_msgs::msg::Targets&gt;::SharedPtr sub_targets_;</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  rclcpp::Subscription&lt;geometry_msgs::msg::WrenchStamped&gt;::SharedPtr sub_joy_;</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  rclcpp::Subscription&lt;localization_msgs::msg::Odometry&gt;::SharedPtr sub_odom_;</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
@@ -111,10 +111,10 @@ $(function() {
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  <span class="comment">// Define unique name(axes)</span></div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  std::array&lt;std::string, 5&gt; name = {<span class="stringliteral">&quot;x&quot;</span>, <span class="stringliteral">&quot;y&quot;</span>, <span class="stringliteral">&quot;z&quot;</span>, <span class="stringliteral">&quot;roll&quot;</span>, <span class="stringliteral">&quot;yaw&quot;</span>};</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  std::map&lt;std::string, std::shared_ptr&lt;pid_controller::VelocityP_PIDParameter&gt;&gt; p_pid_params;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  std::map&lt;std::string, pid_controller::VelocityP_PIDParameter&gt; p_pid_params;</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  std::map&lt;std::string, std::shared_ptr&lt;pid_controller::VelocityP_PID&gt;&gt; vp_pids;</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  std::shared_ptr&lt;test_pid_msgs::msg::Targets&gt; targets_;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  std::shared_ptr&lt;real_time_plotter_msgs::msg::Targets&gt; targets_;</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  std::shared_ptr&lt;geometry_msgs::msg::WrenchStamped&gt; joy_;</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  std::shared_ptr&lt;localization_msgs::msg::Odometry&gt; odom_;</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
@@ -123,7 +123,7 @@ $(function() {
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  <span class="keywordtype">void</span> _declare_parameter();</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keywordtype">void</span> callback_target(<span class="keyword">const</span> test_pid_msgs::msg::Targets::UniquePtr msg);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keywordtype">void</span> callback_target(<span class="keyword">const</span> real_time_plotter_msgs::msg::Targets::UniquePtr msg);</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <span class="keywordtype">void</span> callback_joy(geometry_msgs::msg::WrenchStamped::UniquePtr msg);</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
@@ -139,7 +139,7 @@ $(function() {
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="preprocessor">#endif  </span><span class="comment">// !_TEST_PID_HPP</span></div>
 <div class="ttc" id="aclasstest_1_1TestPID_html"><div class="ttname"><a href="classtest_1_1TestPID.html">test::TestPID</a></div><div class="ttdoc">Test PID class.</div><div class="ttdef"><b>Definition:</b> test_pid.hpp:38</div></div>
-<div class="ttc" id="aclasstest_1_1TestPID_html_a6f62b7897787069cebd1289b3755cab8"><div class="ttname"><a href="classtest_1_1TestPID.html#a6f62b7897787069cebd1289b3755cab8">test::TestPID::update</a></div><div class="ttdeci">void update()</div><div class="ttdoc">calculate PID Controller</div><div class="ttdef"><b>Definition:</b> test_pid.cpp:66</div></div>
+<div class="ttc" id="aclasstest_1_1TestPID_html_a6f62b7897787069cebd1289b3755cab8"><div class="ttname"><a href="classtest_1_1TestPID.html#a6f62b7897787069cebd1289b3755cab8">test::TestPID::update</a></div><div class="ttdeci">void update()</div><div class="ttdoc">calculate PID Controller</div><div class="ttdef"><b>Definition:</b> test_pid.cpp:67</div></div>
 <div class="ttc" id="anamespacetest_html"><div class="ttname"><a href="namespacetest.html">test</a></div><div class="ttdoc">For test.</div></div>
 <div class="ttc" id="ap__pid_8hpp_html"><div class="ttname"><a href="p__pid_8hpp.html">p_pid.hpp</a></div><div class="ttdoc">P-PID Controller library.</div></div>
 <div class="ttc" id="apid_8hpp_html"><div class="ttname"><a href="pid_8hpp.html">pid.hpp</a></div><div class="ttdoc">PID Controller library.</div></div>

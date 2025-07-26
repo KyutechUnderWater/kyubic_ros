@@ -88,18 +88,24 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6045c42e38311a8947fb5d60ab7805e8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#a6045c42e38311a8947fb5d60ab7805e8">VelocityP_PID</a> (const std::shared_ptr&lt; <a class="el" href="structpid__controller_1_1VelocityP__PIDParameter.html">VelocityP_PIDParameter</a> &gt; param_)</td></tr>
-<tr class="memdesc:a6045c42e38311a8947fb5d60ab7805e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller gain setting.  <br /></td></tr>
-<tr class="separator:a6045c42e38311a8947fb5d60ab7805e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b2908ff080e4fce995f10ce27ee2446"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#a2b2908ff080e4fce995f10ce27ee2446">VelocityP_PID</a> (const <a class="el" href="structpid__controller_1_1VelocityP__PIDParameter.html">VelocityP_PIDParameter</a> &amp;param_)</td></tr>
+<tr class="memdesc:a2b2908ff080e4fce995f10ce27ee2446"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller gain setting.  <br /></td></tr>
+<tr class="separator:a2b2908ff080e4fce995f10ce27ee2446"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50d5e534e94fe33e89a96b07634a237d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#a50d5e534e94fe33e89a96b07634a237d">update</a> (double current_slave, double current_master, double target_master)</td></tr>
 <tr class="memdesc:a50d5e534e94fe33e89a96b07634a237d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update PID cycle.  <br /></td></tr>
 <tr class="separator:a50d5e534e94fe33e89a96b07634a237d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd75f01164d1ced7009301ee44a4d4c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#abd75f01164d1ced7009301ee44a4d4c2">reset</a> ()</td></tr>
+<tr class="memdesc:abd75f01164d1ced7009301ee44a4d4c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset previous slave output.  <br /></td></tr>
+<tr class="separator:abd75f01164d1ced7009301ee44a4d4c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd63cf4106de461ce8f5a1cc64a7141d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#afd63cf4106de461ce8f5a1cc64a7141d">get_master_out</a> ()</td></tr>
+<tr class="memdesc:afd63cf4106de461ce8f5a1cc64a7141d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get calculated master output.  <br /></td></tr>
+<tr class="separator:afd63cf4106de461ce8f5a1cc64a7141d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Velocity Form P-PID Controller class. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6045c42e38311a8947fb5d60ab7805e8" name="a6045c42e38311a8947fb5d60ab7805e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6045c42e38311a8947fb5d60ab7805e8">&#9670;&#160;</a></span>VelocityP_PID()</h2>
+<a id="a2b2908ff080e4fce995f10ce27ee2446" name="a2b2908ff080e4fce995f10ce27ee2446"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b2908ff080e4fce995f10ce27ee2446">&#9670;&#160;</a></span>VelocityP_PID()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -110,7 +116,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">pid_controller::VelocityP_PID::VelocityP_PID </td>
           <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="structpid__controller_1_1VelocityP__PIDParameter.html">VelocityP_PIDParameter</a> &gt;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structpid__controller_1_1VelocityP__PIDParameter.html">VelocityP_PIDParameter</a> &amp;&#160;</td>
           <td class="paramname"><em>param_</em></td><td>)</td>
           <td></td>
         </tr>
@@ -133,6 +139,46 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="afd63cf4106de461ce8f5a1cc64a7141d" name="afd63cf4106de461ce8f5a1cc64a7141d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd63cf4106de461ce8f5a1cc64a7141d">&#9670;&#160;</a></span>get_master_out()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double pid_controller::VelocityP_PID::get_master_out </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get calculated master output. </p>
+<dl class="section return"><dt>Returns</dt><dd>master ouput </dd></dl>
+
+</div>
+</div>
+<a id="abd75f01164d1ced7009301ee44a4d4c2" name="abd75f01164d1ced7009301ee44a4d4c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd75f01164d1ced7009301ee44a4d4c2">&#9670;&#160;</a></span>reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pid_controller::VelocityP_PID::reset </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset previous slave output. </p>
+<dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
+</div>
+</div>
 <a id="a50d5e534e94fe33e89a96b07634a237d" name="a50d5e534e94fe33e89a96b07634a237d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a50d5e534e94fe33e89a96b07634a237d">&#9670;&#160;</a></span>update()</h2>
 

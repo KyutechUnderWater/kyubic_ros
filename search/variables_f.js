@@ -11,6 +11,7 @@ var searchData=
   ['plotter_8',['plotter',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a62b85a12451a6a98a3241f811926d12c',1,'trajectory_viewer::main::MainWindow']]],
   ['ppid_5fparam_9',['ppid_param',['../structpid__controller_1_1PositionP__PIDParameter.html#adb12d40440b5da6cee04c0ba95f8c93f',1,'pid_controller::PositionP_PIDParameter']]],
   ['processes_10',['processes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a11742ed5aa6d05fe13377caa2f2dd6bd',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['publisher_5ftimer_11',['publisher_timer',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a32722b273dfc336c1eec6aca04166d2b',1,'trajectory_viewer::main::RosCommunicator']]],
-  ['py_5fmodules_12',['py_modules',['../namespacesetup.html#ad6a0f278ba38b7ed3595fd6896196fb3',1,'setup']]]
+  ['publisher_5f_11',['publisher_',['../classgnss__driver_1_1gnss__driver_1_1GnssDriver.html#a925c8066d58db1b5526d4a27ecc9fc8d',1,'gnss_driver.gnss_driver.GnssDriver.publisher_()'],['../classgnss__driver_1_1gnss__driver__2_1_1GnssDriver.html#abcfa1182c2c2d70b9b747a985c2724c5',1,'gnss_driver.gnss_driver_2.GnssDriver.publisher_()']]],
+  ['publisher_5ftimer_12',['publisher_timer',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a32722b273dfc336c1eec6aca04166d2b',1,'trajectory_viewer::main::RosCommunicator']]],
+  ['py_5fmodules_13',['py_modules',['../namespacesetup.html#ad6a0f278ba38b7ed3595fd6896196fb3',1,'setup']]]
 ];

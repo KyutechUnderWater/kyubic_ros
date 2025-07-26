@@ -1,3 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classpid__controller_1_1PositionPID.html" title="Position Form PID Controller class." alt="" coords="5,5,199,31"/>
+<area shape="rect" id="node1" title=" " alt="" coords="15,141,71,166"/>
+<area shape="rect" id="node2" href="$classgnss__driver_1_1gnss__driver_1_1GnssDriver.html" title=" " alt="" coords="147,5,326,45"/>
+<area shape="rect" id="node3" href="$classgnss__driver_1_1gnss__driver__2_1_1GnssDriver.html" title=" " alt="" coords="149,69,324,109"/>
+<area shape="rect" id="node4" href="$classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html" title=" " alt="" coords="133,133,340,173"/>
+<area shape="rect" id="node5" href="$classtrajectory__viewer_1_1main_1_1RosCommunicator.html" title=" " alt="" coords="137,261,337,301"/>
+<area shape="rect" id="node6" href="$classtrdi__toolz_1_1main_1_1DVLCommandClient.html" title=" " alt="" coords="128,197,345,237"/>
+<area shape="rect" id="node7" title=" " alt="" coords="5,269,80,294"/>
 </map>

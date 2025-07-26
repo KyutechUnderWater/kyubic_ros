@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['g366_0',['g366',['../namespaceimu__driver_1_1g366.html',1,'imu_driver']]],
-  ['imu_5fdriver_1',['imu_driver',['../namespaceimu__driver.html',1,'']]]
+  ['fix_5faxis_5fplotjuggler_0',['fix_axis_plotjuggler',['../namespacefix__axis__plotjuggler.html',1,'']]]
 ];
