@@ -61,6 +61,7 @@ void TestPID::_declare_parameter()
     p_pid_params[name.at(i)].vpid_param.lo = this->declare_parameter(name.at(i) + ".vpid.lo", 0.0);
     p_pid_params[name.at(i)].vpid_param.hi = this->declare_parameter(name.at(i) + ".vpid.hi", 0.0);
   }
+  p_pid_params["z"].vpid_param.offset = this->declare_parameter("z.vpid.offset", 0.0);
 }
 
 void TestPID::update()

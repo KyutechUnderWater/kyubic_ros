@@ -22,11 +22,14 @@ double PositionP_PID::update(
   double current_slave, double current_master, double target_master, double last_saturated)
 {
   // Calculate master P contorller
-  double vel_ref = k * (target_master - current_master);
+  master_out = k * (target_master - current_master);
+  master_out = std::clamp(master_out, lo, hi);
 
   // Clamped between lo and hi value, and Calculate slave PID controller
-  return slave_pid_->update(current_slave, std::clamp(vel_ref, lo, hi), last_saturated);
+  return slave_pid_->update(current_slave, master_out, last_saturated);
 }
+
+double PositionP_PID::get_master_out() { return master_out; }
 
 void PositionP_PID::reset() { slave_pid_->reset_integral(); }
 
@@ -39,10 +42,12 @@ VelocityP_PID::VelocityP_PID(const VelocityP_PIDParameter & param_)
 double VelocityP_PID::update(double current_slave, double current_master, double target_master)
 {
   // Calculate master P contorller
-  double vel_ref = k * (target_master - current_master);
+  master_out = k * (target_master - current_master);
+  master_out = std::clamp(master_out, lo, hi);
 
   // Clamped between lo and hi value, and Calculate slave PID controller
-  return slave_pid_->update(current_slave, std::clamp(vel_ref, lo, hi));
+  return slave_pid_->update(current_slave, master_out);
 }
 
+double VelocityP_PID::get_master_out() { return master_out; }
 }  // namespace pid_controller

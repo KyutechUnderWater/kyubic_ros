@@ -60,6 +60,10 @@ bool P_PIDController::_load_gain_from_yaml(const std::string & yaml_path)
       param.vpid_param.lo = vpid_node["lo"].as<double>();
       param.vpid_param.hi = vpid_node["hi"].as<double>();
 
+      if (vpid_node["offset"]) {
+        param.vpid_param.offset = vpid_node["offset"].as<double>();
+      }
+
       // Store
       pid_params[key] = param;
     }

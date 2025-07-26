@@ -16,7 +16,7 @@ namespace pid_controller
 {
 
 PositionPID::PositionPID(const PositionPIDParameter param)
-: kp(param.kp), ki(param.ki), kd(param.kd), kf(param.kf)
+: kp(param.kp), ki(param.ki), kd(param.kd), kf(param.kf), offset(param.offset)
 {
 }
 
@@ -44,7 +44,7 @@ double PositionPID::update(double current, double target, double last_saturated 
   pre_i = i;
   pre_d = d;
 
-  return kp * p + ki * i + kd * d;
+  return kp * p + ki * i + kd * d + offset;
 }
 
 std::array<double, 3> PositionPID::get_each_term()
@@ -56,7 +56,13 @@ std::array<double, 3> PositionPID::get_each_term()
 void PositionPID::reset_integral() { i = 0.0; }
 
 VelocityPID::VelocityPID(const VelocityPIDParameter param)
-: kp(param.kp), ki(param.ki), kd(param.kd), kf(param.kf), lo(param.lo), hi(param.hi)
+: kp(param.kp),
+  ki(param.ki),
+  kd(param.kd),
+  kf(param.kf),
+  lo(param.lo),
+  hi(param.hi),
+  offset(param.offset)
 {
 }
 
@@ -84,7 +90,7 @@ double VelocityPID::update(double current, double target)
   pre_d = d;
   pre_u = u;
 
-  return u;
+  return std::clamp(u + offset, lo, hi);
 }
 
 std::array<double, 3> VelocityPID::get_each_term()
