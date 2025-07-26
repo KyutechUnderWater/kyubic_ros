@@ -9,8 +9,11 @@ var searchData=
   ['socket_6',['socket',['../classgnss__driver_1_1gnss__driver_1_1GnssDriver.html#ad0b9143504ad87ea664b38ea49e55cf5',1,'gnss_driver.gnss_driver.GnssDriver.socket()'],['../classgnss__driver_1_1gnss__driver__2_1_1GnssDriver.html#a5a285899cee1b1d15bb6c9215eaa8f65',1,'gnss_driver.gnss_driver_2.GnssDriver.socket()']]],
   ['software_5freset_5fwcomm1_7',['software_reset_wcomm1',['../namespaceimu__driver_1_1g366.html#a10a79f621ce39691a59311bbf5e0e41b',1,'imu_driver::g366']]],
   ['speed_5fof_5fsound_8',['speed_of_sound',['../structdvl__driver_1_1path__finder_1_1Data.html#a82f344c6eb15321be71ce48064ff02ec',1,'dvl_driver::path_finder::Data']]],
-  ['start_5ftime_9',['start_time',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#ad2317badc8c568e3a3b3c2958c64047b',1,'real_time_plotter::main::MultiGraphViewer']]],
-  ['submit_5fbutton_10',['submit_button',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a3d2a92b989a3806cc7e90066751f16c4',1,'trajectory_viewer::main::MainWindow']]],
-  ['subscription_11',['subscription',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#aae69033448d6d0f00ff58369da5b0655',1,'trajectory_viewer::main::RosCommunicator']]],
-  ['system_5fconfig_12',['system_config',['../structdvl__driver_1_1path__finder_1_1Data.html#a62e3ffd0664a849e5a8f2e2498cac27c',1,'dvl_driver::path_finder::Data']]]
+  ['start_5fpoint_9',['start_point',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#aa3171777e3868385bdc44308e36abab8',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
+  ['start_5ftime_10',['start_time',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#ad2317badc8c568e3a3b3c2958c64047b',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['steps_5fper_5fsegment_11',['steps_per_segment',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a95791b6d65ce11690147bb5155068c3d',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
+  ['submit_5fbutton_12',['submit_button',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a3d2a92b989a3806cc7e90066751f16c4',1,'trajectory_viewer::main::MainWindow']]],
+  ['subscription_13',['subscription',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#aae69033448d6d0f00ff58369da5b0655',1,'trajectory_viewer::main::RosCommunicator']]],
+  ['suppress_14',['suppress',['../namespacepath__generator_1_1path__generator.html#a4b6bae0066d0f419e8a05e99b79b0662',1,'path_generator::path_generator']]],
+  ['system_5fconfig_15',['system_config',['../structdvl__driver_1_1path__finder_1_1Data.html#a62e3ffd0664a849e5a8f2e2498cac27c',1,'dvl_driver::path_finder::Data']]]
 ];

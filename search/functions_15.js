@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['_7edvldriver_0',['~DVLDriver',['../classdvl__driver_1_1DVLDriver.html#ad9e5b3dd4dc8bb73f6a026e8b22100e3',1,'dvl_driver::DVLDriver']]],
-  ['_7eserial_1',['~Serial',['../classserial_1_1Serial.html#a071000a2f5f77a40df8311fad5044481',1,'serial::Serial']]]
+  ['what_0',['what',['../classserial_1_1SerialException.html#a0a484a58326359c49ee535b23a71d328',1,'serial::SerialException']]],
+  ['wrenchplanner_1',['WrenchPlanner',['../classplanner_1_1WrenchPlanner.html#a00d8d56f9e540c658cee5004ca5a9ff3',1,'planner::WrenchPlanner']]],
+  ['write_2',['write',['../classserial_1_1Serial.html#a6d02ff6d208cf44c70c1339da44a20fd',1,'serial::Serial']]]
 ];

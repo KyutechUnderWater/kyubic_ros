@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['odom_5fcallback_0',['odom_callback',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#a27eca1fd2e23e64e8882af7f5bf5431d',1,'real_time_plotter.main.MultiDimSubscriber.odom_callback()'],['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a5bbf4372c12158c26d686afbad476860',1,'trajectory_viewer.main.RosCommunicator.odom_callback()']]],
-  ['on_5fsubmit_1',['on_submit',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a2fe3470227d1f8e9d39600c44c594ffb',1,'trajectory_viewer::main::MainWindow']]]
+  ['num_5fsegments_0',['num_segments',['../namespacepath__generator_1_1path__generator.html#a542952bbb8d7380ab4b94e00632076c9',1,'path_generator::path_generator']]]
 ];

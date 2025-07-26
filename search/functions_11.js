@@ -1,11 +1,21 @@
 var searchData=
 [
-  ['target_5fcallback_0',['target_callback',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#acf45ce5f7954a6fb3de865907d7cb850',1,'real_time_plotter::main::MultiDimSubscriber']]],
-  ['test_5fcopyright_1',['test_copyright',['../namespacetest__copyright.html#a1e85a46f013c8478a2deddb97f25bdf6',1,'test_copyright']]],
-  ['test_5fflake8_2',['test_flake8',['../namespacetest__flake8.html#a5f7134c66c7d67087a308de33b8203a0',1,'test_flake8']]],
-  ['test_5fpep257_3',['test_pep257',['../namespacetest__pep257.html#ab3bd2c3967386ec5043276860b678e09',1,'test_pep257']]],
-  ['testpid_4',['TestPID',['../classtest_1_1TestPID.html#a67f3eef7565b2c937a5eaccb598e2ea6',1,'test::TestPID']]],
-  ['thrusterdriver_5',['ThrusterDriver',['../classthruster__driver_1_1ThrusterDriver.html#a4eaf0c67ea919ef3c03623080eb9382b',1,'thruster_driver::ThrusterDriver']]],
-  ['timeout_6',['Timeout',['../classtimer_1_1Timeout.html#ad687b72db504ce29534d292ef6c7255c',1,'timer::Timeout']]],
-  ['toggle_5fnode_7',['toggle_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ac4ad21c3caa090c03e868a7e75585924',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['self_5ftest_0',['self_test',['../classimu__driver_1_1g366_1_1G366.html#a36ccab1a1399925b5b62c4f6022b105c',1,'imu_driver::g366::G366']]],
+  ['send_5fbreak_5fcmd_1',['send_break_cmd',['../classdvl__driver_1_1path__finder_1_1Sender.html#af78bdd65b3eb30ae340e177c33330e9b',1,'dvl_driver::path_finder::Sender']]],
+  ['send_5fcmd_2',['send_cmd',['../classdvl__driver_1_1path__finder_1_1Sender.html#ad5c9c1b8eda3237e32e5d5030ca446eb',1,'dvl_driver::path_finder::Sender']]],
+  ['send_5fcommand_3',['send_command',['../classtrdi__toolz_1_1main_1_1DVLCommandClient.html#a31214df13f04669aa105a3c905fb873d',1,'trdi_toolz::main::DVLCommandClient']]],
+  ['send_5fping_5fcmd_4',['send_ping_cmd',['../classdvl__driver_1_1path__finder_1_1Sender.html#aa66062e42c7f3f678aba4dbd4901e9c8',1,'dvl_driver::path_finder::Sender']]],
+  ['sender_5',['Sender',['../classdvl__driver_1_1path__finder_1_1Sender.html#a2bdcabf8042c9644b72b09311625e359',1,'dvl_driver::path_finder::Sender']]],
+  ['serial_6',['Serial',['../classserial_1_1Serial.html#ab0764fe0d037a8b46accac8fe2a72999',1,'serial::Serial']]],
+  ['serialexception_7',['SerialException',['../classserial_1_1SerialException.html#a3713871bf41f84d80537388b7e3308a2',1,'serial::SerialException']]],
+  ['set_5fatti_5fmotion_5fprofile_8',['set_atti_motion_profile',['../classimu__driver_1_1g366_1_1G366.html#acbb449f814bc2f2b3c73992037b7944e',1,'imu_driver::g366::G366']]],
+  ['set_5ffilter_9',['set_filter',['../classimu__driver_1_1g366_1_1G366.html#ad5e8bde5ef0f5919fc601cbe346d8fae',1,'imu_driver::g366::G366']]],
+  ['setconfig_10',['setConfig',['../classserial_1_1Serial.html#a70c460f4584e3f27eab799bde02e2836',1,'serial::Serial']]],
+  ['setdata_11',['setData',['../classreal__time__plotter_1_1main_1_1PlotUnitWidget.html#a149e93a45967033fc106c37bc33fdac0',1,'real_time_plotter::main::PlotUnitWidget']]],
+  ['setplotvisible_12',['setPlotVisible',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a158884091ab9bee0da9a4d77810b0456',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['settermios_13',['setTermios',['../classserial_1_1Serial.html#a4fea3d0ac96d0def65b942ccb80e5eb0',1,'serial::Serial']]],
+  ['setup_14',['setup',['../classimu__driver_1_1g366_1_1G366.html#a7269ddb01c1546c1ba64c3a6753a8e75',1,'imu_driver::g366::G366']]],
+  ['showstl_15',['showSTL',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#aa25809861cfa8b12e8028cc647a9923b',1,'trajectory_viewer::main::TrajectoryPlotter']]],
+  ['software_5freset_16',['software_reset',['../classimu__driver_1_1g366_1_1G366.html#acd5743c08fcfc0673372cfbec720022c',1,'imu_driver::g366::G366']]],
+  ['stop_5fnode_17',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

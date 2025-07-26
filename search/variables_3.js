@@ -1,18 +1,25 @@
 var searchData=
 [
-  ['catmull_5fdensity_0',['catmull_density',['../classplanner_1_1ParamData.html#ad56596fe9d34b9b03a91d7a18cf2577d',1,'planner::ParamData']]],
-  ['catmull_5fend_5frow_1',['catmull_end_row',['../classplanner_1_1ParamData.html#ad32bcacf63e3f1cdab9884549aaa6bd8',1,'planner::ParamData']]],
-  ['catmull_5fmin_5fdistance_2',['catmull_min_distance',['../classplanner_1_1ParamData.html#af16646fb7a0d19a762cc89766883bfbc',1,'planner::ParamData']]],
-  ['catmull_5forient_5flerp_3',['catmull_orient_LERP',['../classplanner_1_1ParamData.html#a0bd06ae1d602a43bf0f93343bee84979',1,'planner::ParamData']]],
-  ['catmull_5from_4',['catmull_rom',['../classplanner_1_1ParamData.html#a5e8cb805084f5395556610104d0b660b',1,'planner::ParamData']]],
+  ['catmull_5fdensity_0',['catmull_density',['../classpath__generator_1_1path__generator_1_1Parameter.html#a99eb8033fa6a532f086f1518a4e6ec7b',1,'path_generator.path_generator.Parameter.catmull_density()'],['../classplanner_1_1ParamData.html#ad56596fe9d34b9b03a91d7a18cf2577d',1,'planner::ParamData::catmull_density()']]],
+  ['catmull_5fend_5frow_1',['catmull_end_row',['../classplanner_1_1ParamData.html#ad32bcacf63e3f1cdab9884549aaa6bd8',1,'planner::ParamData::catmull_end_row()'],['../classpath__generator_1_1path__generator_1_1Parameter.html#a9f726017bde3d3ec0d0acfdec6caae81',1,'path_generator.path_generator.Parameter.catmull_end_row()']]],
+  ['catmull_5fmin_5fdistance_2',['catmull_min_distance',['../classplanner_1_1ParamData.html#af16646fb7a0d19a762cc89766883bfbc',1,'planner::ParamData::catmull_min_distance()'],['../classpath__generator_1_1path__generator_1_1Parameter.html#a9b183b42e6ed0efea123e5ad1d6739d1',1,'path_generator.path_generator.Parameter.catmull_min_distance()']]],
+  ['catmull_5forient_5flerp_3',['catmull_orient_LERP',['../classplanner_1_1ParamData.html#a0bd06ae1d602a43bf0f93343bee84979',1,'planner::ParamData::catmull_orient_LERP()'],['../classpath__generator_1_1path__generator_1_1Parameter.html#a65966244562c50919e1198f665a5c5b2',1,'path_generator.path_generator.Parameter.catmull_orient_LERP()']]],
+  ['catmull_5from_4',['catmull_rom',['../classplanner_1_1ParamData.html#a5e8cb805084f5395556610104d0b660b',1,'planner::ParamData::catmull_rom()'],['../classpath__generator_1_1path__generator_1_1Parameter.html#ac22251bdb1a61a8570671dc3a3dbba20',1,'path_generator.path_generator.Parameter.catmull_rom()']]],
   ['check_5fready_5frcomm1_5',['check_ready_rcomm1',['../namespaceimu__driver_1_1g366.html#a30cbf806c0ef77c1675f578c733525c6',1,'imu_driver::g366']]],
   ['checkbox_5fcurve1_6',['checkbox_curve1',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a9aa59d50c64d7538a5b566cf5f918864',1,'real_time_plotter::main::MultiGraphViewer']]],
   ['checkbox_5fcurve2_7',['checkbox_curve2',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a21d6f55aa3e6db652ea0e34a63564695',1,'real_time_plotter::main::MultiGraphViewer']]],
   ['checkbox_5ftarget_8',['checkbox_target',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a0624b18f60e47e4f8c44987dc746b634',1,'real_time_plotter::main::MultiGraphViewer']]],
-  ['checkpoint_5fend_5frow_9',['checkpoint_end_row',['../classplanner_1_1ParamData.html#a15cd20791b4ef87c55c2384de61a9d43',1,'planner::ParamData']]],
+  ['checkpoint_5fend_5frow_9',['checkpoint_end_row',['../classpath__generator_1_1path__generator_1_1Parameter.html#a15a5493507fe283b4bf99951c3052adc',1,'path_generator.path_generator.Parameter.checkpoint_end_row()'],['../classplanner_1_1ParamData.html#a15cd20791b4ef87c55c2384de61a9d43',1,'planner::ParamData::checkpoint_end_row()']]],
   ['cli_10',['cli',['../classtrdi__toolz_1_1main_1_1DVLCommandClient.html#a96a3014be7e9ae143b0723e6699c5c65',1,'trdi_toolz::main::DVLCommandClient']]],
   ['config_5fcomm_11',['config_comm',['../namespaceimu__driver_1_1g366.html#a13dc3acd6c6c37a70192f5ede1806633',1,'imu_driver::g366']]],
   ['config_5fmode_5fwcomm0_12',['config_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#a3ae26f3b7ad93205dbfc5b0938729ee9',1,'imu_driver::g366']]],
   ['count_13',['count',['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()']]],
-  ['csv_5fheader_14',['csv_header',['../namespaceplanner.html#a5ab963889395bd686b14a06bc2f8b92a',1,'planner']]]
+  ['csv_5ffile_5fpath_14',['csv_file_path',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a6c96705478992fd2329b72f668b131fa',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
+  ['csv_5fheader_15',['csv_header',['../namespaceplanner.html#a5ab963889395bd686b14a06bc2f8b92a',1,'planner']]],
+  ['current_5fangular_5froll_16',['current_angular_roll',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a943d774048e6b92f4286aac00695d711',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
+  ['current_5fangular_5fyaw_17',['current_angular_yaw',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a61d8e737ac2828d85ad278c28f949798',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
+  ['current_5flinear_5fx_18',['current_linear_x',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#ae2143b0003b1161e7432abb1fa9eb868',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
+  ['current_5flinear_5fy_19',['current_linear_y',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a5d3feb9ae6b365839951c41028a4e7f0',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
+  ['current_5flinear_5fz_20',['current_linear_z',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a2e480b7f81c2e46f2cfa460803d2a9cc',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
+  ['current_5fsegment_5fstart_5findex_21',['current_segment_start_index',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#acb0b5273f234a396a57c394b9151154d',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]]
 ];
