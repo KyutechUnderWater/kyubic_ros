@@ -18,14 +18,15 @@ def generate_launch_description():
 
     # --- ノードの定義 ---
     plotter_node = Node(
+        name="real_time_plotter",
+        namespace="real_time_plotter",
         package="real_time_plotter",
         # setup.pyで設定する実行可能ファイル名
         executable="real_time_plotter",
-        name="real_time_plotter",
         output="screen",
         # トピック名のリマッピング設定
         remappings=[
-            ("/odom", LaunchConfiguration("odom_topic")),
+            ("/real_time_plotter/odom", LaunchConfiguration("odom_topic")),
         ],
     )
 
@@ -34,7 +35,6 @@ def generate_launch_description():
     return LaunchDescription(
         [
             odom_topic_arg,
-            targets_topic_arg,
             plotter_node,
         ]
     )
