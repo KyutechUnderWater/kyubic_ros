@@ -36,6 +36,8 @@ class GnssPublisher(Node):
         self.socket = None
         self.latest_heading = None  # 最新の方位情報を保持する変数
         self.gsv_sats = {}  # GSVメッセージから衛星情報を一時保存する辞書
+        self.latest_snr_msg = Float32MultiArray()
+
 
         # 接続とデータ受信を開始
         self.connect_and_read()
@@ -114,10 +116,10 @@ class GnssPublisher(Node):
 
                             # 分割メッセージの最後なら、トピックを配信
                             if msg.msg_num == msg.num_messages:
-                                snr_msg = Float32MultiArray()
+                                #snr_msg = Float32MultiArray()
                                 # 辞書から信号強度のリストを作成
                                 snr_values = [float(s) for s in self.gsv_sats.values()]
-                                snr_msg.data = snr_values
+                                self.latest_snr_msg.data = snr_values
 
                                 #self.snr_publisher_.publish(snr_msg)
                                 self.get_logger().info(
