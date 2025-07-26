@@ -1,9 +1,11 @@
 var searchData=
 [
-  ['latest_5ftargets_0',['latest_targets',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#a417ef43bed72e9a4f8138e7e4d346fc9',1,'real_time_plotter::main::MultiDimSubscriber']]],
-  ['layout_1',['layout',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a7c91a9fa0b2dca3916661983d1a3085a',1,'real_time_plotter::main::MultiGraphViewer']]],
-  ['leak_5fstatus_2',['leak_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a3f6e67ef9053385376a3b5d83cc6d480',1,'dvl_driver::path_finder::Data']]],
-  ['license_3',['license',['../namespacesetup.html#a8ed6f50a28bd6a8794f8e1153baa6de9',1,'setup']]],
-  ['lo_4',['lo',['../structpid__controller_1_1PositionP__PIDParameter.html#ad2d18cf7efb5f2e8695568512b86db2f',1,'pid_controller::PositionP_PIDParameter::lo()'],['../structpid__controller_1_1VelocityP__PIDParameter.html#a42afd954e15ec491120439b2a3c1b8de',1,'pid_controller::VelocityP_PIDParameter::lo()'],['../structpid__controller_1_1VelocityPIDParameter.html#aed090063319ade0be7ff8f037a94952f',1,'pid_controller::VelocityPIDParameter::lo()']]],
-  ['lock_5',['lock',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#aaf0d192f0d2d0615df2e16386ac76be5',1,'real_time_plotter::main::MultiDimSubscriber']]]
+  ['latest_5fheading_0',['latest_heading',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#aedb3d93921c953f4bf434e9b0c54aa25',1,'gnss_driver::gnss_driver::GnssPublisher']]],
+  ['latest_5fsnr_5fmsg_1',['latest_snr_msg',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#a6c302aae393bc3ac2029edc0b937600b',1,'gnss_driver::gnss_driver::GnssPublisher']]],
+  ['latest_5ftargets_2',['latest_targets',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#a417ef43bed72e9a4f8138e7e4d346fc9',1,'real_time_plotter::main::MultiDimSubscriber']]],
+  ['layout_3',['layout',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a7c91a9fa0b2dca3916661983d1a3085a',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['leak_5fstatus_4',['leak_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a3f6e67ef9053385376a3b5d83cc6d480',1,'dvl_driver::path_finder::Data']]],
+  ['license_5',['license',['../namespacesetup.html#a8ed6f50a28bd6a8794f8e1153baa6de9',1,'setup']]],
+  ['lo_6',['lo',['../structpid__controller_1_1PositionP__PIDParameter.html#ad2d18cf7efb5f2e8695568512b86db2f',1,'pid_controller::PositionP_PIDParameter::lo()'],['../structpid__controller_1_1VelocityP__PIDParameter.html#a42afd954e15ec491120439b2a3c1b8de',1,'pid_controller::VelocityP_PIDParameter::lo()'],['../structpid__controller_1_1VelocityPIDParameter.html#aed090063319ade0be7ff8f037a94952f',1,'pid_controller::VelocityPIDParameter::lo()']]],
+  ['lock_7',['lock',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#aaf0d192f0d2d0615df2e16386ac76be5',1,'real_time_plotter::main::MultiDimSubscriber']]]
 ];

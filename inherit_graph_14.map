@@ -1,10 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="15,173,71,198"/>
-<area shape="rect" id="node2" href="$classgnss__driver_1_1gnss__driver_1_1GnssDriver.html" title=" " alt="" coords="169,5,348,45"/>
-<area shape="rect" id="node3" href="$classgnss__driver_1_1gnss__driver__2_1_1GnssDriver.html" title=" " alt="" coords="171,69,346,109"/>
-<area shape="rect" id="node4" href="$classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html" title=" " alt="" coords="155,133,362,173"/>
-<area shape="rect" id="node5" href="$classtrajectory__viewer_1_1main_1_1RosCommunicator.html" title=" " alt="" coords="159,325,359,365"/>
-<area shape="rect" id="node6" href="$classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html" title=" " alt="" coords="128,197,389,237"/>
-<area shape="rect" id="node7" href="$classtrdi__toolz_1_1main_1_1DVLCommandClient.html" title=" " alt="" coords="150,261,367,301"/>
-<area shape="rect" id="node8" title=" " alt="" coords="5,333,80,358"/>
+<area shape="rect" id="node1" title=" " alt="" coords="15,141,71,166"/>
+<area shape="rect" id="node2" href="$classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html" title=" " alt="" coords="169,5,348,45"/>
+<area shape="rect" id="node3" href="$classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html" title=" " alt="" coords="155,69,362,109"/>
+<area shape="rect" id="node4" href="$classtrajectory__viewer_1_1main_1_1RosCommunicator.html" title=" " alt="" coords="159,261,359,301"/>
+<area shape="rect" id="node5" href="$classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html" title=" " alt="" coords="128,133,389,173"/>
+<area shape="rect" id="node6" href="$classtrdi__toolz_1_1main_1_1DVLCommandClient.html" title=" " alt="" coords="150,197,367,237"/>
+<area shape="rect" id="node7" title=" " alt="" coords="5,269,80,294"/>
 </map>

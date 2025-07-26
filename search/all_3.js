@@ -30,7 +30,7 @@ var searchData=
   ['concat_5f8bit_27',['concat_8bit',['../classimu__driver_1_1g366_1_1G366.html#ac74840e9332ba5d6883e1aaabdfe583b',1,'imu_driver::g366::G366']]],
   ['config_5fcomm_28',['config_comm',['../namespaceimu__driver_1_1g366.html#a13dc3acd6c6c37a70192f5ede1806633',1,'imu_driver::g366']]],
   ['config_5fmode_5fwcomm0_29',['config_mode_wcomm0',['../namespaceimu__driver_1_1g366.html#a3ae26f3b7ad93205dbfc5b0938729ee9',1,'imu_driver::g366']]],
-  ['connect_5fand_5fread_30',['connect_and_read',['../classgnss__driver_1_1gnss__driver__2_1_1GnssDriver.html#a707b76a68f9c6beb6397f6067ab8fa91',1,'gnss_driver.gnss_driver_2.GnssDriver.connect_and_read()'],['../classgnss__driver_1_1gnss__driver_1_1GnssDriver.html#a5ec1c706c1a3737addcc17a95041578f',1,'gnss_driver.gnss_driver.GnssDriver.connect_and_read()']]],
+  ['connect_5fand_5fread_30',['connect_and_read',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#ad5869c82910b3a6f4ee0203f5216d9ca',1,'gnss_driver::gnss_driver::GnssPublisher']]],
   ['controller_31',['controller',['../namespacecontroller.html',1,'']]],
   ['count_32',['count',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a5a055bb7a421d7d673644af2cef98e61',1,'imu_driver::g366::RAW_DATA_T::count()'],['../structimu__driver_1_1g366_1_1DATA__META.html#a281801d553356bc6044ac2c9fa6eb6dd',1,'imu_driver::g366::DATA_META::count()']]],
   ['csv_5ffile_5fpath_33',['csv_file_path',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a6c96705478992fd2329b72f668b131fa',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
