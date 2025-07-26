@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'gnss_test'
+package_name = 'gnss_driver'
 
 setup(
     name=package_name,
