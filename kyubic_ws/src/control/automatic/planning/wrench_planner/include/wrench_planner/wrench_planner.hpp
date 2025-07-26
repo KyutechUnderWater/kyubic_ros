@@ -33,6 +33,8 @@ private:
 
   std::shared_ptr<controller::P_PIDController> p_pid_ctrl_;
 
+  uint8_t pre_z_mode = 0;
+
   void _update_wrench();
 
   void goalCurrentOdomCallback(const planner_msgs::msg::WrenchPlan::SharedPtr msg);

@@ -50,4 +50,6 @@ double VelocityP_PID::update(double current_slave, double current_master, double
 }
 
 double VelocityP_PID::get_master_out() { return master_out; }
+
+void VelocityP_PID::reset() { slave_pid_->reset(); }
 }  // namespace pid_controller

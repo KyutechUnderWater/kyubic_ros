@@ -93,6 +93,8 @@ double VelocityPID::update(double current, double target)
   return std::clamp(u + offset, lo, hi);
 }
 
+void VelocityPID::reset() { pre_u = 0.0; }
+
 std::array<double, 3> VelocityPID::get_each_term()
 {
   double term[3] = {p, i, d};

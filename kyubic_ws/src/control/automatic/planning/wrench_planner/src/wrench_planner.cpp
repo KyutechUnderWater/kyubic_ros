@@ -36,7 +36,7 @@ WrenchPlanner::WrenchPlanner(const rclcpp::NodeOptions & options) : Node("wrench
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
   pub_ = create_publisher<geometry_msgs::msg::WrenchStamped>("robot_force", qos);
-  pub_target_ = create_publisher<real_time_plotter_msgs::msg::Targets>("target", qos);
+  pub_target_ = create_publisher<real_time_plotter_msgs::msg::Targets>("targets", qos);
   sub_ = create_subscription<planner_msgs::msg::WrenchPlan>(
     "goal_current_odom", qos,
     std::bind(&WrenchPlanner::goalCurrentOdomCallback, this, std::placeholders::_1));
@@ -60,6 +60,11 @@ void WrenchPlanner::_update_wrench()
       current_twst.linear.y, current_pose.position.y, target_pose.position.y);
 
     double force_z = 0.0;
+    if (pre_z_mode != z_mode) {
+      RCLCPP_INFO(this->get_logger(), "z-axis P_PID reset");
+      pre_z_mode = z_mode;
+      p_pid_ctrl_->pid_z_reset();
+    }
     if (z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
       force_z = p_pid_ctrl_->pid_z_update(
         current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.position.z_depth);
@@ -89,8 +94,8 @@ void WrenchPlanner::_update_wrench()
     force_y = _force_x * sin(z_rad) + _force_y * cos(z_rad);
 
     RCLCPP_DEBUG(
-      this->get_logger(), "P-PID -> x: %f, y: %f, z: %f, roll: %f, yaw: %f", force_x, force_y,
-      force_z, torque_x, torque_z);
+      this->get_logger(), "P-PID -> x: %f  y: %f  z: %f  z_mode: %u  roll: %f  yaw: %f", force_x,
+      force_y, force_z, z_mode, torque_x, torque_z);
 
     {
       msg->wrench.force.x = force_x;

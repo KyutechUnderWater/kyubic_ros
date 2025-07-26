@@ -121,6 +121,12 @@ public:
   double update(double current_slave, double current_master, double target_master);
 
   /**
+   * @brief Reset previous slave output
+   * @return none
+   */
+  void reset();
+
+  /**
   * @brief Get calculated master output
   * @return master ouput
   */

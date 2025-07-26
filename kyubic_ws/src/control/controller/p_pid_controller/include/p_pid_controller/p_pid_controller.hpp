@@ -50,6 +50,12 @@ public:
   double pid_roll_update(double current_slave, double current_master, double target);
   double pid_yaw_update(double current_slave, double current_master, double target);
 
+  void pid_x_reset();
+  void pid_y_reset();
+  void pid_z_reset();
+  void pid_roll_reset();
+  void pid_yaw_reset();
+
   std::array<double, 5> update(std::array<std::array<double, 3>, 5> data);
 };
 

@@ -133,6 +133,12 @@ public:
    * @details Calculate PID
    */
   double update(double current, double target);
+
+  /**
+   * @brief Reset previous output
+   * @return none
+   */
+  void reset();
 };
 
 }  // namespace pid_controller
