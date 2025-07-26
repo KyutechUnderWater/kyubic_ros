@@ -192,7 +192,7 @@ class GnssPublisher(Node):
                             #self.fix_publisher_.publish(fix_msg)
                             gnss_data_msg.fix = fix_msg
                             
-                            gnss_data_msg.snr = self.latest_snr_msg 
+                            gnss_data_msg.snr = self.latest_snr_msg.data 
 
                             """
                             self.get_logger().info(
@@ -209,7 +209,7 @@ class GnssPublisher(Node):
                                 )  # データを直接代入
 
                                 #self.heading_publisher_.publish(heading_msg)
-                                gnss_data_msg.heading = heading_msg
+                                gnss_data_msg.heading = heading_msg.data
 
                                 self.get_logger().info(
                                     f"方位: {self.latest_heading:.2f} degrees"
