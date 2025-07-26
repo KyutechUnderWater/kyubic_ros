@@ -168,23 +168,23 @@ class GnssPublisher(Node):
                                     fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_DIAGONAL_KNOWN
 
                                     self.get_logger().info(
-                                        f"Publishing: タイムスタンプ = {fix_msg.header.stamp.sec}, "
-                                        f"品質 = {fix_msg.status.status}, 緯度 ={msg.latitude:.6f}, 経度 ={msg.longitude:.6f}, "
-                                        f"共分散x = {h_variance:.2f}, y = {h_variance:.2f}, z = {v_variance:.2f}"
+                                        f"Publishing: time = {fix_msg.header.stamp.sec}, "
+                                        f"qual = {fix_msg.status.status}, lat ={msg.latitude:.6f}, long ={msg.longitude:.6f}, "
+                                        f"cov_x = {h_variance:.2f}, cov_y = {h_variance:.2f}, cov_z = {v_variance:.2f}"
                                     )
                                 else:
                                     # hdopが0以下だった場合
                                     fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
                                     self.get_logger().info(
-                                        f"Publishing: タイムスタンプ ={fix_msg.header.stamp.sec}, "
-                                        f"品質 ={fix_msg.status.status}, 緯度 = {msg.latitude:.6f}, 経度 = {msg.longitude:.6f}, "
+                                        f"Publishing: time ={fix_msg.header.stamp.sec}, "
+                                        f"qual ={fix_msg.status.status}, lat = {msg.latitude:.6f}, long = {msg.longitude:.6f}, "
                                     )
                             except (ValueError, TypeError, AttributeError):
                                 # hdopがNone, 空文字列, または不正な値だった場合
                                 fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
                                 self.get_logger().info(
-                                    f"Publishing: タイムスタンプ = {fix_msg.header.stamp.sec}, "
-                                    f"品質 ={fix_msg.status.status}, 緯度 ={msg.latitude:.6f}, 経度 ={msg.longitude:.6f}, "
+                                    f"Publishing: time = {fix_msg.header.stamp.sec}, "
+                                    f"qual ={fix_msg.status.status}, lat ={msg.latitude:.6f}, long ={msg.longitude:.6f}, "
                                 )
                                     
 
@@ -193,13 +193,6 @@ class GnssPublisher(Node):
                             gnss_data_msg.fix = fix_msg
                             
                             gnss_data_msg.snr = self.latest_snr_msg.data 
-
-                            """
-                            self.get_logger().info(
-                                f'Published NavSatFix: lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, '
-                                f'alt={fix_msg.altitude:.2f}, sats={msg.num_sats}, qual={msg.gps_qual}, hdop={msg.horizontal_dil}'
-                            )
-                            """
 
                             # Float64メッセージ（方位）の作成と配信 
                             if self.latest_heading is not None:
@@ -212,7 +205,7 @@ class GnssPublisher(Node):
                                 gnss_data_msg.heading = heading_msg.data
 
                                 self.get_logger().info(
-                                    f"方位: {self.latest_heading:.2f} degrees"
+                                    f"Direction: {self.latest_heading:.2f} degrees"
                                 )
 
                             self.gnss_data_publisher_.publish(gnss_data_msg)
