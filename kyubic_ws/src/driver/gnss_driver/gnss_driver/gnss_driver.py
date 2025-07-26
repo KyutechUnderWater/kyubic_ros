@@ -31,7 +31,7 @@ class GnssPublisher(Node):
         #self.fix_publisher_ = self.create_publisher(NavSatFix, "/gps/fix", 10)
         #self.heading_publisher_ = self.create_publisher(Float64, "/gps/heading", 10)
         #self.snr_publisher_ = self.create_publisher(Float32MultiArray, "/gps/snr", 10)
-        self.gnss_data_publisher_ = self.create_publisher(Gnss, "/gps/all_data", 10)
+        self.gnss_data_publisher_ = self.create_publisher(Gnss, "/gnss", 10)
 
         self.socket = None
         self.latest_heading = None  # 最新の方位情報を保持する変数
