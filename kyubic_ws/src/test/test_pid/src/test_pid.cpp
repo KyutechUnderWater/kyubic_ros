@@ -79,23 +79,23 @@ void TestPID::update()
     auto angular = odom_->twist.angular;
 
     // x-axis
-    p_pid_x = vp_pids[name.at(0)]->update(linear.x, pose.x, targets_->x);
+    p_pid_x = vp_pids[name.at(0)]->update(linear.x, pose.x, targets_->pose.x);
 
     // y-axis
-    p_pid_y = vp_pids[name.at(1)]->update(linear.y, pose.y, targets_->y);
+    p_pid_y = vp_pids[name.at(1)]->update(linear.y, pose.y, targets_->pose.y);
 
     // z-axis
-    p_pid_z = vp_pids[name.at(2)]->update(linear.z_depth, pose.z_depth, targets_->z);
-    // p_pid_z = -vp_pids[name.at(2)]->update(linear.z_altitude, pose.z_altitude, targets_->z);
+    p_pid_z = vp_pids[name.at(2)]->update(linear.z_depth, pose.z_depth, targets_->pose.z_depth);
+    // p_pid_z = -vp_pids[name.at(2)]->update(linear.z_altitude, pose.z_altitude, targets_->pose.z_altitude);
 
     // roll-axis
-    double target_roll = targets_->roll;
+    double target_roll = targets_->pose.roll;
     p_pid_roll = vp_pids[name.at(3)]->update(angular.x, orient.x, target_roll);
 
     // yaw-axis
-    double target_yaw = targets_->yaw;
-    if (targets_->yaw - orient.z < -180) target_yaw += 360;
-    if (targets_->yaw - orient.z > 180) target_yaw -= 360;
+    double target_yaw = targets_->pose.yaw;
+    if (targets_->pose.yaw - orient.z < -180) target_yaw += 360;
+    if (targets_->pose.yaw - orient.z > 180) target_yaw -= 360;
     p_pid_yaw = vp_pids[name.at(4)]->update(angular.z, orient.z, target_yaw);
 
     // z-axis transform
@@ -106,7 +106,7 @@ void TestPID::update()
     p_pid_y = _p_pid_x * sin(z_rad) + _p_pid_y * cos(z_rad);
 
     // Print data
-    double target_p = targets_->z;
+    double target_p = targets_->pose.z_depth;
     double current_p = pose.z_depth;
     double current_vel_p = linear.z_depth;
     double p_pid_p = p_pid_z;
