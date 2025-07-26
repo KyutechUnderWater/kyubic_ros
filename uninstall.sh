@@ -26,8 +26,22 @@ unset KYUBIC_ROS${project_name}
 unset KYUBIC_ROS_COMPOSE${project_name}
 
 # Delete alias
-sed -i "/alias ros2_start${project_name}=/d" ~/.bash_aliases
-unalias "ros2_start${project_name}"
+unalias_command() {
+	local command="$1"
+
+	# delete command from .bash_aliases
+	sed -i "/alias ${command}=/d" ~/.bash_aliases
+
+	# unset alias
+	unalias "${command}"
+}
+unalias_command "ros2_start${project_name}"
+unalias_command "kyubic_main_ping"
+unalias_command "kyubic_img_ping"
+unalias_command "kyubic_mic_ping"
+unalias_command "kyubic_main_shutdown"
+unalias_command "kyubic_img_shutdown"
+unalias_command "kyubic_mic_shutdown"
 eval "$(cat ~/.bashrc | tail -n +10)"
 
 # Delete hardlink for udev rules
