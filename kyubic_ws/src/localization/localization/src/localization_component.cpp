@@ -66,6 +66,7 @@ void Localization::depth_callback(const localization_msgs::msg::Odometry::Unique
   all_updated |= 4;
 
   odom_msg_->header = msg->header;
+  odom_msg_->status.depth = msg->status.depth;
   odom_msg_->pose.position.z_depth = msg->pose.position.z_depth;
   odom_msg_->twist.linear.z_depth = msg->twist.linear.z_depth;
 }
@@ -76,6 +77,7 @@ void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePt
   all_updated |= 2;
 
   odom_msg_->header = msg->header;
+  odom_msg_->status.imu = msg->status.imu;
   odom_msg_->pose.orientation = msg->pose.orientation;
   odom_msg_->twist.angular = msg->twist.angular;
 }
@@ -86,6 +88,7 @@ void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePt
   all_updated |= 1;
 
   this->odom_msg_->header = msg->header;
+  odom_msg_->status.dvl = msg->status.dvl;
 
   this->odom_msg_->pose.position.x = msg->pose.position.x;
   this->odom_msg_->pose.position.y = msg->pose.position.y;
@@ -107,12 +110,12 @@ void Localization::publisher()
   }
   RCLCPP_INFO(this->get_logger(), "Updated localization");
 
-  // Reset flag
-  all_updated = 0b11111000;
-
   // Copy object (shared_ptr -> unique_ptr)
   auto msg = std::make_unique<localization_msgs::msg::Odometry>(*odom_msg_);
   pub_->publish(std::move(msg));
+
+  // Reset flag
+  all_updated = 0b11111000;
 }
 
 void Localization::reset_callback(

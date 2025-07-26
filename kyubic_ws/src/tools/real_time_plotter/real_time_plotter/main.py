@@ -9,7 +9,7 @@ import bisect
 import rclpy
 from rclpy.node import Node
 from localization_msgs.msg import Odometry
-from test_pid_msgs.msg import Targets
+from real_time_plotter_msgs.msg import Targets
 
 # PyQt5/PyQtGraph関連
 from PyQt5.QtWidgets import (
@@ -157,8 +157,7 @@ class PlotUnitWidget(QWidget):
 
     def update_views(self):
         # メインのViewBoxのサイズ変更に合わせて、2つ目のViewBoxとAxisItemの位置を調整
-        self.plot_widget2.setGeometry(
-            self.plot_widget.plotItem.vb.sceneBoundingRect())
+        self.plot_widget2.setGeometry(self.plot_widget.plotItem.vb.sceneBoundingRect())
 
 
 class MultiGraphViewer(QMainWindow):
@@ -242,8 +241,7 @@ class MultiGraphViewer(QMainWindow):
 
         self.plot_units = []
         for i, cfg in enumerate(plot_cfgs):
-            plot_unit = PlotUnitWidget(
-                y1_label="Position", y2_label="Velocity", **cfg)
+            plot_unit = PlotUnitWidget(y1_label="Position", y2_label="Velocity", **cfg)
             self.plot_units.append(plot_unit)
 
             # X軸の同期設定
@@ -415,23 +413,22 @@ class MultiDimSubscriber(Node):
 
             # 現在の目標値をタプルとして取得
             current_targets = (
-                self.latest_targets.x,
-                self.latest_targets.y,
-                self.latest_targets.z,
-                self.latest_targets.z,
-                self.latest_targets.roll,
-                self.latest_targets.yaw,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
+                self.latest_targets.pose.x,
+                self.latest_targets.pose.y,
+                self.latest_targets.pose.z_depth,
+                self.latest_targets.pose.z_altitude,
+                self.latest_targets.pose.roll,
+                self.latest_targets.pose.yaw,
+                self.latest_targets.twist.x,
+                self.latest_targets.twist.y,
+                self.latest_targets.twist.z_depth,
+                self.latest_targets.twist.z_altitude,
+                self.latest_targets.twist.roll,
+                self.latest_targets.twist.yaw,
             )
 
             # (タイムスタンプ, 値のタプル, 目標値のタプル) の形式でキューに追加
-            self.data_queue.append(
-                (timestamp, current_values, current_targets))
+            self.data_queue.append((timestamp, current_values, current_targets))
 
     def get_data_points(self):
         points = []
@@ -445,8 +442,7 @@ def main(args=None):
     rclpy.init(args=args)
     ros_node = MultiDimSubscriber()
 
-    ros_thread = threading.Thread(
-        target=rclpy.spin, args=(ros_node,), daemon=True)
+    ros_thread = threading.Thread(target=rclpy.spin, args=(ros_node,), daemon=True)
     ros_thread.start()
 
     app = QApplication(sys.argv)

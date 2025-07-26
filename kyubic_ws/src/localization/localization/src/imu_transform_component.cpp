@@ -35,40 +35,44 @@ IMUTransform::IMUTransform(const rclcpp::NodeOptions & options) : Node("imu_tran
 
 void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 {
-  // define
-  const double sin180 = sin(std::numbers::pi);
-  const double cos180 = cos(std::numbers::pi);
+  auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
-  // z-axis transform
-  double gyro_x = msg->gyro.x * cos180 - msg->gyro.y * sin180;
-  double gyro_y = msg->gyro.x * sin180 + msg->gyro.y * cos180;
+  if (msg->status == driver_msgs::msg::IMU::STATUS_ERROR) {
+    RCLCPP_ERROR(this->get_logger(), "The imu data is invalid");
+    odom_msg->status.imu = localization_msgs::msg::Status::ERROR;
+  } else {
+    // define
+    const double sin180 = sin(std::numbers::pi);
+    const double cos180 = cos(std::numbers::pi);
 
-  roll = msg->orient.x * cos180 - msg->orient.y * sin180;
-  pitch = msg->orient.x * sin180 + msg->orient.y * cos180;
+    // z-axis transform
+    double gyro_x = msg->gyro.x * cos180 - msg->gyro.y * sin180;
+    double gyro_y = msg->gyro.x * sin180 + msg->gyro.y * cos180;
 
-  yaw = msg->orient.z;
-  double yaw_offset = msg->orient.z - offset_angle.at(2);
-  if (yaw_offset < -180) yaw_offset += 360;
-  if (180 < yaw_offset) yaw_offset -= 360;
+    roll = msg->orient.x * cos180 - msg->orient.y * sin180;
+    pitch = msg->orient.x * sin180 + msg->orient.y * cos180;
 
-  // Publish
-  {
-    auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
+    yaw = msg->orient.z;
+    double yaw_offset = msg->orient.z - offset_angle.at(2);
+    if (yaw_offset < -180) yaw_offset += 360;
+    if (180 < yaw_offset) yaw_offset -= 360;
 
-    odom_msg->header = msg->header;
+    // Publish
+    {
+      odom_msg->header = msg->header;
 
-    odom_msg->twist.angular.x = gyro_x;
-    odom_msg->twist.angular.y = gyro_y;
-    odom_msg->twist.angular.z = msg->gyro.z;
+      odom_msg->twist.angular.x = gyro_x;
+      odom_msg->twist.angular.y = gyro_y;
+      odom_msg->twist.angular.z = msg->gyro.z;
 
-    odom_msg->pose.orientation.x = roll - offset_angle.at(0);
-    odom_msg->pose.orientation.y = pitch - offset_angle.at(1);
+      odom_msg->pose.orientation.x = roll - offset_angle.at(0);
+      odom_msg->pose.orientation.y = pitch - offset_angle.at(1);
 
-    odom_msg->pose.orientation.z = yaw_offset;
-
-    pub_->publish(std::move(odom_msg));
+      odom_msg->pose.orientation.z = yaw_offset;
+    }
+    RCLCPP_INFO(this->get_logger(), "Calculated IMU transform");
   }
-  RCLCPP_INFO(this->get_logger(), "Calculated IMU transform");
+  pub_->publish(std::move(odom_msg));
 }
 
 void IMUTransform::reset_callback(
