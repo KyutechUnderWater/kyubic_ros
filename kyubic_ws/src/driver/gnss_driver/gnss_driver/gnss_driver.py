@@ -3,6 +3,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import NavSatFix, NavSatStatus
 from std_msgs.msg import Float64
 from std_msgs.msg import Float32MultiArray
+from driver_msgs.msg import Gnss
 import socket
 import pynmea2
 import math
@@ -27,14 +28,14 @@ class GnssPublisher(Node):
         )
 
         # Publisherを作成
-        self.fix_publisher_ = self.create_publisher(NavSatFix, "/gps/fix", 10)
-        # Imu Publisherの代わりに、Float64型のPublisherを作成
-        self.heading_publisher_ = self.create_publisher(Float64, "/gps/heading", 10)
-        self.snr_publisher_ = self.create_publisher(Float32MultiArray, "/gps/snr", 10)
+        #self.fix_publisher_ = self.create_publisher(NavSatFix, "/gps/fix", 10)
+        #self.heading_publisher_ = self.create_publisher(Float64, "/gps/heading", 10)
+        #self.snr_publisher_ = self.create_publisher(Float32MultiArray, "/gps/snr", 10)
+        self.gnss_data_publisher_ = self.create_publisher(Gnss, "/gps/all_data", 10)
 
         self.socket = None
         self.latest_heading = None  # 最新の方位情報を保持する変数
-        self.gsv_sats = {}  # 追加: GSVメッセージから衛星情報を一時保存する辞書 ▼▼▼
+        self.gsv_sats = {}  # GSVメッセージから衛星情報を一時保存する辞書
 
         # 接続とデータ受信を開始
         self.connect_and_read()
@@ -76,7 +77,7 @@ class GnssPublisher(Node):
                     try:
                         msg = pynmea2.parse(line)
 
-                        # --- NMEAメッセージの種別に応じた処理 ---
+                        # NMEAメッセージの種別に応じた処理 
                         if isinstance(msg, pynmea2.types.talker.HDT):
                             if hasattr(msg, "heading") and msg.heading is not None:
                                 self.latest_heading = msg.heading
@@ -118,7 +119,7 @@ class GnssPublisher(Node):
                                 snr_values = [float(s) for s in self.gsv_sats.values()]
                                 snr_msg.data = snr_values
 
-                                self.snr_publisher_.publish(snr_msg)
+                                #self.snr_publisher_.publish(snr_msg)
                                 self.get_logger().info(
                                     f"Published satellite SNRs ({
                                         len(self.gsv_sats)
@@ -129,12 +130,13 @@ class GnssPublisher(Node):
                             isinstance(msg, pynmea2.types.talker.GGA)
                             and msg.latitude != 0.0
                         ):
+                            gnss_data_msg = Gnss()
                             now = self.get_clock().now().to_msg()
 
-                            # (1) NavSatFixメッセージの作成と配信
+                            # NavSatFixメッセージの作成と配信
                             fix_msg = NavSatFix()
                             fix_msg.header.stamp = now
-                            fix_msg.header.frame_id = "gps_link"
+                            fix_msg.header.frame_id = "gnss_link"
 
                             fix_msg.status.status = self.get_status_from_gga(msg)
                             fix_msg.status.service = NavSatStatus.SERVICE_GPS
@@ -145,15 +147,14 @@ class GnssPublisher(Node):
                             try:
                                 fix_msg.altitude = msg.altitude + msg.geo_sep
                             except (ValueError, TypeError):
-                                # 値が空文字列などでfloatに変換できない場合や、
-                                # その他の型エラーが起きた場合は、このブロックが実行される。
+                                # 型エラー時の処理
                                 pass
 
                             # 共分散の計算
                             try:
                                 hdop = float(msg.horizontal_dil)
                                 if hdop > 0:
-                                    # ★★★ 元の`msg.horizontal_dil`ではなく、変換後の`hdop`を使用 ★★★
+                                    #通常の処理
                                     h_variance = (self.hdop_error_factor * hdop) ** 2
                                     v_variance = (self.hdop_error_factor * hdop * 1.5) ** 2
 
@@ -161,49 +162,56 @@ class GnssPublisher(Node):
                                     fix_msg.position_covariance[4] = h_variance
                                     fix_msg.position_covariance[8] = v_variance
                                     fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_DIAGONAL_KNOWN
-                                    
-                                    # ★★★ ログ出力はifブロックの内側に移動 ★★★
+
                                     self.get_logger().info(
-                                        f"Publishing: time={fix_msg.header.stamp.sec}, "
-                                        f"qual={fix_msg.status.status}, lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, "
-                                        f"cov_x={h_variance:.2f}, cov_y={h_variance:.2f}, cov_z={v_variance:.2f}"
+                                        f"Publishing: タイムスタンプ = {fix_msg.header.stamp.sec}, "
+                                        f"品質 = {fix_msg.status.status}, 緯度 ={msg.latitude:.6f}, 経度 ={msg.longitude:.6f}, "
+                                        f"共分散x = {h_variance:.2f}, y = {h_variance:.2f}, z = {v_variance:.2f}"
                                     )
                                 else:
                                     # hdopが0以下だった場合
                                     fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
                                     self.get_logger().info(
-                                        f"Publishing: time={fix_msg.header.stamp.sec}, "
-                                        f"qual={fix_msg.status.status}, lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, "
+                                        f"Publishing: タイムスタンプ ={fix_msg.header.stamp.sec}, "
+                                        f"品質 ={fix_msg.status.status}, 緯度 = {msg.latitude:.6f}, 経度 = {msg.longitude:.6f}, "
                                     )
                             except (ValueError, TypeError, AttributeError):
                                 # hdopがNone, 空文字列, または不正な値だった場合
                                 fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
                                 self.get_logger().info(
-                                    f"Publishing: time={fix_msg.header.stamp.sec}, "
-                                    f"qual={fix_msg.status.status}, lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, "
+                                    f"Publishing: タイムスタンプ = {fix_msg.header.stamp.sec}, "
+                                    f"品質 ={fix_msg.status.status}, 緯度 ={msg.latitude:.6f}, 経度 ={msg.longitude:.6f}, "
                                 )
                                     
 
 
-                            self.fix_publisher_.publish(fix_msg)
-
+                            #self.fix_publisher_.publish(fix_msg)
+                            gnss_data_msg.fix = fix_msg
                             
-                            # self.get_logger().info(
-                            #     f'Published NavSatFix: lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, '
-                            #     f'alt={fix_msg.altitude:.2f}, sats={msg.num_sats}, qual={msg.gps_qual}, hdop={msg.horizontal_dil}'
-                            # )
+                            gnss_data_msg.snr = self.latest_snr_msg 
 
-                            # (2) Float64メッセージ（方位）の作成と配信 (方位情報がある場合)
+                            """
+                            self.get_logger().info(
+                                f'Published NavSatFix: lat={msg.latitude:.6f}, lon={msg.longitude:.6f}, '
+                                f'alt={fix_msg.altitude:.2f}, sats={msg.num_sats}, qual={msg.gps_qual}, hdop={msg.horizontal_dil}'
+                            )
+                            """
+
+                            # Float64メッセージ（方位）の作成と配信 
                             if self.latest_heading is not None:
                                 heading_msg = Float64()
                                 heading_msg.data = (
                                     self.latest_heading
                                 )  # データを直接代入
 
-                                self.heading_publisher_.publish(heading_msg)
+                                #self.heading_publisher_.publish(heading_msg)
+                                gnss_data_msg.heading = heading_msg
+
                                 self.get_logger().info(
                                     f"方位: {self.latest_heading:.2f} degrees"
                                 )
+
+                            self.gnss_data_publisher_.publish(gnss_data_msg)
 
                     except pynmea2.ParseError as e:
                         self.get_logger().warning(
