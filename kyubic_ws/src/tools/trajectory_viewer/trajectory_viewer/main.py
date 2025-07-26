@@ -215,7 +215,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
             # 2. ピッチ (Y軸周り)
             tr.rotate(pitch, 0, 1, 0)
             # 3. ヨー (Z軸周り)
-            tr.rotate(yaw, 0, 0, 1)
+            tr.rotate(-yaw, 0, 0, 1)
 
             # メッシュにTransform3Dを適用
             self.mesh.setTransform(tr)

@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = "trajectory_viewer"
+package_name = "path_generator"
 
 setup(
     name=package_name,
@@ -9,7 +9,6 @@ setup(
     data_files=[
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
         ("share/" + package_name, ["package.xml"]),
-        ("share/" + package_name + "/launch", ["launch/trajectory_viewer.launch.py"]),
     ],
     install_requires=["setuptools"],
     zip_safe=True,
@@ -19,9 +18,6 @@ setup(
     license="Apache License 2.0",
     tests_require=["pytest"],
     entry_points={
-        "console_scripts": [
-            f"trajectory_viewer = {package_name}.main:main",
-            f"publish_odom_from_csv = {package_name}.publish_odom_from_csv:main",
-        ],
+        "console_scripts": [f"path_generator = {package_name}.path_generator:main"],
     },
 )
