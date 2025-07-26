@@ -149,6 +149,8 @@ class GnssPublisher(Node):
                             try:
                                 altitude_val = float(msg.altitude)
                                 geo_sep_val = float(msg.geo_sep) if msg.geo_sep else 0.0
+                                gnss_data_msg.geoid_altitude = altitude_val
+                                gnss_data_msg.geoid_separation = geo_sep_val
                                 fix_msg.altitude = altitude_val + geo_sep_val
                             except (ValueError, TypeError):
                                 # 型エラー時の処理
