@@ -70,7 +70,8 @@ class RosCommunicator(Node, QObject):
         msg = Targets()
         msg.pose.x = self.target_x_value
         msg.pose.y = self.target_y_value
-        msg.pose.z = self.target_z_value
+        msg.pose.z_depth = self.target_z_value
+        msg.pose.z_altitude = self.target_z_value
         msg.pose.roll = self.target_roll_value
         msg.pose.yaw = self.target_yaw_value
 
