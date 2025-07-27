@@ -70,7 +70,7 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 
       odom_msg->pose.orientation.z = yaw_offset;
     }
-    RCLCPP_INFO(this->get_logger(), "Calculated IMU transform");
+    RCLCPP_DEBUG(this->get_logger(), "Calculated IMU transform");
   }
   pub_->publish(std::move(odom_msg));
 }
