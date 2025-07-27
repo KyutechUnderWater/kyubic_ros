@@ -16,7 +16,6 @@
 
 using namespace std::chrono_literals;
 
-// ROS2のノードとして、IMUのデータをシステム全体に配信する関数
 namespace imu_driver
 {
 
@@ -55,7 +54,6 @@ void IMUDriver::_setup()
   }
 }
 
-// IMUからデータを取得し、ROS 2メッセージに変換し、ネットワークに配信する
 void IMUDriver::_update()
 {
   auto msg = std::make_unique<driver_msgs::msg::IMU>();

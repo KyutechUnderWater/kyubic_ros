@@ -19,14 +19,12 @@ using namespace std::chrono_literals;
 
 namespace imu_driver::g366
 {
-//シリアルポートとボーレートを引数として受取、シリアル通信の準備をする
+
 G366::G366(const char * _portname, const int _baudrate) : portname(_portname), baudrate(_baudrate)
 {
   serial_ = std::make_shared<serial::Serial>(portname, baudrate);
 }
 
-//IMUの初期設定
-//IMUに設定を指示するために測定範囲や出力データレートを送る
 bool G366::setup()
 {
   // Check if ready
@@ -46,8 +44,6 @@ bool G366::setup()
   }
 
   // Set config
-  //serial_->write:シリアル通信でデータを送信する関数(引数:１バイトorバイト配列)
-  //IMUに送信
   serial_->write(config_comm, sizeof(config_comm));
 
   // Set filter
@@ -67,7 +63,6 @@ bool G366::setup()
   }
 
   // Set sampling mode
-  // IMUにデータの連続的な計測と出力を開始
   serial_->write(window0_select_wcomm, sizeof(window0_select_wcomm));
   serial_->write(sampling_mode_wcomm0, sizeof(sampling_mode_wcomm0));
 
@@ -82,22 +77,17 @@ bool G366::setup()
   return true;
 }
 
-//IMUから最新のセンサーデータを取得し、人間が扱える物理的な単位に変換する関数
 bool G366::update()
 {
-  uint8_t buf[36];// データみ取り用のバッファを確保
-  serial_->flush();// シリアルポートのバッファをクリア
-
-  // 今すぐ最新のセンサーデータを全部ください」という要求コマンドを送信
+  // Read data
+  uint8_t buf[36];
+  serial_->flush();
   serial_->write(burst_request_wcomm0, sizeof(burst_request_wcomm0));
-  // シリアルポートから36バイトのデータを読み取る (タイムアウト10ms)
   ssize_t len = serial_->read(buf, 36, 10ms);
 
-  // データをバイト列から整数へ
+  // Decord data
   if (len == 36 && buf[0] == 0x80 && buf[35] == 0x0d) {
-    // 生データ格納用の構造体
     RAW_DATA_T raw_data_t;
-
     raw_data_t.head = buf[0];
     raw_data_t.flag = concat_8bit(buf[1], buf[2]);
     raw_data_t.temp = concat_8bit(buf[3], buf[4]);
@@ -119,7 +109,6 @@ bool G366::update()
     raw_data_t.foot = buf[35];
 
     // LSB -> float
-    // 整数値から物理量へ
     data.meta.head = raw_data_t.head;
     data.meta.flag = raw_data_t.flag;
     data.meta.gpio = raw_data_t.gpio;
@@ -352,7 +341,6 @@ bool G366::is_ready()
   }
 }
 
-// update関数によって計算された最新のセンサーデータを、このライブラリを利用する側のプログラムに共有ポインタで他に渡すための関数
 std::shared_ptr<DATA> G366::get_data() { return std::make_shared<DATA>(data); }
 
 // G366HWReseter::G366HWReseter(const char * _portname, const int _baudrate)

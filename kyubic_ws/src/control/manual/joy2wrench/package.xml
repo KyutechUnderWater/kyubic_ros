@@ -3,8 +3,8 @@
 <package format="3">
   <name>joy2wrench</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="user@todo.todo">user</maintainer>
+  <description>Convert from joy type to wrench type</description>
+  <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
@@ -12,7 +12,6 @@
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
   <depend>geometry_msgs</depend>
-  <depend>nav_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
