@@ -34,7 +34,7 @@ class GnssPublisher(Node):
         self.gnss_data_publisher_ = self.create_publisher(Gnss, "gnss", 10)
 
         self.socket = None
-        self.latest_heading = None  # 最新の方位情報を保持する変数
+        self.latest_azimuth = None  # 最新の方位情報を保持する変数
         self.gsv_sats = {}  # GSVメッセージから衛星情報を一時保存する辞書
         self.latest_snr_msg = Float32MultiArray()
 
@@ -82,21 +82,21 @@ class GnssPublisher(Node):
                         # NMEAメッセージの種別に応じた処理 
                         if isinstance(msg, pynmea2.types.talker.HDT):
                             if hasattr(msg, "heading") and msg.heading is not None:
-                                self.latest_heading = msg.heading
+                                self.latest_azimuth = msg.heading
 
                         elif isinstance(msg, pynmea2.types.talker.VTG):
                             if (
                                 hasattr(msg, "true_track")
                                 and msg.true_track is not None
                             ):
-                                self.latest_heading = msg.true_track
+                                self.latest_azimuth = msg.true_track
 
                         elif isinstance(msg, pynmea2.types.talker.RMC):
                             if (
                                 hasattr(msg, "true_course")
                                 and msg.true_course is not None
                             ):
-                                self.latest_heading = msg.true_course
+                                self.latest_azimuth = msg.true_course
 
                         elif isinstance(msg, pynmea2.types.talker.GSV):
                             # 分割メッセージの1つ目なら、衛星データを初期化
@@ -197,17 +197,17 @@ class GnssPublisher(Node):
                             gnss_data_msg.snr = self.latest_snr_msg.data 
 
                             # Float64メッセージ（方位）の作成と配信 
-                            if self.latest_heading is not None:
-                                heading_msg = Float64()
-                                heading_msg.data = (
-                                    self.latest_heading
+                            if self.latest_azimuth is not None:
+                                azimuth_msg = Float64()
+                                azimuth_msg.data = (
+                                    self.latest_azimuth
                                 )  # データを直接代入
 
-                                #self.heading_publisher_.publish(heading_msg)
-                                gnss_data_msg.azimuth = heading_msg.data
+                                #self.heading_publisher_.publish(azimuth_msg)
+                                gnss_data_msg.azimuth = azimuth_msg.data
 
                                 self.get_logger().info(
-                                    f"Direction: {self.latest_heading:.2f} degrees"
+                                    f"Direction: {self.latest_azimuth:.2f} degrees"
                                 )
 
                             self.gnss_data_publisher_.publish(gnss_data_msg)
