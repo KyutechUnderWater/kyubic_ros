@@ -204,7 +204,7 @@ class GnssPublisher(Node):
                                 )  # データを直接代入
 
                                 #self.heading_publisher_.publish(heading_msg)
-                                gnss_data_msg.heading = heading_msg.data
+                                gnss_data_msg.azimuth = heading_msg.data
 
                                 self.get_logger().info(
                                     f"Direction: {self.latest_heading:.2f} degrees"
