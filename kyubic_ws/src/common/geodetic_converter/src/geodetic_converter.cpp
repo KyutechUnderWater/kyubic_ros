@@ -140,4 +140,33 @@ LatLon xy2bl(double x, double y, double origin_lat, double origin_lon)
   return {rad2deg(phi), rad2deg(lambda)};
 }
 
+double get_meridian_convergence(double x, double y, double origin_lat, double origin_lon)
+{
+  // xy2blと共通の計算を行う
+  const double phi_0 = deg2rad(origin_lat);
+
+  double S_phi0_term = A_coeffs[0] * phi_0;
+  for (size_t j = 1; j < A_coeffs.size(); ++j) {
+    S_phi0_term += A_coeffs[j] * sin(2.0 * j * phi_0);
+  }
+  const double S_bar_phi0 = (m0 * a) / (1.0 + n) * S_phi0_term;
+  const double A_bar = (m0 * a) / (1.0 + n) * A_coeffs[0];
+
+  const double xi = (x + S_bar_phi0) / A_bar;
+  const double eta = y / A_bar;
+
+  double xi_prime = xi;
+  double eta_prime = eta;
+  for (size_t j = 1; j < beta_coeffs.size(); ++j) {
+    xi_prime -= beta_coeffs[j] * sin(2.0 * j * xi) * cosh(2.0 * j * eta);
+    eta_prime -= beta_coeffs[j] * cos(2.0 * j * xi) * sinh(2.0 * j * eta);
+  }
+
+  // 子午線収差角 γ (ガンマ) の計算
+  // γ = atan(tan(ξ') * tanh(η'))
+  const double gamma_rad = atan(tan(xi_prime) * tanh(eta_prime));
+
+  return rad2deg(gamma_rad);
+}
+
 }  // namespace GSI

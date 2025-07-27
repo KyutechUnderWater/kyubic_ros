@@ -40,10 +40,12 @@ int main()
   std::cout << "入力Y座標: " << result_xy.y << " [m]" << std::endl;
 
   GSI::LatLon result_bl = GSI::xy2bl(result_xy.x, result_xy.y, origin_lat, origin_lon);
+  double gamma = GSI::get_meridian_convergence(result_xy.x, result_xy.y, origin_lat, origin_lon);
 
   std::cout << "\n逆変換の結果:" << std::endl;
   std::cout << "緯度 (B): " << result_bl.latitude << " [deg]" << std::endl;
   std::cout << "経度 (L): " << result_bl.longitude << " [deg]" << std::endl;
+  std::cout << "子午線収差角 (γ): " << gamma << " [deg]" << std::endl;
   std::cout << "(入力値とほぼ同じ値に戻れば成功です)" << std::endl;
 
   return 0;

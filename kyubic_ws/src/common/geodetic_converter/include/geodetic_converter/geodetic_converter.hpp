@@ -74,6 +74,16 @@ XY bl2xy(double lat, double lon, double origin_lat, double origin_lon);
      */
 LatLon xy2bl(double x, double y, double origin_lat, double origin_lon);
 
+/**
+ * @brief [GSI方式] 平面直角座標から子午線収差角を計算します。
+ * @param x X座標（メートル）
+ *param y Y座標（メートル）
+ * @param origin_lat 座標系の原点の緯度（度）
+ * @param origin_lon 座標系の原点の経度（度）
+ * @return double 子午線収差角（ガンマ、単位：度）
+ */
+double get_meridian_convergence(double x, double y, double origin_lat, double origin_lon);
+
 }  // namespace GSI
 
 #endif  // GEODETIC_TRANSFORMATIONS_HPP
