@@ -10,8 +10,13 @@
 #ifndef _LOCALIZATIN_COMPONENT_HPP
 #define _LOCALIZATIN_COMPONENT_HPP
 
+#include <geodetic_converter/geodetic_converter.hpp>
 #include <rclcpp/rclcpp.hpp>
 
+#include "driver_msgs/msg/gnss.hpp"
+#include "localization_msgs/msg/global_pose.hpp"
+#include <driver_msgs/msg/gnss.hpp>
+#include <localization_msgs/msg/global_pose.hpp>
 #include <localization_msgs/msg/odometry.hpp>
 #include <std_srvs/srv/trigger.hpp>
 
@@ -31,11 +36,14 @@ using FutureAndRequestId = rclcpp::Client<std_srvs::srv::Trigger>::SharedFuture;
 class Localization : public rclcpp::Node
 {
 private:
+  uint8_t coord_system_id;
   rclcpp::CallbackGroup::SharedPtr client_cb_group_;
-  rclcpp::Publisher<localization_msgs::msg::Odometry>::SharedPtr pub_;
+  rclcpp::Publisher<localization_msgs::msg::Odometry>::SharedPtr pub_odom_;
+  rclcpp::Publisher<localization_msgs::msg::GlobalPose>::SharedPtr pub_global_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_depth_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_imu_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_dvl_;
+  rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_gnss_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_depth_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_imu_;
@@ -44,7 +52,14 @@ private:
   rclcpp::TimerBase::SharedPtr timer_;
 
   std::shared_ptr<localization_msgs::msg::Odometry> odom_msg_;
+  std::shared_ptr<driver_msgs::msg::Gnss> gnss_msg_;
+  std::shared_ptr<localization_msgs::msg::GlobalPose> global_pose_msg_;
+  GSI::LatLon origin_geodetic;
+  GSI::LatLon reference_geodetic;
+  GSI::XY reference_plane;
+  double azimuth;
 
+  bool gnss_updated = false;
   uint8_t enabled_sensor = 0b11111000;
   uint8_t all_updated = 0b11111000;
 
@@ -65,6 +80,18 @@ private:
    * @details Acquisitionn the dvl odometry.
    */
   void dvl_callback(const localization_msgs::msg::Odometry::UniquePtr msg);
+
+  /**
+   * @brief Update gnss data
+   * @details Acquisitionn the gnss data.
+   */
+  void gnss_callback(const driver_msgs::msg::Gnss::UniquePtr msg);
+
+  /**
+   * @brief calculate geodetic uding gnss and dvl odometry
+   * @details Acquisitionn the dvl odometry.
+   */
+  void _calc_global_pose(const localization_msgs::msg::Odometry::SharedPtr odom_);
 
   /**
    * @brief If all data is updated, Publish odometry.

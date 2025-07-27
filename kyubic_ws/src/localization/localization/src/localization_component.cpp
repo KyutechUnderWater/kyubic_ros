@@ -16,6 +16,8 @@
 #include <functional>
 #include <future>
 #include <memory>
+#include <thread>
+#include <utility>
 
 using namespace std::chrono_literals;
 
@@ -24,6 +26,9 @@ namespace localization
 
 Localization::Localization(const rclcpp::NodeOptions & options) : Node("localization", options)
 {
+  coord_system_id = this->declare_parameter("coord_system_id", 1);
+  origin_geodetic = GSI::getOriginPoint(coord_system_id);
+
   bool depth_enable = this->declare_parameter("depth", false);
   bool imu_enable = this->declare_parameter("imu", false);
   bool dvl_enable = this->declare_parameter("dvl", false);
@@ -34,7 +39,8 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   // Create publisher
-  pub_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
+  pub_odom_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
+  pub_global_ = create_publisher<localization_msgs::msg::GlobalPose>("global_pose", qos);
 
   // Create subscription
   sub_depth_ = create_subscription<localization_msgs::msg::Odometry>(
@@ -102,6 +108,36 @@ void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePt
   this->odom_msg_->twist.linear.z_altitude = msg->twist.linear.z_altitude;
 }
 
+void Localization::gnss_callback(driver_msgs::msg::Gnss::UniquePtr msg)
+{
+  gnss_msg_ = std::move(msg);
+  gnss_updated = true;
+}
+
+void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::SharedPtr odom_)
+{
+  double azimuth_rad = azimuth * std::numbers::pi / 180;
+  double plane_x =
+    odom_->pose.position.x * cos(azimuth_rad) - odom_->pose.position.y * sin(azimuth_rad);
+  double plane_y =
+    odom_->pose.position.x * sin(azimuth_rad) + odom_->pose.position.y * cos(azimuth_rad);
+
+  plane_x += reference_plane.x;
+  plane_y += reference_plane.y;
+
+  GSI::LatLon current_geodetic =
+    GSI::xy2bl(plane_x, plane_y, origin_geodetic.latitude, origin_geodetic.longitude);
+
+  global_pose_msg_->current_pose.plane_x = plane_x;
+  global_pose_msg_->current_pose.plane_y = plane_y;
+  global_pose_msg_->current_pose.latitude = current_geodetic.latitude;
+  global_pose_msg_->current_pose.longitude = current_geodetic.longitude;
+  global_pose_msg_->ref_pose.latitude = reference_geodetic.latitude;
+  global_pose_msg_->ref_pose.longitude = reference_geodetic.longitude;
+  global_pose_msg_->ref_pose.plane_x = reference_plane.x;
+  global_pose_msg_->ref_pose.plane_y = reference_plane.y;
+}
+
 void Localization::publisher()
 {
   if (all_updated != enabled_sensor) {
@@ -110,9 +146,18 @@ void Localization::publisher()
   }
   RCLCPP_INFO(this->get_logger(), "Updated localization");
 
+  auto odom_msg_buf_ = std::make_shared<localization_msgs::msg::Odometry>(*odom_msg_);
+  global_pose_msg_->header = odom_msg_buf_->header;
+  global_pose_msg_->status = odom_msg_buf_->status;
+  global_pose_msg_->depth = odom_msg_buf_->pose.position.z_depth;
+  global_pose_msg_->altitude = odom_msg_buf_->pose.position.z_altitude;
+  _calc_global_pose(odom_msg_buf_);
+
   // Copy object (shared_ptr -> unique_ptr)
-  auto msg = std::make_unique<localization_msgs::msg::Odometry>(*odom_msg_);
-  pub_->publish(std::move(msg));
+  auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>(*odom_msg_buf_);
+  auto global_pose_msg = std::make_unique<localization_msgs::msg::GlobalPose>(*global_pose_msg_);
+  pub_odom_->publish(std::move(odom_msg));
+  pub_global_->publish(std::move(global_pose_msg));
 
   // Reset flag
   all_updated = 0b11111000;
@@ -190,6 +235,18 @@ int Localization::reset()
   if (_is_server_active(client_depth_)) depth_future_ = _reset_request(client_depth_);
   if (_is_server_active(client_imu_)) imu_future_ = _reset_request(client_imu_);
   if (_is_server_active(client_dvl_)) dvl_future_ = _reset_request(client_dvl_);
+
+  gnss_updated = false;
+  while (!gnss_updated) {
+    std::this_thread::sleep_for(100ms);
+    RCLCPP_INFO(this->get_logger(), "Wait GNSS data.");
+  }
+  azimuth = gnss_msg_->heading;
+  reference_geodetic.latitude = gnss_msg_->fix.latitude;
+  reference_geodetic.longitude = gnss_msg_->fix.longitude;
+  reference_plane = GSI::bl2xy(
+    reference_geodetic.latitude, reference_geodetic.longitude, origin_geodetic.latitude,
+    origin_geodetic.longitude);
 
   int result = 0;
   result |= static_cast<int>(_reset_response(depth_future_, 5000ms, "depth/reset")) << 2;
