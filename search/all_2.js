@@ -11,12 +11,13 @@ var searchData=
   ['beam_5f3_5flow_5fecho_8',['BEAM_3_LOW_ECHO',['../structdvl__driver_1_1path__finder_1_1Data.html#ae01321b71e16addb0592aaf37802347b',1,'dvl_driver::path_finder::Data']]],
   ['beam_5f4_5flow_5fcorrelation_9',['BEAM_4_LOW_CORRELATION',['../structdvl__driver_1_1path__finder_1_1Data.html#a27b39c5ee7986a1209d6728d3749d957',1,'dvl_driver::path_finder::Data']]],
   ['beam_5f4_5flow_5fecho_10',['BEAM_4_LOW_ECHO',['../structdvl__driver_1_1path__finder_1_1Data.html#a300cf3f9dfcb1700ed2d794de2be0184',1,'dvl_driver::path_finder::Data']]],
-  ['bm1_5frng_5fto_5fbtm_11',['BM1_RNG_TO_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830daa3201c96cda512071bb2419687928fd8',1,'dvl_driver::path_finder']]],
-  ['bm2_5frng_5fto_5fbtm_12',['BM2_RNG_TO_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da6e4c41e15aa05d0e49226814d2cc5403',1,'dvl_driver::path_finder']]],
-  ['bm3_5frng_5fto_5fbtm_13',['BM3_RNG_TO_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830daa72f2ad933add8ef3bef2a025b04649b',1,'dvl_driver::path_finder']]],
-  ['bm4_5frng_5fto_5fbtm_14',['BM4_RNG_TO_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da2f136e8923e0f3d6374f19ed5b21bfec',1,'dvl_driver::path_finder']]],
-  ['bottom_5fstatus_15',['bottom_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a35c007aedb83e0609e3c37c24d478fec',1,'dvl_driver::path_finder::Data']]],
-  ['bottom_5fstatus_16',['BOTTOM_STATUS',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da508b3adf3582e913fd988e23f0cab730',1,'dvl_driver::path_finder']]],
-  ['build_5fui_17',['build_ui',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#af1a988239afd76b0650a2607a43c9528',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['burst_5frequest_5fwcomm0_18',['burst_request_wcomm0',['../namespaceimu__driver_1_1g366.html#a1fed97eb3b95a3a50dfa2ede5bda5c23',1,'imu_driver::g366']]]
+  ['bl2xy_11',['bl2xy',['../namespaceGSI.html#a25529ace25bf3eb124a57973cde6ebc1',1,'GSI']]],
+  ['bm1_5frng_5fto_5fbtm_12',['BM1_RNG_TO_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830daa3201c96cda512071bb2419687928fd8',1,'dvl_driver::path_finder']]],
+  ['bm2_5frng_5fto_5fbtm_13',['BM2_RNG_TO_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da6e4c41e15aa05d0e49226814d2cc5403',1,'dvl_driver::path_finder']]],
+  ['bm3_5frng_5fto_5fbtm_14',['BM3_RNG_TO_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830daa72f2ad933add8ef3bef2a025b04649b',1,'dvl_driver::path_finder']]],
+  ['bm4_5frng_5fto_5fbtm_15',['BM4_RNG_TO_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da2f136e8923e0f3d6374f19ed5b21bfec',1,'dvl_driver::path_finder']]],
+  ['bottom_5fstatus_16',['bottom_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a35c007aedb83e0609e3c37c24d478fec',1,'dvl_driver::path_finder::Data']]],
+  ['bottom_5fstatus_17',['BOTTOM_STATUS',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da508b3adf3582e913fd988e23f0cab730',1,'dvl_driver::path_finder']]],
+  ['build_5fui_18',['build_ui',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#af1a988239afd76b0650a2607a43c9528',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['burst_5frequest_5fwcomm0_19',['burst_request_wcomm0',['../namespaceimu__driver_1_1g366.html#a1fed97eb3b95a3a50dfa2ede5bda5c23',1,'imu_driver::g366']]]
 ];
