@@ -1,7 +1,6 @@
 #include "geodetic_converter/geodetic_converter.hpp"
 
 #include <cmath>
-#include <cstdint>
 #include <stdexcept>
 #include <vector>
 

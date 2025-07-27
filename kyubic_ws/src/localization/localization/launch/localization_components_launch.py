@@ -14,7 +14,7 @@ def generate_launch_description():
 
     log_level_arg = DeclareLaunchArgument(
         "log_level",
-        default_value=["warn"],
+        default_value=["info"],
         description="Logging level",
     )
 
@@ -74,7 +74,7 @@ def generate_launch_description():
                 namespace="localization",
                 package="localization",
                 plugin="localization::Localization",
-                remappings=[],
+                remappings=[("/localization/gnss", "/driver/gnss")],
                 parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}

@@ -15,11 +15,12 @@
 
 #include "driver_msgs/msg/gnss.hpp"
 #include "localization_msgs/msg/global_pose.hpp"
+#include "localization_msgs/srv/reset.hpp"
 #include <driver_msgs/msg/gnss.hpp>
 #include <localization_msgs/msg/global_pose.hpp>
 #include <localization_msgs/msg/odometry.hpp>
+#include <localization_msgs/srv/reset.hpp>
 #include <std_srvs/srv/trigger.hpp>
-
 /**
  * @namespace localization
  * @brief localization
@@ -43,8 +44,8 @@ private:
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_depth_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_imu_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_dvl_;
-  rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_gnss_;
-  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_;
+  rclcpp::Subscription<driver_msgs::msg::Gnss>::SharedPtr sub_gnss_;
+  rclcpp::Service<localization_msgs::srv::Reset>::SharedPtr srv_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_depth_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_imu_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_dvl_;
@@ -57,6 +58,7 @@ private:
   GSI::LatLon origin_geodetic;
   GSI::LatLon reference_geodetic;
   GSI::XY reference_plane;
+  double reference_meridian_convergence;
   double azimuth;
 
   bool gnss_updated = false;
@@ -104,8 +106,8 @@ private:
    * @details Execute a reset function when requested by the client.
    */
   void reset_callback(
-    const std_srvs::srv::Trigger::Request::SharedPtr request,
-    const std_srvs::srv::Trigger::Response::SharedPtr response);
+    const localization_msgs::srv::Reset::Request::SharedPtr request,
+    const localization_msgs::srv::Reset::Response::SharedPtr response);
 
   /**
    * @brief Check if the server is running

@@ -2,6 +2,7 @@
 #define GEODETIC_CONVERTER_HPP
 
 #include <array>
+#include <cstdint>
 
 namespace GSI
 {
@@ -52,7 +53,7 @@ struct XY
 
 double dms2deg(const std::array<int, 3> & dms);
 
-LatLon getOriginPoint(int systemId);
+LatLon getOriginPoint(uint8_t systemId);
 
 /**
      * @brief [GSI方式] 緯度経度から平面直角座標へ変換します。

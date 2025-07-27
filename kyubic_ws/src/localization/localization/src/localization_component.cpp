@@ -9,9 +9,13 @@
 
 #include "localization/localization_component.hpp"
 
+#include <geodetic_converter/geodetic_converter.hpp>
 #include <rclcpp/client.hpp>
 #include <rclcpp/logging.hpp>
 #include <rclcpp/qos.hpp>
+
+#include "driver_msgs/msg/gnss.hpp"
+#include "localization_msgs/srv/reset.hpp"
 
 #include <functional>
 #include <future>
@@ -35,6 +39,8 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   enabled_sensor |= depth_enable << 2 | imu_enable << 1 | (imu_enable ? dvl_enable : 0);
 
   odom_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
+  gnss_msg_ = std::make_shared<driver_msgs::msg::Gnss>();
+  global_pose_msg_ = std::make_shared<localization_msgs::msg::GlobalPose>();
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
@@ -49,9 +55,11 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
     "imu/transformed", qos, std::bind(&Localization::imu_callback, this, std::placeholders::_1));
   sub_dvl_ = create_subscription<localization_msgs::msg::Odometry>(
     "dvl/odom", qos, std::bind(&Localization::dvl_callback, this, std::placeholders::_1));
+  sub_gnss_ = create_subscription<driver_msgs::msg::Gnss>(
+    "gnss", qos, std::bind(&Localization::gnss_callback, this, std::placeholders::_1));
 
   // Create server
-  srv_ = create_service<std_srvs::srv::Trigger>(
+  srv_ = create_service<localization_msgs::srv::Reset>(
     "reset",
     std::bind(&Localization::reset_callback, this, std::placeholders::_1, std::placeholders::_2),
     qos, nullptr);
@@ -68,7 +76,7 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
 
 void Localization::depth_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
-  RCLCPP_INFO(this->get_logger(), "Updated Depth odometry");
+  RCLCPP_DEBUG(this->get_logger(), "Updated Depth odometry");
   all_updated |= 4;
 
   odom_msg_->header = msg->header;
@@ -79,7 +87,7 @@ void Localization::depth_callback(const localization_msgs::msg::Odometry::Unique
 
 void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
-  RCLCPP_INFO(this->get_logger(), "Updated IMU transformed");
+  RCLCPP_DEBUG(this->get_logger(), "Updated IMU transformed");
   all_updated |= 2;
 
   odom_msg_->header = msg->header;
@@ -90,7 +98,7 @@ void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePt
 
 void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
-  RCLCPP_INFO(this->get_logger(), "Updated DVL odometry");
+  RCLCPP_DEBUG(this->get_logger(), "Updated DVL odometry");
   all_updated |= 1;
 
   this->odom_msg_->header = msg->header;
@@ -112,11 +120,12 @@ void Localization::gnss_callback(driver_msgs::msg::Gnss::UniquePtr msg)
 {
   gnss_msg_ = std::move(msg);
   gnss_updated = true;
+  RCLCPP_DEBUG(this->get_logger(), "Updated GNSS data");
 }
 
 void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::SharedPtr odom_)
 {
-  double azimuth_rad = azimuth * std::numbers::pi / 180;
+  double azimuth_rad = (azimuth - reference_meridian_convergence) * std::numbers::pi / 180;
   double plane_x =
     odom_->pose.position.x * cos(azimuth_rad) - odom_->pose.position.y * sin(azimuth_rad);
   double plane_y =
@@ -136,12 +145,14 @@ void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::Sha
   global_pose_msg_->ref_pose.longitude = reference_geodetic.longitude;
   global_pose_msg_->ref_pose.plane_x = reference_plane.x;
   global_pose_msg_->ref_pose.plane_y = reference_plane.y;
+  global_pose_msg_->ref_pose.meridian_convergence = reference_meridian_convergence;
+  global_pose_msg_->azimuth = azimuth;
 }
 
 void Localization::publisher()
 {
   if (all_updated != enabled_sensor) {
-    RCLCPP_WARN(this->get_logger(), "Don't update. Wait data comming.");
+    RCLCPP_DEBUG(this->get_logger(), "Don't update. Wait data comming.");
     return;
   }
   RCLCPP_INFO(this->get_logger(), "Updated localization");
@@ -164,9 +175,18 @@ void Localization::publisher()
 }
 
 void Localization::reset_callback(
-  [[maybe_unused]] const std_srvs::srv::Trigger::Request::SharedPtr reqest,
-  const std_srvs::srv::Trigger::Response::SharedPtr response)
+  const localization_msgs::srv::Reset::Request::SharedPtr reqest,
+  const localization_msgs::srv::Reset::Response::SharedPtr response)
 {
+  azimuth = reqest->azimuth;
+  reference_geodetic.latitude = gnss_msg_->fix.latitude;
+  reference_geodetic.longitude = gnss_msg_->fix.longitude;
+  reference_plane = GSI::bl2xy(
+    reference_geodetic.latitude, reference_geodetic.longitude, origin_geodetic.latitude,
+    origin_geodetic.longitude);
+  reference_meridian_convergence = GSI::get_meridian_convergence(
+    reference_plane.x, reference_plane.y, origin_geodetic.latitude, origin_geodetic.longitude);
+
   int result = ~this->reset();
 
   // Check reset
@@ -235,18 +255,6 @@ int Localization::reset()
   if (_is_server_active(client_depth_)) depth_future_ = _reset_request(client_depth_);
   if (_is_server_active(client_imu_)) imu_future_ = _reset_request(client_imu_);
   if (_is_server_active(client_dvl_)) dvl_future_ = _reset_request(client_dvl_);
-
-  gnss_updated = false;
-  while (!gnss_updated) {
-    std::this_thread::sleep_for(100ms);
-    RCLCPP_INFO(this->get_logger(), "Wait GNSS data.");
-  }
-  azimuth = gnss_msg_->heading;
-  reference_geodetic.latitude = gnss_msg_->fix.latitude;
-  reference_geodetic.longitude = gnss_msg_->fix.longitude;
-  reference_plane = GSI::bl2xy(
-    reference_geodetic.latitude, reference_geodetic.longitude, origin_geodetic.latitude,
-    origin_geodetic.longitude);
 
   int result = 0;
   result |= static_cast<int>(_reset_response(depth_future_, 5000ms, "depth/reset")) << 2;

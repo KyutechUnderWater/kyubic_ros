@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.8)
 project(geodetic_converter)
 
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 20)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -8,6 +14,8 @@ endif()
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
+
+include_directories(include)
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
   ./src/geodetic_converter.cpp
@@ -18,13 +26,6 @@ ament_auto_add_executable(main
 )
 
 target_link_libraries(main ${PROJECT_NAME})
-
-install(TARGETS
-  ${PROJECT_NAME}
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin
-)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

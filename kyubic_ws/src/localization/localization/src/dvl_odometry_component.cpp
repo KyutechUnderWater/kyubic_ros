@@ -80,7 +80,7 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
       odom_msg->twist.linear.y = vel_y;
       odom_msg->twist.linear.z_altitude = msg->velocity.z;
     }
-    RCLCPP_INFO(this->get_logger(), "Calculated DVL odometry");
+    RCLCPP_DEBUG(this->get_logger(), "Calculated DVL odometry");
   }
   pub_->publish(std::move(odom_msg));
 }
