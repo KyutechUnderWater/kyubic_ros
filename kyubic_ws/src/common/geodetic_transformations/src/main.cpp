@@ -1,64 +1,48 @@
 #include "geodetic_transformations/geodetic_transformations.hpp"
-
-#include <iomanip>  // For std::fixed, std::setprecision
 #include <iostream>
+#include <iomanip>
 
-int main()
-{
-  // 例: 日本の平面直角座標系IX系 (東京近辺)
-  // 基準点: 北緯36度00分00秒、東経139度00分00秒
-  int systemId = 9;
-  GeodeticConverter converter(systemId);
+int main() {
+    // --- テスト用の緯度経度 ---
+    // 例: 新宿駅付近
+    double test_lat = 35.69000000;
+    double test_lon = 139.69200000;
 
-  // 緯度経度 -> 平面直角座標 変換例
-  // 東京都庁の概略位置
-  LatLon tokyoStationLatLon = {35.6895, 139.6917};  // 新宿駅付近
+    // --- 座標系の原点 ---
+    // 平面直角座標系 第IX系（関東地方）の原点
+    double origin_lat = 36.0; 
+    double origin_lon = 139.0 + 50.0 / 60.0; // 139度50分
+    // 例えば第Ⅲ系(山口県　島根県　広島県)の場合は
+    //double origin_rat = 33.0;
+    //double origin_lon = 132.0 + 10.0 / 60.0; //(132度10分)と宣言する
+    //第Ⅱ系(長崎以外の九州)
+    //double origin_rat = 33.0;
+    //double origin_lon = 132.0 + 10.0 / 60.0; //(132度10分)と宣言する
+    // --- 緯度経度から座標への変換 ---
+    std::cout << "--- 緯度経度 -> 平面直角座標 ---" << std::endl;
+    std::cout << std::fixed << std::setprecision(8);
+    std::cout << "入力緯度 (B): " << test_lat << " [deg]" << std::endl;
+    std::cout << "入力経度 (L): " << test_lon << " [deg]" << std::endl;
 
-  PlaneXY tokyoStationXY = converter.convertLatLonToPlaneXY(tokyoStationLatLon);
+    GSI::XY result_xy = GSI::bl2xy(test_lat, test_lon, origin_lat, origin_lon);
 
-  std::cout << std::fixed << std::setprecision(3);
-  std::cout << "--- 緯度経度から平面直角座標へ ---" << std::endl;
-  std::cout << "入力緯度: " << tokyoStationLatLon.latitude
-            << "度, 経度: " << tokyoStationLatLon.longitude << "度" << std::endl;
-  std::cout << "変換結果 X: " << tokyoStationXY.x << " m, Y: " << tokyoStationXY.y << " m"
-            << std::endl;
-  std::cout << std::endl;
+    std::cout << "\n変換結果:" << std::endl;
+    std::cout << "X座標: " << result_xy.x << " [m]" << std::endl;
+    std::cout << "Y座標: " << result_xy.y << " [m]" << std::endl;
 
-  // 平面直角座標 -> 緯度経度 変換例
-  // 上で計算したXY座標を元に戻す
-  PlaneXY calculatedXY = {tokyoStationXY.x, tokyoStationXY.y};
-  LatLon convertedLatLon = converter.convertPlaneXYToLatLon(calculatedXY);
+    std::cout << "\n---------------------------------------------\n" << std::endl;
 
-  std::cout << "--- 平面直角座標から緯度経度へ ---" << std::endl;
-  std::cout << "入力X: " << calculatedXY.x << " m, Y: " << calculatedXY.y << " m" << std::endl;
-  std::cout << "変換結果 緯度: " << convertedLatLon.latitude
-            << "度, 経度: " << convertedLatLon.longitude << "度" << std::endl;
-  std::cout << std::endl;
+    // --- 座標から緯度経度への逆変換 ---
+    std::cout << "--- 平面直角座標 -> 緯度経度 ---" << std::endl;
+    std::cout << "入力X座標: " << result_xy.x << " [m]" << std::endl;
+    std::cout << "入力Y座標: " << result_xy.y << " [m]" << std::endl;
 
-  // 別の系でのテスト例: 福岡県北九州市 (III系が近いが、I系で計算)
-  // 北九州市役所の概略位置
-  // I系: 基準点 北緯33度00分00秒、東経129度30分00秒
-  try {
-    GeodeticConverter kitakyushuConverter(1);  // I系
+    GSI::LatLon result_bl = GSI::xy2bl(result_xy.x, result_xy.y, origin_lat, origin_lon);
+    
+    std::cout << "\n逆変換の結果:" << std::endl;
+    std::cout << "緯度 (B): " << result_bl.latitude << " [deg]" << std::endl;
+    std::cout << "経度 (L): " << result_bl.longitude << " [deg]" << std::endl;
+    std::cout << "(入力値とほぼ同じ値に戻れば成功です)" << std::endl;
 
-    LatLon kitakyushuLatLon = {33.8824, 130.8753};  // 北九州市役所付近
-
-    PlaneXY kitakyushuXY = kitakyushuConverter.convertLatLonToPlaneXY(kitakyushuLatLon);
-
-    std::cout << "--- 北九州市 (I系) 変換例 ---" << std::endl;
-    std::cout << "入力緯度: " << kitakyushuLatLon.latitude
-              << "度, 経度: " << kitakyushuLatLon.longitude << "度" << std::endl;
-    std::cout << "変換結果 X: " << kitakyushuXY.x << " m, Y: " << kitakyushuXY.y << " m"
-              << std::endl;
-    std::cout << std::endl;
-
-    LatLon kitakyushuConvertedLatLon = kitakyushuConverter.convertPlaneXYToLatLon(kitakyushuXY);
-    std::cout << "逆変換結果 緯度: " << kitakyushuConvertedLatLon.latitude
-              << "度, 経度: " << kitakyushuConvertedLatLon.longitude << "度" << std::endl;
-
-  } catch (const std::out_of_range & e) {
-    std::cerr << "エラー: " << e.what() << std::endl;
-  }
-
-  return 0;
+    return 0;
 }

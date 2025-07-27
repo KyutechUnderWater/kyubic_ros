@@ -1,203 +1,119 @@
 #include "geodetic_transformations/geodetic_transformations.hpp"
+#include <cmath>
+#include <vector>
 
-#include <iostream>  // For debug output, can be removed in production
+namespace GSI {
+namespace {
+    // 定数定義
+    constexpr double PI = 3.14159265358979323846;
+    constexpr double a = 6377397.155;
+    constexpr double F_inv = 299.1528128;
+    constexpr double m0 = 0.9999;
+    constexpr double f = 1.0 / F_inv;
+    constexpr double n = f / (2.0 - f);
 
-// マクロ定数 PIの定義
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
+    // ★★★ 順変換用のα係数を正しく定義 ★★★
+    const std::vector<double> alpha_coeffs = {
+        0.0,
+        1.0/2.0*n - 2.0/3.0*pow(n, 2) + 5.0/16.0*pow(n, 3) + 41.0/180.0*pow(n, 4) - 127.0/288.0*pow(n, 5),
+        13.0/48.0*pow(n, 2) - 3.0/5.0*pow(n, 3) + 557.0/1440.0*pow(n, 4) + 281.0/630.0*pow(n, 5),
+        61.0/240.0*pow(n, 3) - 103.0/140.0*pow(n, 4) + 15061.0/26880.0*pow(n, 5),
+        49561.0/161280.0*pow(n, 4) - 179.0/168.0*pow(n, 5),
+        34729.0/80640.0*pow(n, 5)
+    };
 
-// 平面直角座標系の基準点データ
-// {systemId, 基準緯度(度), 基準経度(度)}
-// 環境省 自然環境局 測量計画図 縮尺データに基づく
-// https://www.env.go.jp/nature/doing/ekakei/kibo/pdf/houi_keisankata.pdf
-// (ただし、実際の計算式は国土地理院のものを参照)
-const double REFERENCE_POINTS[19][3] = {
-  {1, 33 + 0.0 / 60.0 + 0.0 / 3600.0,
-   129 + 30.0 / 60.0 + 0.0 / 3600.0},  // I系: 33°00′00″N, 129°30′00″E
-  {2, 33 + 0.0 / 60.0 + 0.0 / 3600.0,
-   131 + 0.0 / 60.0 + 0.0 / 3600.0},  // II系: 33°00′00″N, 131°00′00″E
-  {3, 36 + 0.0 / 60.0 + 0.0 / 3600.0,
-   132 + 10.0 / 60.0 + 30.0 / 3600.0},  // III系: 36°00′00″N, 132°10′30″E (変更される可能性あり)
-  {4, 33 + 0.0 / 60.0 + 0.0 / 3600.0,
-   133 + 0.0 / 60.0 + 0.0 / 3600.0},  // IV系: 33°00′00″N, 133°00′00″E
-  {5, 36 + 0.0 / 60.0 + 0.0 / 3600.0,
-   134 + 0.0 / 60.0 + 0.0 / 3600.0},  // V系: 36°00′00″N, 134°00′00″E
-  {6, 36 + 0.0 / 60.0 + 0.0 / 3600.0,
-   136 + 0.0 / 60.0 + 0.0 / 3600.0},  // VI系: 36°00′00″N, 136°00′00″E
-  {7, 36 + 0.0 / 60.0 + 0.0 / 3600.0,
-   137 + 0.0 / 60.0 + 0.0 / 3600.0},  // VII系: 36°00′00″N, 137°00′00″E
-  {8, 36 + 0.0 / 60.0 + 0.0 / 3600.0,
-   138 + 0.0 / 60.0 + 0.0 / 3600.0},  // VIII系: 36°00′00″N, 138°00′00″E
-  {9, 36 + 0.0 / 60.0 + 0.0 / 3600.0,
-   139 + 0.0 / 60.0 + 0.0 / 3600.0},  // IX系: 36°00′00″N, 139°00′00″E
-  {10, 40 + 0.0 / 60.0 + 0.0 / 3600.0,
-   140 + 0.0 / 60.0 + 0.0 / 3600.0},  // X系: 40°00′00″N, 140°00′00″E
-  {11, 40 + 0.0 / 60.0 + 0.0 / 3600.0,
-   142 + 0.0 / 60.0 + 0.0 / 3600.0},  // XI系: 40°00′00″N, 142°00′00″E
-  {12, 44 + 0.0 / 60.0 + 0.0 / 3600.0,
-   142 + 0.0 / 60.0 + 0.0 / 3600.0},  // XII系: 44°00′00″N, 142°00′00″E
-  {13, 44 + 0.0 / 60.0 + 0.0 / 3600.0,
-   144 + 0.0 / 60.0 + 0.0 / 3600.0},  // XIII系: 44°00′00″N, 144°00′00″E
-  {14, 26 + 0.0 / 60.0 + 0.0 / 3600.0,
-   127 + 30.0 / 60.0 + 0.0 / 3600.0},  // XIV系: 26°00′00″N, 127°30′00″E
-  {15, 26 + 0.0 / 60.0 + 0.0 / 3600.0,
-   124 + 0.0 / 60.0 + 0.0 / 3600.0},  // XV系: 26°00′00″N, 124°00′00″E
-  {16, 26 + 0.0 / 60.0 + 0.0 / 3600.0,
-   141 + 0.0 / 60.0 + 0.0 / 3600.0},  // XVI系: 26°00′00″N, 141°00′00″E
-  {17, 26 + 0.0 / 60.0 + 0.0 / 3600.0,
-   157 + 0.0 / 60.0 + 0.0 / 3600.0},  // XVII系: 26°00′00″N, 157°00′00″E
-  {18, 20 + 0.0 / 60.0 + 0.0 / 3600.0,
-   136 + 0.0 / 60.0 + 0.0 / 3600.0},  // XVIII系: 20°00′00″N, 136°00′00″E
-  {19, 26 + 0.0 / 60.0 + 0.0 / 3600.0,
-   130 + 0.0 / 60.0 + 0.0 / 3600.0}  // XIX系: 26°00′00″N, 130°00′00″E
-};
+    // 逆変換用のβ係数
+    const std::vector<double> beta_coeffs = {
+        0.0,
+        1.0/2.0*n - 2.0/3.0*pow(n,2) + 37.0/96.0*pow(n,3) - 1.0/360.0*pow(n,4) - 81.0/512.0*pow(n,5),
+        1.0/48.0*pow(n,2) + 1.0/15.0*pow(n,3) - 437.0/1440.0*pow(n,4) + 46.0/105.0*pow(n,5),
+        17.0/480.0*pow(n,3) - 37.0/840.0*pow(n,4) - 209.0/4480.0*pow(n,5),
+        4397.0/161280.0*pow(n,4) - 11.0/504.0*pow(n,5),
+        4583.0/161280.0*pow(n,5)
+    };
 
-GeodeticConverter::GeodeticConverter(int systemId) : systemId_(systemId)
-{
-  setReferencePoint(systemId_);
+    // その他の係数...
+    const std::vector<double> A_coeffs = {
+        1.0 + (1.0/4.0)*pow(n, 2) + (1.0/64.0)*pow(n, 4),
+        -3.0/2.0 * (n - (1.0/8.0)*pow(n, 3) - (1.0/64.0)*pow(n, 5)),
+        15.0/16.0 * (pow(n, 2) - (1.0/4.0)*pow(n, 4)),
+        -35.0/48.0 * (pow(n, 3) - (5.0/16.0)*pow(n, 5)),
+        315.0/512.0 * pow(n, 4),
+        -693.0/1280.0 * pow(n, 5)
+    };
+    const std::vector<double> delta_coeffs = {
+        0.0,
+        2.0*n - 2.0/3.0*pow(n,2) - 2.0*pow(n,3) + 116.0/45.0*pow(n,4) + 26.0/45.0*pow(n,5),
+        7.0/3.0*pow(n,2) - 8.0/5.0*pow(n,3) - 227.0/45.0*pow(n,4) + 2704.0/315.0*pow(n,5),
+        56.0/15.0*pow(n,3) - 136.0/35.0*pow(n,4) - 1262.0/105.0*pow(n,5),
+        4279.0/630.0*pow(n,4) - 332.0/35.0*pow(n,5),
+        4174.0/315.0*pow(n,5)
+    };
+
+    // ヘルパー関数
+    double deg2rad(double deg) { return deg * PI / 180.0; }
+    double rad2deg(double rad) { return rad * 180.0 / PI; }
 }
 
-void GeodeticConverter::setReferencePoint(int systemId)
-{
-  if (systemId < 1 || systemId > 19) {
-    throw std::out_of_range("Invalid system ID. Must be between 1 and 19.");
-  }
-  phi0_rad_ = degToRad(REFERENCE_POINTS[systemId - 1][1]);
-  lambda0_rad_ = degToRad(REFERENCE_POINTS[systemId - 1][2]);
+XY bl2xy(double lat, double lon, double origin_lat, double origin_lon) {
+    const double phi = deg2rad(lat);
+    const double lambda = deg2rad(lon);
+    const double phi_0 = deg2rad(origin_lat);
+    const double lambda_0 = deg2rad(origin_lon);
+    const double A_bar = (m0 * a) / (1.0 + n) * A_coeffs[0];
+
+    double S_phi0_term = A_coeffs[0] * phi_0;
+    for (size_t j = 1; j < A_coeffs.size(); ++j) {
+        S_phi0_term += A_coeffs[j] * sin(2.0 * j * phi_0);
+    }
+    const double S_bar_phi0 = (m0 * a) / (1.0 + n) * S_phi0_term;
+
+    const double t = sinh(atanh(sin(phi)) - (2.0 * sqrt(n)) / (1.0 + n) * atanh((2.0 * sqrt(n)) / (1.0 + n) * sin(phi)));
+    const double t_bar = sqrt(1.0 + t*t);
+    const double xi_prime = atan2(t, cos(lambda - lambda_0));
+    const double eta_prime = atanh(sin(lambda - lambda_0) / t_bar);
+
+    double x_term = xi_prime;
+    double y_term = eta_prime;
+
+    // ★★★ ここで正しい alpha_coeffs を使う ★★★
+    for (size_t j = 1; j < alpha_coeffs.size(); ++j) {
+        x_term += alpha_coeffs[j] * sin(2.0 * j * xi_prime) * cosh(2.0 * j * eta_prime);
+        y_term += alpha_coeffs[j] * cos(2.0 * j * xi_prime) * sinh(2.0 * j * eta_prime);
+    }
+    return {A_bar * x_term - S_bar_phi0, A_bar * y_term};
 }
 
-double GeodeticConverter::degToRad(double deg) const { return deg * M_PI / 180.0; }
+LatLon xy2bl(double x, double y, double origin_lat, double origin_lon) {
+    const double phi_0 = deg2rad(origin_lat);
+    const double lambda_0 = deg2rad(origin_lon);
+    
+    double S_phi0_term = A_coeffs[0] * phi_0;
+    for (size_t j = 1; j < A_coeffs.size(); ++j) {
+        S_phi0_term += A_coeffs[j] * sin(2.0 * j * phi_0);
+    }
+    const double S_bar_phi0 = (m0 * a) / (1.0 + n) * S_phi0_term;
+    const double A_bar = (m0 * a) / (1.0 + n) * A_coeffs[0];
 
-double GeodeticConverter::radToDeg(double rad) const { return rad * 180.0 / M_PI; }
+    const double xi = (x + S_bar_phi0) / A_bar;
+    const double eta = y / A_bar;
+    
+    double xi_prime = xi;
+    double eta_prime = eta;
+    for (size_t j = 1; j < beta_coeffs.size(); ++j) {
+        xi_prime -= beta_coeffs[j] * sin(2.0 * j * xi) * cosh(2.0 * j * eta);
+        eta_prime -= beta_coeffs[j] * cos(2.0 * j * xi) * sinh(2.0 * j * eta);
+    }
 
-// 子午線弧長 M(φ) の計算
-double GeodeticConverter::calculateM(double phi_rad) const
-{
-  double e = std::sqrt(E2);  // 離心率
-  double e2 = E2;
-  double e4 = e2 * e2;
-  double e6 = e4 * e2;
+    const double chi = asin(sin(xi_prime) / cosh(eta_prime));
+    double phi = chi;
+    for(size_t j = 1; j < delta_coeffs.size(); ++j) {
+        phi += delta_coeffs[j] * sin(2.0 * j * chi);
+    }
 
-  double M = A * ((1 - e2 / 4 - 3 * e4 / 64 - 5 * e6 / 256) * phi_rad -
-                  (3 * e2 / 8 + 3 * e4 / 32 + 45 * e6 / 1024) * std::sin(2 * phi_rad) +
-                  (15 * e4 / 256 + 45 * e6 / 1024) * std::sin(4 * phi_rad) -
-                  (35 * e6 / 3072) * std::sin(6 * phi_rad));
-  return M;
+    const double lambda = lambda_0 + atan2(sinh(eta_prime), cos(xi_prime));
+    
+    return {rad2deg(phi), rad2deg(lambda)};
 }
 
-// 補助関数 T(φ)
-double GeodeticConverter::calculateT(double phi_rad) const
-{
-  double tan_phi = std::tan(phi_rad);
-  return tan_phi * tan_phi;
-}
-
-// 補助関数 D(λ-λ0)
-double GeodeticConverter::calculateD(double delta_lambda_rad) const { return delta_lambda_rad; }
-
-// 緯度経度から平面直角座標へ変換
-PlaneXY GeodeticConverter::convertLatLonToPlaneXY(const LatLon & latLon) const
-{
-  double phi_rad = degToRad(latLon.latitude);
-  double lambda_rad = degToRad(latLon.longitude);
-  double delta_lambda_rad = lambda_rad - lambda0_rad_;
-
-  double N = A / std::sqrt(1.0 - E2 * std::sin(phi_rad) * std::sin(phi_rad));  // 卯酉線曲率半径
-  double M0 = calculateM(phi0_rad_);  // 基準緯度の子午線弧長
-  double M = calculateM(phi_rad);     // 現在緯度の子午線弧長
-
-  double t = calculateT(phi_rad);                                       // tan^2(phi)
-  double n_squared = E_PRIME2 * std::cos(phi_rad) * std::cos(phi_rad);  // (e'^2 * cos^2(phi))
-
-  double sin_phi = std::sin(phi_rad);
-  double cos_phi = std::cos(phi_rad);
-
-  // X座標の計算
-  double term1_X = N * sin_phi * cos_phi;
-  double term2_X = (N / 6.0) * sin_phi * std::pow(cos_phi, 3.0) * (1.0 - t + n_squared);
-  double term3_X = (N / 120.0) * sin_phi * std::pow(cos_phi, 5.0) *
-                   (5.0 - 18.0 * t + t * t + 14.0 * n_squared - 58.0 * t * n_squared);
-
-  double x = M - M0 + term1_X * (std::pow(delta_lambda_rad, 2.0) / 2.0) +
-             term2_X * (std::pow(delta_lambda_rad, 4.0) / 24.0) +
-             term3_X * (std::pow(delta_lambda_rad, 6.0) / 720.0);
-
-  // Y座標の計算
-  double term1_Y = N * cos_phi;
-  double term2_Y = (N / 6.0) * std::pow(cos_phi, 3.0) * (1.0 - t + n_squared);
-  double term3_Y = (N / 120.0) * std::pow(cos_phi, 5.0) *
-                   (5.0 - 18.0 * t + t * t + 14.0 * n_squared - 58.0 * t * n_squared);
-
-  double y = term1_Y * delta_lambda_rad + term2_Y * (std::pow(delta_lambda_rad, 3.0) / 6.0) +
-             term3_Y * (std::pow(delta_lambda_rad, 5.0) / 120.0);
-
-  // 平面直角座標系では、X座標に+100km、Y座標に+0km（中央子午線上に設定）のオフセットが加えられることが多い。
-  // 日本の測量ではX座標は原点から北へ向かって正、Y座標は原点から東へ向かって正。
-  // ただし、この実装では純粋な計算結果を返す。必要に応じてオフセットを追加する。
-  // 例: x += 100000.0; // X座標を100kmシフトする場合
-
-  return {x, y};
-}
-
-// 平面直角座標から緯度経度へ変換 (逆計算はより複雑)
-LatLon GeodeticConverter::convertPlaneXYToLatLon(const PlaneXY & planeXY) const
-{
-  // 逆変換は非常に複雑な反復計算が必要
-  // ここでは簡略化のため、概略的な計算、または一部のみ実装
-  // 実際の逆変換には反復計算アルゴリズムが必要となる
-
-  double x_prime = planeXY.x;  // + 100000.0; // X座標のオフセットを考慮する場合はここで調整
-  double y_prime = planeXY.y;
-
-  double m_prime = calculateM(phi0_rad_) + x_prime;  // 基準緯度の子午線弧長 + X座標
-
-  // φ' の初期値 (反復計算の初期近似)
-  double phi_prime_rad = m_prime / A;
-
-  double nu_prime;           // 卯酉線曲率半径の近似値
-  double rho_prime;          // 子午線曲率半径の近似値
-  double eta_prime_squared;  // 第2離心率の2乗 * cos^2(phi_prime_rad)
-
-  // φ' の反復計算 (数回繰り返すことで精度を高める)
-  for (int i = 0; i < 5; ++i)  // 5回程度の反復で十分な精度が得られることが多い
-  {
-    nu_prime = A / std::sqrt(1.0 - E2 * std::sin(phi_prime_rad) * std::sin(phi_prime_rad));
-    rho_prime =
-      A * (1.0 - E2) / std::pow(1.0 - E2 * std::sin(phi_prime_rad) * std::sin(phi_prime_rad), 1.5);
-    eta_prime_squared = E_PRIME2 * std::cos(phi_prime_rad) * std::cos(phi_prime_rad);
-
-    double term_phi_prime = (m_prime - calculateM(phi_prime_rad)) /
-                            rho_prime;  // M0が既に考慮されているためm_primeからM(phi)を引く
-    phi_prime_rad = phi_prime_rad + term_phi_prime;
-  }
-
-  double t_prime = std::tan(phi_prime_rad) * std::tan(phi_prime_rad);
-  double d_prime = y_prime / nu_prime;  // Y' / N'
-
-  // 経度の計算
-  double term1_lambda = d_prime;
-  double term2_lambda = (1.0 + 2.0 * t_prime + eta_prime_squared) * std::pow(d_prime, 3.0) / 6.0;
-  double term3_lambda = (5.0 + 28.0 * t_prime + 24.0 * t_prime * t_prime + 6.0 * eta_prime_squared +
-                         8.0 * t_prime * eta_prime_squared) *
-                        std::pow(d_prime, 5.0) / 120.0;
-
-  double delta_lambda_rad =
-    (term1_lambda - term2_lambda + term3_lambda) / std::cos(phi_prime_rad);  // (λ - λ0)
-  double lambda_rad = lambda0_rad_ + delta_lambda_rad;                       // 経度
-
-  // 緯度の計算
-  double term1_phi = t_prime;
-  double term2_phi = (1.0 + t_prime - eta_prime_squared) * std::pow(d_prime, 2.0) / 2.0;
-  double term3_phi =
-    (5.0 - 2.0 * t_prime + 3.0 * eta_prime_squared + 4.0 * eta_prime_squared * eta_prime_squared -
-     9.0 * t_prime * eta_prime_squared) *
-    std::pow(d_prime, 4.0) / 24.0;
-  double term4_phi =
-    (61.0 - 148.0 * t_prime + 16.0 * t_prime * t_prime) * std::pow(d_prime, 6.0) / 720.0;
-
-  double phi_rad =
-    phi_prime_rad - (term2_phi - term3_phi + term4_phi) * std::sin(phi_prime_rad);  // 緯度
-
-  return {radToDeg(phi_rad), radToDeg(lambda_rad)};
-}
+} // namespace GSI

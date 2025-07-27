@@ -17,6 +17,8 @@ ament_auto_add_executable(main
 ./src/main.cpp
 )
 
+target_link_libraries(main geodetic_transformations)
+
 install(TARGETS
   geodetic_transformations
   ARCHIVE DESTINATION lib
