@@ -25,8 +25,10 @@ bool Bar30::update()
 {
   uint8_t buf[255];
   uint8_t buf_bytes[12];
+  //シリアルポートのバッファクリア
   serial_->flush();
 
+  // ヘッダ待機：#を受け取るまでデータを読み飛ばす
   serial_->read_until(buf, 255, '#', 100ms);
   ssize_t len = serial_->read_until(buf, sizeof(DepthData) * 2, '%', 100ms);
 
