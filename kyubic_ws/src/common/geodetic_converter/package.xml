@@ -1,20 +1,13 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>localization</name>
+  <name>geodetic_converter</name>
   <version>0.1.0</version>
-  <description>localization package</description>
+  <description>Interconversion between geodetic and plane rectangular coordinate systems</description>
   <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-
-  <depend>geodetic_converter</depend>
-  <depend>rclcpp</depend>
-  <depend>rclcpp_components</depend>
-  <depend>driver_msgs</depend>
-  <depend>localization_msgs</depend>
-  <depend>std_srvs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

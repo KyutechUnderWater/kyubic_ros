@@ -70,7 +70,7 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
       // add velocity
       odom_msg->twist.linear.z_depth = vel_z;
     }
-    RCLCPP_INFO(this->get_logger(), "Calculated depth odometry");
+    RCLCPP_DEBUG(this->get_logger(), "Calculated depth odometry");
   }
   pub_->publish(std::move(odom_msg));
 }
