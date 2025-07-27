@@ -1,7 +1,5 @@
-# joy2wrenchノード用の設定
-/joy2wrench/joy2wrench:
+/**:
   ros__parameters:
-<<<<<<< Updated upstream
     # device_name: "Logicool Dual Action"
     device_name: "PLAYSTATION(R)3 Controller"
 
@@ -16,21 +14,3 @@
     force_z_scale: 17.0 # x: 60 * cos(30), y: 60 * sin(30), z: 20 * cos(30). 30 is Mounting angle.
     torque_x_scale: 3.0
     torque_z_scale: 10.0
-=======
-    # 購読するOdometryのトピック名
-    odom_topic: "/odom"
-
-    # 起動時のデフォルトモード (false: ロボット基準, true: 絶対座標基準)
-    default_mode_is_absolute: false
-
-    # 使用するコントローラ名
-    device_name: "Logicool Dual Action"
-    #device_name: "PLAYSTATION(R)3 Controller"
-    
-    # 力とトルクのスケール
-    force_x_scale: 52.0
-    force_y_scale: 30.0
-    force_z_scale: 17.0
-    torque_x_scale: 3.0
-    torque_z_scale: 10.0
->>>>>>> Stashed changes
