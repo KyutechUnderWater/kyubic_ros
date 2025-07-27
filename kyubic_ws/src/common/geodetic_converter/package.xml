@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>geodetic_transformations</name>
+  <name>geodetic_converter</name>
   <version>0.1.0</version>
   <description>Interconversion between geodetic and plane rectangular coordinate systems</description>
   <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
