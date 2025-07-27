@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['latest_5fheading_0',['latest_heading',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#aedb3d93921c953f4bf434e9b0c54aa25',1,'gnss_driver::gnss_driver::GnssPublisher']]],
+  ['latest_5fazimuth_0',['latest_azimuth',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#a21b28fd483e1071c9919b1782c15284e',1,'gnss_driver::gnss_driver::GnssPublisher']]],
   ['latest_5fsnr_5fmsg_1',['latest_snr_msg',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#a6c302aae393bc3ac2029edc0b937600b',1,'gnss_driver::gnss_driver::GnssPublisher']]],
   ['latest_5ftargets_2',['latest_targets',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#a417ef43bed72e9a4f8138e7e4d346fc9',1,'real_time_plotter::main::MultiDimSubscriber']]],
   ['layout_3',['layout',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a7c91a9fa0b2dca3916661983d1a3085a',1,'real_time_plotter::main::MultiGraphViewer']]],
