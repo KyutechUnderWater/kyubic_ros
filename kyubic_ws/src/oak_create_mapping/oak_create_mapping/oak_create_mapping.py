@@ -4,6 +4,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
+from localization_msgs.msg import GlobalPose
 
 import cv2
 import depthai as dai
@@ -12,6 +13,7 @@ from pathlib import Path
 import threading
 import subprocess
 import os
+import csv
 
 
 class OakCameraSubscriber(Node):
@@ -79,9 +81,11 @@ class OakCameraSubscriber(Node):
             self.get_logger().error(f"OAK-1カメラの初期化に失敗: {e}")
             raise
 
+        self.global_pose: GlobalPose = GlobalPose()
+
         # 5. ROS 2 サブスクライバの作成
         self.photo_sub = self.create_subscription(
-            String, "trigger_photo", self.photo_trigger_callback, 10
+            GlobalPose, "global_pose", self.photo_trigger_callback, 10
         )
         self.video_start_sub = self.create_subscription(
             String, "trigger_video_start", self.video_start_callback, 10
@@ -97,15 +101,47 @@ class OakCameraSubscriber(Node):
         self.video_thread.start()
         self.still_thread.start()
 
+        # CSVファイルの準備
+        self.filename = "global_pose.csv"
+        self.csv_file = open(self.save_dir / self.filename, "w", newline="")
+        self.csv_writer = csv.writer(self.csv_file)
+
+        # ヘッダーの書き込み
+        self.csv_writer.writerow(
+            [
+                "image_path",
+                "header_timestamp_sec",
+                "header_timestamp_nanosec",
+                "header_frame_id",
+                "status_depth",
+                "status_imu",
+                "status_dvl",
+                "coordinate_system_id",
+                "ref_pose_latitude",
+                "ref_pose_longitude",
+                "ref_pose_plane_x",
+                "ref_pose_plane_y",
+                "ref_pose_meridian_convergence",
+                "current_pose_latitude",
+                "current_pose_longitude",
+                "current_pose_plane_x",
+                "current_pose_plane_y",
+                "current_pose_meridian_convergence",
+                "azimuth",
+                "depth",
+                "altitude",
+            ]
+        )
+        self.get_logger().info(f"Localization data will be logged to {self.filename}")
+
         self.get_logger().info(
             "ノード準備完了。最適化されたコード。静止画・動画のトリガーを待っています..."
         )
 
     # --- コールバック関数群 ---
     def photo_trigger_callback(self, msg):
-        self.get_logger().info(
-            f'静止画トリガー受信: "{msg.data}" -> 次のフレームを保存します。'
-        )
+        self.get_logger().info("静止画トリガー受信: -> 次のフレームを保存します。")
+        self.global_pose = msg
         self.capture_still_event.set()  # イベントをセットして静止画保存スレッドに通知
 
     def video_start_callback(self, msg):
@@ -181,11 +217,44 @@ class OakCameraSubscriber(Node):
                 # キューから最新のフレームを取得
                 in_still = self.still_queue.get()
                 if in_still is not None:
-                    save_filepath = self.save_dir / f"image{self.image_count}.jpg"
+                    now = self.get_clock().now()
+                    seconds = now.nanoseconds // 1_000_000_000
+                    nanoseconds = now.nanoseconds % 1_000_000_000
+                    timestamp = f"{seconds}.{nanoseconds}"
+                    save_filepath = (
+                        self.save_dir / f"image{self.image_count}_{timestamp}.jpg"
+                    )
                     still_frame = in_still.getCvFrame()
                     cv2.imwrite(str(save_filepath), still_frame)
                     self.get_logger().info(f"静止画を保存しました: {save_filepath}")
-                    self.image_count += 1
+
+                    self.csv_writer.writerow(
+                        [
+                            save_filepath,
+                            self.global_pose.header.stamp.sec,
+                            self.global_pose.header.stamp.nanosec,
+                            self.global_pose.header.frame_id,
+                            self.global_pose.status.depth,
+                            self.global_pose.status.imu,
+                            self.global_pose.status.dvl,
+                            self.global_pose.coordinate_system_id,
+                            self.global_pose.ref_pose.latitude,
+                            self.global_pose.ref_pose.longitude,
+                            self.global_pose.ref_pose.plane_x,
+                            self.global_pose.ref_pose.plane_y,
+                            self.global_pose.ref_pose.meridian_convergence,
+                            self.global_pose.current_pose.latitude,
+                            self.global_pose.current_pose.longitude,
+                            self.global_pose.current_pose.plane_x,
+                            self.global_pose.current_pose.plane_y,
+                            self.global_pose.current_pose.meridian_convergence,
+                            self.global_pose.azimuth,
+                            self.global_pose.depth,
+                            self.global_pose.altitude,
+                        ]
+                    )
+
+                self.image_count += 1
 
     def video_loop(self):
         """エンコードされた動画データを一時ファイルに書き込むループ"""
@@ -198,6 +267,10 @@ class OakCameraSubscriber(Node):
 
     def destroy_node(self):
         self.get_logger().info("ノードをシャットダウンします...")
+        if self.csv_file:
+            self.csv_file.close()
+            self.get_logger().info(f"Closed {self.filename}")
+
         if self.is_recording:
             self.video_stop_callback(String())
 

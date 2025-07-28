@@ -22,7 +22,6 @@
 #include <future>
 #include <iostream>
 #include <memory>
-#include <thread>
 #include <utility>
 
 using namespace std::chrono_literals;
@@ -43,6 +42,7 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   odom_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
   gnss_msg_ = std::make_shared<driver_msgs::msg::Gnss>();
   global_pose_msg_ = std::make_shared<localization_msgs::msg::GlobalPose>();
+  global_pose_msg_->coordinate_system_id = coord_system_id;
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
@@ -137,7 +137,8 @@ void Localization::imu_raw_callback(driver_msgs::msg::IMU::UniquePtr msg)
 
 void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::SharedPtr odom_)
 {
-  double azimuth_rad = (azimuth - reference_meridian_convergence) * std::numbers::pi / 180;
+  double azimuth_rad =
+    (odom_->pose.orientation.z + azimuth - reference_meridian_convergence) * std::numbers::pi / 180;
   double plane_x =
     odom_->pose.position.x * cos(azimuth_rad) - odom_->pose.position.y * sin(azimuth_rad);
   double plane_y =
