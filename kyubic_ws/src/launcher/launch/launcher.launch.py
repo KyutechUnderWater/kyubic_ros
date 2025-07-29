@@ -23,7 +23,9 @@ def generate_launch_description():
                 }.items(),
             ),
             IncludeLaunchDescription(
-                PathJoinSubstitution([localization_dir, "localization.launch.py"]),
+                PathJoinSubstitution(
+                    [localization_dir, "localization_components.launch.py"]
+                ),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),
