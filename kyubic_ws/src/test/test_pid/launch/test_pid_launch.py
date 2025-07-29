@@ -24,7 +24,7 @@ def generate_launch_description():
                 plugin="test::TestPID",
                 remappings=[
                     ("/test_pid/joy_robot_force", "/joy2wrench/robot_force"),
-                    # ("/test_pid/targets", "/real_time_plotter/targets"),
+                    ("/test_pid/targets", "/real_time_plotter/targets"),
                     ("/test_pid/odom", "/localization/odom"),
                     ("/test_pid/robot_force", "/driver/robot_force"),
                 ],

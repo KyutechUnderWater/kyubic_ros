@@ -9,7 +9,7 @@ namespace GSI
 
 // 平面直角座標系の原点データ
 // ref: https://www.gsi.go.jp/LAW/heimencho.html
-const std::array<std::array<int, 3>, 2> ORIGIN_POINTS_DMS[19] = {
+const std::array<std::array<double, 3>, 2> ORIGIN_POINTS_DMS[19] = {
   {{{33, 0, 0}, {129, 30, 0}}},   // I系: 33°00′00″N, 129°30′00″E
   {{{33, 0, 0}, {131, 0, 0}}},    // II系: 33°00′00″N, 131°00′00″E
   {{{36, 0, 0}, {132, 10, 30}}},  // III系: 36°00′00″N, 132°10′30″E
@@ -51,7 +51,7 @@ struct XY
   double y;  // Y座標（真東方向が正）
 };
 
-double dms2deg(const std::array<int, 3> & dms);
+double dms2deg(const std::array<double, 3> & dms);
 
 LatLon getOriginPoint(uint8_t systemId);
 

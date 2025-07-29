@@ -61,7 +61,7 @@ double deg2rad(double deg) { return deg * PI / 180.0; }
 double rad2deg(double rad) { return rad * 180.0 / PI; }
 }  // namespace
 
-double dms2deg(const std::array<int, 3> & dms)
+double dms2deg(const std::array<double, 3> & dms)
 {
   return static_cast<double>(dms[0]) + static_cast<double>(dms[1]) / 60.0 +
          static_cast<double>(dms[2]) / 3600.0;

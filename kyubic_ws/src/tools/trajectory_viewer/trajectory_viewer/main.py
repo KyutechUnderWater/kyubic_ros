@@ -8,7 +8,7 @@ from stl import mesh
 # ROS2関連のインポート
 import rclpy
 from rclpy.node import Node
-
+from visualization_msgs.msg import MarkerArray
 from localization_msgs.msg import Odometry
 from real_time_plotter_msgs.msg import Targets
 
@@ -34,6 +34,9 @@ class RosCommunicator(Node, QObject):
 
     # 軌跡プロット用の位置データシグナル
     new_position_signal = pyqtSignal(float, float, float, float, float, float)
+    new_anchor_signal = pyqtSignal(
+        float, float, float, float, float, float, float, float
+    )
 
     def __init__(self):
         # 親クラスのコンストラクタをそれぞれ呼び出す
@@ -43,6 +46,9 @@ class RosCommunicator(Node, QObject):
         # --- Subscriber設定 ---
         self.subscription = self.create_subscription(
             Odometry, "odom", self.odom_callback, 10
+        )
+        self.sub_marker = self.create_subscription(
+            MarkerArray, "/fixed_locations", self.marker_callback, 10
         )
 
         # --- Publisher設定 ---
@@ -63,6 +69,23 @@ class RosCommunicator(Node, QObject):
         orient = msg.pose.orientation
         self.new_position_signal.emit(
             pos.x, -pos.y, -pos.z_depth, orient.x, orient.y, orient.z
+        )
+
+    def marker_callback(self, msg):
+        """'odom' トピックのコールバック"""
+        markers = [marker for marker in msg.markers]
+        offset_x = markers[4].pose.position.x
+        offset_y = markers[4].pose.position.y
+        print(markers[0].pose.position.x)
+        self.new_anchor_signal.emit(
+            markers[0].pose.position.x - offset_x,
+            markers[0].pose.position.y - offset_y,
+            markers[1].pose.position.x - offset_x,
+            markers[1].pose.position.y - offset_y,
+            markers[2].pose.position.x - offset_x,
+            markers[2].pose.position.y - offset_y,
+            markers[3].pose.position.x - offset_x,
+            markers[3].pose.position.y - offset_y,
         )
 
     def publish_targets(self):
@@ -125,6 +148,35 @@ class TrajectoryPlotter(gl.GLViewWidget):
         self.addItem(self.x_axis_item)
         self.addItem(self.y_axis_item)
         self.addItem(self.z_axis_item)
+
+        self.anchor_item1 = gl.GLLinePlotItem(
+            pos=[[0.0, 0.0, 0.25], [0.0, 0.0, -0.25]],
+            color=(1.0, 0.0, 1.0, 1.0),
+            width=15,
+            antialias=True,
+        )
+        self.anchor_item2 = gl.GLLinePlotItem(
+            pos=[[0.0, 0.0, 0.25], [0.0, 0.0, -0.25]],
+            color=(1.0, 1.0, 1.0, 1.0),
+            width=15,
+            antialias=True,
+        )
+        self.anchor_item3 = gl.GLLinePlotItem(
+            pos=[[0.0, 0.0, 0.25], [0.0, 0.0, -0.25]],
+            color=(0.0, 0.0, 1.0, 1.0),
+            width=15,
+            antialias=True,
+        )
+        self.anchor_item4 = gl.GLLinePlotItem(
+            pos=[[0.0, 0.0, 0.25], [0.0, 0.0, -0.25]],
+            color=(1.0, 1.0, 1.0, 1.0),
+            width=15,
+            antialias=True,
+        )
+        self.addItem(self.anchor_item1)
+        self.addItem(self.anchor_item2)
+        self.addItem(self.anchor_item3)
+        self.addItem(self.anchor_item4)
 
         self.trajectory_points = np.empty((0, 3))
         self.trajectory_points = np.vstack(
@@ -219,6 +271,17 @@ class TrajectoryPlotter(gl.GLViewWidget):
 
             # メッシュにTransform3Dを適用
             self.mesh.setTransform(tr)
+
+    @pyqtSlot(float, float, float, float, float, float, float, float)
+    def add_anchor(self, ax, ay, bx, by, cx, cy, dx, dy):
+        ay *= -1
+        by *= -1
+        cy *= -1
+        dy *= -1
+        self.anchor_item1.setData(pos=[[ax, ay, -0.25], [ax, ay, 0.25]])
+        self.anchor_item2.setData(pos=[[bx, by, -0.25], [bx, by, 0.25]])
+        self.anchor_item3.setData(pos=[[cx, cy, -0.25], [cx, cy, 0.25]])
+        self.anchor_item4.setData(pos=[[dx, dy, -0.25], [dx, dy, 0.25]])
 
 
 class MainWindow(QMainWindow):
@@ -322,6 +385,7 @@ def main(args=None):
     # 4. シグナルとスロットを接続
     # 4-1. ROS(Odom) -> プロッタ描画
     ros_communicator.new_position_signal.connect(main_window.plotter.add_point)
+    ros_communicator.new_anchor_signal.connect(main_window.plotter.add_anchor)
     # 4-2. GUI(ボタン) -> ROS(目標値更新)
     main_window.targets_submitted.connect(ros_communicator.update_targets)
 
