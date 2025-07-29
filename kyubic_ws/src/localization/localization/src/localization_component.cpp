@@ -221,6 +221,12 @@ void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::Sha
     marker.lifetime = rclcpp::Duration(0, 0);
     marker_array.markers.push_back(marker);
   }
+  marker_array.markers[0].color.r = 1.0;
+  marker_array.markers[0].color.b = 1.0;
+  marker_array.markers[0].color.r = 1.0;
+  marker_array.markers[4].color.g = 1.0;
+  marker_array.markers[4].color.r = 1.0;
+  marker_array.markers[4].color.b = 1.0;
   marker_array.markers[5].color.r = 0.0;
   marker_array.markers[5].color.b = 1.0;
 
