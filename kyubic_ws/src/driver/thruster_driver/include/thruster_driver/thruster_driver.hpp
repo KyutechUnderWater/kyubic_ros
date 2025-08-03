@@ -11,7 +11,6 @@
 #include <serial/serial.hpp>
 #include <timer/timeout.hpp>
 
-#include "std_msgs/msg/bool.hpp"
 #include <driver_msgs/msg/thruster.hpp>
 #include <geometry_msgs/msg/wrench_stamped.hpp>
 #include <std_msgs/msg/bool.hpp>

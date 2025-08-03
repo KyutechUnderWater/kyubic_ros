@@ -50,6 +50,7 @@ private:
   rclcpp::CallbackGroup::SharedPtr client_cb_group_;
   rclcpp::Publisher<localization_msgs::msg::Odometry>::SharedPtr pub_odom_;
   rclcpp::Publisher<localization_msgs::msg::GlobalPose>::SharedPtr pub_global_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_depth_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_imu_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_dvl_;
@@ -60,7 +61,6 @@ private:
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_imu_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_dvl_;
 
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 
   std::shared_ptr<localization_msgs::msg::Odometry> odom_msg_;
