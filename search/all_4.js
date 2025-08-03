@@ -38,7 +38,7 @@ var searchData=
   ['dmg_5fdistance_5fref_5ferror_35',['dmg_distance_ref_error',['../structdvl__driver_1_1path__finder_1_1Data.html#aeeeb19e67fc82e6e2cace2565a9e57f2',1,'dvl_driver::path_finder::Data']]],
   ['dmg_5fdistance_5fref_5fnorth_36',['dmg_distance_ref_north',['../structdvl__driver_1_1path__finder_1_1Data.html#ae4ee1128332e81fab571f0ac5459f559',1,'dvl_driver::path_finder::Data']]],
   ['dmg_5fdistance_5fref_5fup_37',['dmg_distance_ref_up',['../structdvl__driver_1_1path__finder_1_1Data.html#a8a6dcc63d14d5485b8495ac18ef95a65',1,'dvl_driver::path_finder::Data']]],
-  ['dms2deg_38',['dms2deg',['../namespaceGSI.html#aa73c4e60a4833a30c628c3ba211742b9',1,'GSI']]],
+  ['dms2deg_38',['dms2deg',['../namespaceGSI.html#ab85859ad1bcf659db5b828d90cd81ed6',1,'GSI']]],
   ['driver_5flauncher_39',['driver_launcher',['../namespacedriver__launcher.html',1,'']]],
   ['driver_5flauncher_2elaunch_2epy_40',['driver_launcher.launch.py',['../driver__launcher_8launch_8py.html',1,'']]],
   ['driver_5fnode_5fmanager_41',['driver_node_manager',['../namespacedriver__node__manager.html',1,'driver_node_manager'],['../namespacedriver__node__manager_1_1driver__node__manager.html',1,'driver_node_manager.driver_node_manager']]],
