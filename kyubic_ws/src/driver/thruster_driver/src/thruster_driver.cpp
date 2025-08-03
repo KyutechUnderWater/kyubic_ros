@@ -23,6 +23,10 @@ ThrusterDriver::ThrusterDriver() : Node("thruster_driver")
   baudrate = this->declare_parameter("serial_speed", 115200);
   max_thrust = this->declare_parameter("max_thrust", 80);
   max_thrust_per = this->declare_parameter("max_thrust_per", 30);
+  timeout = this->declare_parameter("timeout", 0);
+
+  // heartbeat life check
+  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout);
 
   // Check value
   assert(0.0 < max_thrust && 0.0 < max_thrust_per);
@@ -35,6 +39,9 @@ ThrusterDriver::ThrusterDriver() : Node("thruster_driver")
   sub_ = create_subscription<geometry_msgs::msg::WrenchStamped>(
     "robot_force", 10,
     std::bind(&ThrusterDriver::robot_force_callback, this, std::placeholders::_1));
+
+  sub_heartbeat_ = create_subscription<std_msgs::msg::Bool>(
+    "heartbeat", 10, std::bind(&ThrusterDriver::heartbeat_callback, this, std::placeholders::_1));
 }
 
 std::array<float, NUM_THRUSTERS> ThrusterDriver::_wrench2thrusts(
@@ -91,51 +98,61 @@ float ThrusterDriver::_restrict_thrust(std::array<float, NUM_THRUSTERS> thrusts)
 
 void ThrusterDriver::robot_force_callback(const geometry_msgs::msg::WrenchStamped::SharedPtr msg)
 {
-  float force_x = msg->wrench.force.x;
-  float force_y = msg->wrench.force.y;
-  float force_z = msg->wrench.force.z;
-  float moment_x = msg->wrench.torque.x;
-  float moment_z = msg->wrench.torque.z;
+  auto thruster_msg = std::make_unique<driver_msgs::msg::Thruster>();
 
-  // Calculate thrust
-  std::array<float, 6> thrusts = _wrench2thrusts(force_x, force_y, force_z, moment_x, moment_z);
+  if (timeout_->check(this->get_clock()->now())) {
+    RCLCPP_WARN(this->get_logger(), "HeartBeat timeout. Thrusts set 0[N].");
+  } else {
+    float force_x = msg->wrench.force.x;
+    float force_y = msg->wrench.force.y;
+    float force_z = msg->wrench.force.z;
+    float moment_x = msg->wrench.torque.x;
+    float moment_z = msg->wrench.torque.z;
 
-  // Limitation
-  float total_thrust = _restrict_thrust(thrusts);
+    // Calculate thrust
+    std::array<float, 6> thrusts = _wrench2thrusts(force_x, force_y, force_z, moment_x, moment_z);
 
-  {
-    // Send serial
-    // format is like this *4.30;1.46;-0.00;-0.00;-1.46;-4.30#
-    std::string s_buf = "";
-    s_buf += start_char;
-    for (int i = 0; i < 6; ++i) {
-      if (i != 0) {
-        s_buf += delim_char;
+    // Limitation
+    float total_thrust = _restrict_thrust(thrusts);
+
+    {
+      // Send serial
+      // format is like this *4.30;1.46;-0.00;-0.00;-1.46;-4.30#
+      std::string s_buf = "";
+      s_buf += start_char;
+      for (int i = 0; i < 6; ++i) {
+        if (i != 0) {
+          s_buf += delim_char;
+        }
+
+        std::string s = std::to_string(thrusts[i]);
+        s_buf += s.substr(0, s.size() - 4);
       }
+      s_buf += end_char;
 
-      std::string s = std::to_string(thrusts[i]);
-      s_buf += s.substr(0, s.size() - 4);
+      const uint8_t * buf = reinterpret_cast<const uint8_t *>(s_buf.c_str());
+      serial_->write(buf, strlen(s_buf.c_str()));
+      RCLCPP_INFO(this->get_logger(), "sending message is %s", s_buf.c_str());
     }
-    s_buf += end_char;
 
-    const uint8_t * buf = reinterpret_cast<const uint8_t *>(s_buf.c_str());
-    serial_->write(buf, strlen(s_buf.c_str()));
-    RCLCPP_INFO(this->get_logger(), "sending message is %s", s_buf.c_str());
+    {
+      // Publish thrust value
+      thruster_msg->thrust_hfr = thrusts[0];
+      thruster_msg->thrust_hrr = thrusts[4];
+      thruster_msg->thrust_hrl = thrusts[5];
+      thruster_msg->thrust_hfl = thrusts[1];
+      thruster_msg->thrust_vmr = thrusts[3];
+      thruster_msg->thrust_vml = thrusts[2];
+      thruster_msg->total_thrust = total_thrust;
+    }
   }
+  pub_->publish(std::move(thruster_msg));
+}
 
-  {
-    // Publish thrust value
-    auto msg = std::make_unique<driver_msgs::msg::Thruster>();
-    msg->thrust_hfr = thrusts[0];
-    msg->thrust_hrr = thrusts[4];
-    msg->thrust_hrl = thrusts[5];
-    msg->thrust_hfl = thrusts[1];
-    msg->thrust_vmr = thrusts[3];
-    msg->thrust_vml = thrusts[2];
-    msg->total_thrust = total_thrust;
-
-    pub_->publish(std::move(msg));
-  }
+void ThrusterDriver::heartbeat_callback(const std_msgs::msg::Bool::SharedPtr msg)
+{
+  heartbeat = msg->data;
+  if (heartbeat) timeout_->reset(this->get_clock()->now());
 }
 
 }  // namespace thruster_driver

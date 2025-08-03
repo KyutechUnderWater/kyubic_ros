@@ -9,9 +9,11 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <serial/serial.hpp>
+#include <timer/timeout.hpp>
 
 #include <driver_msgs/msg/thruster.hpp>
 #include <geometry_msgs/msg/wrench_stamped.hpp>
+#include <std_msgs/msg/bool.hpp>
 
 #include <array>
 #include <cmath>
@@ -63,19 +65,26 @@ private:
   int baudrate;
   float max_thrust;
   float max_thrust_per;
+  uint64_t timeout;
 
   const char start_char = {'*'};
   const char delim_char = {';'};
   const char end_char = {'#'};
 
+  bool heartbeat = false;
+
   std::shared_ptr<serial::Serial> serial_;
   rclcpp::Publisher<driver_msgs::msg::Thruster>::SharedPtr pub_;
   rclcpp::Subscription<geometry_msgs::msg::WrenchStamped>::SharedPtr sub_;
+  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr sub_heartbeat_;
+
+  std::shared_ptr<timer::Timeout> timeout_;
 
   std::array<float, NUM_THRUSTERS> _wrench2thrusts(
     float f_x, float f_y, float f_z, float t_x, float t_z);
   float _restrict_thrust(std::array<float, NUM_THRUSTERS> thrusts);
   void robot_force_callback(const geometry_msgs::msg::WrenchStamped::SharedPtr msg);
+  void heartbeat_callback(const std_msgs::msg::Bool::SharedPtr msg);
 };
 
 }  // namespace thruster_driver
