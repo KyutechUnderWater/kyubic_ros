@@ -20,7 +20,8 @@ setup(
     tests_require=["pytest"],
     entry_points={
         "console_scripts": [
-            "oak_create_mapping = oak_create_mapping.oak_create_mapping:main"
+            "oak_main = oak_create_mapping.main:main",
+            "oak_create_mapping = oak_create_mapping.oak_create_mapping:main",
         ],
     },
 )
