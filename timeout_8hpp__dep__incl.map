@@ -1,10 +1,12 @@
 <map id="src/common/timer/include/timer/timeout.hpp" name="src/common/timer/include/timer/timeout.hpp">
-<area shape="rect" id="node1" title="timeout library" alt="" coords="278,5,470,45"/>
+<area shape="rect" id="node1" title="timeout library" alt="" coords="374,5,566,45"/>
 <area shape="rect" id="node2" href="$timeout_8cpp.html" title="timeout library" alt="" coords="5,101,169,141"/>
 <area shape="rect" id="node3" href="$depth__driver_8hpp.html" title="depth driver" alt="" coords="193,93,363,148"/>
 <area shape="rect" id="node5" href="$dvl__driver_8hpp.html" title="DVL driver." alt="" coords="387,93,553,148"/>
 <area shape="rect" id="node7" href="$imu__driver_8hpp.html" title="imu driver" alt="" coords="578,93,754,148"/>
-<area shape="rect" id="node4" href="$depth__driver_8cpp.html" title="depth driver" alt="" coords="193,196,363,236"/>
-<area shape="rect" id="node6" href="$dvl__driver_8cpp.html" title="DVL driver." alt="" coords="394,196,546,236"/>
-<area shape="rect" id="node8" href="$imu__driver_8cpp.html" title="imu driver" alt="" coords="587,196,745,236"/>
+<area shape="rect" id="node9" href="$thruster__driver_8hpp.html" title="thruster driver" alt="" coords="778,93,973,148"/>
+<area shape="rect" id="node4" href="$depth__driver_8cpp.html" title="depth driver" alt="" coords="193,203,363,243"/>
+<area shape="rect" id="node6" href="$dvl__driver_8cpp.html" title="DVL driver." alt="" coords="394,203,546,243"/>
+<area shape="rect" id="node8" href="$imu__driver_8cpp.html" title="imu driver" alt="" coords="587,203,745,243"/>
+<area shape="rect" id="node10" href="$thruster__driver_8cpp.html" title="thruster driver" alt="" coords="803,196,948,251"/>
 </map>

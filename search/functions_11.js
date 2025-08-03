@@ -17,5 +17,6 @@ var searchData=
   ['setup_14',['setup',['../classimu__driver_1_1g366_1_1G366.html#a7269ddb01c1546c1ba64c3a6753a8e75',1,'imu_driver::g366::G366']]],
   ['showstl_15',['showSTL',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#aa25809861cfa8b12e8028cc647a9923b',1,'trajectory_viewer::main::TrajectoryPlotter']]],
   ['software_5freset_16',['software_reset',['../classimu__driver_1_1g366_1_1G366.html#acd5743c08fcfc0673372cfbec720022c',1,'imu_driver::g366::G366']]],
-  ['stop_5fnode_17',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
+  ['still_5floop_17',['still_loop',['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html#a27a3257a96cead85b12114d001f89135',1,'oak_create_mapping::oak_create_mapping::OakCameraSubscriber']]],
+  ['stop_5fnode_18',['stop_node',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#aac5093aed715db3d3590320a246f9d2a',1,'driver_node_manager::driver_node_manager::NodeManager']]]
 ];

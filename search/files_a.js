@@ -1,19 +1,5 @@
 var searchData=
 [
-  ['p_5fpid_2ecpp_0',['p_pid.cpp',['../p__pid_8cpp.html',1,'']]],
-  ['p_5fpid_2ehpp_1',['p_pid.hpp',['../p__pid_8hpp.html',1,'']]],
-  ['p_5fpid_5fcontroller_2ecpp_2',['p_pid_controller.cpp',['../p__pid__controller_8cpp.html',1,'']]],
-  ['p_5fpid_5fcontroller_2ehpp_3',['p_pid_controller.hpp',['../p__pid__controller_8hpp.html',1,'']]],
-  ['path_5fcsv_5floader_2ecpp_4',['path_csv_loader.cpp',['../path__csv__loader_8cpp.html',1,'']]],
-  ['path_5fcsv_5floader_2ehpp_5',['path_csv_loader.hpp',['../path__csv__loader_8hpp.html',1,'']]],
-  ['path_5ffinder_2ecpp_6',['path_finder.cpp',['../path__finder_8cpp.html',1,'']]],
-  ['path_5ffinder_2ehpp_7',['path_finder.hpp',['../path__finder_8hpp.html',1,'']]],
-  ['path_5fgenerator_2epy_8',['path_generator.py',['../path__generator_8py.html',1,'']]],
-  ['pdla_5fplanner_2ecpp_9',['pdla_planner.cpp',['../pdla__planner_8cpp.html',1,'']]],
-  ['pdla_5fplanner_2ehpp_10',['pdla_planner.hpp',['../pdla__planner_8hpp.html',1,'']]],
-  ['pdla_5fplanner_2elaunch_2epy_11',['pdla_planner.launch.py',['../pdla__planner_8launch_8py.html',1,'']]],
-  ['pid_2ecpp_12',['pid.cpp',['../pid_8cpp.html',1,'']]],
-  ['pid_2ehpp_13',['pid.hpp',['../pid_8hpp.html',1,'']]],
-  ['planner_5flauncher_2elaunch_2epy_14',['planner_launcher.launch.py',['../planner__launcher_8launch_8py.html',1,'']]],
-  ['publish_5fodom_5ffrom_5fcsv_2epy_15',['publish_odom_from_csv.py',['../publish__odom__from__csv_8py.html',1,'']]]
+  ['main_2ecpp_0',['main.cpp',['../common_2geodetic__converter_2src_2main_8cpp.html',1,'(Global Namespace)'],['../control_2automatic_2planning_2path__planner_2src_2main_8cpp.html',1,'(Global Namespace)']]],
+  ['main_2epy_1',['main.py',['../real__time__plotter_2real__time__plotter_2main_8py.html',1,'(Global Namespace)'],['../trajectory__viewer_2trajectory__viewer_2main_8py.html',1,'(Global Namespace)'],['../trdi__toolz_2trdi__toolz_2main_8py.html',1,'(Global Namespace)']]]
 ];
