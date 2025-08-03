@@ -1,10 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="15,173,71,198"/>
+<area shape="rect" id="node1" title=" " alt="" coords="15,205,71,230"/>
 <area shape="rect" id="node2" href="$classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html" title=" " alt="" coords="180,5,359,45"/>
-<area shape="rect" id="node3" href="$classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html" title=" " alt="" coords="128,69,411,109"/>
-<area shape="rect" id="node4" href="$classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html" title=" " alt="" coords="166,133,373,173"/>
-<area shape="rect" id="node5" href="$classtrajectory__viewer_1_1main_1_1RosCommunicator.html" title=" " alt="" coords="169,325,369,365"/>
-<area shape="rect" id="node6" href="$classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html" title=" " alt="" coords="139,197,400,237"/>
-<area shape="rect" id="node7" href="$classtrdi__toolz_1_1main_1_1DVLCommandClient.html" title=" " alt="" coords="161,261,378,301"/>
-<area shape="rect" id="node8" title=" " alt="" coords="5,333,80,358"/>
+<area shape="rect" id="node3" href="$classoak__create__mapping_1_1main_1_1HeadlessOakCameraNode.html" title=" " alt="" coords="170,69,369,109"/>
+<area shape="rect" id="node4" href="$classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html" title=" " alt="" coords="128,133,411,173"/>
+<area shape="rect" id="node5" href="$classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html" title=" " alt="" coords="166,197,373,237"/>
+<area shape="rect" id="node6" href="$classtrajectory__viewer_1_1main_1_1RosCommunicator.html" title=" " alt="" coords="169,389,369,429"/>
+<area shape="rect" id="node7" href="$classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html" title=" " alt="" coords="139,261,400,301"/>
+<area shape="rect" id="node8" href="$classtrdi__toolz_1_1main_1_1DVLCommandClient.html" title=" " alt="" coords="161,325,378,365"/>
+<area shape="rect" id="node9" title=" " alt="" coords="5,397,80,422"/>
 </map>

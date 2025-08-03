@@ -5,7 +5,7 @@ var searchData=
   ['parse_5fargs_2',['parse_args',['../namespacepath__generator_1_1path__generator.html#ac94cb6df48eb69845e98e7b6c052c987',1,'path_generator::path_generator']]],
   ['pathcsvloader_3',['PathCsvLoader',['../classplanner_1_1PathCsvLoader.html#a661e1bc9b0a9e337e16ce45d3019f6b7',1,'planner::PathCsvLoader']]],
   ['pdlaplanner_4',['PDLAPlanner',['../classplanner_1_1PDLAPlanner.html#a08b9ceae676be3cea1a5eebf72f341b7',1,'planner::PDLAPlanner']]],
-  ['photo_5ftrigger_5fcallback_5',['photo_trigger_callback',['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html#ac1df2418f4c9225374f6757629ab2aa3',1,'oak_create_mapping::oak_create_mapping::OakCameraSubscriber']]],
+  ['photo_5ftrigger_5fcallback_5',['photo_trigger_callback',['../classoak__create__mapping_1_1main_1_1HeadlessOakCameraNode.html#ac73aead7865aacc058275d791f1f601f',1,'oak_create_mapping.main.HeadlessOakCameraNode.photo_trigger_callback()'],['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html#ac1df2418f4c9225374f6757629ab2aa3',1,'oak_create_mapping.oak_create_mapping.OakCameraSubscriber.photo_trigger_callback()']]],
   ['pid_5froll_5freset_6',['pid_roll_reset',['../classcontroller_1_1P__PIDController.html#a996c7f6b6edd7efc55d3b14fa723bae0',1,'controller::P_PIDController']]],
   ['pid_5froll_5fupdate_7',['pid_roll_update',['../classcontroller_1_1P__PIDController.html#aa65262a0cd9ca9246f9d52aeb43a9ae3',1,'controller::P_PIDController']]],
   ['pid_5fx_5freset_8',['pid_x_reset',['../classcontroller_1_1P__PIDController.html#a72478a52e245e777b634ae8680c215ba',1,'controller::P_PIDController']]],

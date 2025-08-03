@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['xy_0',['XY',['../structGSI_1_1XY.html',1,'GSI']]]
+  ['wrenchplanner_0',['WrenchPlanner',['../classplanner_1_1WrenchPlanner.html',1,'planner']]]
 ];

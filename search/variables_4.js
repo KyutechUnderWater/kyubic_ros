@@ -6,7 +6,7 @@ var searchData=
   ['depth_3',['depth',['../structdepth__driver_1_1DepthData.html#a7265a6a43a17a2d4b24eb11dc07ecabe',1,'depth_driver::DepthData::depth()'],['../structdvl__driver_1_1path__finder_1_1Data.html#a354cbefb4f97988261d57da200cfe97d',1,'dvl_driver::path_finder::Data::depth()']]],
   ['depth_5fsma_5fsumple_5fnum_4',['DEPTH_SMA_SUMPLE_NUM',['../namespacelocalization.html#afb72184cf64e23af3745ecf74ef5fd10',1,'localization']]],
   ['description_5',['description',['../namespacesetup.html#aedf461ec52a946bda975938ba0b93ec0',1,'setup']]],
-  ['device_6',['device',['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html#a82b5e4d0fd290191c0b4514fc16013f2',1,'oak_create_mapping::oak_create_mapping::OakCameraSubscriber']]],
+  ['device_6',['device',['../classoak__create__mapping_1_1main_1_1HeadlessOakCameraNode.html#add58479731c902efa8758525192a3174',1,'oak_create_mapping.main.HeadlessOakCameraNode.device()'],['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html#a82b5e4d0fd290191c0b4514fc16013f2',1,'oak_create_mapping.oak_create_mapping.OakCameraSubscriber.device()']]],
   ['df_7',['df',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a8debc88ab39eb3a2ee0c2e2592a3c579',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
   ['diag_5fstat_5frcomm0_8',['diag_stat_rcomm0',['../namespaceimu__driver_1_1g366.html#adf9bb01c9f38eb2c65267f2fc03e2fe4',1,'imu_driver::g366']]],
   ['dist_5fhx_9',['dist_hx',['../namespacethruster__driver.html#a8af5fb016aaa6fc2a2a7e4d0e610d497',1,'thruster_driver']]],

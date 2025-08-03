@@ -19,7 +19,7 @@ var searchData=
   ['get_5fstatus_5ffrom_5fgga_16',['get_status_from_gga',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#a1ae44104545969c79a72c377a6f918c0',1,'gnss_driver::gnss_driver::GnssPublisher']]],
   ['getoriginpoint_17',['getOriginPoint',['../namespaceGSI.html#ae55ae801eb81e0025afa529419aa01be',1,'GSI']]],
   ['gettermios_18',['getTermios',['../classserial_1_1Serial.html#a2ad33e557ba5332d3cc6ebfad2bc4ef4',1,'serial::Serial']]],
-  ['global_5fpose_19',['global_pose',['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html#af0e5d2d3785982bb15f1bf04533862a5',1,'oak_create_mapping::oak_create_mapping::OakCameraSubscriber']]],
+  ['global_5fpose_19',['global_pose',['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html#af0e5d2d3785982bb15f1bf04533862a5',1,'oak_create_mapping.oak_create_mapping.OakCameraSubscriber.global_pose()'],['../classoak__create__mapping_1_1main_1_1HeadlessOakCameraNode.html#aecff0989044b68ac39875831b5a3e6df',1,'oak_create_mapping.main.HeadlessOakCameraNode.global_pose()']]],
   ['gnss_5fdata_5fpublisher_5f_20',['gnss_data_publisher_',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#a4fdf0ad69d2021945940c7b1c3475578',1,'gnss_driver::gnss_driver::GnssPublisher']]],
   ['gnss_5fdriver_21',['gnss_driver',['../namespacegnss__driver.html',1,'gnss_driver'],['../namespacegnss__driver_1_1gnss__driver.html',1,'gnss_driver.gnss_driver']]],
   ['gnss_5fdriver_2elaunch_2epy_22',['gnss_driver.launch.py',['../gnss__driver_8launch_8py.html',1,'']]],

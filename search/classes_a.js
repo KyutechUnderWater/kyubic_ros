@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['oakcamerasubscriber_0',['OakCameraSubscriber',['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html',1,'oak_create_mapping::oak_create_mapping']]],
-  ['odometrypublisher_1',['OdometryPublisher',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html',1,'trajectory_viewer::publish_odom_from_csv']]]
+  ['nodemanager_0',['NodeManager',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html',1,'driver_node_manager::driver_node_manager']]]
 ];
