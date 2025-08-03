@@ -14,7 +14,7 @@ def generate_launch_description():
     )
     targets_topic_arg = DeclareLaunchArgument(
         "targets_topic",
-        default_value="/test_pid/targets",
+        default_value="/real_time_plotter/targets",
         description="Topic name for the target Z position",
     )
 

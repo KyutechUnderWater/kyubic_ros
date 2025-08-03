@@ -17,16 +17,25 @@
 #include "localization_msgs/msg/global_pose.hpp"
 #include "localization_msgs/srv/reset.hpp"
 #include <driver_msgs/msg/gnss.hpp>
+#include <driver_msgs/msg/imu.hpp>
 #include <localization_msgs/msg/global_pose.hpp>
 #include <localization_msgs/msg/odometry.hpp>
 #include <localization_msgs/srv/reset.hpp>
 #include <std_srvs/srv/trigger.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
 /**
  * @namespace localization
  * @brief localization
  */
 namespace localization
 {
+
+const std::array<std::array<double, 3>, 2> ANCHOR_POINTS_DMS[4] = {
+  {{{33, 59, 14.8}, {132, 12, 5.4}}},  // I系: 33°00′00″N, 129°30′00″E
+  {{{33, 59, 14.6}, {132, 12, 6.4}}},  // II系: 33°00′00″N, 131°00′00″E
+  {{{33, 59, 15.2}, {132, 12, 6.4}}},  // III系: 36°00′00″N, 132°10′30″E
+  {{{33, 59, 15.5}, {132, 12, 5.7}}},  // IV系: 33°00′00″N, 133°00′00″E
+};
 
 /** Create alias for namespace */
 using FutureAndRequestId = rclcpp::Client<std_srvs::srv::Trigger>::SharedFuture;
@@ -41,10 +50,12 @@ private:
   rclcpp::CallbackGroup::SharedPtr client_cb_group_;
   rclcpp::Publisher<localization_msgs::msg::Odometry>::SharedPtr pub_odom_;
   rclcpp::Publisher<localization_msgs::msg::GlobalPose>::SharedPtr pub_global_;
+  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_depth_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_imu_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_dvl_;
   rclcpp::Subscription<driver_msgs::msg::Gnss>::SharedPtr sub_gnss_;
+  rclcpp::Subscription<driver_msgs::msg::IMU>::SharedPtr sub_imu_raw_;
   rclcpp::Service<localization_msgs::srv::Reset>::SharedPtr srv_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_depth_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_imu_;
@@ -54,6 +65,7 @@ private:
 
   std::shared_ptr<localization_msgs::msg::Odometry> odom_msg_;
   std::shared_ptr<driver_msgs::msg::Gnss> gnss_msg_;
+  std::shared_ptr<driver_msgs::msg::IMU> imu_raw_msg_;
   std::shared_ptr<localization_msgs::msg::GlobalPose> global_pose_msg_;
   GSI::LatLon origin_geodetic;
   GSI::LatLon reference_geodetic;
@@ -88,6 +100,12 @@ private:
    * @details Acquisitionn the gnss data.
    */
   void gnss_callback(const driver_msgs::msg::Gnss::UniquePtr msg);
+
+  /**
+   * @brief Update gnss data
+   * @details Acquisitionn the gnss data.
+   */
+  void imu_raw_callback(const driver_msgs::msg::IMU::UniquePtr msg);
 
   /**
    * @brief calculate geodetic uding gnss and dvl odometry

@@ -17,6 +17,7 @@
 #include "driver_msgs/msg/gnss.hpp"
 #include "localization_msgs/srv/reset.hpp"
 
+#include <array>
 #include <functional>
 #include <future>
 #include <memory>
@@ -47,6 +48,8 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   // Create publisher
   pub_odom_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
   pub_global_ = create_publisher<localization_msgs::msg::GlobalPose>("global_pose", qos);
+  marker_pub_ =
+    this->create_publisher<visualization_msgs::msg::MarkerArray>("/fixed_locations", 10);
 
   // Create subscription
   sub_depth_ = create_subscription<localization_msgs::msg::Odometry>(
@@ -57,6 +60,8 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
     "dvl/odom", qos, std::bind(&Localization::dvl_callback, this, std::placeholders::_1));
   sub_gnss_ = create_subscription<driver_msgs::msg::Gnss>(
     "gnss", qos, std::bind(&Localization::gnss_callback, this, std::placeholders::_1));
+  sub_imu_raw_ = create_subscription<driver_msgs::msg::IMU>(
+    "imu", qos, std::bind(&Localization::imu_raw_callback, this, std::placeholders::_1));
 
   // Create server
   srv_ = create_service<localization_msgs::srv::Reset>(
@@ -123,6 +128,12 @@ void Localization::gnss_callback(driver_msgs::msg::Gnss::UniquePtr msg)
   RCLCPP_DEBUG(this->get_logger(), "Updated GNSS data");
 }
 
+void Localization::imu_raw_callback(driver_msgs::msg::IMU::UniquePtr msg)
+{
+  imu_raw_msg_ = std::move(msg);
+  RCLCPP_DEBUG(this->get_logger(), "Updated GNSS data");
+}
+
 void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::SharedPtr odom_)
 {
   double azimuth_rad =
@@ -148,6 +159,77 @@ void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::Sha
   global_pose_msg_->ref_pose.plane_y = reference_plane.y;
   global_pose_msg_->ref_pose.meridian_convergence = reference_meridian_convergence;
   global_pose_msg_->azimuth = azimuth;
+
+  std::array<GSI::XY, 6> xy_geo;
+  for (int i = 0; i < 4; i++) {
+    GSI::LatLon anchor;
+    anchor.latitude = GSI::dms2deg(ANCHOR_POINTS_DMS[i][0]);
+    anchor.longitude = GSI::dms2deg(ANCHOR_POINTS_DMS[i][1]);
+    xy_geo[i] = GSI::bl2xy(
+      anchor.latitude, anchor.longitude, origin_geodetic.latitude, origin_geodetic.longitude);
+  }
+  xy_geo[4] = GSI::bl2xy(
+    reference_geodetic.latitude, reference_geodetic.longitude, origin_geodetic.latitude,
+    origin_geodetic.longitude);
+  xy_geo[5] = GSI::bl2xy(
+    current_geodetic.latitude, current_geodetic.longitude, origin_geodetic.latitude,
+    origin_geodetic.longitude);
+
+  int id = 0;
+  double scale = 1.0;
+  visualization_msgs::msg::MarkerArray marker_array;
+
+  visualization_msgs::msg::Marker marker;
+  marker.header.frame_id = "map";
+  marker.header.stamp = this->get_clock()->now();
+  marker.ns = "fixed_points";
+  marker.id = id++;
+  marker.type = visualization_msgs::msg::Marker::CUBE;
+  marker.action = visualization_msgs::msg::Marker::ADD;
+  marker.pose.position.x = 0.0;
+  marker.pose.position.y = 0.0;
+  marker.scale.x = scale;
+  marker.scale.y = scale;
+  marker.scale.z = scale;
+  marker.color.a = 0.8;
+  marker.color.r = 1.0;
+  marker.color.g = 0.0;
+  marker.color.b = 0.0;
+  marker.lifetime = rclcpp::Duration(0, 0);
+  marker_array.markers.push_back(marker);
+
+  for (size_t i = 1; i < xy_geo.size(); i++) {
+    xy_geo[i].x -= xy_geo[0].x;
+    xy_geo[i].y -= xy_geo[0].y;
+
+    visualization_msgs::msg::Marker marker;
+    marker.header.frame_id = "map";
+    marker.header.stamp = this->get_clock()->now();
+    marker.ns = "fixed_points";
+    marker.id = id++;
+    marker.type = visualization_msgs::msg::Marker::CUBE;
+    marker.action = visualization_msgs::msg::Marker::ADD;
+    marker.pose.position.x = xy_geo[i].x;
+    marker.pose.position.y = xy_geo[i].y;
+    marker.scale.x = scale;
+    marker.scale.y = scale;
+    marker.scale.z = scale;
+    marker.color.a = 0.8;
+    marker.color.r = 1.0;
+    marker.color.g = 0.0;
+    marker.color.b = 0.0;
+    marker.lifetime = rclcpp::Duration(0, 0);
+    marker_array.markers.push_back(marker);
+  }
+  marker_array.markers[0].color.r = 1.0;
+  marker_array.markers[0].color.g = 1.0;
+  marker_array.markers[0].color.b = 1.0;
+  marker_array.markers[4].color.r = 1.0;
+  marker_array.markers[4].color.g = 1.0;
+  marker_array.markers[5].color.r = 0.0;
+  marker_array.markers[5].color.b = 1.0;
+
+  marker_pub_->publish(marker_array);
 }
 
 void Localization::publisher()
@@ -179,7 +261,7 @@ void Localization::reset_callback(
   const localization_msgs::srv::Reset::Request::SharedPtr reqest,
   const localization_msgs::srv::Reset::Response::SharedPtr response)
 {
-  azimuth = reqest->azimuth;
+  azimuth = imu_raw_msg_->orient.z;
   reference_geodetic.latitude = gnss_msg_->fix.latitude;
   reference_geodetic.longitude = gnss_msg_->fix.longitude;
   reference_plane = GSI::bl2xy(
