@@ -152,7 +152,7 @@ void ThrusterDriver::robot_force_callback(const geometry_msgs::msg::WrenchStampe
 void ThrusterDriver::heartbeat_callback(const std_msgs::msg::Bool::SharedPtr msg)
 {
   heartbeat = msg->data;
-  timeout_->reset(this->get_clock()->now());
+  if (heartbeat) timeout_->reset(this->get_clock()->now());
 }
 
 }  // namespace thruster_driver
