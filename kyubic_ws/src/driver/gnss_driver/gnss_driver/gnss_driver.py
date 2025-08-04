@@ -14,7 +14,7 @@ class GnssPublisher(Node):
         super().__init__("gnss_publisher_node")
 
         # パラメータを宣言
-        self.declare_parameter("tcp_ip", "172.30.51.180")
+        self.declare_parameter("tcp_ip", "192.168.9.20")
         self.declare_parameter("tcp_port", 5050)
         self.declare_parameter("hdop_error_factor", 2.0)  # HDOPを分散に変換する係数
 
@@ -28,16 +28,15 @@ class GnssPublisher(Node):
         )
 
         # Publisherを作成
-        #self.fix_publisher_ = self.create_publisher(NavSatFix, "/gps/fix", 10)
-        #self.heading_publisher_ = self.create_publisher(Float64, "/gps/heading", 10)
-        #self.snr_publisher_ = self.create_publisher(Float32MultiArray, "/gps/snr", 10)
+        # self.fix_publisher_ = self.create_publisher(NavSatFix, "/gps/fix", 10)
+        # self.heading_publisher_ = self.create_publisher(Float64, "/gps/heading", 10)
+        # self.snr_publisher_ = self.create_publisher(Float32MultiArray, "/gps/snr", 10)
         self.gnss_data_publisher_ = self.create_publisher(Gnss, "gnss", 10)
 
         self.socket = None
         self.latest_azimuth = None  # 最新の方位情報を保持する変数
         self.gsv_sats = {}  # GSVメッセージから衛星情報を一時保存する辞書
         self.latest_snr_msg = Float32MultiArray()
-
 
         # 接続とデータ受信を開始
         self.connect_and_read()
@@ -79,7 +78,7 @@ class GnssPublisher(Node):
                     try:
                         msg = pynmea2.parse(line)
 
-                        # NMEAメッセージの種別に応じた処理 
+                        # NMEAメッセージの種別に応じた処理
                         if isinstance(msg, pynmea2.types.talker.HDT):
                             if hasattr(msg, "heading") and msg.heading is not None:
                                 self.latest_azimuth = msg.heading
@@ -110,18 +109,20 @@ class GnssPublisher(Node):
                                 if prn is not None and snr is not None:
                                     # pynmea2では空のSNRは空文字列になるため、intに変換
                                     try:
-                                        self.gsv_sats[msg.talker,prn] = int(snr)#msg.talkerを追加
+                                        self.gsv_sats[msg.talker, prn] = int(
+                                            snr
+                                        )  # msg.talkerを追加
                                     except (ValueError, TypeError):
                                         pass  # 変換できない場合は無視
 
                             # 分割メッセージの最後なら、トピックに保存
                             if msg.msg_num == msg.num_messages:
-                                #snr_msg = Float32MultiArray()
+                                # snr_msg = Float32MultiArray()
                                 # 辞書から信号強度のリストを作成
                                 snr_values = [float(s) for s in self.gsv_sats.values()]
                                 self.latest_snr_msg.data = snr_values
 
-                                #self.snr_publisher_.publish(snr_msg)
+                                # self.snr_publisher_.publish(snr_msg)
                                 self.get_logger().info(
                                     f"Published satellite SNRs ({
                                         len(self.gsv_sats)
@@ -160,14 +161,18 @@ class GnssPublisher(Node):
                             try:
                                 hdop = float(msg.horizontal_dil)
                                 if hdop > 0:
-                                    #通常の処理
+                                    # 通常の処理
                                     h_variance = (self.hdop_error_factor * hdop) ** 2
-                                    v_variance = (self.hdop_error_factor * hdop * 1.5) ** 2
+                                    v_variance = (
+                                        self.hdop_error_factor * hdop * 1.5
+                                    ) ** 2
 
                                     fix_msg.position_covariance[0] = h_variance
                                     fix_msg.position_covariance[4] = h_variance
                                     fix_msg.position_covariance[8] = v_variance
-                                    fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_DIAGONAL_KNOWN
+                                    fix_msg.position_covariance_type = (
+                                        NavSatFix.COVARIANCE_TYPE_DIAGONAL_KNOWN
+                                    )
 
                                     self.get_logger().info(
                                         f"Publishing: time = {fix_msg.header.stamp.sec}, "
@@ -176,34 +181,36 @@ class GnssPublisher(Node):
                                     )
                                 else:
                                     # hdopが0以下だった場合
-                                    fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
+                                    fix_msg.position_covariance_type = (
+                                        NavSatFix.COVARIANCE_TYPE_UNKNOWN
+                                    )
                                     self.get_logger().info(
                                         f"Publishing: time ={fix_msg.header.stamp.sec}, "
                                         f"qual ={fix_msg.status.status}, lat = {msg.latitude:.6f}, long = {msg.longitude:.6f}, "
                                     )
                             except (ValueError, TypeError, AttributeError):
                                 # hdopがNone, 空文字列, または不正な値だった場合
-                                fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
+                                fix_msg.position_covariance_type = (
+                                    NavSatFix.COVARIANCE_TYPE_UNKNOWN
+                                )
                                 self.get_logger().info(
                                     f"Publishing: time = {fix_msg.header.stamp.sec}, "
                                     f"qual ={fix_msg.status.status}, lat ={msg.latitude:.6f}, long ={msg.longitude:.6f}, "
                                 )
-                                    
 
-
-                            #self.fix_publisher_.publish(fix_msg)
+                            # self.fix_publisher_.publish(fix_msg)
                             gnss_data_msg.fix = fix_msg
-                            
-                            gnss_data_msg.snr = self.latest_snr_msg.data 
 
-                            # Float64メッセージ（方位）の作成と配信 
+                            gnss_data_msg.snr = self.latest_snr_msg.data
+
+                            # Float64メッセージ（方位）の作成と配信
                             if self.latest_azimuth is not None:
                                 azimuth_msg = Float64()
                                 azimuth_msg.data = (
                                     self.latest_azimuth
                                 )  # データを直接代入
 
-                                #self.heading_publisher_.publish(azimuth_msg)
+                                # self.heading_publisher_.publish(azimuth_msg)
                                 gnss_data_msg.azimuth = azimuth_msg.data
 
                                 self.get_logger().info(
