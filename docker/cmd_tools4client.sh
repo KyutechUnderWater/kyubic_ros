@@ -19,9 +19,12 @@ set_alias_command() {
     fi
 
 }
-set_alias_command "alias kyubic_main_ping='ping 172.30.51.160'"
-set_alias_command "alias kyubic_img_ping='ping 172.30.51.155'"
-set_alias_command "alias kyubic_mic_ping='ping 172.30.51.170'"
+
+set_alias_command "alias kyubic_dvl_ping='ping 192.168.9.10'"
+set_alias_command "alias kyubic_gnss_ping='ping 192.168.9.20'"
+set_alias_command "alias kyubic_main_ping='ping 192.168.9.100'"
+set_alias_command "alias kyubic_img_ping='ping 192.168.9.110'"
+set_alias_command "alias kyubic_mic_ping='ping 192.168.9.120'"
 set_alias_command "alias kyubic_main_shutdown='ssh kyubic_main sudo -S shutdown -h now'"
 set_alias_command "alias kyubic_img_shutdown='ssh kyubic_img sudo -S shutdown -h now'"
 set_alias_command "alias kyubic_mic_shutdown='ssh kyubic_mic sudo -S shutdown -h now'"
