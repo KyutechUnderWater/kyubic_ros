@@ -9,5 +9,6 @@ var searchData=
   ['y_5fvel_5fbtm_6',['Y_VEL_BTM',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da1baf87a4bc015c9827607b895d45c820',1,'dvl_driver::path_finder']]],
   ['y_5fvel_5fref_5flayer_7',['Y_VEL_REF_LAYER',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da33f61103a8708f9cd01e5342bd8c0535',1,'dvl_driver::path_finder']]],
   ['yaw_8',['yaw',['../classplanner_1_1PoseData.html#a8389b0ae6b12fa24850f166a69a1180c',1,'planner::PoseData::yaw()'],['../structplanner_1_1Tolerance.html#ae38b61000d22f88eda5f37f202dfc21c',1,'planner::Tolerance::yaw()'],['../structimu__driver_1_1g366_1_1DATA.html#ab1fd3a19f5e2587500d74de5e4176647',1,'imu_driver::g366::DATA::yaw()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#afc04e21b8480421135eecfd320765740',1,'imu_driver::g366::RAW_DATA_T::yaw()']]],
-  ['yaw_5finput_9',['yaw_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a852c9ae42ee06159cee5ce4339f9eea6',1,'trajectory_viewer::main::MainWindow']]]
+  ['yaw_5finput_9',['yaw_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a852c9ae42ee06159cee5ce4339f9eea6',1,'trajectory_viewer::main::MainWindow']]],
+  ['yellow_10',['yellow',['../classweb__controller_1_1main_1_1Colors.html#a9aa39fd92f8c8a2e6658743ee6c1a634',1,'web_controller::main::Colors']]]
 ];

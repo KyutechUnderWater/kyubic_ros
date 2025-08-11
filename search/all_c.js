@@ -28,6 +28,6 @@ var searchData=
   ['localization_5fcomponent_2ehpp_25',['localization_component.hpp',['../localization__component_8hpp.html',1,'']]],
   ['localization_5fcomponents_26',['localization_components',['../namespacelocalization__components.html',1,'']]],
   ['localization_5fcomponents_2elaunch_2epy_27',['localization_components.launch.py',['../localization__components_8launch_8py.html',1,'']]],
-  ['lock_28',['lock',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#aaf0d192f0d2d0615df2e16386ac76be5',1,'real_time_plotter::main::MultiDimSubscriber']]],
+  ['lock_28',['lock',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#aaf0d192f0d2d0615df2e16386ac76be5',1,'real_time_plotter.main.MultiDimSubscriber.lock()'],['../classweb__controller_1_1main_1_1WebVisualizerNode.html#a4758b06d74f95a24eeeab392d9056a0e',1,'web_controller.main.WebVisualizerNode.lock()']]],
   ['longitude_29',['longitude',['../structGSI_1_1LatLon.html#adde4dfa4cf0f5470cb538ba7c1b52616',1,'GSI::LatLon']]]
 ];

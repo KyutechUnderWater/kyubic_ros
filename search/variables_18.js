@@ -7,5 +7,6 @@ var searchData=
   ['y_5finput_4',['y_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#acb8719529d703c0e2e9646d3fb210b3d',1,'trajectory_viewer::main::MainWindow']]],
   ['y_5fvel_5fbottom_5',['y_vel_bottom',['../structdvl__driver_1_1path__finder_1_1Data.html#a537deaf6551206c898b5687a1de8203c',1,'dvl_driver::path_finder::Data']]],
   ['yaw_6',['yaw',['../classplanner_1_1PoseData.html#a8389b0ae6b12fa24850f166a69a1180c',1,'planner::PoseData::yaw()'],['../structplanner_1_1Tolerance.html#ae38b61000d22f88eda5f37f202dfc21c',1,'planner::Tolerance::yaw()'],['../structimu__driver_1_1g366_1_1DATA.html#ab1fd3a19f5e2587500d74de5e4176647',1,'imu_driver::g366::DATA::yaw()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#afc04e21b8480421135eecfd320765740',1,'imu_driver::g366::RAW_DATA_T::yaw()']]],
-  ['yaw_5finput_7',['yaw_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a852c9ae42ee06159cee5ce4339f9eea6',1,'trajectory_viewer::main::MainWindow']]]
+  ['yaw_5finput_7',['yaw_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a852c9ae42ee06159cee5ce4339f9eea6',1,'trajectory_viewer::main::MainWindow']]],
+  ['yellow_8',['yellow',['../classweb__controller_1_1main_1_1Colors.html#a9aa39fd92f8c8a2e6658743ee6c1a634',1,'web_controller::main::Colors']]]
 ];

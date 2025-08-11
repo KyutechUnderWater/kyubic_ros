@@ -22,5 +22,6 @@ var searchData=
   ['print_19',['print',['../classplanner_1_1ParamData.html#a2137938b1f81e5ccb2a7e93639bbb87a',1,'planner::ParamData::print()'],['../classplanner_1_1PoseData.html#afaab4086edd87569ae26586104316456',1,'planner::PoseData::print()']]],
   ['print_5finfo_20',['print_info',['../classdvl__driver_1_1path__finder_1_1Listener.html#aac8f10ef6cf61256ca128a40cb0cff89',1,'dvl_driver::path_finder::Listener']]],
   ['publish_5fodometry_21',['publish_odometry',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a82539d76239e3120a690339dcab50965',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
-  ['publish_5ftargets_22',['publish_targets',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#ac546eaba7dbeecae3296e4d6a43e38a8',1,'trajectory_viewer::main::RosCommunicator']]]
+  ['publish_5ftarget_22',['publish_target',['../classweb__controller_1_1main_1_1WebVisualizerNode.html#af06fd0eeefb2169fcea03dca9b051bb7',1,'web_controller::main::WebVisualizerNode']]],
+  ['publish_5ftargets_23',['publish_targets',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#ac546eaba7dbeecae3296e4d6a43e38a8',1,'trajectory_viewer::main::RosCommunicator']]]
 ];

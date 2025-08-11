@@ -7,8 +7,9 @@ var searchData=
   ['anchor_5fitem3_4',['anchor_item3',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#aee2655da2bd5a8fa83eeef49b6126aa6',1,'trajectory_viewer::main::TrajectoryPlotter']]],
   ['anchor_5fitem4_5',['anchor_item4',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#afb52dec9dd726b61cf1fbe5b0db48c9c',1,'trajectory_viewer::main::TrajectoryPlotter']]],
   ['anchor_5fpoints_5fdms_6',['ANCHOR_POINTS_DMS',['../namespacelocalization.html#a310f6a400b67bac345d5ab1d8cff52cb',1,'localization']]],
-  ['atti_5fmotion_5frcomm1_7',['atti_motion_rcomm1',['../namespaceimu__driver_1_1g366.html#af8736f98cf693e3841940eabb89b1e12',1,'imu_driver::g366']]],
-  ['atti_5fmotion_5fwcomm1_8',['atti_motion_wcomm1',['../namespaceimu__driver_1_1g366.html#a80efb54277cc7ff567822fad4cc5a3e6',1,'imu_driver::g366']]],
-  ['atti_5fsf_9',['atti_sf',['../namespaceimu__driver_1_1g366.html#adf9f35c12cdd1d55abd57bdfbd8483ea',1,'imu_driver::g366']]],
-  ['attitude_10',['attitude',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a953d07eb3e34c8d2ecdbe4cc87ab0d0e',1,'trajectory_viewer::main::TrajectoryPlotter']]]
+  ['aqua_7',['aqua',['../classweb__controller_1_1main_1_1Colors.html#a0d9cfee1544c6705b4d80a80cf2de930',1,'web_controller::main::Colors']]],
+  ['atti_5fmotion_5frcomm1_8',['atti_motion_rcomm1',['../namespaceimu__driver_1_1g366.html#af8736f98cf693e3841940eabb89b1e12',1,'imu_driver::g366']]],
+  ['atti_5fmotion_5fwcomm1_9',['atti_motion_wcomm1',['../namespaceimu__driver_1_1g366.html#a80efb54277cc7ff567822fad4cc5a3e6',1,'imu_driver::g366']]],
+  ['atti_5fsf_10',['atti_sf',['../namespaceimu__driver_1_1g366.html#adf9f35c12cdd1d55abd57bdfbd8483ea',1,'imu_driver::g366']]],
+  ['attitude_11',['attitude',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a953d07eb3e34c8d2ecdbe4cc87ab0d0e',1,'trajectory_viewer::main::TrajectoryPlotter']]]
 ];
