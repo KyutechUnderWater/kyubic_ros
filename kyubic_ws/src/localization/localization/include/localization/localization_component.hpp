@@ -63,14 +63,14 @@ private:
 
   rclcpp::TimerBase::SharedPtr timer_;
 
+  std::shared_ptr<common::GeodeticConverter> geo_converter_;
   std::shared_ptr<localization_msgs::msg::Odometry> odom_msg_;
   std::shared_ptr<driver_msgs::msg::Gnss> gnss_msg_;
   std::shared_ptr<driver_msgs::msg::IMU> imu_raw_msg_;
   std::shared_ptr<localization_msgs::msg::GlobalPose> global_pose_msg_;
-  GSI::LatLon origin_geodetic;
-  GSI::LatLon reference_geodetic;
-  GSI::XY reference_plane;
-  double reference_meridian_convergence;
+  common::Geodetic origin_geodetic;
+  common::Geodetic reference_geodetic;
+  common::PlaneXY reference_plane;
   double azimuth;
 
   bool gnss_updated = false;
