@@ -15,15 +15,37 @@ endif()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
+
 # add library
+## p_pid_controller
 ament_auto_add_library(p_pid_controller SHARED
   ./src/p_pid_controller.cpp
 )
 # ament_autoがyaml-cppを検出しないため，手動で追記
 target_link_libraries(p_pid_controller yaml-cpp)
 
+## test_pid_component
+ament_auto_add_library(test_p_pid_component SHARED
+  ./src/test_p_pid.cpp
+)
+
+rclcpp_components_register_node(test_p_pid_component
+  PLUGIN "controller::TestPPID"
+  EXECUTABLE test_p_pid_component_node
+)
+
+
+# set install config
+install(TARGETS
+  test_p_pid_component
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
 install(DIRECTORY
   config
+  launch
   DESTINATION share/${PROJECT_NAME}
 )
 
