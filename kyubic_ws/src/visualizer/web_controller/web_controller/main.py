@@ -12,7 +12,7 @@ from scipy.spatial.transform import Rotation
 from threading import Thread, Lock
 
 # --- ROS2 Message Imports ---
-from real_time_plotter_msgs.msg import Targets
+from p_pid_controller_msgs.msg import Targets
 from localization_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 
@@ -166,7 +166,7 @@ class WebVisualizerNode(Node):
             with self.server.gui.add_folder("Targets Controller"):
                 # Position Input
                 self.gui_target_posi = self.server.gui.add_vector3(
-                    "Position (x,y,z)[m]", initial_value=(1.0, 1.0, 1.0), step=0.1
+                    "Position (x,y,z)[m]", initial_value=(0.0, 0.0, 0.0), step=0.01
                 )
                 self.gui_z_type = self.server.gui.add_dropdown(
                     "z-type", ("depth", "altitude")
@@ -385,13 +385,15 @@ class WebVisualizerNode(Node):
             self.targets.pose.x = posi[0]
             self.targets.pose.y = posi[1]
 
-            z_value = posi[2]
+            z_value = posi[2] if posi[2] > 0 else 0.0
             if self.gui_z_type.value == "altitude":
                 self.targets.pose.z_altitude = z_value
+                self.targets.z_mode = Targets.Z_MODE_ALTITUDE
             else:
                 self.targets.pose.z_depth = z_value
+                self.targets.z_mode = Targets.Z_MODE_DEPTH
 
-            orient = tuple[float, float] = self.gui_target_orient.value
+            orient: tuple[float, float] = self.gui_target_orient.value
             self.targets.pose.roll = orient[0]
             self.targets.pose.yaw = orient[1]
 
@@ -429,6 +431,7 @@ class WebVisualizerNode(Node):
 
     def publish_target(self):
         """Publish targets as a ROS2 message."""
+        self.targets.header.stamp = self.get_clock().now().to_msg()
         self.target_publisher.publish(self.targets)
 
     def front_camera_callback(self, msg: Image):

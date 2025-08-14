@@ -10,7 +10,7 @@ import rclpy
 from rclpy.node import Node
 from visualization_msgs.msg import MarkerArray
 from localization_msgs.msg import Odometry
-from real_time_plotter_msgs.msg import Targets
+from p_pid_controller_msgs.msg import Targets
 
 # PyQtとPyQtGraph関連のインポート
 from PyQt6.QtWidgets import (
