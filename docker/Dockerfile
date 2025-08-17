@@ -41,7 +41,7 @@ RUN apt update && apt install -y locales && \
 ##################
 ## Install variety
 ##################
-RUN apt update && apt install -y sudo gosu iproute2 iputils-ping curl gnupg2 lsb-release \
+RUN apt update && apt install -y sudo gosu iproute2 iputils-ping curl gnupg2 lsb-release ninja-build \
 	screen tmux vim git wget locate python3-pip python3-venv python3-flake8-docstrings doxygen && \
 	updatedb
 
