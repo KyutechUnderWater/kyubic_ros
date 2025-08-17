@@ -6,5 +6,6 @@ var searchData=
   ['end_5fpoint_3',['end_point',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a137b3769f2f13b279fa6430a51772529',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
   ['entry_5fpoints_4',['entry_points',['../namespacesetup.html#ada7058afc98897f073d3f3b8b9157059',1,'setup']]],
   ['error_5',['error',['../namespacedvl__driver_1_1path__finder.html#a173fe1164d1723004799c5643952b5c1',1,'dvl_driver::path_finder']]],
-  ['example_5fpyqtgraph_2epy_6',['example_pyqtgraph.py',['../example__pyqtgraph_8py.html',1,'']]]
+  ['example_5fpyqtgraph_2epy_6',['example_pyqtgraph.py',['../example__pyqtgraph_8py.html',1,'']]],
+  ['extras_5frequire_7',['extras_require',['../namespacesetup.html#a5081a5a3f9d0dee597ab99a7fdc362df',1,'setup']]]
 ];
