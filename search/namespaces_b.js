@@ -8,7 +8,7 @@ var searchData=
   ['test_5fcopyright_5',['test_copyright',['../namespacetest__copyright.html',1,'']]],
   ['test_5fflake8_6',['test_flake8',['../namespacetest__flake8.html',1,'']]],
   ['test_5fpep257_7',['test_pep257',['../namespacetest__pep257.html',1,'']]],
-  ['test_5fpid_5flaunch_8',['test_pid_launch',['../namespacetest__pid__launch.html',1,'']]],
+  ['test_5fpid_8',['test_pid',['../namespacetest__pid.html',1,'']]],
   ['thruster_5fdriver_9',['thruster_driver',['../namespacethruster__driver.html',1,'']]],
   ['timer_10',['timer',['../namespacetimer.html',1,'']]],
   ['tools_11',['tools',['../namespacetools.html',1,'']]],
