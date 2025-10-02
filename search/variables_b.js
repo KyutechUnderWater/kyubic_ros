@@ -3,11 +3,11 @@ var searchData=
   ['latest_5fazimuth_0',['latest_azimuth',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#a21b28fd483e1071c9919b1782c15284e',1,'gnss_driver::gnss_driver::GnssPublisher']]],
   ['latest_5fsnr_5fmsg_1',['latest_snr_msg',['../classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html#a6c302aae393bc3ac2029edc0b937600b',1,'gnss_driver::gnss_driver::GnssPublisher']]],
   ['latest_5ftargets_2',['latest_targets',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#a417ef43bed72e9a4f8138e7e4d346fc9',1,'real_time_plotter::main::MultiDimSubscriber']]],
-  ['latitude_3',['latitude',['../structGSI_1_1LatLon.html#ab063bc1c1a3114ab8ba889af9bee47f8',1,'GSI::LatLon']]],
+  ['latitude_3',['latitude',['../structcommon_1_1Geodetic.html#a3b14ae970b28f7e8ec3e4322cb3cd205',1,'common::Geodetic']]],
   ['layout_4',['layout',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a7c91a9fa0b2dca3916661983d1a3085a',1,'real_time_plotter::main::MultiGraphViewer']]],
   ['leak_5fstatus_5',['leak_status',['../structdvl__driver_1_1path__finder_1_1Data.html#a3f6e67ef9053385376a3b5d83cc6d480',1,'dvl_driver::path_finder::Data']]],
   ['license_6',['license',['../namespacesetup.html#a8ed6f50a28bd6a8794f8e1153baa6de9',1,'setup']]],
   ['lo_7',['lo',['../structpid__controller_1_1PositionP__PIDParameter.html#ad2d18cf7efb5f2e8695568512b86db2f',1,'pid_controller::PositionP_PIDParameter::lo()'],['../structpid__controller_1_1VelocityP__PIDParameter.html#a42afd954e15ec491120439b2a3c1b8de',1,'pid_controller::VelocityP_PIDParameter::lo()'],['../structpid__controller_1_1VelocityPIDParameter.html#aed090063319ade0be7ff8f037a94952f',1,'pid_controller::VelocityPIDParameter::lo()']]],
   ['lock_8',['lock',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#aaf0d192f0d2d0615df2e16386ac76be5',1,'real_time_plotter.main.MultiDimSubscriber.lock()'],['../classweb__controller_1_1main_1_1WebVisualizerNode.html#a4758b06d74f95a24eeeab392d9056a0e',1,'web_controller.main.WebVisualizerNode.lock()']]],
-  ['longitude_9',['longitude',['../structGSI_1_1LatLon.html#adde4dfa4cf0f5470cb538ba7c1b52616',1,'GSI::LatLon']]]
+  ['longitude_9',['longitude',['../structcommon_1_1Geodetic.html#a6f3530063d72584d2806737e247f6d5b',1,'common::Geodetic']]]
 ];

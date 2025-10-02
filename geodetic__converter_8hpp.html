@@ -77,21 +77,23 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">geodetic_converter.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>geodetic to plane converter library  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;array&gt;</code><br />
-<code>#include &lt;cstdint&gt;</code><br />
+<code>#include &lt;cmath&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for geodetic_converter.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="geodetic__converter_8hpp__incl.png" border="0" usemap="#asrc_2common_2geodetic__converter_2include_2geodetic__converter_2geodetic__converter_8hpp" alt=""/></div>
 <map name="asrc_2common_2geodetic__converter_2include_2geodetic__converter_2geodetic__converter_8hpp" id="asrc_2common_2geodetic__converter_2include_2geodetic__converter_2geodetic__converter_8hpp">
-<area shape="rect" title=" " alt="" coords="5,5,252,60"/>
-<area shape="rect" title=" " alt="" coords="58,108,114,133"/>
-<area shape="rect" title=" " alt="" coords="138,108,205,133"/>
+<area shape="rect" title="geodetic to plane converter library" alt="" coords="5,5,252,60"/>
+<area shape="rect" title=" " alt="" coords="59,108,115,133"/>
+<area shape="rect" title=" " alt="" coords="140,108,203,133"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -99,9 +101,9 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="geodetic__converter_8hpp__dep__incl.png" border="0" usemap="#asrc_2common_2geodetic__converter_2include_2geodetic__converter_2geodetic__converter_8hppdep" alt=""/></div>
 <map name="asrc_2common_2geodetic__converter_2include_2geodetic__converter_2geodetic__converter_8hppdep" id="asrc_2common_2geodetic__converter_2include_2geodetic__converter_2geodetic__converter_8hppdep">
-<area shape="rect" title=" " alt="" coords="285,5,532,60"/>
-<area shape="rect" href="geodetic__converter_8cpp.html" title=" " alt="" coords="5,108,180,163"/>
-<area shape="rect" href="common_2geodetic__converter_2src_2main_8cpp.html" title=" " alt="" coords="205,115,383,155"/>
+<area shape="rect" title="geodetic to plane converter library" alt="" coords="285,5,532,60"/>
+<area shape="rect" href="geodetic__converter_8cpp.html" title="geodetic to plane converter library" alt="" coords="5,108,180,163"/>
+<area shape="rect" href="common_2geodetic__converter_2src_2main_8cpp.html" title="geodetic to plane converter example" alt="" coords="205,115,383,155"/>
 <area shape="rect" href="localization__component_8hpp.html" title=" " alt="" coords="408,108,639,163"/>
 <area shape="rect" href="localization__component_8cpp.html" title="localization using dvl , imu, and depth" alt="" coords="484,211,715,251"/>
 </map>
@@ -111,40 +113,34 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structGSI_1_1LatLon.html">GSI::LatLon</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">緯度経度を格納する構造体（単位：度）  <a href="structGSI_1_1LatLon.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1Geodetic.html">common::Geodetic</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure of latitude longitude.  <a href="structcommon_1_1Geodetic.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structGSI_1_1XY.html">GSI::XY</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">平面直角座標を格納する構造体（単位：メートル）  <a href="structGSI_1_1XY.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1PlaneXY.html">common::PlaneXY</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Structure of Cartesian coordinate system.  <a href="structcommon_1_1PlaneXY.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcommon_1_1GeodeticConverter.html">common::GeodeticConverter</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classcommon_1_1GeodeticConverter.html" title="GeodeticConverter class.">GeodeticConverter</a> class.  <a href="classcommon_1_1GeodeticConverter.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespaceGSI"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html">GSI</a></td></tr>
+<tr class="memitem:namespacecommon"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecommon.html">common</a></td></tr>
+<tr class="memdesc:namespacecommon"><td class="mdescLeft">&#160;</td><td class="mdescRight">For common. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ab85859ad1bcf659db5b828d90cd81ed6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#ab85859ad1bcf659db5b828d90cd81ed6">GSI::dms2deg</a> (const std::array&lt; double, 3 &gt; &amp;dms)</td></tr>
-<tr class="separator:ab85859ad1bcf659db5b828d90cd81ed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae55ae801eb81e0025afa529419aa01be"><td class="memItemLeft" align="right" valign="top">LatLon&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#ae55ae801eb81e0025afa529419aa01be">GSI::getOriginPoint</a> (uint8_t systemId)</td></tr>
-<tr class="separator:ae55ae801eb81e0025afa529419aa01be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25529ace25bf3eb124a57973cde6ebc1"><td class="memItemLeft" align="right" valign="top">XY&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#a25529ace25bf3eb124a57973cde6ebc1">GSI::bl2xy</a> (double lat, double lon, double origin_lat, double origin_lon)</td></tr>
-<tr class="memdesc:a25529ace25bf3eb124a57973cde6ebc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">[GSI方式] 緯度経度から平面直角座標へ変換します。  <br /></td></tr>
-<tr class="separator:a25529ace25bf3eb124a57973cde6ebc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1e7f1f19ab0595b18302a5b987f40c0"><td class="memItemLeft" align="right" valign="top">LatLon&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#ae1e7f1f19ab0595b18302a5b987f40c0">GSI::xy2bl</a> (double x, double y, double origin_lat, double origin_lon)</td></tr>
-<tr class="memdesc:ae1e7f1f19ab0595b18302a5b987f40c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">[GSI方式] 平面直角座標から緯度経度へ変換します。  <br /></td></tr>
-<tr class="separator:ae1e7f1f19ab0595b18302a5b987f40c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab06a5cdd6e0f7ae146f0825310503686"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#ab06a5cdd6e0f7ae146f0825310503686">GSI::get_meridian_convergence</a> (double x, double y, double origin_lat, double origin_lon)</td></tr>
-<tr class="memdesc:ab06a5cdd6e0f7ae146f0825310503686"><td class="mdescLeft">&#160;</td><td class="mdescRight">[GSI方式] 平面直角座標から子午線収差角を計算します。  <br /></td></tr>
-<tr class="separator:ab06a5cdd6e0f7ae146f0825310503686"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a41a99dd126ca7e79be54c6972500e199"><td class="memItemLeft" align="right" valign="top">const std::array&lt; std::array&lt; double, 3 &gt;, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#a41a99dd126ca7e79be54c6972500e199">GSI::ORIGIN_POINTS_DMS</a> [19]</td></tr>
-<tr class="separator:a41a99dd126ca7e79be54c6972500e199"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f4c0433259de8ff3650e272ce693db2"><td class="memItemLeft" align="right" valign="top">const std::array&lt; std::array&lt; double, 3 &gt;, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecommon.html#a4f4c0433259de8ff3650e272ce693db2">common::ORIGIN_POINTS_DMS</a> [19]</td></tr>
+<tr class="memdesc:a4f4c0433259de8ff3650e272ce693db2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Origin data for the Cartesian coordinate system.  <br /></td></tr>
+<tr class="separator:a4f4c0433259de8ff3650e272ce693db2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>geodetic to plane converter library </p>
+<dl class="section author"><dt>Author</dt><dd>R.Ohnishi </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2025/10/02</dd></dl>
+<p>測地座標系 &lt;-&gt; 平面直角座標系 の相互変換 </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6

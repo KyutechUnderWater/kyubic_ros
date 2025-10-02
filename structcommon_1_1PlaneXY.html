@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Common: GSI::XY Struct Reference</title>
+<title>Common: common::PlaneXY Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -70,54 +70,86 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespaceGSI.html">GSI</a></li><li class="navelem"><a class="el" href="structGSI_1_1XY.html">XY</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacecommon.html">common</a></li><li class="navelem"><a class="el" href="structcommon_1_1PlaneXY.html">PlaneXY</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structGSI_1_1XY-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">GSI::XY Struct Reference</div></div>
+<a href="structcommon_1_1PlaneXY-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">common::PlaneXY Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>平面直角座標を格納する構造体（単位：メートル）  
- <a href="structGSI_1_1XY.html#details">More...</a></p>
+<p>Structure of Cartesian coordinate system.  
+ <a href="structcommon_1_1PlaneXY.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="geodetic__converter_8hpp_source.html">geodetic_converter.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab05af2e0b3b7879fcbfe78392962317f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structGSI_1_1XY.html#ab05af2e0b3b7879fcbfe78392962317f">x</a></td></tr>
-<tr class="separator:ab05af2e0b3b7879fcbfe78392962317f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae029b9f1979ce1e905b27acc0e6d1a51"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structGSI_1_1XY.html#ae029b9f1979ce1e905b27acc0e6d1a51">y</a></td></tr>
-<tr class="separator:ae029b9f1979ce1e905b27acc0e6d1a51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac806509852fd6e887fe7765809c7377f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1PlaneXY.html#ac806509852fd6e887fe7765809c7377f">x</a></td></tr>
+<tr class="separator:ac806509852fd6e887fe7765809c7377f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0da123559d195c827db78a705a9d3a36"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1PlaneXY.html#a0da123559d195c827db78a705a9d3a36">y</a></td></tr>
+<tr class="separator:a0da123559d195c827db78a705a9d3a36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12e403f26ea225c4f0354a85494c8b49"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1PlaneXY.html#a12e403f26ea225c4f0354a85494c8b49">meridian_convergence</a></td></tr>
+<tr class="separator:a12e403f26ea225c4f0354a85494c8b49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c2ef39b3a93ee2aebbc21eb2779fadd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1PlaneXY.html#a1c2ef39b3a93ee2aebbc21eb2779fadd">scale_coefficient</a></td></tr>
+<tr class="separator:a1c2ef39b3a93ee2aebbc21eb2779fadd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>平面直角座標を格納する構造体（単位：メートル） </p>
+<div class="textblock"><p>Structure of Cartesian coordinate system. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab05af2e0b3b7879fcbfe78392962317f" name="ab05af2e0b3b7879fcbfe78392962317f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab05af2e0b3b7879fcbfe78392962317f">&#9670;&#160;</a></span>x</h2>
+<a id="a12e403f26ea225c4f0354a85494c8b49" name="a12e403f26ea225c4f0354a85494c8b49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12e403f26ea225c4f0354a85494c8b49">&#9670;&#160;</a></span>meridian_convergence</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double GSI::XY::x</td>
+          <td class="memname">double common::PlaneXY::meridian_convergence</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ae029b9f1979ce1e905b27acc0e6d1a51" name="ae029b9f1979ce1e905b27acc0e6d1a51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae029b9f1979ce1e905b27acc0e6d1a51">&#9670;&#160;</a></span>y</h2>
+<a id="a1c2ef39b3a93ee2aebbc21eb2779fadd" name="a1c2ef39b3a93ee2aebbc21eb2779fadd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c2ef39b3a93ee2aebbc21eb2779fadd">&#9670;&#160;</a></span>scale_coefficient</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double GSI::XY::y</td>
+          <td class="memname">double common::PlaneXY::scale_coefficient</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac806509852fd6e887fe7765809c7377f" name="ac806509852fd6e887fe7765809c7377f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac806509852fd6e887fe7765809c7377f">&#9670;&#160;</a></span>x</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double common::PlaneXY::x</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0da123559d195c827db78a705a9d3a36" name="a0da123559d195c827db78a705a9d3a36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0da123559d195c827db78a705a9d3a36">&#9670;&#160;</a></span>y</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double common::PlaneXY::y</td>
         </tr>
       </table>
 </div><div class="memdoc">

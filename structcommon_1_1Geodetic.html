@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Common: GSI::LatLon Struct Reference</title>
+<title>Common: common::Geodetic Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -70,54 +70,86 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespaceGSI.html">GSI</a></li><li class="navelem"><a class="el" href="structGSI_1_1LatLon.html">LatLon</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacecommon.html">common</a></li><li class="navelem"><a class="el" href="structcommon_1_1Geodetic.html">Geodetic</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structGSI_1_1LatLon-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">GSI::LatLon Struct Reference</div></div>
+<a href="structcommon_1_1Geodetic-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">common::Geodetic Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>緯度経度を格納する構造体（単位：度）  
- <a href="structGSI_1_1LatLon.html#details">More...</a></p>
+<p>Structure of latitude longitude.  
+ <a href="structcommon_1_1Geodetic.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="geodetic__converter_8hpp_source.html">geodetic_converter.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab063bc1c1a3114ab8ba889af9bee47f8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structGSI_1_1LatLon.html#ab063bc1c1a3114ab8ba889af9bee47f8">latitude</a></td></tr>
-<tr class="separator:ab063bc1c1a3114ab8ba889af9bee47f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adde4dfa4cf0f5470cb538ba7c1b52616"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structGSI_1_1LatLon.html#adde4dfa4cf0f5470cb538ba7c1b52616">longitude</a></td></tr>
-<tr class="separator:adde4dfa4cf0f5470cb538ba7c1b52616"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b14ae970b28f7e8ec3e4322cb3cd205"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1Geodetic.html#a3b14ae970b28f7e8ec3e4322cb3cd205">latitude</a></td></tr>
+<tr class="separator:a3b14ae970b28f7e8ec3e4322cb3cd205"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f3530063d72584d2806737e247f6d5b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1Geodetic.html#a6f3530063d72584d2806737e247f6d5b">longitude</a></td></tr>
+<tr class="separator:a6f3530063d72584d2806737e247f6d5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71dad00435004b3c54441e62f86bf28a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1Geodetic.html#a71dad00435004b3c54441e62f86bf28a">meridian_convergence</a></td></tr>
+<tr class="separator:a71dad00435004b3c54441e62f86bf28a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6b6c20f0ce21cd689529ccf8f884a22"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structcommon_1_1Geodetic.html#ab6b6c20f0ce21cd689529ccf8f884a22">scale_coefficient</a></td></tr>
+<tr class="separator:ab6b6c20f0ce21cd689529ccf8f884a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>緯度経度を格納する構造体（単位：度） </p>
+<div class="textblock"><p>Structure of latitude longitude. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab063bc1c1a3114ab8ba889af9bee47f8" name="ab063bc1c1a3114ab8ba889af9bee47f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab063bc1c1a3114ab8ba889af9bee47f8">&#9670;&#160;</a></span>latitude</h2>
+<a id="a3b14ae970b28f7e8ec3e4322cb3cd205" name="a3b14ae970b28f7e8ec3e4322cb3cd205"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b14ae970b28f7e8ec3e4322cb3cd205">&#9670;&#160;</a></span>latitude</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double GSI::LatLon::latitude</td>
+          <td class="memname">double common::Geodetic::latitude</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="adde4dfa4cf0f5470cb538ba7c1b52616" name="adde4dfa4cf0f5470cb538ba7c1b52616"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adde4dfa4cf0f5470cb538ba7c1b52616">&#9670;&#160;</a></span>longitude</h2>
+<a id="a6f3530063d72584d2806737e247f6d5b" name="a6f3530063d72584d2806737e247f6d5b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f3530063d72584d2806737e247f6d5b">&#9670;&#160;</a></span>longitude</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double GSI::LatLon::longitude</td>
+          <td class="memname">double common::Geodetic::longitude</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a71dad00435004b3c54441e62f86bf28a" name="a71dad00435004b3c54441e62f86bf28a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71dad00435004b3c54441e62f86bf28a">&#9670;&#160;</a></span>meridian_convergence</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double common::Geodetic::meridian_convergence</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab6b6c20f0ce21cd689529ccf8f884a22" name="ab6b6c20f0ce21cd689529ccf8f884a22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6b6c20f0ce21cd689529ccf8f884a22">&#9670;&#160;</a></span>scale_coefficient</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double common::Geodetic::scale_coefficient</td>
         </tr>
       </table>
 </div><div class="memdoc">

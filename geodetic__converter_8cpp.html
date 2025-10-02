@@ -75,52 +75,42 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle"><div class="title">geodetic_converter.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>geodetic to plane converter library  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="geodetic__converter_8hpp_source.html">geodetic_converter/geodetic_converter.hpp</a>&quot;</code><br />
+<code>#include &lt;array&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
-<code>#include &lt;vector&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for geodetic_converter.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="geodetic__converter_8cpp__incl.png" border="0" usemap="#asrc_2common_2geodetic__converter_2src_2geodetic__converter_8cpp" alt=""/></div>
 <map name="asrc_2common_2geodetic__converter_2src_2geodetic__converter_8cpp" id="asrc_2common_2geodetic__converter_2src_2geodetic__converter_8cpp">
-<area shape="rect" title=" " alt="" coords="202,5,377,60"/>
-<area shape="rect" href="geodetic__converter_8hpp.html" title=" " alt="" coords="5,108,184,148"/>
-<area shape="rect" title=" " alt="" coords="209,115,271,141"/>
-<area shape="rect" title=" " alt="" coords="295,115,382,141"/>
-<area shape="rect" title=" " alt="" coords="406,115,469,141"/>
-<area shape="rect" title=" " alt="" coords="24,196,80,221"/>
-<area shape="rect" title=" " alt="" coords="104,196,171,221"/>
+<area shape="rect" title="geodetic to plane converter library" alt="" coords="88,5,262,60"/>
+<area shape="rect" href="geodetic__converter_8hpp.html" title="geodetic to plane converter library" alt="" coords="23,108,202,148"/>
+<area shape="rect" title=" " alt="" coords="31,196,87,221"/>
+<area shape="rect" title=" " alt="" coords="133,196,196,221"/>
+<area shape="rect" title=" " alt="" coords="277,115,364,141"/>
 </map>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespaceGSI"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html">GSI</a></td></tr>
+<tr class="memitem:namespacecommon"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecommon.html">common</a></td></tr>
+<tr class="memdesc:namespacecommon"><td class="mdescLeft">&#160;</td><td class="mdescRight">For common. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ab85859ad1bcf659db5b828d90cd81ed6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#ab85859ad1bcf659db5b828d90cd81ed6">GSI::dms2deg</a> (const std::array&lt; double, 3 &gt; &amp;dms)</td></tr>
-<tr class="separator:ab85859ad1bcf659db5b828d90cd81ed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae55ae801eb81e0025afa529419aa01be"><td class="memItemLeft" align="right" valign="top">LatLon&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#ae55ae801eb81e0025afa529419aa01be">GSI::getOriginPoint</a> (uint8_t systemId)</td></tr>
-<tr class="separator:ae55ae801eb81e0025afa529419aa01be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25529ace25bf3eb124a57973cde6ebc1"><td class="memItemLeft" align="right" valign="top">XY&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#a25529ace25bf3eb124a57973cde6ebc1">GSI::bl2xy</a> (double lat, double lon, double origin_lat, double origin_lon)</td></tr>
-<tr class="memdesc:a25529ace25bf3eb124a57973cde6ebc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">[GSI方式] 緯度経度から平面直角座標へ変換します。  <br /></td></tr>
-<tr class="separator:a25529ace25bf3eb124a57973cde6ebc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1e7f1f19ab0595b18302a5b987f40c0"><td class="memItemLeft" align="right" valign="top">LatLon&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#ae1e7f1f19ab0595b18302a5b987f40c0">GSI::xy2bl</a> (double x, double y, double origin_lat, double origin_lon)</td></tr>
-<tr class="memdesc:ae1e7f1f19ab0595b18302a5b987f40c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">[GSI方式] 平面直角座標から緯度経度へ変換します。  <br /></td></tr>
-<tr class="separator:ae1e7f1f19ab0595b18302a5b987f40c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab06a5cdd6e0f7ae146f0825310503686"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGSI.html#ab06a5cdd6e0f7ae146f0825310503686">GSI::get_meridian_convergence</a> (double x, double y, double origin_lat, double origin_lon)</td></tr>
-<tr class="memdesc:ab06a5cdd6e0f7ae146f0825310503686"><td class="mdescLeft">&#160;</td><td class="mdescRight">[GSI方式] 平面直角座標から子午線収差角を計算します。  <br /></td></tr>
-<tr class="separator:ab06a5cdd6e0f7ae146f0825310503686"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>geodetic to plane converter library </p>
+<dl class="section author"><dt>Author</dt><dd>R.Ohnishi </dd></dl>
+<dl class="section date"><dt>Date</dt><dd>2025/10/02</dd></dl>
+<p>測地座標系 &lt;-&gt; 平面直角座標系 の相互変換 </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6
