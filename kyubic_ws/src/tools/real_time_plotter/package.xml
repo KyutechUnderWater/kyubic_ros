@@ -4,8 +4,8 @@
   <name>real_time_plotter</name>
   <version>0.0.0</version>
   <description>TODO: Package description</description>
-  <maintainer email="ros@todo.todo">ros</maintainer>
-  <license>TODO: License declaration</license>
+  <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
+  <license>Apache License 2.0</license>
 
   <depend>rclpy</depend>
   <depend>test_pid_msgs</depend>
