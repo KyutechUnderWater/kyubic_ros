@@ -1,14 +1,28 @@
+/**
+ * @file geodetic_converter.hpp
+ * @brief geodetic to plane converter library
+ * @author R.Ohnishi
+ * @date 2025/10/02
+ *
+ * @details 測地座標系 <-> 平面直角座標系 の相互変換
+ **************************************************/
+
 #ifndef GEODETIC_CONVERTER_HPP
 #define GEODETIC_CONVERTER_HPP
 
 #include <array>
-#include <cmath>  // For std::sin, std::cos, std::tan, std::log, std::pow, std::sqrt, M_PI
+#include <cmath>
 
+/**
+ * @namespace common
+ * @brief For common
+ */
 namespace common
 {
 
-// 平面直角座標系の原点データ
-// ref: https://www.gsi.go.jp/LAW/heimencho.html
+/** @brief Origin data for the Cartesian coordinate system
+ * @details https://www.gsi.go.jp/LAW/heimencho.html
+ */
 const std::array<std::array<double, 3>, 2> ORIGIN_POINTS_DMS[19] = {
   {{{33, 0, 0}, {129, 30, 0}}},  // I系: 33°00′00″N, 129°30′00″E
   {{{33, 0, 0}, {131, 0, 0}}},   // II系: 33°00′00″N, 131°00′00″E
@@ -31,52 +45,103 @@ const std::array<std::array<double, 3>, 2> ORIGIN_POINTS_DMS[19] = {
   {{{26, 0, 0}, {154, 0, 0}}}    // XIX系: 26°00′00″N, 154°00′00″E
 };
 
-// 緯度経度を表現する構造体
+/**
+ * @brief Structure of latitude longitude
+ */
 struct Geodetic
 {
-  double latitude;   // 緯度 (度)
-  double longitude;  // 経度 (度)
+  double latitude;   // 緯度 (deg)
+  double longitude;  // 経度 (deg)
   double meridian_convergence;
   double scale_coefficient;
 };
 
-// 平面直角座標を表現する構造体
+/**
+ * @brief Structure of Cartesian coordinate system
+ */
 struct PlaneXY
 {
-  double x;  // X座標 (メートル)
-  double y;  // Y座標 (メートル)
+  double x;  // X座標 (meter)
+  double y;  // Y座標 (meter)
   double meridian_convergence;
   double scale_coefficient;
 };
 
+/**
+ * @brief custom power function
+ * @param base base
+ * @param exp exponent
+ * @details constexpr pow function
+ */
 static constexpr double power(double base, int exp)
 {
   return (exp == 0) ? 1.0 : base * power(base, exp - 1);
 }
 
+/**
+ * @brief GeodeticConverter class
+ */
 class GeodeticConverter
 {
 public:
-  // コンストラクタ
-  // systemId: 平面直角座標系の系番号 (1-19)
+  /**
+   * @brief Set System ID
+   * @param systemId Cartesian coordinate system (1-19)
+   */
   explicit GeodeticConverter(int systemId);
 
+  /**
+   * @brief Get longitude and latitude that serve as the origin of the Cartesian coordinate system
+   * @return origin(latitude and longitude)
+   */
   Geodetic getOrigin();
 
-  // 緯度経度から平面直角座標へ変換
+  /**
+   * @brief Conversion from latitude and longitude to Cartesian coordinate system
+   * @param latLon latitude and longitude
+   * @return x, y
+   * @details https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/bl2xyf.html
+   */
   PlaneXY geo2xy(const Geodetic & latLon) const;
 
-  // 平面直角座標から緯度経度へ変換
+  /**
+   * @brief Conversion from Cartesian coordinate system to latitude and longitude
+   * @param planeXY xy coordinate
+   * @return latitude and longitude
+   * @details https://vldb.gsi.go.jp/sokuchi/surveycalc/surveycalc/xy2blf.html
+   */
   Geodetic xy2geo(const PlaneXY & planeXY) const;
 
-  // 各種変換
+  /**
+   * @brief degrees-minutes-seconds to decimal degrees converter
+   * @param dms 3d array(degrees, minutes, seconds)
+   * @return decimal degrees
+   */
   double dms2deg(const std::array<double, 3> & dms);
+
+  /**
+   * @brief decimal degrees to degrees-minutes-seconds converter
+   * @param deg decimal degrees
+   * @return 3d array(degrees, minutes, seconds)
+   */
   std::array<double, 3> deg2dmg(const double & deg) const;
+
+  /**
+   * @brief degree to radian converter
+   * @param deg degree
+   * @return radian
+   */
   double deg2rad(double deg) const;
+
+  /**
+   * @brief radian to degree converter
+   * @param rad radian
+   * @return degrees
+   */
   double rad2deg(double rad) const;
 
 private:
-  int systemId_;  // 平面直角座標系の系番号
+  int systemId_;
 
   // 基準点の緯度と経度 (ラジアン)
   double phi0_rad_;     // 基準緯度
@@ -121,7 +186,9 @@ private:
   // 内部計算用関数
   double calc_S_bar_phi0(const double & phi0_rad) const;
 
-  // 系番号に基づく基準点設定
+  /**
+   * @brief Set reference point(Cartesian coordinate system)
+   */
   void setReferencePoint(int systemId);
 };
 

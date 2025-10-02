@@ -1,3 +1,12 @@
+/**
+ * @file geodetic_converter.cpp
+ * @brief geodetic to plane converter library
+ * @author R.Ohnishi
+ * @date 2025/10/02
+ *
+ * @details 測地座標系 <-> 平面直角座標系 の相互変換
+ **************************************************/
+
 #include "geodetic_converter/geodetic_converter.hpp"
 
 #include <array>

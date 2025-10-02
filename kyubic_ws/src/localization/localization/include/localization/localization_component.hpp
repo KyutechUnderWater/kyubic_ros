@@ -23,6 +23,7 @@
 #include <localization_msgs/srv/reset.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
+
 /**
  * @namespace localization
  * @brief localization
@@ -102,8 +103,8 @@ private:
   void gnss_callback(const driver_msgs::msg::Gnss::UniquePtr msg);
 
   /**
-   * @brief Update gnss data
-   * @details Acquisitionn the gnss data.
+   * @brief Update imu data
+   * @details Acquisitionn the imu data.
    */
   void imu_raw_callback(const driver_msgs::msg::IMU::UniquePtr msg);
 
