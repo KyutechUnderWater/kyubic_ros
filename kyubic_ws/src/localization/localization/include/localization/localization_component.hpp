@@ -23,6 +23,7 @@
 #include <localization_msgs/srv/reset.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
+
 /**
  * @namespace localization
  * @brief localization
@@ -63,14 +64,14 @@ private:
 
   rclcpp::TimerBase::SharedPtr timer_;
 
+  std::shared_ptr<common::GeodeticConverter> geo_converter_;
   std::shared_ptr<localization_msgs::msg::Odometry> odom_msg_;
   std::shared_ptr<driver_msgs::msg::Gnss> gnss_msg_;
   std::shared_ptr<driver_msgs::msg::IMU> imu_raw_msg_;
   std::shared_ptr<localization_msgs::msg::GlobalPose> global_pose_msg_;
-  GSI::LatLon origin_geodetic;
-  GSI::LatLon reference_geodetic;
-  GSI::XY reference_plane;
-  double reference_meridian_convergence;
+  common::Geodetic origin_geodetic;
+  common::Geodetic reference_geodetic;
+  common::PlaneXY reference_plane;
   double azimuth;
 
   bool gnss_updated = false;
@@ -102,8 +103,8 @@ private:
   void gnss_callback(const driver_msgs::msg::Gnss::UniquePtr msg);
 
   /**
-   * @brief Update gnss data
-   * @details Acquisitionn the gnss data.
+   * @brief Update imu data
+   * @details Acquisitionn the imu data.
    */
   void imu_raw_callback(const driver_msgs::msg::IMU::UniquePtr msg);
 

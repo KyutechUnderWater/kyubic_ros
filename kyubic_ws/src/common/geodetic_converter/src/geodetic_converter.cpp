@@ -1,171 +1,152 @@
+/**
+ * @file geodetic_converter.cpp
+ * @brief geodetic to plane converter library
+ * @author R.Ohnishi
+ * @date 2025/10/02
+ *
+ * @details 測地座標系 <-> 平面直角座標系 の相互変換
+ **************************************************/
+
 #include "geodetic_converter/geodetic_converter.hpp"
 
+#include <array>
 #include <cmath>
 #include <stdexcept>
-#include <vector>
 
-namespace GSI
+namespace common
 {
-namespace
+
+GeodeticConverter::GeodeticConverter(int systemId) : systemId_(systemId)
 {
-// 定数定義
-constexpr double PI = 3.14159265358979323846;
-constexpr double a = 6377397.155;
-constexpr double F_inv = 299.1528128;
-constexpr double m0 = 0.9999;
-constexpr double f = 1.0 / F_inv;
-constexpr double n = f / (2.0 - f);
+  setReferencePoint(systemId_);
+}
 
-// ★★★ 順変換用のα係数を正しく定義 ★★★
-const std::vector<double> alpha_coeffs = {
-  0.0,
-  1.0 / 2.0 * n - 2.0 / 3.0 * pow(n, 2) + 5.0 / 16.0 * pow(n, 3) + 41.0 / 180.0 * pow(n, 4) -
-    127.0 / 288.0 * pow(n, 5),
-  13.0 / 48.0 * pow(n, 2) - 3.0 / 5.0 * pow(n, 3) + 557.0 / 1440.0 * pow(n, 4) +
-    281.0 / 630.0 * pow(n, 5),
-  61.0 / 240.0 * pow(n, 3) - 103.0 / 140.0 * pow(n, 4) + 15061.0 / 26880.0 * pow(n, 5),
-  49561.0 / 161280.0 * pow(n, 4) - 179.0 / 168.0 * pow(n, 5),
-  34729.0 / 80640.0 * pow(n, 5)};
+void GeodeticConverter::setReferencePoint(int systemId)
+{
+  if (systemId < 1 || systemId > 19) {
+    throw std::out_of_range("Invalid system ID. Must be between 1 and 19.");
+  }
+  phi0_rad_ = deg2rad(dms2deg(ORIGIN_POINTS_DMS[systemId - 1][0]));
+  lambda0_rad_ = deg2rad(dms2deg(ORIGIN_POINTS_DMS[systemId - 1][1]));
+  S_bar_phi0_ = calc_S_bar_phi0(phi0_rad_);
+}
 
-// 逆変換用のβ係数
-const std::vector<double> beta_coeffs = {
-  0.0,
-  1.0 / 2.0 * n - 2.0 / 3.0 * pow(n, 2) + 37.0 / 96.0 * pow(n, 3) - 1.0 / 360.0 * pow(n, 4) -
-    81.0 / 512.0 * pow(n, 5),
-  1.0 / 48.0 * pow(n, 2) + 1.0 / 15.0 * pow(n, 3) - 437.0 / 1440.0 * pow(n, 4) +
-    46.0 / 105.0 * pow(n, 5),
-  17.0 / 480.0 * pow(n, 3) - 37.0 / 840.0 * pow(n, 4) - 209.0 / 4480.0 * pow(n, 5),
-  4397.0 / 161280.0 * pow(n, 4) - 11.0 / 504.0 * pow(n, 5),
-  4583.0 / 161280.0 * pow(n, 5)};
-
-// その他の係数...
-const std::vector<double> A_coeffs = {
-  1.0 + (1.0 / 4.0) * pow(n, 2) + (1.0 / 64.0) * pow(n, 4),
-  -3.0 / 2.0 * (n - (1.0 / 8.0) * pow(n, 3) - (1.0 / 64.0) * pow(n, 5)),
-  15.0 / 16.0 * (pow(n, 2) - (1.0 / 4.0) * pow(n, 4)),
-  -35.0 / 48.0 * (pow(n, 3) - (5.0 / 16.0) * pow(n, 5)),
-  315.0 / 512.0 * pow(n, 4),
-  -693.0 / 1280.0 * pow(n, 5)};
-const std::vector<double> delta_coeffs = {
-  0.0,
-  2.0 * n - 2.0 / 3.0 * pow(n, 2) - 2.0 * pow(n, 3) + 116.0 / 45.0 * pow(n, 4) +
-    26.0 / 45.0 * pow(n, 5),
-  7.0 / 3.0 * pow(n, 2) - 8.0 / 5.0 * pow(n, 3) - 227.0 / 45.0 * pow(n, 4) +
-    2704.0 / 315.0 * pow(n, 5),
-  56.0 / 15.0 * pow(n, 3) - 136.0 / 35.0 * pow(n, 4) - 1262.0 / 105.0 * pow(n, 5),
-  4279.0 / 630.0 * pow(n, 4) - 332.0 / 35.0 * pow(n, 5),
-  4174.0 / 315.0 * pow(n, 5)};
-
-// ヘルパー関数
-double deg2rad(double deg) { return deg * PI / 180.0; }
-double rad2deg(double rad) { return rad * 180.0 / PI; }
-}  // namespace
-
-double dms2deg(const std::array<double, 3> & dms)
+double GeodeticConverter::dms2deg(const std::array<double, 3> & dms)
 {
   return static_cast<double>(dms[0]) + static_cast<double>(dms[1]) / 60.0 +
          static_cast<double>(dms[2]) / 3600.0;
 }
 
-LatLon getOriginPoint(uint8_t systemId)
+std::array<double, 3> GeodeticConverter::deg2dmg(const double & deg) const
 {
-  if (systemId < 1 || systemId > 19) {
-    throw std::out_of_range("Invalid system ID. Must be between 1 and 19.");
-  }
-  return {dms2deg(ORIGIN_POINTS_DMS[systemId - 1][0]), dms2deg(ORIGIN_POINTS_DMS[systemId - 1][1])};
+  double d = (int)deg;
+  double _m = (deg - d) * 60;
+  double m = (int)_m;
+  double s = (_m - m) * 60;
+
+  return std::array<double, 3>({d, m, s});
 }
 
-XY bl2xy(double lat, double lon, double origin_lat, double origin_lon)
+double GeodeticConverter::deg2rad(double deg) const { return deg * M_PI / 180.0; }
+
+double GeodeticConverter::rad2deg(double rad) const { return rad * 180.0 / M_PI; }
+
+Geodetic GeodeticConverter::getOrigin() { return {phi0_rad_, lambda0_rad_, 0.0, 0.0}; }
+
+double GeodeticConverter::calc_S_bar_phi0(const double & phi0_rad) const
 {
-  const double phi = deg2rad(lat);
-  const double lambda = deg2rad(lon);
-  const double phi_0 = deg2rad(origin_lat);
-  const double lambda_0 = deg2rad(origin_lon);
-  const double A_bar = (m0 * a) / (1.0 + n) * A_coeffs[0];
-
-  double S_phi0_term = A_coeffs[0] * phi_0;
-  for (size_t j = 1; j < A_coeffs.size(); ++j) {
-    S_phi0_term += A_coeffs[j] * sin(2.0 * j * phi_0);
+  double sigma = 0.0;
+  for (int j = 1; j < 6; j++) {
+    sigma += A[j] * sin(2 * j * phi0_rad);
   }
-  const double S_bar_phi0 = (m0 * a) / (1.0 + n) * S_phi0_term;
-
-  const double t = sinh(
-    atanh(sin(phi)) - (2.0 * sqrt(n)) / (1.0 + n) * atanh((2.0 * sqrt(n)) / (1.0 + n) * sin(phi)));
-  const double t_bar = sqrt(1.0 + t * t);
-  const double xi_prime = atan2(t, cos(lambda - lambda_0));
-  const double eta_prime = atanh(sin(lambda - lambda_0) / t_bar);
-
-  double x_term = xi_prime;
-  double y_term = eta_prime;
-
-  // ★★★ ここで正しい alpha_coeffs を使う ★★★
-  for (size_t j = 1; j < alpha_coeffs.size(); ++j) {
-    x_term += alpha_coeffs[j] * sin(2.0 * j * xi_prime) * cosh(2.0 * j * eta_prime);
-    y_term += alpha_coeffs[j] * cos(2.0 * j * xi_prime) * sinh(2.0 * j * eta_prime);
-  }
-  return {A_bar * x_term - S_bar_phi0, A_bar * y_term};
+  return A_bar * phi0_rad + (m0 * a / (1 + n)) * sigma;
 }
 
-LatLon xy2bl(double x, double y, double origin_lat, double origin_lon)
+// 平面直角座標から緯度経度へ変換
+PlaneXY GeodeticConverter::geo2xy(const Geodetic & latlon) const
 {
-  const double phi_0 = deg2rad(origin_lat);
-  const double lambda_0 = deg2rad(origin_lon);
+  double phi_rad = deg2rad(latlon.latitude);
+  double lambda_rad = deg2rad(latlon.longitude);
 
-  double S_phi0_term = A_coeffs[0] * phi_0;
-  for (size_t j = 1; j < A_coeffs.size(); ++j) {
-    S_phi0_term += A_coeffs[j] * sin(2.0 * j * phi_0);
+  double t =
+    sinh(atanh(sin(phi_rad)) - 2 * sqrt(n) * atanh(2 * sqrt(n) * sin(phi_rad) / (1 + n)) / (1 + n));
+  double t_bar = sqrt(1 + pow(t, 2));
+
+  double lambda_c = cos(lambda_rad - lambda0_rad_);
+  double lambda_s = sin(lambda_rad - lambda0_rad_);
+  double xi_prime = atan(t / lambda_c);
+  double eta_prime = atanh(lambda_s / t_bar);
+
+  double x = A_bar * xi_prime - S_bar_phi0_;
+  double y = A_bar * eta_prime;
+  double sigma = 1.0;
+  double tau = 0.0;
+  for (int j = 1; j < 6; j++) {
+    double _x = 2 * j * xi_prime;
+    double _y = 2 * j * eta_prime;
+    x += A_bar * alpha[j] * sin(_x) * cosh(_y);
+    y += A_bar * alpha[j] * cos(_x) * sinh(_y);
+    sigma += 2 * j * alpha[j] * cos(_x) * cosh(_y);
+    tau += 2 * j * alpha[j] * sin(_x) * sinh(_y);
   }
-  const double S_bar_phi0 = (m0 * a) / (1.0 + n) * S_phi0_term;
-  const double A_bar = (m0 * a) / (1.0 + n) * A_coeffs[0];
 
-  const double xi = (x + S_bar_phi0) / A_bar;
-  const double eta = y / A_bar;
+  double gamma = atan(
+    (tau * t_bar * lambda_c + sigma * t * lambda_s) /
+    (sigma * t_bar * lambda_c - tau * t * lambda_s));
+
+  double m = (A_bar / a) * sqrt(
+                             ((pow(sigma, 2) + pow(tau, 2)) / (pow(t, 2) + pow(lambda_c, 2))) *
+                             (1 + pow((1 - n) * tan(phi_rad) / (1 + n), 2)));
+
+  return {x, y, rad2deg(gamma), m};
+}
+
+// 平面直角座標から緯度経度へ変換
+Geodetic GeodeticConverter::xy2geo(const PlaneXY & planeXY) const
+{
+  double x = planeXY.x;
+  double y = planeXY.y;
+
+  double eta = y / A_bar;
+
+  double xi = (x + S_bar_phi0_) / A_bar;
 
   double xi_prime = xi;
   double eta_prime = eta;
-  for (size_t j = 1; j < beta_coeffs.size(); ++j) {
-    xi_prime -= beta_coeffs[j] * sin(2.0 * j * xi) * cosh(2.0 * j * eta);
-    eta_prime -= beta_coeffs[j] * cos(2.0 * j * xi) * sinh(2.0 * j * eta);
+  double sigma_prime = 1.0;
+  double tau_prime = 0.0;
+  for (int j = 1; j < 6; j++) {
+    double _x = 2 * j * xi;
+    double _y = 2 * j * eta;
+
+    xi_prime -= beta[j] * sin(_x) * cosh(_y);
+    eta_prime -= beta[j] * cos(_x) * sinh(_y);
+    sigma_prime -= 2 * j * beta[j] * cos(_x) * cosh(_y);
+    tau_prime += 2 * j * beta[j] * sin(_x) * sinh(_y);
   }
 
-  const double chi = asin(sin(xi_prime) / cosh(eta_prime));
-  double phi = chi;
-  for (size_t j = 1; j < delta_coeffs.size(); ++j) {
-    phi += delta_coeffs[j] * sin(2.0 * j * chi);
+  double chi = asin(sin(xi_prime) / cosh(eta_prime));
+
+  double sigma = 0.0;
+  for (int j = 1; j < 6; j++) {
+    sigma += delta[j] * sin(2 * j * chi);
   }
+  double t_phi = ((1 + n) / (1 - n)) * tan(chi + sigma);
 
-  const double lambda = lambda_0 + atan2(sinh(eta_prime), cos(xi_prime));
+  // Caluculate latitude and longitude
+  double phi_rad = atan(((1 + n) / (1 - n)) * t_phi);
+  double lambda_rad = lambda0_rad_ + atan(sinh(eta_prime) / cos(xi_prime));
 
-  return {rad2deg(phi), rad2deg(lambda)};
+  // Caluculate meridian convergence
+  double tmp = tan(xi_prime) * tanh(eta_prime);
+  double gamma = atan((tau_prime + sigma_prime * tmp) / (sigma_prime - tau_prime * tmp));
+
+  // Caluculate scale coefficients
+  double m = (A_bar / a) * sqrt(
+                             (pow(cos(xi_prime), 2) + pow(sinh(eta_prime), 2)) *
+                             (1 + pow(t_phi, 2)) / (pow(sigma_prime, 2) + pow(tau_prime, 2)));
+
+  return {rad2deg(phi_rad), rad2deg(lambda_rad), rad2deg(gamma), m};
 }
 
-double get_meridian_convergence(double x, double y, double origin_lat, double origin_lon)
-{
-  // xy2blと共通の計算を行う
-  const double phi_0 = deg2rad(origin_lat);
-
-  double S_phi0_term = A_coeffs[0] * phi_0;
-  for (size_t j = 1; j < A_coeffs.size(); ++j) {
-    S_phi0_term += A_coeffs[j] * sin(2.0 * j * phi_0);
-  }
-  const double S_bar_phi0 = (m0 * a) / (1.0 + n) * S_phi0_term;
-  const double A_bar = (m0 * a) / (1.0 + n) * A_coeffs[0];
-
-  const double xi = (x + S_bar_phi0) / A_bar;
-  const double eta = y / A_bar;
-
-  double xi_prime = xi;
-  double eta_prime = eta;
-  for (size_t j = 1; j < beta_coeffs.size(); ++j) {
-    xi_prime -= beta_coeffs[j] * sin(2.0 * j * xi) * cosh(2.0 * j * eta);
-    eta_prime -= beta_coeffs[j] * cos(2.0 * j * xi) * sinh(2.0 * j * eta);
-  }
-
-  // 子午線収差角 γ (ガンマ) の計算
-  // γ = atan(tan(ξ') * tanh(η'))
-  const double gamma_rad = atan(tan(xi_prime) * tanh(eta_prime));
-
-  return rad2deg(gamma_rad);
-}
-
-}  // namespace GSI
+}  // namespace common
