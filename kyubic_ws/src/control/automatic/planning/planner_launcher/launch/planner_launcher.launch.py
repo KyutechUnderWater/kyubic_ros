@@ -69,7 +69,7 @@ def generate_launch_description():
                         "/planner/pdla_planner/goal_current_odom",
                     ),
                     ("/planner/wrench_planner/robot_force", "/driver/robot_force"),
-                    ("/planner/wrench_planner/targets", "/real_time_plotter/targets"),
+                    ("/planner/wrench_planner/targets", "/rt_pose_plotter/targets"),
                 ],
                 parameters=[
                     {"p_pid_controller_path": p_pid_controller_path},

@@ -5,18 +5,21 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    real_time_plotter_dir = PathJoinSubstitution(
-        [FindPackageShare("real_time_plotter"), "launch"]
+    rt_pose_plotter_dir = PathJoinSubstitution(
+        [FindPackageShare("rt_pose_plotter"), "launch"]
     )
     trajectory_viewer_dir = PathJoinSubstitution(
         [FindPackageShare("trajectory_viewer"), "launch"]
+    )
+    web_controller_dir = PathJoinSubstitution(
+        [FindPackageShare("web_controller"), "launch"]
     )
 
     return LaunchDescription(
         [
             IncludeLaunchDescription(
                 PathJoinSubstitution(
-                    [real_time_plotter_dir, "real_time_plotter.launch.py"]
+                    [rt_pose_plotter_dir, "rt_pose_plotter.launch.py"]
                 ),
                 launch_arguments={
                     "log_level": "warn",
@@ -26,6 +29,12 @@ def generate_launch_description():
                 PathJoinSubstitution(
                     [trajectory_viewer_dir, "trajectory_viewer.launch.py"]
                 ),
+                launch_arguments={
+                    "log_level": "warn",
+                }.items(),
+            ),
+            IncludeLaunchDescription(
+                PathJoinSubstitution([web_controller_dir, "web_controller.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),

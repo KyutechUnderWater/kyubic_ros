@@ -13,7 +13,7 @@ def generate_launch_description():
     )
     targets_topic_arg = DeclareLaunchArgument(
         "targets_topic",
-        default_value="/real_time_plotter/targets",
+        default_value="/rt_pose_plotter/targets",
         description="Topic name for the target Z position",
     )
     front_cam_topic_arg = DeclareLaunchArgument(
@@ -25,6 +25,12 @@ def generate_launch_description():
         "bottom_cam_topic",
         default_value="/camera/bottom",
         description="Topic name for the target Z position",
+    )
+
+    log_level_arg = DeclareLaunchArgument(
+        "log_level",
+        default_value="info",
+        description="Logging level (info, warn, error, etc.)",
     )
 
     # --- Define Node ---
@@ -40,6 +46,7 @@ def generate_launch_description():
             ("camera/front", LaunchConfiguration("front_cam_topic")),
             ("camera/bottom", LaunchConfiguration("bottom_cam_topic")),
         ],
+        arguments=["--ros-args", "--log-level", LaunchConfiguration("log_level")],
     )
 
     # --- Generate LaunchDescription ---
@@ -49,6 +56,7 @@ def generate_launch_description():
             targets_topic_arg,
             front_cam_topic_arg,
             bottom_cam_topic_arg,
+            log_level_arg,
             viewer_node,
         ]
     )

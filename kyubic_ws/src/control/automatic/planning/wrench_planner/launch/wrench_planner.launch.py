@@ -31,7 +31,7 @@ def generate_launch_description():
                 executable="wrench_planner_component_node",
                 remappings=[
                     ("/planner/robot_force", "/driver/robot_force"),
-                    ("/planner/targets", "/real_time_plotter/targets"),
+                    ("/planner/targets", "/rt_pose_plotter/targets"),
                 ],
                 parameters=[
                     {"p_pid_controller_path": p_pid_controller_path},

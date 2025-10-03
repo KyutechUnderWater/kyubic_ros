@@ -12,7 +12,7 @@ from scipy.spatial.transform import Rotation
 from threading import Thread, Lock
 
 # --- ROS2 Message Imports ---
-from real_time_plotter_msgs.msg import Targets
+from rt_pose_plotter_msgs.msg import Targets
 from localization_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 
