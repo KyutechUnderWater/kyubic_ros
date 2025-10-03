@@ -1,9 +1,7 @@
 <map id="src/tools" name="src/tools">
-<area shape="rect" id="node2" href="dir_ea8ce304953b2f1adda1a47c81f3f9e0.html" title="path_generator" alt="" coords="579,63,701,88"/>
-<area shape="rect" id="node3" href="dir_5cdcc9fdf26f67d2ebde41e597e79ed6.html" title="plotjuggler" alt="" coords="463,63,555,88"/>
-<area shape="rect" id="node4" href="dir_7b819bd0b376e864f64edcf1087068ef.html" title="real_time_plotter" alt="" coords="305,63,439,88"/>
-<area shape="rect" id="node5" href="dir_ec6391cb16d54f9f870ac8e684ac8947.html" title="trajectory_viewer" alt="" coords="144,63,280,88"/>
-<area shape="rect" id="node6" href="dir_941ec602165103c36040e8b6d54ad0ad.html" title="trdi_toolz" alt="" coords="37,63,120,88"/>
-<area shape="rect" id="clust2" href="dir_1563a38af0d3a5e4a6330d6d45e9792a.html" alt="" coords="27,52,791,99"/>
-<area shape="rect" id="clust1" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" title="src" alt="" coords="16,16,801,109"/>
+<area shape="rect" id="node2" href="dir_ea8ce304953b2f1adda1a47c81f3f9e0.html" title="path_generator" alt="" coords="261,63,382,88"/>
+<area shape="rect" id="node3" href="dir_5cdcc9fdf26f67d2ebde41e597e79ed6.html" title="plotjuggler" alt="" coords="145,63,237,88"/>
+<area shape="rect" id="node4" href="dir_941ec602165103c36040e8b6d54ad0ad.html" title="trdi_toolz" alt="" coords="37,63,120,88"/>
+<area shape="rect" id="clust2" href="dir_1563a38af0d3a5e4a6330d6d45e9792a.html" alt="" coords="27,52,472,99"/>
+<area shape="rect" id="clust1" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" title="src" alt="" coords="16,16,483,109"/>
 </map>
