@@ -17,7 +17,7 @@
 #include "geometry_msgs/msg/wrench_stamped.hpp"
 #include <geometry_msgs/msg/wrench_stamped.hpp>
 #include <localization_msgs/msg/odometry.hpp>
-#include <real_time_plotter_msgs/msg/targets.hpp>
+#include <rt_pose_plotter_msgs/msg/targets.hpp>
 
 #include <array>
 #include <map>
@@ -38,7 +38,7 @@ class TestPID : public rclcpp::Node
 {
 private:
   rclcpp::Publisher<geometry_msgs::msg::WrenchStamped>::SharedPtr pub_;
-  rclcpp::Subscription<real_time_plotter_msgs::msg::Targets>::SharedPtr sub_targets_;
+  rclcpp::Subscription<rt_pose_plotter_msgs::msg::Targets>::SharedPtr sub_targets_;
   rclcpp::Subscription<geometry_msgs::msg::WrenchStamped>::SharedPtr sub_joy_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_odom_;
 
@@ -50,7 +50,7 @@ private:
   std::map<std::string, pid_controller::VelocityP_PIDParameter> p_pid_params;
   std::map<std::string, std::shared_ptr<pid_controller::VelocityP_PID>> vp_pids;
 
-  std::shared_ptr<real_time_plotter_msgs::msg::Targets> targets_;
+  std::shared_ptr<rt_pose_plotter_msgs::msg::Targets> targets_;
   std::shared_ptr<geometry_msgs::msg::WrenchStamped> joy_;
   std::shared_ptr<localization_msgs::msg::Odometry> odom_;
 
@@ -67,7 +67,7 @@ private:
    * @brief Get target value (x, y, z, yaw)
    * @details Get target value via topic communication
    */
-  void callback_target(const real_time_plotter_msgs::msg::Targets::UniquePtr msg);
+  void callback_target(const rt_pose_plotter_msgs::msg::Targets::UniquePtr msg);
 
   /**
    * @brief Acquire joy data
