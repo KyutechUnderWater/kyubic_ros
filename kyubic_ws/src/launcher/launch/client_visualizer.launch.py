@@ -11,6 +11,9 @@ def generate_launch_description():
     trajectory_viewer_dir = PathJoinSubstitution(
         [FindPackageShare("trajectory_viewer"), "launch"]
     )
+    web_controller_dir = PathJoinSubstitution(
+        [FindPackageShare("web_controller"), "launch"]
+    )
 
     return LaunchDescription(
         [
@@ -26,6 +29,12 @@ def generate_launch_description():
                 PathJoinSubstitution(
                     [trajectory_viewer_dir, "trajectory_viewer.launch.py"]
                 ),
+                launch_arguments={
+                    "log_level": "warn",
+                }.items(),
+            ),
+            IncludeLaunchDescription(
+                PathJoinSubstitution([web_controller_dir, "web_controller.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),
