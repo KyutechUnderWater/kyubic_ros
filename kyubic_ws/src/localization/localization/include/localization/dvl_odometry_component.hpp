@@ -21,6 +21,8 @@
 #include <localization_msgs/msg/odometry.hpp>
 #include <std_srvs/srv/trigger.hpp>
 
+#include <array>
+
 /**
  * @namespace localization
  * @brief localization
@@ -42,6 +44,7 @@ private:
   rclcpp::Time pre_time;
 
   std::shared_ptr<localization_msgs::msg::Odometry> imu_msg_;
+  std::array<double, 3> offset;
 
   double pos_x = 0.0;
   double pos_y = 0.0;

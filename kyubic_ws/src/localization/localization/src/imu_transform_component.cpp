@@ -9,18 +9,16 @@
 
 #include "localization/imu_transform_component.hpp"
 
-#include "driver_msgs/msg/imu.hpp"
-
-#include <cmath>
-#include <cstdlib>
-#include <functional>
-#include <numbers>
-
 namespace localization
 {
 
 IMUTransform::IMUTransform(const rclcpp::NodeOptions & options) : Node("imu_transform", options)
 {
+  double x = Transform3D::deg2rad(this->declare_parameter("x", 0.0));
+  double y = Transform3D::deg2rad(this->declare_parameter("y", 0.0));
+  double z = Transform3D::deg2rad(this->declare_parameter("z", 0.0));
+  rot_ = Transform3D::Rotation::fromRPY(x, y, z);
+
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   pub_ = create_publisher<localization_msgs::msg::Odometry>("transformed", qos);
@@ -33,60 +31,125 @@ IMUTransform::IMUTransform(const rclcpp::NodeOptions & options) : Node("imu_tran
   reset();
 }
 
-void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
+void IMUTransform::update_callback(driver_msgs::msg::IMU::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
   if (msg->status == driver_msgs::msg::IMU::STATUS_ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The imu data is invalid");
-    odom_msg->status.imu = localization_msgs::msg::Status::ERROR;
+    odom_msg->status.imu = status_ = localization_msgs::msg::Status::ERROR;
   } else {
-    // define
-    const double sin180 = sin(std::numbers::pi);
-    const double cos180 = cos(std::numbers::pi);
+    msg = calc_euler(std::move(msg));
+    msg = calc_quartenion(std::move(msg));
 
-    // z-axis transform
-    double gyro_x = msg->gyro.x * cos180 - msg->gyro.y * sin180;
-    double gyro_y = msg->gyro.x * sin180 + msg->gyro.y * cos180;
-
-    roll = msg->orient.x * cos180 - msg->orient.y * sin180;
-    pitch = msg->orient.x * sin180 + msg->orient.y * cos180;
-
-    yaw = msg->orient.z;
-    double yaw_offset = msg->orient.z - offset_angle.at(2);
-    if (yaw_offset < -180) yaw_offset += 360;
-    if (180 < yaw_offset) yaw_offset -= 360;
+    status_ = localization_msgs::msg::Status::NORMAL;
 
     // Publish
     {
       odom_msg->header = msg->header;
-
-      odom_msg->twist.angular.x = gyro_x;
-      odom_msg->twist.angular.y = gyro_y;
-      odom_msg->twist.angular.z = msg->gyro.z;
-
-      odom_msg->pose.orientation.x = roll - offset_angle.at(0);
-      odom_msg->pose.orientation.y = pitch - offset_angle.at(1);
-
-      odom_msg->pose.orientation.z = yaw_offset;
+      odom_msg->twist.angular = msg->gyro;
+      odom_msg->pose.orientation.euler = msg->orient;
+      odom_msg->pose.orientation.qtn = msg->qtn;
     }
     RCLCPP_DEBUG(this->get_logger(), "Calculated IMU transform");
   }
   pub_->publish(std::move(odom_msg));
 }
 
+driver_msgs::msg::IMU::UniquePtr IMUTransform::calc_euler(driver_msgs::msg::IMU::UniquePtr msg)
+{
+  // Copy current data
+  gyro_ << msg->gyro.x, msg->gyro.y, msg->gyro.z;
+  orient_ << msg->orient.x, msg->orient.y, msg->orient.z;
+
+  Transform3D::Rotation ori =
+    Transform3D::Rotation::fromRPY(msg->orient.x, msg->orient.y, msg->orient.z);
+  // Transform
+  Eigen::Vector3d gyro = rot_ * gyro_;
+  Eigen::Vector3d orient = (rot_ * ori).toRotationMatrix().eulerAngles(2, 1, 0);
+
+  // Add offset
+  orient(0) -= offset_orient_(0);
+  orient(1) -= offset_orient_(1);
+  orient(2) -= offset_orient_(2);
+
+  // yaw range
+  // if (orient[2] < -180) orient[2] += 360;
+  // if (180 < orient[2]) orient[2] -= 360;
+
+  msg->gyro.x = gyro(0);
+  msg->gyro.y = gyro(1);
+  msg->gyro.z = gyro(2);
+  msg->orient.x = orient(0);
+  msg->orient.y = orient(1);
+  msg->orient.z = orient(2);
+  return msg;
+}
+
+driver_msgs::msg::IMU::UniquePtr IMUTransform::calc_quartenion(driver_msgs::msg::IMU::UniquePtr msg)
+{
+  qtn_ = Eigen::Quaterniond(msg->qtn.w, msg->qtn.x, msg->qtn.y, msg->qtn.z);
+
+  // Transform
+  // Eigen::Quaterniond q_relative = qtn_ * rot_.toQuaternion();
+  // Eigen::Quaterniond q_relative = q * offset_qtn_;
+
+  // TODO: 計算が正しいことを確認したら削除
+  const double rad_to_deg = 180.0 / M_PI;
+  // std::cout << "orient  roll: " << msg->orient.x << ", ";
+  // std::cout << "  pitch: " << msg->orient.y << ", ";
+  // std::cout << "  yaw: " << msg->orient.z << ", " << std::endl;
+  // // Z-Y-X順のオイラー角に変換
+  // Eigen::Vector3d euler = q_relative.toRotationMatrix().eulerAngles(2, 0, 1);
+  // std::cout << "quart  Roll: " << euler.y() * rad_to_deg << ", ";
+  // std::cout << "  Pitch: " << euler.z() * rad_to_deg << ", ";
+  // std::cout << "  Yaw: " << euler.x() * rad_to_deg << std::endl;
+  // std::cout << std::endl;
+  // const double rad_to_deg = 180.0 / M_PI;
+  std::cout << "orient  roll: " << orient_(0) << ", ";
+  std::cout << "  pitch: " << orient_(1) << ", ";
+  std::cout << "  yaw: " << orient_(2) << ", " << std::endl;
+  // Z-Y-X順のオイラー角に変換
+  Eigen::Vector3d euler = qtn_.toRotationMatrix().eulerAngles(2, 1, 0);
+  std::cout << "quart   Roll: " << euler.z() * rad_to_deg << ", ";
+  std::cout << "  Pitch: " << euler.y() * rad_to_deg << ", ";
+  std::cout << "  Yaw: " << euler.x() * rad_to_deg << std::endl;
+  std::cout << qtn_ << std::endl;
+  std::cout << std::endl;
+
+  // msg->qtn.w = q_relative.w();
+  // msg->qtn.x = q_relative.x();
+  // msg->qtn.y = q_relative.y();
+  // msg->qtn.z = q_relative.z();
+  return msg;
+}
+
 void IMUTransform::reset_callback(
   [[maybe_unused]] const std_srvs::srv::Trigger::Request::SharedPtr request,
   const std_srvs::srv::Trigger::Response::SharedPtr response)
 {
-  this->reset();
-  RCLCPP_INFO(this->get_logger(), "Reset");
+  bool result = this->reset();
+  RCLCPP_INFO(this->get_logger(), "Reset: %s", result ? "success" : "faild");
 
-  response->success = true;
   response->message = "";
+  if (result)
+    response->success = true;
+  else
+    response->success = false;
 }
 
-void IMUTransform::reset() { offset_angle = {roll, pitch, yaw}; }
+bool IMUTransform::reset()
+{
+  int count = 0;
+  while (status_ == localization_msgs::msg::Status::ERROR) {
+    std::this_thread::sleep_for(20ms);
+    if (++count == 3) return false;
+  };
+
+  offset_orient_ = orient_;
+  offset_qtn_ = qtn_.inverse();
+  return true;
+}
 
 }  // namespace localization
 

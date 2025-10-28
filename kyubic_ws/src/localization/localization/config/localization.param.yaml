@@ -2,6 +2,18 @@
   ros__parameters:
     fresh_water: true # True if fresh water, otherwise false
 
+/localization/imu/imu_transform_component:
+  ros__parameters:
+    x: 0.0  # correction coordinate-system [deg]
+    y: 0.0
+    z: 180.0
+
+/localization/dvl/dvl_odometry_component:
+  ros__parameters:
+    origin_offset_x: 0.15  # Distance(x-axis) from robot origin to DVL origin
+    origin_offset_y: 0.0   # Distance(y-axis) from robot origin to DVL origin
+    origin_offset_z: 0.0   # Distance(z-axis) from robot origin to DVL origin
+
 /localization/localization_component:
   ros__parameters:
     coord_system_id: 3

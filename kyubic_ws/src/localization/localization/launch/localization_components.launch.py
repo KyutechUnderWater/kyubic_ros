@@ -49,6 +49,7 @@ def generate_launch_description():
                 package="localization",
                 plugin="localization::IMUTransform",
                 remappings=[("/localization/imu/imu", "/driver/imu")],
+                parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
