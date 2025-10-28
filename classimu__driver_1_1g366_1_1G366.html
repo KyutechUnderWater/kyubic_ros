@@ -91,9 +91,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a98d3029baa884eafdb46d8a5be7cbb8a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimu__driver_1_1g366_1_1G366.html#a98d3029baa884eafdb46d8a5be7cbb8a">G366</a> (const char *_portname, const int _baudrate)</td></tr>
 <tr class="memdesc:a98d3029baa884eafdb46d8a5be7cbb8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serial communication setting.  <br /></td></tr>
 <tr class="separator:a98d3029baa884eafdb46d8a5be7cbb8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95e232c48f9b99fbb9f96b0415780051"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimu__driver_1_1g366_1_1G366.html#a95e232c48f9b99fbb9f96b0415780051">~G366</a> ()</td></tr>
+<tr class="separator:a95e232c48f9b99fbb9f96b0415780051"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac74840e9332ba5d6883e1aaabdfe583b"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimu__driver_1_1g366_1_1G366.html#ac74840e9332ba5d6883e1aaabdfe583b">concat_8bit</a> (uint8_t msb, uint8_t lsb)</td></tr>
 <tr class="memdesc:ac74840e9332ba5d6883e1aaabdfe583b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenate 8bit to 16bit.  <br /></td></tr>
 <tr class="separator:ac74840e9332ba5d6883e1aaabdfe583b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab26f4cdb3b77d8d8dd59b964f8c98fbf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimu__driver_1_1g366_1_1G366.html#ab26f4cdb3b77d8d8dd59b964f8c98fbf">set_baud_rate</a> (int baudrate)</td></tr>
+<tr class="memdesc:ab26f4cdb3b77d8d8dd59b964f8c98fbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set baudrate.  <br /></td></tr>
+<tr class="separator:ab26f4cdb3b77d8d8dd59b964f8c98fbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5e8bde5ef0f5919fc601cbe346d8fae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classimu__driver_1_1g366_1_1G366.html#ad5e8bde5ef0f5919fc601cbe346d8fae">set_filter</a> (uint8_t filter_type=8)</td></tr>
 <tr class="memdesc:ad5e8bde5ef0f5919fc601cbe346d8fae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set filter.  <br /></td></tr>
 <tr class="separator:ad5e8bde5ef0f5919fc601cbe346d8fae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -166,6 +171,23 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <p>Setting such as port opening, and communication speed </p>
+
+</div>
+</div>
+<a id="a95e232c48f9b99fbb9f96b0415780051" name="a95e232c48f9b99fbb9f96b0415780051"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95e232c48f9b99fbb9f96b0415780051">&#9670;&#160;</a></span>~G366()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">imu_driver::g366::G366::~G366 </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -284,6 +306,32 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <p>0b00100000 is modeC, which Assumed operating speed is 1 [m/s], Application examples are construction machinery. </p>
+
+</div>
+</div>
+<a id="ab26f4cdb3b77d8d8dd59b964f8c98fbf" name="ab26f4cdb3b77d8d8dd59b964f8c98fbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab26f4cdb3b77d8d8dd59b964f8c98fbf">&#9670;&#160;</a></span>set_baud_rate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void imu_driver::g366::G366::set_baud_rate </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>baudrate</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set baudrate. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">baudrate</td><td>serial baudrate </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
