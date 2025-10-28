@@ -20,10 +20,13 @@ using namespace std::chrono_literals;
 namespace imu_driver::g366
 {
 
-G366::G366(const char * _portname, const int _baudrate) : portname(_portname), baudrate(_baudrate)
+G366::G366(const char * portname, const int baudrate) : portname_(portname), baudrate_(baudrate)
 {
-  serial_ = std::make_shared<serial::Serial>(portname, baudrate);
+  if (baudrate_ != default_baudrate) set_baud_rate(baudrate_);
+  serial_ = std::make_shared<serial::Serial>(portname_, baudrate_);
 }
+
+G366::~G366() { software_reset(); }
 
 bool G366::setup()
 {
@@ -32,9 +35,6 @@ bool G366::setup()
     std::cout << "Info [setup]: Is not ready" << std::endl;
     std::this_thread::sleep_for(1s);
   }
-
-  // Reset
-  software_reset();
 
   // Check hardware error (malfanction)
   uint16_t hard_error = self_test() & 0b0000000001100000;
@@ -83,7 +83,7 @@ bool G366::update()
   uint8_t buf[36];
   serial_->flush();
   serial_->write(burst_request_wcomm0, sizeof(burst_request_wcomm0));
-  ssize_t len = serial_->read(buf, 36, 10ms);
+  ssize_t len = serial_->read(buf, 36, 20ms);
 
   // Decord data
   if (len == 36 && buf[0] == 0x80 && buf[35] == 0x0d) {
@@ -159,6 +159,22 @@ bool G366::update()
 uint16_t G366::concat_8bit(uint8_t msb, uint8_t lsb)
 {
   return static_cast<short>(msb << 8) | static_cast<short>(lsb);
+}
+
+void G366::set_baud_rate(int baudrate)
+{
+  // Set baud rate (persists after being set)
+  serial::Serial serial(portname_, 460800);
+  serial.write(window1_select_wcomm, sizeof(window1_select_wcomm));
+
+  if (baudrate == 230400)
+    serial.write(baud_rate_230_wcomm1, sizeof(baud_rate_230_wcomm1));
+  else if (baudrate == 921600)
+    serial.write(baud_rate_921_wcomm1, sizeof(baud_rate_921_wcomm1));
+  else {
+    throw std::runtime_error("Error: Don't match baudrate. Select 230600, 460800, or 921600.");
+    exit(0);
+  }
 }
 
 void G366::set_filter(uint8_t filter_type)

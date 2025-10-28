@@ -27,14 +27,14 @@ IMUDriver::IMUDriver() : Node("imu_driver")
   timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout);
 
   g366_ = std::make_shared<g366::G366>(portname.c_str(), baudrate);
-  RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
+  RCLCPP_INFO(this->get_logger(), "Connected %s > %d", portname.c_str(), baudrate);
 
   _setup();
   RCLCPP_INFO(this->get_logger(), "G366 settings successful");
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<driver_msgs::msg::IMU>("imu", qos);
-  timer_ = create_wall_timer(10ms, std::bind(&IMUDriver::_update, this));
+  timer_ = create_wall_timer(20ms, std::bind(&IMUDriver::_update, this));
 }
 
 // TODO: Reset Nodeへの命令を実装
