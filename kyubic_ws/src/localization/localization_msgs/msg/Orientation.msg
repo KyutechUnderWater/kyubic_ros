@@ -1,5 +1,4 @@
 # This represents an orientation in free space in euler form.
 
-float64 x
-float64 y
-float64 z
+geometry_msgs/Vector3 euler
+geometry_msgs/Quaternion qtn

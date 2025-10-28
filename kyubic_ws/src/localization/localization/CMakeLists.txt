@@ -43,11 +43,13 @@ ament_target_dependencies(depth_odometry_component
 ament_auto_add_library(imu_transform_component SHARED
   ./src/imu_transform_component.cpp
 )
+target_link_libraries(imu_transform_component transform::transform)
 
 ## dvl_odometry_component
 ament_auto_add_library(dvl_odometry_component SHARED
   ./src/dvl_odometry_component.cpp
 )
+target_link_libraries(dvl_odometry_component transform::transform)
 
 ## localization_component
 ament_auto_add_library(localization_component SHARED

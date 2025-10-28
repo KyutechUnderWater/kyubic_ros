@@ -8,12 +8,13 @@
  ***********************************************/
 
 #include <rclcpp/rclcpp.hpp>
+#include <transform/transform.hpp>
 
 #include <driver_msgs/msg/imu.hpp>
 #include <localization_msgs/msg/odometry.hpp>
 #include <std_srvs/srv/trigger.hpp>
 
-#include <array>
+using namespace std::chrono_literals;
 
 /**
  * @namespace localization
@@ -32,10 +33,15 @@ private:
   rclcpp::Subscription<driver_msgs::msg::IMU>::SharedPtr sub_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_;
 
-  std::array<double, 3> offset_angle;
-  double roll = 0.0;
-  double pitch = 0.0;
-  double yaw = 0.0;
+  Transform3D::Rotation rot_;
+
+  uint8_t status_ = localization_msgs::msg::Status::ERROR;
+  Eigen::Vector3d gyro_;
+  Eigen::Vector3d orient_;
+  Eigen::Vector3d pre_euler;
+  Eigen::Vector3d offset_orient_;
+  Eigen::Quaterniond qtn_;
+  Eigen::Quaterniond offset_qtn_;
 
   /**
    * @brief Update imu data
@@ -43,6 +49,18 @@ private:
    * @note The calculation cycle depends on the cycle of the topic sent from the imu driver.
    */
   void update_callback(const driver_msgs::msg::IMU::UniquePtr msg);
+
+  /**
+   * @brief Calculate euler angle
+   * @details After getting the imu data, transform from imu coordinate system to map coordinate system
+   */
+  driver_msgs::msg::IMU::UniquePtr calc_euler(driver_msgs::msg::IMU::UniquePtr msg);
+
+  /**
+   * @brief Calculate quaternion
+   * @details After getting the imu data, transform from imu coordinate system to map coordinate system
+   */
+  driver_msgs::msg::IMU::UniquePtr calc_quartenion(driver_msgs::msg::IMU::UniquePtr msg);
 
   /**
    * @brief Call reset func
@@ -62,8 +80,9 @@ public:
 
   /**
    * @brief Set offset_angle
+   * @return If success is true, otherwise is false.
    */
-  void reset();
+  bool reset();
 };
 
 }  // namespace localization

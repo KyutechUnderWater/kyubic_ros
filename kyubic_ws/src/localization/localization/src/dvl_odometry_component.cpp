@@ -8,6 +8,7 @@
  *********************************************************/
 
 #include <localization/dvl_odometry_component.hpp>
+#include <transform/transform.hpp>
 
 #include <cmath>
 #include <functional>
@@ -20,6 +21,10 @@ namespace localization
 
 DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odometry", options)
 {
+  offset[0] = this->declare_parameter("origin_offset_x", 0.0);
+  offset[1] = this->declare_parameter("origin_offset_y", 0.0);
+  offset[2] = this->declare_parameter("origin_offset_z", 0.0);
+
   imu_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
@@ -53,7 +58,7 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 
     // Convert to warld coordinate system (right-handed coordinate system, and z-axis downward)
     // DVL coordinate system is right-handed cooordinate system, and z-axis upward.
-    double heading_rad = imu_msg_->pose.orientation.z * std::numbers::pi / 180;
+    double heading_rad = imu_msg_->pose.orientation.euler.z * std::numbers::pi / 180;
     double vel_x = msg->velocity.x * cos(heading_rad) - msg->velocity.y * sin(heading_rad);
     double vel_y = msg->velocity.x * sin(heading_rad) + msg->velocity.y * cos(heading_rad);
 
