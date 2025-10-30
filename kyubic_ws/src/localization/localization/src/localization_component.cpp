@@ -17,7 +17,6 @@
 #include "driver_msgs/msg/gnss.hpp"
 #include "localization_msgs/srv/reset.hpp"
 
-#include <array>
 #include <functional>
 #include <future>
 #include <memory>
@@ -31,7 +30,8 @@ namespace localization
 Localization::Localization(const rclcpp::NodeOptions & options) : Node("localization", options)
 {
   coord_system_id = this->declare_parameter("coord_system_id", 1);
-  origin_geodetic = GSI::getOriginPoint(coord_system_id);
+  geo_converter_ = std::make_shared<common::GeodeticConverter>(coord_system_id);
+  origin_geodetic = geo_converter_->getOrigin();
 
   bool depth_enable = this->declare_parameter("depth", false);
   bool imu_enable = this->declare_parameter("imu", false);
@@ -40,6 +40,7 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
 
   odom_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
   gnss_msg_ = std::make_shared<driver_msgs::msg::Gnss>();
+  imu_raw_msg_ = std::make_shared<driver_msgs::msg::IMU>();
   global_pose_msg_ = std::make_shared<localization_msgs::msg::GlobalPose>();
   global_pose_msg_->coordinate_system_id = coord_system_id;
 
@@ -106,19 +107,19 @@ void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePt
   RCLCPP_DEBUG(this->get_logger(), "Updated DVL odometry");
   all_updated |= 1;
 
-  this->odom_msg_->header = msg->header;
+  odom_msg_->header = msg->header;
   odom_msg_->status.dvl = msg->status.dvl;
 
-  this->odom_msg_->pose.position.x = msg->pose.position.x;
-  this->odom_msg_->pose.position.y = msg->pose.position.y;
-  this->odom_msg_->pose.position.z_altitude = msg->pose.position.z_altitude;
+  odom_msg_->pose.position.x = msg->pose.position.x;
+  odom_msg_->pose.position.y = msg->pose.position.y;
+  odom_msg_->pose.position.z_altitude = msg->pose.position.z_altitude;
 
-  this->odom_msg_->pose.orientation = msg->pose.orientation;
-  this->odom_msg_->twist.angular = msg->twist.angular;
+  odom_msg_->pose.orientation = msg->pose.orientation;
+  odom_msg_->twist.angular = msg->twist.angular;
 
-  this->odom_msg_->twist.linear.x = msg->twist.linear.x;
-  this->odom_msg_->twist.linear.y = msg->twist.linear.y;
-  this->odom_msg_->twist.linear.z_altitude = msg->twist.linear.z_altitude;
+  odom_msg_->twist.linear.x = msg->twist.linear.x;
+  odom_msg_->twist.linear.y = msg->twist.linear.y;
+  odom_msg_->twist.linear.z_altitude = msg->twist.linear.z_altitude;
 }
 
 void Localization::gnss_callback(driver_msgs::msg::Gnss::UniquePtr msg)
@@ -131,13 +132,12 @@ void Localization::gnss_callback(driver_msgs::msg::Gnss::UniquePtr msg)
 void Localization::imu_raw_callback(driver_msgs::msg::IMU::UniquePtr msg)
 {
   imu_raw_msg_ = std::move(msg);
-  RCLCPP_DEBUG(this->get_logger(), "Updated GNSS data");
+  RCLCPP_DEBUG(this->get_logger(), "Updated IMU data");
 }
 
 void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::SharedPtr odom_)
 {
-  double azimuth_rad =
-    (odom_->pose.orientation.z + azimuth - reference_meridian_convergence) * std::numbers::pi / 180;
+  double azimuth_rad = (azimuth + reference_plane.meridian_convergence) * std::numbers::pi / 180;
   double plane_x =
     odom_->pose.position.x * cos(azimuth_rad) - odom_->pose.position.y * sin(azimuth_rad);
   double plane_y =
@@ -146,8 +146,7 @@ void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::Sha
   plane_x += reference_plane.x;
   plane_y += reference_plane.y;
 
-  GSI::LatLon current_geodetic =
-    GSI::xy2bl(plane_x, plane_y, origin_geodetic.latitude, origin_geodetic.longitude);
+  common::Geodetic current_geodetic = geo_converter_->xy2geo({plane_x, plane_y, 0.0, 0.0});
 
   global_pose_msg_->current_pose.plane_x = plane_x;
   global_pose_msg_->current_pose.plane_y = plane_y;
@@ -157,23 +156,20 @@ void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::Sha
   global_pose_msg_->ref_pose.longitude = reference_geodetic.longitude;
   global_pose_msg_->ref_pose.plane_x = reference_plane.x;
   global_pose_msg_->ref_pose.plane_y = reference_plane.y;
-  global_pose_msg_->ref_pose.meridian_convergence = reference_meridian_convergence;
+  global_pose_msg_->ref_pose.meridian_convergence = reference_plane.meridian_convergence;
   global_pose_msg_->azimuth = azimuth;
 
-  std::array<GSI::XY, 6> xy_geo;
+  std::array<common::PlaneXY, 6> xy_geo;
   for (int i = 0; i < 4; i++) {
-    GSI::LatLon anchor;
-    anchor.latitude = GSI::dms2deg(ANCHOR_POINTS_DMS[i][0]);
-    anchor.longitude = GSI::dms2deg(ANCHOR_POINTS_DMS[i][1]);
-    xy_geo[i] = GSI::bl2xy(
-      anchor.latitude, anchor.longitude, origin_geodetic.latitude, origin_geodetic.longitude);
+    common::Geodetic anchor;
+    anchor.latitude = geo_converter_->dms2deg(ANCHOR_POINTS_DMS[i][0]);
+    anchor.longitude = geo_converter_->dms2deg(ANCHOR_POINTS_DMS[i][1]);
+    xy_geo[i] = geo_converter_->geo2xy({anchor.latitude, anchor.longitude, 0.0, 0.0});
   }
-  xy_geo[4] = GSI::bl2xy(
-    reference_geodetic.latitude, reference_geodetic.longitude, origin_geodetic.latitude,
-    origin_geodetic.longitude);
-  xy_geo[5] = GSI::bl2xy(
-    current_geodetic.latitude, current_geodetic.longitude, origin_geodetic.latitude,
-    origin_geodetic.longitude);
+  xy_geo[4] =
+    geo_converter_->geo2xy({reference_geodetic.latitude, reference_geodetic.longitude, 0.0, 0.0});
+  xy_geo[5] =
+    geo_converter_->geo2xy({current_geodetic.latitude, current_geodetic.longitude, 0.0, 0.0});
 
   int id = 0;
   double scale = 1.0;
@@ -261,14 +257,11 @@ void Localization::reset_callback(
   const localization_msgs::srv::Reset::Request::SharedPtr reqest,
   const localization_msgs::srv::Reset::Response::SharedPtr response)
 {
-  azimuth = imu_raw_msg_->orient.z;
+  azimuth = imu_raw_msg_->orient.z + reqest->azimuth;
   reference_geodetic.latitude = gnss_msg_->fix.latitude;
   reference_geodetic.longitude = gnss_msg_->fix.longitude;
-  reference_plane = GSI::bl2xy(
-    reference_geodetic.latitude, reference_geodetic.longitude, origin_geodetic.latitude,
-    origin_geodetic.longitude);
-  reference_meridian_convergence = GSI::get_meridian_convergence(
-    reference_plane.x, reference_plane.y, origin_geodetic.latitude, origin_geodetic.longitude);
+  reference_plane =
+    geo_converter_->geo2xy({reference_geodetic.latitude, reference_geodetic.longitude, 0.0, 0.0});
 
   int result = ~this->reset();
 

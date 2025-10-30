@@ -41,8 +41,9 @@ RUN apt update && apt install -y locales && \
 ##################
 ## Install variety
 ##################
-RUN apt update && apt install -y sudo gosu iproute2 iputils-ping curl gnupg2 lsb-release \
-	screen tmux vim git wget locate python3-pip python3-venv python3-flake8-docstrings doxygen && \
+RUN apt update && apt install -y sudo gosu iproute2 iputils-ping curl gnupg2 lsb-release ninja-build \
+	screen tmux vim git wget locate python3-pip python3-venv python3-flake8-docstrings \
+	doxygen pre-commit tree ncdu v4l-utils libxcb-cursor0 byobu && \
 	updatedb
 
 ####################################################
@@ -85,7 +86,9 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o 
 ARG ros2_ver=jazzy
 ENV ROS_DISTRO=$ros2_ver
 
-RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DISTRO-teleop-twist-keyboard ros-dev-tools && \
+RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DISTRO-teleop-twist-keyboard ros-dev-tools \
+	ros-$ROS_DISTRO-ament-clang-format ros-$ROS_DISTRO-plotjuggler-ros ros-$ROS_DISTRO-v4l2-camera \
+	ros-$ROS_DISTRO-image-transport-plugins ros-$ROS_DISTRO-web-video-server && \
 	echo "ros installed" && \
 	rosdep init && \
 	rosdep update && \

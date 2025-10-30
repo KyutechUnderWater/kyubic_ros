@@ -17,7 +17,9 @@ setup(
     maintainer_email="ros@todo.todo",
     description="TODO: Package description",
     license="TODO: License declaration",
-    tests_require=["pytest"],
+    extras_require={
+        "test": ["pytest"],
+    },
     entry_points={
         "console_scripts": [
             "oak_main = oak_create_mapping.main:main",

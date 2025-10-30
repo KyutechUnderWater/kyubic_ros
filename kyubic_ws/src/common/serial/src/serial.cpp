@@ -12,6 +12,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include <atomic>
 #include <cstring>
 #include <future>
 
@@ -145,23 +146,29 @@ ssize_t Serial::read(uint8_t * buf, const size_t len)
 ssize_t Serial::read(
   uint8_t * buf, const size_t len, const std::chrono::duration<long, std::ratio<1, 1000>> timeout)
 {
-  bool end_flag = false;
-  std::future<ssize_t> future = std::async(std::launch::async, [this, buf, &len, &end_flag]() {
+  if (len == 0) return 0;
+
+  std::atomic<bool> end_flag(false);
+  std::future<ssize_t> future = std::async(std::launch::async, [this, buf, len, &end_flag]() {
     ssize_t read_len = 0;
-    while (!end_flag) {
-      read_len += read(buf + read_len, len - read_len);
-      if (static_cast<size_t>(read_len) >= len) {
-        return read_len;
+    while (!end_flag.load(std::memory_order_relaxed)) {
+      ssize_t newly_read = read(buf + read_len, len - read_len);
+      if (newly_read > -1) {
+        read_len += newly_read;
+        if (static_cast<size_t>(read_len) >= len) {
+          return read_len;
+        }
       }
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
-    return ssize_t(0);
+    return read_len;
   });
 
   std::future_status status = future.wait_for(timeout);
-  end_flag = true;
-  if (status == std::future_status::ready)
+  end_flag.store(true, std::memory_order_relaxed);
+  if (status == std::future_status::ready) {
     return future.get();
-  else {
+  } else {
     return (ssize_t)0;
   }
 }
@@ -170,11 +177,13 @@ ssize_t Serial::read_until(
   uint8_t * buf, const size_t len, const char end_char,
   std::chrono::duration<long, std::ratio<1, 1000>> timeout)
 {
-  bool end_flag = false;
+  if (len == 0) return 0;
+
+  std::atomic<bool> end_flag(false);
   std::future<ssize_t> future =
-    std::async(std::launch::async, [this, buf, &len, &end_char, &end_flag]() {
+    std::async(std::launch::async, [this, buf, len, &end_char, &end_flag]() {
       ssize_t read_len = 0;
-      while (!end_flag) {
+      while (!end_flag.load(std::memory_order_relaxed)) {
         size_t rl = read(buf + read_len, 1);
         read_len += rl;
         if (buf[read_len - 1] == (uint8_t)end_char) {
@@ -183,12 +192,13 @@ ssize_t Serial::read_until(
         if (static_cast<size_t>(read_len) > len) {
           return ssize_t(-1);
         }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
       }
-      return ssize_t(0);
+      return read_len;
     });
 
   std::future_status status = future.wait_for(timeout);
-  end_flag = true;
+  end_flag.store(true, std::memory_order_relaxed);
   if (status == std::future_status::ready) {
     return future.get();
   } else {
