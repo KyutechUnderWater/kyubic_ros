@@ -9,7 +9,7 @@
 
   <depend>rclpy</depend>
   <depend>localization_msgs</depend>
-  <depend>real_time_plotter_msgs</depend>
+  <depend>rt_pose_plotter_msgs</depend>
   <depend>sensor_msgs</depend>
 
   <test_depend>ament_copyright</test_depend>

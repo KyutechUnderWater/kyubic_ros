@@ -31,13 +31,13 @@ TestPID::TestPID(const rclcpp::NodeOptions & options) : Node("test_pid", options
   // Create messages instance
   odom_ = std::make_shared<localization_msgs::msg::Odometry>();
   joy_ = std::make_shared<geometry_msgs::msg::WrenchStamped>();
-  targets_ = std::make_shared<real_time_plotter_msgs::msg::Targets>();
+  targets_ = std::make_shared<rt_pose_plotter_msgs::msg::Targets>();
 
   // ROS 2 communication
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   pub_ = create_publisher<geometry_msgs::msg::WrenchStamped>("robot_force", qos);
-  sub_targets_ = create_subscription<real_time_plotter_msgs::msg::Targets>(
+  sub_targets_ = create_subscription<rt_pose_plotter_msgs::msg::Targets>(
     "targets", qos, std::bind(&TestPID::callback_target, this, std::placeholders::_1));
   sub_joy_ = create_subscription<geometry_msgs::msg::WrenchStamped>(
     "joy_robot_force", qos, std::bind(&TestPID::callback_joy, this, std::placeholders::_1));
@@ -130,7 +130,7 @@ void TestPID::update()
   }
 }
 
-void TestPID::callback_target(real_time_plotter_msgs::msg::Targets::UniquePtr msg)
+void TestPID::callback_target(rt_pose_plotter_msgs::msg::Targets::UniquePtr msg)
 {
   targets_ = std::move(msg);
 }

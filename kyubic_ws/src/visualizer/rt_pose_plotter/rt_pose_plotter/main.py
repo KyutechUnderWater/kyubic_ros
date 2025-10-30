@@ -9,7 +9,7 @@ import bisect
 import rclpy
 from rclpy.node import Node
 from localization_msgs.msg import Odometry
-from real_time_plotter_msgs.msg import Targets
+from rt_pose_plotter_msgs.msg import Targets
 
 # PyQt5/PyQtGraph関連
 from PyQt5.QtWidgets import (
@@ -365,7 +365,7 @@ class MultiDimSubscriber(Node):
     """
 
     def __init__(self):
-        super().__init__("multi_dim_plotter_node")
+        super().__init__("rt_pose_plotter")
 
         self.data_queue = collections.deque(maxlen=MAX_DATA_POINTS)
         self.lock = threading.Lock()
