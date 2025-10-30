@@ -1,4 +1,3 @@
-import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
@@ -6,10 +5,6 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    # --- Launch引数の宣言 ---
-    # Launch実行時にコマンドラインから値を変更できる
-    # 例: ros2 launch ... odom_topic:=/robot1/odom
-
     odom_topic_arg = DeclareLaunchArgument(
         "odom_topic",
         default_value="/localization/odom",
@@ -23,16 +18,14 @@ def generate_launch_description():
 
     # --- ノードの定義 ---
     plotter_node = Node(
-        name="real_time_plotter",
-        namespace="real_time_plotter",
-        package="real_time_plotter",
-        # setup.pyで設定する実行可能ファイル名
-        executable="real_time_plotter",
+        name="rt_pose_plotter",
+        namespace="visualizer",
+        package="rt_pose_plotter",
+        executable="rt_pose_plotter",
         output="screen",
-        # トピック名のリマッピング設定
         remappings=[
-            ("/real_time_plotter/odom", LaunchConfiguration("odom_topic")),
-            ("/real_time_plotter/targets", LaunchConfiguration("targets_topic")),
+            ("/rt_pose_plotter/odom", LaunchConfiguration("odom_topic")),
+            ("/rt_pose_plotter/targets", LaunchConfiguration("targets_topic")),
         ],
     )
 

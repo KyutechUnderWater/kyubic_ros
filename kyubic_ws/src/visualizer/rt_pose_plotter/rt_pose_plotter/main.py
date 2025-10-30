@@ -365,7 +365,7 @@ class MultiDimSubscriber(Node):
     """
 
     def __init__(self):
-        super().__init__("multi_dim_plotter_node")
+        super().__init__("rt_pose_plotter")
 
         self.data_queue = collections.deque(maxlen=MAX_DATA_POINTS)
         self.lock = threading.Lock()

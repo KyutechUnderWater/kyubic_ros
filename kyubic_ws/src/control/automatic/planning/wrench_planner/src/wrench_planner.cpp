@@ -9,9 +9,8 @@
 
 #include "wrench_planner/wrench_planner.hpp"
 
-#include <rclcpp/logging.hpp>
-
 #include <memory>
+#include <rclcpp/logging.hpp>
 
 namespace planner
 {
@@ -125,7 +124,11 @@ void WrenchPlanner::_update_wrench()
   pub_->publish(std::move(msg));
 
   {
+<<<<<<< HEAD
     auto targets = std::make_unique<p_pid_controller_msgs::msg::Targets>();
+=======
+    auto targets = std::make_unique<rt_pose_plotter_msgs::msg::Targets>();
+>>>>>>> main
 
     targets->pose.x = target_pose.position.x;
     targets->pose.y = target_pose.position.y;
