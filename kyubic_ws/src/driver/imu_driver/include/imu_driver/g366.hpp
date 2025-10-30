@@ -103,6 +103,9 @@ command filter_ctrl_wcomm1[3] = {0x86, 0x00, 0x0d};     /// Set Filter command
 command filter_ctrl_rcomm1[3] = {0x06, 0x00, 0x0d};     /// Read set filter status
 command atti_motion_wcomm1[3] = {0x96, 0x00, 0x0d};     /// Set attitude mortion profile
 command atti_motion_rcomm1[3] = {0x16, 0x00, 0x0d};     /// Read set profile status
+command baud_rate_460_wcomm1[3] = {0x89, 0x00, 0x0d};   /// Set baud rate (460800bps)
+command baud_rate_230_wcomm1[3] = {0x89, 0x01, 0x0d};   /// Set baud rate (230400bps)
+command baud_rate_921_wcomm1[3] = {0x89, 0x02, 0x0d};   /// Set baud rate (921600bps)
 
 command config_comm[33] = {
   0xFE, 0x01, 0x0d,  /// WINDOW = 1
@@ -115,6 +118,8 @@ command config_comm[33] = {
   0x94, 0x00, 0x0d,  /// axis mode is XYZ-XYZ
   0x95, 0x0c, 0x0d,  /// eular mode, enable ATTI_ON
 };
+
+const int default_baudrate = 460800;  /// Default baudrate.
 
 /**
  * @brief The scale factor for each data
@@ -139,10 +144,18 @@ public:
    */
   explicit G366(const char * _portname, const int _baudrate);
 
+  ~G366();
+
   /**
    * @brief Concatenate 8bit to 16bit
    */
   uint16_t concat_8bit(uint8_t msb, uint8_t lsb);
+
+  /**
+   * @brief Set baudrate
+   * @param baudrate serial baudrate
+   */
+  void set_baud_rate(int baudrate);
 
   /**
    * @brief Set filter
@@ -193,8 +206,8 @@ public:
   bool update();
 
 private:
-  const char * portname;
-  const int baudrate;
+  const char * portname_;
+  const int baudrate_;
 
   DATA data;
 

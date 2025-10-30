@@ -33,3 +33,5 @@ gosu ros bash -c 'git config --global --add safe.directory /home/ros/kyubic_ros'
 # Build ROS packages
 gosu ros bash -i -c 'cd ~/kyubic_ros/kyubic_ws &&
 	colcon build --symlink-install --cmake-args -GNinja'
+
+gosu ros bash -i -c 'cd ~/kyubic_ros/kyubic_ws && pre-commit install'
