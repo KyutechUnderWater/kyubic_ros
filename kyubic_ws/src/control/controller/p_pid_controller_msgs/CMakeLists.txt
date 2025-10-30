@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-<<<<<<<< HEAD:kyubic_ws/src/control/controller/p_pid_controller_msgs/CMakeLists.txt
 project(p_pid_controller_msgs)
-========
-project(rt_pose_plotter_msgs)
->>>>>>>> main:kyubic_ws/src/visualizer/rt_pose_plotter_msgs/CMakeLists.txt
 
 if (NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)

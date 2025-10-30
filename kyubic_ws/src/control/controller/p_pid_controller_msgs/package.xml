@@ -1,11 +1,7 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-<<<<<<<< HEAD:kyubic_ws/src/control/controller/p_pid_controller_msgs/package.xml
   <name>p_pid_controller_msgs</name>
-========
-  <name>rt_pose_plotter_msgs</name>
->>>>>>>> main:kyubic_ws/src/visualizer/rt_pose_plotter_msgs/package.xml
   <version>0.1.0</version>
   <description>Define messages for target position</description>
   <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
