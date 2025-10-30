@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(rt_pose_plotter_msgs)
+project(p_pid_controller_msgs)
 
 if (NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)

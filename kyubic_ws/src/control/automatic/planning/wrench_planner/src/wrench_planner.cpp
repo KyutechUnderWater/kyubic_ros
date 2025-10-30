@@ -9,14 +9,7 @@
 
 #include "wrench_planner/wrench_planner.hpp"
 
-#include <rclcpp/logging.hpp>
-
-#include "geometry_msgs/msg/wrench_stamped.hpp"
-#include "rt_pose_plotter_msgs/msg/targets.hpp"
-
-#include <functional>
 #include <memory>
-#include <utility>
 
 namespace planner
 {
@@ -36,7 +29,7 @@ WrenchPlanner::WrenchPlanner(const rclcpp::NodeOptions & options) : Node("wrench
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
   pub_ = create_publisher<geometry_msgs::msg::WrenchStamped>("robot_force", qos);
-  pub_target_ = create_publisher<rt_pose_plotter_msgs::msg::Targets>("targets", qos);
+  pub_target_ = create_publisher<p_pid_controller_msgs::msg::Targets>("targets", qos);
   sub_ = create_subscription<planner_msgs::msg::WrenchPlan>(
     "goal_current_odom", qos,
     std::bind(&WrenchPlanner::goalCurrentOdomCallback, this, std::placeholders::_1));
@@ -130,7 +123,7 @@ void WrenchPlanner::_update_wrench()
   pub_->publish(std::move(msg));
 
   {
-    auto targets = std::make_unique<rt_pose_plotter_msgs::msg::Targets>();
+    auto targets = std::make_unique<p_pid_controller_msgs::msg::Targets>();
 
     targets->pose.x = target_pose.position.x;
     targets->pose.y = target_pose.position.y;

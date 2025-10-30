@@ -10,6 +10,11 @@ def generate_launch_description():
         default_value="/localization/odom",
         description="Topic name for the odometry message",
     )
+    targets_topic_arg = DeclareLaunchArgument(
+        "targets_topic",
+        default_value="/controller/p_pid_controller/targets",
+        description="Topic name for the odometry message",
+    )
 
     # --- ノードの定義 ---
     plotter_node = Node(
@@ -20,9 +25,16 @@ def generate_launch_description():
         output="screen",
         remappings=[
             ("/rt_pose_plotter/odom", LaunchConfiguration("odom_topic")),
+            ("/rt_pose_plotter/targets", LaunchConfiguration("targets_topic")),
         ],
     )
 
     # --- LaunchDescriptionの生成 ---
     # 宣言した引数とノードをLaunchDescriptionに含めて返す
-    return LaunchDescription([odom_topic_arg, plotter_node])
+    return LaunchDescription(
+        [
+            odom_topic_arg,
+            targets_topic_arg,
+            plotter_node,
+        ]
+    )

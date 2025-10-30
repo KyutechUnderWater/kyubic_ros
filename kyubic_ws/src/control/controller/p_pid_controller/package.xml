@@ -11,6 +11,11 @@
 
   <depend>pid_controller</depend>
   <depend>yaml-cpp</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>geometry_msgs</depend>
+  <depend>localization_msgs</depend>
+  <depend>p_pid_controller_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
