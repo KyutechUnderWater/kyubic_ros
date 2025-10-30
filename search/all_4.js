@@ -6,7 +6,7 @@ var searchData=
   ['data_5fid_3',['DATA_ID',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830dab7e40ebbf5652496506b1a1df94c736e',1,'dvl_driver::path_finder']]],
   ['data_5flock_4',['data_lock',['../classtrajectory__viewer_1_1odom__viewer_1_1OdomPlotter.html#ae06f17e12933d7d3715a1346fbd0faf9',1,'trajectory_viewer.odom_viewer.OdomPlotter.data_lock()'],['../classtrajectory__viewer_1_1global__pose__viewer_1_1GlobalPosePlotter.html#a874f9c7724f0dd702bca64bc987913ae',1,'trajectory_viewer.global_pose_viewer.GlobalPosePlotter.data_lock()']]],
   ['data_5fmeta_5',['DATA_META',['../structimu__driver_1_1g366_1_1DATA__META.html',1,'imu_driver::g366']]],
-  ['data_5fqueue_6',['data_queue',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#a628225e9d64aa8c6bfa37579f232a900',1,'real_time_plotter::main::MultiDimSubscriber']]],
+  ['data_5fqueue_6',['data_queue',['../classrt__pose__plotter_1_1main_1_1MultiDimSubscriber.html#a2b8c5e9772e0dc00477478b3b0cfc716',1,'rt_pose_plotter::main::MultiDimSubscriber']]],
   ['data_5fstructure_7',['DATA_STRUCTURE',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da6e07a48b0edb08bec4cb981157120a2f',1,'dvl_driver::path_finder']]],
   ['data_5fstructure_8',['data_structure',['../structdvl__driver_1_1path__finder_1_1Data.html#a0b3536d702c93b62074affa2361e194f',1,'dvl_driver::path_finder::Data']]],
   ['data_5ftable_9',['DATA_TABLE',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830d',1,'dvl_driver::path_finder']]],

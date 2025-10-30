@@ -2,7 +2,7 @@ var searchData=
 [
   ['data_5ffiles_0',['data_files',['../namespacesetup.html#ad027a8e9452da003dca32bf7467bd16e',1,'setup']]],
   ['data_5flock_1',['data_lock',['../classtrajectory__viewer_1_1odom__viewer_1_1OdomPlotter.html#ae06f17e12933d7d3715a1346fbd0faf9',1,'trajectory_viewer.odom_viewer.OdomPlotter.data_lock()'],['../classtrajectory__viewer_1_1global__pose__viewer_1_1GlobalPosePlotter.html#a874f9c7724f0dd702bca64bc987913ae',1,'trajectory_viewer.global_pose_viewer.GlobalPosePlotter.data_lock()']]],
-  ['data_5fqueue_2',['data_queue',['../classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html#a628225e9d64aa8c6bfa37579f232a900',1,'real_time_plotter::main::MultiDimSubscriber']]],
+  ['data_5fqueue_2',['data_queue',['../classrt__pose__plotter_1_1main_1_1MultiDimSubscriber.html#a2b8c5e9772e0dc00477478b3b0cfc716',1,'rt_pose_plotter::main::MultiDimSubscriber']]],
   ['data_5fstructure_3',['data_structure',['../structdvl__driver_1_1path__finder_1_1Data.html#a0b3536d702c93b62074affa2361e194f',1,'dvl_driver::path_finder::Data']]],
   ['deep_5fsky_4',['deep_sky',['../classweb__controller_1_1main_1_1Colors.html#a2ba78e66debb96809592a24f847ab2d1',1,'web_controller::main::Colors']]],
   ['default_5fbaudrate_5',['default_baudrate',['../namespaceimu__driver_1_1g366.html#aec7a77d45e16ec24a232d98739d4219f',1,'imu_driver::g366']]],

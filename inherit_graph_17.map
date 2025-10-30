@@ -3,7 +3,7 @@
 <area shape="rect" id="node2" href="$classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html" title=" " alt="" coords="181,5,359,45"/>
 <area shape="rect" id="node3" href="$classoak__create__mapping_1_1main_1_1HeadlessOakCameraNode.html" title=" " alt="" coords="171,69,369,109"/>
 <area shape="rect" id="node4" href="$classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html" title=" " alt="" coords="129,133,411,173"/>
-<area shape="rect" id="node5" href="$classreal__time__plotter_1_1main_1_1MultiDimSubscriber.html" title=" " alt="" coords="167,197,373,237"/>
+<area shape="rect" id="node5" href="$classrt__pose__plotter_1_1main_1_1MultiDimSubscriber.html" title=" " alt="" coords="173,197,367,237"/>
 <area shape="rect" id="node6" href="$classtrajectory__viewer_1_1global__pose__viewer_1_1GlobalPosePlotter.html" title=" " alt="" coords="155,261,385,301"/>
 <area shape="rect" id="node7" href="$classtrajectory__viewer_1_1main_1_1RosCommunicator.html" title=" " alt="" coords="170,568,370,608"/>
 <area shape="rect" id="node8" href="$classtrajectory__viewer_1_1odom__viewer_1_1OdomPlotter.html" title=" " alt="" coords="182,325,358,365"/>

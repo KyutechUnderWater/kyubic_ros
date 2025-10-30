@@ -1,8 +1,8 @@
 <map id="src/visualizer" name="src/visualizer">
-<area shape="rect" id="node2" href="dir_61a9cb9ed6eb6ba6be3fea1a074ae864.html" title="archive" alt="" coords="498,63,569,88"/>
-<area shape="rect" id="node3" href="dir_7c24bc4ac7ff7e43970b09c2fb38e6b9.html" title="real_time_plotter" alt="" coords="339,63,474,88"/>
+<area shape="rect" id="node2" href="dir_61a9cb9ed6eb6ba6be3fea1a074ae864.html" title="archive" alt="" coords="483,63,554,88"/>
+<area shape="rect" id="node3" href="dir_0691f522f3f3a5c2dcde3a8ca0f48903.html" title="rt_pose_plotter" alt="" coords="339,63,459,88"/>
 <area shape="rect" id="node4" href="dir_90998cd0e8508534705ef9f6607cfef1.html" title="trajectory_viewer" alt="" coords="179,63,315,88"/>
 <area shape="rect" id="node5" href="dir_f28924bb3653fbcf315a5a6aec0cae54.html" title="web_controller" alt="" coords="37,63,155,88"/>
-<area shape="rect" id="clust2" href="dir_ba77f8dab2f3b5b8a1cbb129ed9c63cb.html" alt="" coords="27,52,689,99"/>
-<area shape="rect" id="clust1" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" title="src" alt="" coords="16,16,700,109"/>
+<area shape="rect" id="clust2" href="dir_ba77f8dab2f3b5b8a1cbb129ed9c63cb.html" alt="" coords="27,52,675,99"/>
+<area shape="rect" id="clust1" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" title="src" alt="" coords="16,16,685,109"/>
 </map>

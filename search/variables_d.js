@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['n_5fgraph_0',['n_graph',['../classreal__time__plotter_1_1main_1_1MultiGraphViewer.html#a9a4b059a7ea4ac0bb76ab14561f82b59',1,'real_time_plotter::main::MultiGraphViewer']]],
+  ['n_5fgraph_0',['n_graph',['../classrt__pose__plotter_1_1main_1_1MultiGraphViewer.html#a3f50e2a06c32ea08be9f5d76d3d89a48',1,'rt_pose_plotter::main::MultiGraphViewer']]],
   ['name_1',['name',['../namespacesetup.html#ab3a7a0638d76a01367c5bc3cc699447f',1,'setup']]],
   ['new_5fanchor_5fsignal_2',['new_anchor_signal',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a28a3d4345b78426d29966e5269e20b11',1,'trajectory_viewer::main::RosCommunicator']]],
   ['new_5fposition_5fsignal_3',['new_position_signal',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a31c5cf1effbe007a4fda8e4e6a8ee167',1,'trajectory_viewer::main::RosCommunicator']]],

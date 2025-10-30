@@ -88,7 +88,7 @@ $(function() {
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;geometry_msgs/msg/wrench_stamped.hpp&quot;</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;geometry_msgs/msg/wrench_stamped.hpp&gt;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;localization_msgs/msg/odometry.hpp&gt;</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;real_time_plotter_msgs/msg/targets.hpp&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;rt_pose_plotter_msgs/msg/targets.hpp&gt;</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;array&gt;</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;map&gt;</span></div>
@@ -102,7 +102,7 @@ $(function() {
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>{</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  rclcpp::Publisher&lt;geometry_msgs::msg::WrenchStamped&gt;::SharedPtr pub_;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  rclcpp::Subscription&lt;real_time_plotter_msgs::msg::Targets&gt;::SharedPtr sub_targets_;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  rclcpp::Subscription&lt;rt_pose_plotter_msgs::msg::Targets&gt;::SharedPtr sub_targets_;</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  rclcpp::Subscription&lt;geometry_msgs::msg::WrenchStamped&gt;::SharedPtr sub_joy_;</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  rclcpp::Subscription&lt;localization_msgs::msg::Odometry&gt;::SharedPtr sub_odom_;</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
@@ -114,7 +114,7 @@ $(function() {
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  std::map&lt;std::string, pid_controller::VelocityP_PIDParameter&gt; p_pid_params;</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  std::map&lt;std::string, std::shared_ptr&lt;pid_controller::VelocityP_PID&gt;&gt; vp_pids;</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  std::shared_ptr&lt;real_time_plotter_msgs::msg::Targets&gt; targets_;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  std::shared_ptr&lt;rt_pose_plotter_msgs::msg::Targets&gt; targets_;</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  std::shared_ptr&lt;geometry_msgs::msg::WrenchStamped&gt; joy_;</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  std::shared_ptr&lt;localization_msgs::msg::Odometry&gt; odom_;</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
@@ -123,7 +123,7 @@ $(function() {
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  <span class="keywordtype">void</span> _declare_parameter();</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keywordtype">void</span> callback_target(<span class="keyword">const</span> real_time_plotter_msgs::msg::Targets::UniquePtr msg);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  <span class="keywordtype">void</span> callback_target(<span class="keyword">const</span> rt_pose_plotter_msgs::msg::Targets::UniquePtr msg);</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <span class="keywordtype">void</span> callback_joy(geometry_msgs::msg::WrenchStamped::UniquePtr msg);</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
