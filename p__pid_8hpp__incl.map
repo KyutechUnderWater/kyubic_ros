@@ -1,7 +1,7 @@
 <map id="src/common/pid_controller/include/pid_controller/p_pid.hpp" name="src/common/pid_controller/include/pid_controller/p_pid.hpp">
-<area shape="rect" id="node1" title="P&#45;PID Controller library." alt="" coords="28,5,223,60"/>
-<area shape="rect" id="node2" href="$pid_8hpp.html" title="PID Controller library." alt="" coords="41,108,111,133"/>
-<area shape="rect" id="node5" title=" " alt="" coords="136,108,213,133"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,181,61,207"/>
-<area shape="rect" id="node4" title=" " alt="" coords="85,181,152,207"/>
+<area shape="rect" id="node1" title="P&#45;PID Controller library." alt="" coords="5,5,200,60"/>
+<area shape="rect" id="node2" title=" " alt="" coords="15,108,92,133"/>
+<area shape="rect" id="node3" href="$pid_8hpp.html" title="PID Controller library." alt="" coords="117,108,187,133"/>
+<area shape="rect" id="node4" title=" " alt="" coords="81,181,137,207"/>
+<area shape="rect" id="node5" title=" " alt="" coords="161,181,228,207"/>
 </map>

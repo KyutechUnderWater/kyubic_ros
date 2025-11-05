@@ -1,9 +1,9 @@
 <map id="src/driver/imu_driver/include/imu_driver/g366.hpp" name="src/driver/imu_driver/include/imu_driver/g366.hpp">
-<area shape="rect" id="node1" title="G366 library." alt="" coords="163,5,374,45"/>
-<area shape="rect" id="node2" href="$serial_8hpp.html" title="serial library" alt="" coords="84,93,211,119"/>
-<area shape="rect" id="node6" title=" " alt="" coords="235,93,302,119"/>
-<area shape="rect" id="node7" title=" " alt="" coords="326,93,403,119"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,167,89,192"/>
-<area shape="rect" id="node4" title=" " alt="" coords="114,167,181,192"/>
-<area shape="rect" id="node5" title=" " alt="" coords="205,167,263,192"/>
+<area shape="rect" id="node1" title="G366 library." alt="" coords="29,5,240,45"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,93,72,119"/>
+<area shape="rect" id="node3" title=" " alt="" coords="96,93,173,119"/>
+<area shape="rect" id="node4" href="$serial_8hpp.html" title="serial library" alt="" coords="198,93,325,119"/>
+<area shape="rect" id="node5" title=" " alt="" coords="119,167,203,192"/>
+<area shape="rect" id="node6" title=" " alt="" coords="228,167,295,192"/>
+<area shape="rect" id="node7" title=" " alt="" coords="319,167,377,192"/>
 </map>

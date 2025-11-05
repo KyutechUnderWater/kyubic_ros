@@ -1,10 +1,10 @@
 <map id="src/control/manual/joy2wrench/src/joy2wrench.cpp" name="src/control/manual/joy2wrench/src/joy2wrench.cpp">
-<area shape="rect" id="node1" title=" " alt="" coords="425,5,656,45"/>
-<area shape="rect" id="node2" href="$joy2wrench_8hpp.html" title=" " alt="" coords="277,93,481,119"/>
-<area shape="rect" id="node7" title=" " alt="" coords="506,93,575,119"/>
-<area shape="rect" id="node8" title=" " alt="" coords="599,93,679,119"/>
-<area shape="rect" id="node3" title=" " alt="" coords="5,174,137,199"/>
-<area shape="rect" id="node4" title=" " alt="" coords="162,167,373,207"/>
-<area shape="rect" id="node5" title=" " alt="" coords="397,174,586,199"/>
-<area shape="rect" id="node6" title=" " alt="" coords="610,174,669,199"/>
+<area shape="rect" id="node1" title=" " alt="" coords="445,5,675,45"/>
+<area shape="rect" id="node2" href="$joy2wrench_8hpp.html" title=" " alt="" coords="297,93,501,119"/>
+<area shape="rect" id="node7" title=" " alt="" coords="525,93,595,119"/>
+<area shape="rect" id="node8" title=" " alt="" coords="619,93,699,119"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,167,216,207"/>
+<area shape="rect" id="node4" title=" " alt="" coords="241,174,373,199"/>
+<area shape="rect" id="node5" title=" " alt="" coords="397,174,587,199"/>
+<area shape="rect" id="node6" title=" " alt="" coords="611,174,669,199"/>
 </map>
