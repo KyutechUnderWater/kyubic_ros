@@ -7,16 +7,14 @@
  * @details 各軸の推力をサブスクライブし，ESC制御マイコンに命令する
  *******************************************************************/
 
-#include <rclcpp/rclcpp.hpp>
-#include <serial/serial.hpp>
-#include <timer/timeout.hpp>
-
-#include <driver_msgs/msg/thruster.hpp>
-#include <geometry_msgs/msg/wrench_stamped.hpp>
-#include <std_msgs/msg/bool.hpp>
-
 #include <array>
 #include <cmath>
+#include <driver_msgs/msg/thruster.hpp>
+#include <geometry_msgs/msg/wrench_stamped.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <serial/serial.hpp>
+#include <std_msgs/msg/bool.hpp>
+#include <timer/timeout.hpp>
 
 /**
  * @namespace thruster_driver

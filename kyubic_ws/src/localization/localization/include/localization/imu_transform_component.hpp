@@ -7,13 +7,11 @@
  * @details imuの座標系をワールド座標系に変換する
  ***********************************************/
 
-#include <rclcpp/rclcpp.hpp>
-
+#include <array>
 #include <driver_msgs/msg/imu.hpp>
 #include <localization_msgs/msg/odometry.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
-
-#include <array>
 
 /**
  * @namespace localization

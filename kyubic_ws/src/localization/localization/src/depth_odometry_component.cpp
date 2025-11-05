@@ -9,12 +9,11 @@
 
 #include "localization/depth_odometry_component.hpp"
 
+#include <functional>
+#include <numeric>
 #include <rclcpp/logging.hpp>
 
 #include "localization_msgs/msg/status.hpp"
-
-#include <functional>
-#include <numeric>
 
 namespace localization
 {

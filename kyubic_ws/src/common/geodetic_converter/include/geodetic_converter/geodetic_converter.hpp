@@ -151,7 +151,7 @@ private:
   // GRS80楕円体定数
   static constexpr double a = 6378137.0;      // 長半径 (メートル)
   static constexpr double F = 298.257222101;  // 扁平率の逆数
-  static constexpr double m0 = 0.9999;        // 平面直角座標系のX軸上における縮尺係数
+  static constexpr double m0 = 0.9999;  // 平面直角座標系のX軸上における縮尺係数
   static constexpr double n = 1 / (2 * F - 1);
   static constexpr double n2 = power(n, 2);
   static constexpr double n3 = power(n, 3);

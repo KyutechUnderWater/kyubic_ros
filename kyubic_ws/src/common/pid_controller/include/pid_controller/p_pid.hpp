@@ -10,9 +10,9 @@
 #ifndef _P_PID_HPP
 #define _P_PID_HPP
 
-#include "pid.hpp"
-
 #include <memory>
+
+#include "pid.hpp"
 
 /**
  * @namespace pid_controller

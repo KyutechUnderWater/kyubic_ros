@@ -10,13 +10,12 @@
 #include "projection_dynamic_look_ahead_planner/pdla_planner.hpp"
 
 #include <Eigen/Dense>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/qos.hpp>
-#include <rclcpp/utilities.hpp>
-
 #include <cstddef>
 #include <functional>
 #include <memory>
+#include <rclcpp/logging.hpp>
+#include <rclcpp/qos.hpp>
+#include <rclcpp/utilities.hpp>
 
 namespace planner
 {

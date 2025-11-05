@@ -10,9 +10,8 @@
 #ifndef _FIX_AXIS_plotjuggler_HPP
 #define _FIX_AXIS_plotjuggler_HPP
 
-#include <rclcpp/rclcpp.hpp>
-
 #include <plotjuggler_msgs/msg/min_max.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 namespace tools::plotjuggler
 {
