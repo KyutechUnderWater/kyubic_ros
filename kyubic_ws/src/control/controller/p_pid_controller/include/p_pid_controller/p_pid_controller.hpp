@@ -10,11 +10,10 @@
 #ifndef _P_PID_CONTROLLER_HPP
 #define _P_PID_CONTROLLER_HPP
 
-#include <pid_controller/p_pid.hpp>
-
 #include <array>
 #include <map>
 #include <memory>
+#include <pid_controller/p_pid.hpp>
 
 /**
  * @namespace controller

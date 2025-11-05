@@ -9,12 +9,12 @@
 
 #include "localization/imu_transform_component.hpp"
 
-#include "driver_msgs/msg/imu.hpp"
-
 #include <cmath>
 #include <cstdlib>
 #include <functional>
 #include <numbers>
+
+#include "driver_msgs/msg/imu.hpp"
 
 namespace localization
 {

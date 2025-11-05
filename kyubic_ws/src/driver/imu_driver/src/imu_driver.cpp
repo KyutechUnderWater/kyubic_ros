@@ -9,10 +9,9 @@
 
 #include "imu_driver/imu_driver.hpp"
 
-#include <rclcpp/logging.hpp>
-
 #include <cstdlib>
 #include <memory>
+#include <rclcpp/logging.hpp>
 
 using namespace std::chrono_literals;
 
