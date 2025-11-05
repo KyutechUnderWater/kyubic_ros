@@ -10,9 +10,9 @@
 #ifndef _P_PID_HPP
 #define _P_PID_HPP
 
-#include "pid.hpp"
-
 #include <memory>
+
+#include "pid.hpp"
 
 /**
  * @namespace pid_controller
@@ -72,6 +72,12 @@ public:
   double get_master_out();
 
   /**
+  * @brief Set offset parameter
+  * @param offset offset
+  */
+  void set_param_offset(double offset);
+
+  /**
    * @brief Reset integral term
    * @return none
    */
@@ -125,6 +131,12 @@ public:
    * @return none
    */
   void reset();
+
+  /**
+  * @brief Set offset parameter
+  * @param offset offset
+  */
+  void set_param_offset(double offset);
 
   /**
   * @brief Get calculated master output
