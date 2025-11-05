@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
-project(joy2wrench)
+project(joy_common)
+
 
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 20)
@@ -18,20 +19,18 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-# Add library
-## joy2wrench_component
-ament_auto_add_library(joy2wrench_component SHARED
-  src/joy2wrench.cpp
+ament_auto_add_library(joy_common_component SHARED
+  ./src/joy_common.cpp
 )
 
-rclcpp_components_register_node(joy2wrench_component
-  PLUGIN "joy2wrench::Joy2WrenchStamped"
-  EXECUTABLE joy2wrench_component_node
+rclcpp_components_register_node(joy_common_component
+  PLUGIN "joy_common::JoyCommon"
+  EXECUTABLE joy_common_component_node
 )
 
 # set install config
 install(TARGETS
-  joy2wrench_component
+  joy_common_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
