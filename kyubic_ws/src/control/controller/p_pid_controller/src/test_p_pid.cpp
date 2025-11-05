@@ -95,6 +95,7 @@ void TestPPID::update()
       return;
     }
 
+    p_pid_ctrl_->set_roll_offset(current_pose.orientation.x);
     double torque_x = p_pid_ctrl_->pid_roll_update(
       current_twst.angular.x, current_pose.orientation.x, target_pose.roll);
 

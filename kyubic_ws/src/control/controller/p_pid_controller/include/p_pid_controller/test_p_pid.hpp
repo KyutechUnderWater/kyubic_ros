@@ -10,12 +10,11 @@
 #ifndef _TEST_PPID_HPP
 #define _TEST_PPID_HPP
 
-#include <p_pid_controller/p_pid_controller.hpp>
-#include <rclcpp/rclcpp.hpp>
-
 #include <geometry_msgs/msg/wrench_stamped.hpp>
 #include <localization_msgs/msg/odometry.hpp>
+#include <p_pid_controller/p_pid_controller.hpp>
 #include <p_pid_controller_msgs/msg/targets.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 /**
  * @namespace controller
@@ -64,7 +63,7 @@ public:
 
   /**
    * @brief calculate P-PID Controller
-   * @details If odometru data is updated, update pid step.
+   * @details If odometry data is updated, update pid step.
    */
   void update();
 };
