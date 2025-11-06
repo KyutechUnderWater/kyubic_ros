@@ -59,6 +59,7 @@ def generate_launch_description():
                 namespace="joy2wrench",
                 package="joy2wrench",
                 plugin="joy2wrench::Joy2WrenchStamped",
+                remappings=[("robot_force", "/driver/robot_force")],
                 parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
