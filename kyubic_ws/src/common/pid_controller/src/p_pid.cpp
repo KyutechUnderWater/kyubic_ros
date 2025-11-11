@@ -31,6 +31,8 @@ double PositionP_PID::update(
 
 double PositionP_PID::get_master_out() { return master_out; }
 
+void PositionP_PID::set_param_offset(double offset) { slave_pid_->set_offset(offset); }
+
 void PositionP_PID::reset() { slave_pid_->reset_integral(); }
 
 VelocityP_PID::VelocityP_PID(const VelocityP_PIDParameter & param_)
@@ -48,6 +50,8 @@ double VelocityP_PID::update(double current_slave, double current_master, double
   // Clamped between lo and hi value, and Calculate slave PID controller
   return slave_pid_->update(current_slave, master_out);
 }
+
+void VelocityP_PID::set_param_offset(double offset) { slave_pid_->set_offset(offset); }
 
 double VelocityP_PID::get_master_out() { return master_out; }
 
