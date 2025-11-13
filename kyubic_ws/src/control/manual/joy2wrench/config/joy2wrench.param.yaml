@@ -1,4 +1,4 @@
-/joy2wrench/joy_to_wrench_stamped:
+/joy2wrench/joy2wrench_component:
   ros__parameters:
     force_x_scale: 52.0 # Calculated based on total thrust of all thrusters. 80 [N]
     force_y_scale: 30.0 # Allocated 75% horizontally and 25% vertically.
