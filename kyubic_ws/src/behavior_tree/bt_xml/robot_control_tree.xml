@@ -1,0 +1,34 @@
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <Fallback>
+
+      <Sequence>
+        <CheckEmergencyState/>
+        <LifecycleManager node_name="/emergencyNode" transition="1"/> <LifecycleManager node_name="/emergencyNode" transition="3"/> <LifecycleManager node_name="/manualNode"    transition="4"/> <LifecycleManager node_name="/waypointNode"  transition="4"/> </Sequence>
+
+      <Sequence>
+        <CheckJoyButton button_index="1"/>
+        <LifecycleManager node_name="/manualNode"    transition="1"/>
+        <LifecycleManager node_name="/manualNode"    transition="3"/>
+        <LifecycleManager node_name="/waypointNode"  transition="4"/>
+        <LifecycleManager node_name="/emergencyNode" transition="4"/>
+      </Sequence>
+
+      <Sequence>
+        <CheckJoyButton button_index="0"/>
+        <LifecycleManager node_name="/waypointNode"  transition="1"/>
+        <LifecycleManager node_name="/waypointNode"  transition="3"/>
+        <LifecycleManager node_name="/manualNode"    transition="4"/>
+        <LifecycleManager node_name="/emergencyNode" transition="4"/>
+      </Sequence>
+
+      <Sequence>
+        <LifecycleManager node_name="/manualNode"    transition="4"/>
+        <LifecycleManager node_name="/waypointNode"  transition="4"/>
+        <LifecycleManager node_name="/emergencyNode" transition="4"/>
+        <AlwaysSuccess/>
+      </Sequence>
+
+    </Fallback>
+  </BehaviorTree>
+</root>

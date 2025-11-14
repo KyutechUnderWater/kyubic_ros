@@ -100,13 +100,12 @@ RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DI
 	echo "succesfully"
 
 ######################################
-## Install zellij
+## Install Groot2
 ######################################
-RUN gosu ros bash -c "mkdir -p /home/ros/Apps/Zellij && cd /home/ros/Apps/Zellij && \
-	curl -OL https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz && \
-	tar -xvf zellij*.tar.gz" && \
-	chmod +x /home/ros/Apps/Zellij/zellij && \
-	ln -s /home/ros/Apps/Zellij/zellij /usr/bin/zellij
+RUN gosu ros bash -c "mkdir -p /home/ros/Apps/Groot2 && cd /home/ros/Apps/Groot2 && \
+	curl -OL https://s3.us-west-1.amazonaws.com/download.behaviortree.dev/groot2_linux_installer/Groot2-v1.6.1-x86_64.AppImage" && \
+	cd /home/ros/Apps/Groot2 && chmod +x Groot2-v1.6.1-x86_64.AppImage && ./Groot2-v1.6.1-x86_64.AppImage --appimage-extract && \
+	ln -s /home/ros/Apps/Groot2/squashfs-root/usr/bin/groot2 /usr/bin/groot2
 
 COPY ./entrypoint.sh /usr/bin
 COPY ./once_entrypoint.sh /usr/bin
