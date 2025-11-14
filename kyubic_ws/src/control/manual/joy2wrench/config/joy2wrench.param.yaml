@@ -1,13 +1,4 @@
-/**:
-  ros__parameters:
-    # device_name: "Logicool Dual Action"
-    device_name: "PLAYSTATION(R)3 Controller"
-
-/joy2wrench/joy_node:
-  ros__parameters:
-    deadzone: 0.1
-
-/joy2wrench/joy_to_wrench_stamped:
+/joy2wrench/joy2wrench_component:
   ros__parameters:
     force_x_scale: 52.0 # Calculated based on total thrust of all thrusters. 80 [N]
     force_y_scale: 30.0 # Allocated 75% horizontally and 25% vertically.

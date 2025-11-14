@@ -13,6 +13,7 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
   <depend>localization_msgs</depend>
+  <depend>p_pid_controller_msgs</depend>
 
   <exec_depend>rosidl_default_runtime</exec_depend>
 

@@ -1,2 +1,0 @@
-rt_pose_plotter_msgs/BaseAxes twist
-rt_pose_plotter_msgs/BaseAxes pose

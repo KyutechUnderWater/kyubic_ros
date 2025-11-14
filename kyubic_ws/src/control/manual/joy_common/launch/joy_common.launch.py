@@ -8,11 +8,8 @@ from launch import LaunchDescription
 
 
 def generate_launch_description():
-    joy_common_config = os.path.join(
-        get_package_share_directory("joy_common"), "config", "joy_common.param.yaml"
-    )
     config = os.path.join(
-        get_package_share_directory("joy2wrench"), "config", "joy2wrench.param.yaml"
+        get_package_share_directory("joy_common"), "config", "joy_common.param.yaml"
     )
     log_level_arg = DeclareLaunchArgument(
         "log_level",
@@ -21,8 +18,8 @@ def generate_launch_description():
     )
 
     action_component_container = ComposableNodeContainer(
-        name="joy2wrench_component_container",
-        namespace="joy2wrench",
+        name="joy_common_component_container",
+        namespace="joy_common",
         package="rclcpp_components",
         executable="component_container_isolated",
         output="screen",
@@ -35,31 +32,21 @@ def generate_launch_description():
         ],
         composable_node_descriptions=[
             ComposableNode(
-                name="joy",
-                namespace="joy2wrench",
-                package="joy",
-                plugin="joy::Joy",
-                parameters=[joy_common_config],
-                extra_arguments=[
-                    {"use_intra_process_comms": True}
-                ],  # enable intra-process communication
-            ),
-            ComposableNode(
                 name="joy_common_component",
-                namespace="joy2wrench",
+                namespace="joy_common",
                 package="joy_common",
                 plugin="joy_common::JoyCommon",
-                parameters=[joy_common_config],
+                remappings=[("/joy", "/joy_common/joy")],
+                parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
             ),
             ComposableNode(
-                name="joy2wrench_component",
-                namespace="joy2wrench",
-                package="joy2wrench",
-                plugin="joy2wrench::Joy2WrenchStamped",
-                remappings=[("robot_force", "/driver/robot_force")],
+                name="joy",
+                namespace="joy_common",
+                package="joy",
+                plugin="joy::Joy",
                 parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}

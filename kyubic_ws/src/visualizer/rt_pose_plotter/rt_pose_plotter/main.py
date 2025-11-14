@@ -415,14 +415,14 @@ class MultiDimSubscriber(Node):
             current_targets = (
                 self.latest_targets.pose.x,
                 self.latest_targets.pose.y,
-                self.latest_targets.pose.z_depth,
-                self.latest_targets.pose.z_altitude,
+                self.latest_targets.pose.z,
+                self.latest_targets.pose.z,
                 self.latest_targets.pose.roll,
                 self.latest_targets.pose.yaw,
                 self.latest_targets.twist.x,
                 self.latest_targets.twist.y,
-                self.latest_targets.twist.z_depth,
-                self.latest_targets.twist.z_altitude,
+                self.latest_targets.twist.z,
+                self.latest_targets.twist.z,
                 self.latest_targets.twist.roll,
                 self.latest_targets.twist.yaw,
             )

@@ -11,7 +11,6 @@
 #define _WRENCH_PLANNER_HPP
 
 #include <geometry_msgs/msg/wrench_stamped.hpp>
-#include <memory>
 #include <p_pid_controller/p_pid_controller.hpp>
 #include <p_pid_controller_msgs/msg/targets.hpp>
 #include <planner_msgs/msg/wrench_plan.hpp>
