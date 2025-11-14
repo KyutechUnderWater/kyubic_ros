@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>robot_bt_controller</name>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>sensor_msgs</depend>
+  <depend>custom_msgs</depend> 
+  <depend>lifecycle_msgs</depend>
+
+  <depend>projection_dynamic_look_ahead_planner</depend>
+  <depend>wrench_planner</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
