@@ -1,0 +1,9 @@
+# Goal
+string csv_file_path
+---
+# Result
+bool success
+---
+# Feedback
+localization_msgs/Odometry current_odom
+uint32 current_waypoint_index

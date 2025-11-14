@@ -16,13 +16,15 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 ament_auto_find_build_dependencies()
 
 # add library
 ament_auto_add_library(pdla_planner_component SHARED
   ./src/pdla_planner.cpp
 )
+
+# target link libraries
 target_link_libraries(pdla_planner_component
   Eigen3::Eigen
 )
@@ -33,7 +35,23 @@ rclcpp_components_register_node(pdla_planner_component
   EXECUTABLE pdla_planner_component_node
 )
 
-# set install config
+
+# # Actionの C++ 型サポート (typesupport) ターゲット名を取得
+# rosidl_get_typesupport_target(cpp_typesupport_target
+#   ${PROJECT_NAME} "rosidl_typesupport_cpp"
+# )
+#
+# # [追加] 型サポートをライブラリ (component) にリンク
+# target_link_libraries(pdla_planner_component
+#   "${cpp_typesupport_target}"
+# )
+#
+# # [追加] 型サポートを実行可能ファイル (node) にリンク
+# target_link_libraries(pdla_planner_component_node
+#   "${cpp_typesupport_target}"
+# )
+
+# Set install config
 install(TARGETS
   pdla_planner_component
   ARCHIVE DESTINATION lib
