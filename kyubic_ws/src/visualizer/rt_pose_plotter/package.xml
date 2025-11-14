@@ -8,7 +8,7 @@
   <license>Apache License 2.0</license>
 
   <depend>rclpy</depend>
-  <depend>rt_pose_plotter_msgs</depend>
+  <depend>p_pid_controller_msgs</depend>
   <depend>localization_msgs</depend>
 
   <test_depend>ament_copyright</test_depend>
