@@ -36,67 +36,67 @@ void JoyCommon::_joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
     joy_msg->stick.rx = msg->axes[3];
     joy_msg->stick.ry = msg->axes[4];
 
-    joy_msg->button.cross = msg->buttons[0];
-    joy_msg->button.circle = msg->buttons[1];
-    joy_msg->button.triangle = msg->buttons[2];
-    joy_msg->button.square = msg->buttons[3];
-    joy_msg->button.l1 = msg->buttons[4];
-    joy_msg->button.r1 = msg->buttons[5];
-    joy_msg->button.l2 = msg->axes[2];
-    joy_msg->button.r2 = msg->axes[5];
-    joy_msg->button.select = msg->buttons[8];
-    joy_msg->button.start = msg->buttons[9];
-    joy_msg->button.ps = msg->buttons[10];
-    joy_msg->button.l_stick = msg->buttons[11];
-    joy_msg->button.r_stick = msg->buttons[12];
-    joy_msg->button.up = msg->buttons[13];
-    joy_msg->button.down = msg->buttons[14];
-    joy_msg->button.left = msg->buttons[15];
-    joy_msg->button.right = msg->buttons[16];
+    joy_msg->buttons.cross = msg->buttons[0];
+    joy_msg->buttons.circle = msg->buttons[1];
+    joy_msg->buttons.triangle = msg->buttons[2];
+    joy_msg->buttons.square = msg->buttons[3];
+    joy_msg->buttons.l1 = msg->buttons[4];
+    joy_msg->buttons.r1 = msg->buttons[5];
+    joy_msg->buttons.l2 = msg->axes[2];
+    joy_msg->buttons.r2 = msg->axes[5];
+    joy_msg->buttons.select = msg->buttons[8];
+    joy_msg->buttons.start = msg->buttons[9];
+    joy_msg->buttons.ps = msg->buttons[10];
+    joy_msg->buttons.l_stick = msg->buttons[11];
+    joy_msg->buttons.r_stick = msg->buttons[12];
+    joy_msg->buttons.up = msg->buttons[13];
+    joy_msg->buttons.down = msg->buttons[14];
+    joy_msg->buttons.left = msg->buttons[15];
+    joy_msg->buttons.right = msg->buttons[16];
   } else if (device_name == "Logicool Dual Action") {
     joy_msg->stick.lx = msg->axes[0];
     joy_msg->stick.ly = msg->axes[1];
     joy_msg->stick.rx = msg->axes[2];
     joy_msg->stick.ry = msg->axes[3];
 
-    joy_msg->button.cross = msg->buttons[1];
-    joy_msg->button.circle = msg->buttons[2];
-    joy_msg->button.triangle = msg->buttons[3];
-    joy_msg->button.square = msg->buttons[0];
-    joy_msg->button.l1 = msg->buttons[4];
-    joy_msg->button.r1 = msg->buttons[5];
-    joy_msg->button.select = msg->buttons[8];
-    joy_msg->button.start = msg->buttons[9];
-    joy_msg->button.ps = false;
-    joy_msg->button.l_stick = msg->buttons[10];
-    joy_msg->button.r_stick = msg->buttons[11];
+    joy_msg->buttons.cross = msg->buttons[1];
+    joy_msg->buttons.circle = msg->buttons[2];
+    joy_msg->buttons.triangle = msg->buttons[3];
+    joy_msg->buttons.square = msg->buttons[0];
+    joy_msg->buttons.l1 = msg->buttons[4];
+    joy_msg->buttons.r1 = msg->buttons[5];
+    joy_msg->buttons.select = msg->buttons[8];
+    joy_msg->buttons.start = msg->buttons[9];
+    joy_msg->buttons.ps = false;
+    joy_msg->buttons.l_stick = msg->buttons[10];
+    joy_msg->buttons.r_stick = msg->buttons[11];
 
     if (msg->buttons[6])
-      joy_msg->button.l2 = -1;
+      joy_msg->buttons.l2 = -1;
     else
-      joy_msg->button.l2 = 1;
+      joy_msg->buttons.l2 = 1;
 
     if (msg->buttons[7])
-      joy_msg->button.r2 = -1;
+      joy_msg->buttons.r2 = -1;
     else
-      joy_msg->button.r2 = 1;
+      joy_msg->buttons.r2 = 1;
 
     if (msg->axes[5] == 1)
-      joy_msg->button.up = true;
+      joy_msg->buttons.up = true;
     else if (msg->axes[5] == -1)
-      joy_msg->button.down = true;
+      joy_msg->buttons.down = true;
     else {
-      joy_msg->button.up = false;
-      joy_msg->button.down = false;
+      joy_msg->buttons.up = false;
+      joy_msg->buttons.down = false;
     }
 
     if (msg->axes[4] == 1)
-      joy_msg->button.left = true;
+      joy_msg->buttons.left = true;
     else if (msg->axes[4] == -1)
-      joy_msg->button.right = true;
+      joy_msg->buttons.right = true;
     else {
-      joy_msg->button.left = false;
-      joy_msg->button.right = false;
+      joy_msg->buttons.left = false;
+      joy_msg->buttons.right = false;
     }
   } else {
     RCLCPP_ERROR(this->get_logger(), "Not found device: %s", device_name.c_str());

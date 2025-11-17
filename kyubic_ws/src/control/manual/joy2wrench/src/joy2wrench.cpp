@@ -28,10 +28,10 @@ void Joy2WrenchStamped::_joyCallback(const joy_common_msgs::msg::Joy::SharedPtr 
   wrench_msg->wrench.force.y = msg->stick.lx * -force_y_scale;
   wrench_msg->wrench.force.z = msg->stick.ry * -force_z_scale;
 
-  if (msg->button.l2 < 1 && msg->button.r2) {
-    wrench_msg->wrench.torque.x = -(msg->button.l2 - 1) * -torque_x_scale;
-  } else if (msg->button.l2 && msg->button.r2 < 1) {
-    wrench_msg->wrench.torque.x = -(msg->button.r2 - 1) * torque_x_scale;
+  if (msg->buttons.l2 < 1 && msg->buttons.r2) {
+    wrench_msg->wrench.torque.x = -(msg->buttons.l2 - 1) * -torque_x_scale;
+  } else if (msg->buttons.l2 && msg->buttons.r2 < 1) {
+    wrench_msg->wrench.torque.x = -(msg->buttons.r2 - 1) * torque_x_scale;
   } else {
     wrench_msg->wrench.torque.x = 0.0;
   }
