@@ -11,6 +11,10 @@
 
   <depend>rclcpp</depend>
 
+  <depend>rclcpp_components</depend>
+  <depend>projection_dynamic_look_ahead_planner</depend>
+  <depend>wrench_planner</depend>
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
