@@ -384,13 +384,11 @@ class WebVisualizerNode(Node):
             posi: tuple[float, float, float] = self.gui_target_posi.value
             self.targets.pose.x = posi[0]
             self.targets.pose.y = posi[1]
+            self.targets.pose.z = posi[2] if posi[2] > 0 else 0.0
 
-            z_value = posi[2] if posi[2] > 0 else 0.0
             if self.gui_z_type.value == "altitude":
-                self.targets.pose.z_altitude = z_value
                 self.targets.z_mode = Targets.Z_MODE_ALTITUDE
             else:
-                self.targets.pose.z_depth = z_value
                 self.targets.z_mode = Targets.Z_MODE_DEPTH
 
             orient: tuple[float, float] = self.gui_target_orient.value

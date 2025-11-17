@@ -1,0 +1,17 @@
+bool circle
+bool cross
+bool triangle
+bool square
+bool up
+bool down
+bool left
+bool right
+bool l_stick
+bool r_stick
+bool l1
+bool r1
+float64 l2
+float64 r2
+bool select
+bool start
+bool ps

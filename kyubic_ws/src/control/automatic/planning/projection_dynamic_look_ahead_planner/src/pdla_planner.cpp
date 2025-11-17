@@ -10,12 +10,6 @@
 #include "projection_dynamic_look_ahead_planner/pdla_planner.hpp"
 
 #include <Eigen/Dense>
-#include <cstddef>
-#include <functional>
-#include <memory>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/qos.hpp>
-#include <rclcpp/utilities.hpp>
 
 namespace planner
 {
@@ -123,19 +117,30 @@ void PDLAPlanner::_updateGoal()
 
     msg->header.stamp = this->get_clock()->now();
     msg->z_mode = target_pose_.at(step_idx).z_mode;
-    msg->target.position.x = virtual_goal_point.x();
-    msg->target.position.y = virtual_goal_point.y();
+
+    msg->targets.x = virtual_goal_point.x();
+    msg->targets.y = virtual_goal_point.y();
+    msg->targets.z = virtual_goal_point.z();
+    msg->targets.roll = target_pose_.at(step_idx).roll;
+    msg->targets.yaw = target_pose_.at(step_idx).yaw;
+
+    msg->master.x = current_odom_->pose.position.x;
+    msg->master.y = current_odom_->pose.position.y;
+    msg->master.roll = current_odom_->pose.orientation.x;
+    msg->master.yaw = current_odom_->pose.orientation.z;
+
+    msg->slave.x = current_odom_->twist.linear.x;
+    msg->slave.y = current_odom_->twist.linear.y;
+    msg->slave.roll = current_odom_->twist.angular.x;
+    msg->slave.yaw = current_odom_->twist.angular.z;
 
     if (target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-      msg->target.position.z_depth = virtual_goal_point.z();
-    } else if (target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-      msg->target.position.z_altitude = virtual_goal_point.z();
+      msg->master.z = current_odom_->pose.position.z_depth;
+      msg->slave.z = current_odom_->twist.linear.z_depth;
+    } else {
+      msg->master.z = current_odom_->pose.position.z_altitude;
+      msg->slave.z = current_odom_->twist.linear.z_altitude;
     }
-
-    msg->target.orientation.x = target_pose_.at(step_idx).roll;
-    msg->target.orientation.z = target_pose_.at(step_idx).yaw;
-    msg->odom = *current_odom_;
-
     pub_->publish(std::move(msg));
   }
 }
