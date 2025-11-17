@@ -72,6 +72,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">joy_common Namespace Reference</div></div>
 </div><!--header-->
@@ -82,11 +83,49 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classjoy__common_1_1JoyCommon.html">JoyCommon</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:aeb55469ed956b3c229f1b63e94290ac1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacejoy__common.html#aeb55469ed956b3c229f1b63e94290ac1">ButtonValue</a> = std::variant&lt; bool, double &gt;</td></tr>
+<tr class="separator:aeb55469ed956b3c229f1b63e94290ac1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8387c6c03e3b2671549c989562a982d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacejoy__common.html#aa8387c6c03e3b2671549c989562a982d">ButtonMap</a> = std::map&lt; std::string, std::function&lt; <a class="el" href="namespacejoy__common.html#aeb55469ed956b3c229f1b63e94290ac1">ButtonValue</a>(const joy_common_msgs::msg::Buttons &amp;)&gt; &gt;</td></tr>
+<tr class="separator:aa8387c6c03e3b2671549c989562a982d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:ab4cbbaa4e14e8e1639b29edd8543a9cc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacejoy__common.html#aa8387c6c03e3b2671549c989562a982d">ButtonMap</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacejoy__common.html#ab4cbbaa4e14e8e1639b29edd8543a9cc">get_button_map</a> ()</td></tr>
+<tr class="separator:ab4cbbaa4e14e8e1639b29edd8543a9cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab31137c4465e7e7a46197144c84ba022"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacejoy__common.html#ab31137c4465e7e7a46197144c84ba022">generate_launch_description</a> ()</td></tr>
 <tr class="separator:ab31137c4465e7e7a46197144c84ba022"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="aa8387c6c03e3b2671549c989562a982d" name="aa8387c6c03e3b2671549c989562a982d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8387c6c03e3b2671549c989562a982d">&#9670;&#160;</a></span>ButtonMap</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacejoy__common.html#aa8387c6c03e3b2671549c989562a982d">joy_common::ButtonMap</a> = typedef std::map&lt;std::string, std::function&lt;<a class="el" href="namespacejoy__common.html#aeb55469ed956b3c229f1b63e94290ac1">ButtonValue</a>(const joy_common_msgs::msg::Buttons &amp;)&gt; &gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aeb55469ed956b3c229f1b63e94290ac1" name="aeb55469ed956b3c229f1b63e94290ac1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb55469ed956b3c229f1b63e94290ac1">&#9670;&#160;</a></span>ButtonValue</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacejoy__common.html#aeb55469ed956b3c229f1b63e94290ac1">joy_common::ButtonValue</a> = typedef std::variant&lt;bool, double&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="ab31137c4465e7e7a46197144c84ba022" name="ab31137c4465e7e7a46197144c84ba022"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab31137c4465e7e7a46197144c84ba022">&#9670;&#160;</a></span>generate_launch_description()</h2>
@@ -96,6 +135,23 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">def joy_common.generate_launch_description </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab4cbbaa4e14e8e1639b29edd8543a9cc" name="ab4cbbaa4e14e8e1639b29edd8543a9cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4cbbaa4e14e8e1639b29edd8543a9cc">&#9670;&#160;</a></span>get_button_map()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacejoy__common.html#aa8387c6c03e3b2671549c989562a982d">ButtonMap</a> joy_common::get_button_map </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>

@@ -26,5 +26,7 @@ var searchData=
   ['bottom_5fstatus_23',['BOTTOM_STATUS',['../namespacedvl__driver_1_1path__finder.html#a2dc34a44d06b00b6e8c43efa516e830da508b3adf3582e913fd988e23f0cab730',1,'dvl_driver::path_finder']]],
   ['bridge_24',['bridge',['../classweb__controller_1_1main_1_1WebVisualizerNode.html#ac5cbd62167ff8789fb4afcafd11f45b2',1,'web_controller::main::WebVisualizerNode']]],
   ['build_5fui_25',['build_ui',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#af1a988239afd76b0650a2607a43c9528',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['burst_5frequest_5fwcomm0_26',['burst_request_wcomm0',['../namespaceimu__driver_1_1g366.html#a1fed97eb3b95a3a50dfa2ede5bda5c23',1,'imu_driver::g366']]]
+  ['burst_5frequest_5fwcomm0_26',['burst_request_wcomm0',['../namespaceimu__driver_1_1g366.html#a1fed97eb3b95a3a50dfa2ede5bda5c23',1,'imu_driver::g366']]],
+  ['buttonmap_27',['ButtonMap',['../namespacejoy__common.html#aa8387c6c03e3b2671549c989562a982d',1,'joy_common']]],
+  ['buttonvalue_28',['ButtonValue',['../namespacejoy__common.html#aeb55469ed956b3c229f1b63e94290ac1',1,'joy_common']]]
 ];

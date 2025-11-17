@@ -1,7 +1,8 @@
 <map id="src/control/manual/joy_common/include/joy_common/joy_common.hpp" name="src/control/manual/joy_common/include/joy_common/joy_common.hpp">
-<area shape="rect" id="node1" title="joystick library" alt="" coords="254,5,481,60"/>
+<area shape="rect" id="node1" title="joystick library" alt="" coords="366,5,593,60"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,108,185,148"/>
-<area shape="rect" id="node3" title=" " alt="" coords="209,115,341,141"/>
-<area shape="rect" id="node4" title=" " alt="" coords="366,115,555,141"/>
-<area shape="rect" id="node5" title=" " alt="" coords="579,115,638,141"/>
+<area shape="rect" id="node3" title=" " alt="" coords="209,108,389,148"/>
+<area shape="rect" id="node4" title=" " alt="" coords="413,115,545,141"/>
+<area shape="rect" id="node5" title=" " alt="" coords="570,115,759,141"/>
+<area shape="rect" id="node6" title=" " alt="" coords="783,115,842,141"/>
 </map>
