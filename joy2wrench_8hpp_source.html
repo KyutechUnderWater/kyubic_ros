@@ -77,33 +77,59 @@ $(function() {
   <div class="headertitle"><div class="title">joy2wrench.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="joy2wrench_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#include &lt;geometry_msgs/msg/wrench_stamped.hpp&gt;</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;joy_common_msgs/msg/joy.hpp&gt;</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;rclcpp/rclcpp.hpp&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="namespacejoy2wrench.html">    6</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacejoy2wrench.html">joy2wrench</a></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span>{</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="classjoy2wrench_1_1Joy2WrenchStamped.html">    9</a></span><span class="keyword">class </span><a class="code hl_class" href="classjoy2wrench_1_1Joy2WrenchStamped.html">Joy2WrenchStamped</a> : <span class="keyword">public</span> rclcpp::Node</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>{</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  <span class="keyword">explicit</span> <a class="code hl_class" href="classjoy2wrench_1_1Joy2WrenchStamped.html">Joy2WrenchStamped</a>(<span class="keyword">const</span> rclcpp::NodeOptions &amp; options);</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  std::string device_name;</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  <span class="keywordtype">double</span> force_x_scale, force_y_scale, force_z_scale;</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keywordtype">double</span> torque_x_scale, torque_z_scale;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  rclcpp::Publisher&lt;geometry_msgs::msg::WrenchStamped&gt;::SharedPtr pub_;</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  rclcpp::Subscription&lt;joy_common_msgs::msg::Joy&gt;::SharedPtr sub_;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  <span class="keywordtype">void</span> _joyCallback(<span class="keyword">const</span> joy_common_msgs::msg::Joy::SharedPtr msg);</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>};</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>}  <span class="comment">// namespace joy2wrench</span></div>
-<div class="ttc" id="aclassjoy2wrench_1_1Joy2WrenchStamped_html"><div class="ttname"><a href="classjoy2wrench_1_1Joy2WrenchStamped.html">joy2wrench::Joy2WrenchStamped</a></div><div class="ttdef"><b>Definition:</b> joy2wrench.hpp:10</div></div>
-<div class="ttc" id="anamespacejoy2wrench_html"><div class="ttname"><a href="namespacejoy2wrench.html">joy2wrench</a></div><div class="ttdef"><b>Definition:</b> joy2wrench.hpp:7</div></div>
+<a href="joy2wrench_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#ifndef _JOY2WRENCH_HPP</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#define _JOY2WRENCH_HPP</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;geometry_msgs/msg/wrench_stamped.hpp&quot;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;joy_common_msgs/msg/joy.hpp&quot;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;rclcpp_lifecycle/lifecycle_node.hpp&quot;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;rclcpp_lifecycle/lifecycle_publisher.hpp&quot;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="namespacejoy2wrench.html">   18</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacejoy2wrench.html">joy2wrench</a></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="classjoy2wrench_1_1Joy2WrenchStamped.html">   21</a></span><span class="keyword">class </span><a class="code hl_class" href="classjoy2wrench_1_1Joy2WrenchStamped.html">Joy2WrenchStamped</a> : <span class="keyword">public</span> rclcpp_lifecycle::LifecycleNode</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keyword">explicit</span> <a class="code hl_class" href="classjoy2wrench_1_1Joy2WrenchStamped.html">Joy2WrenchStamped</a>(<span class="keyword">const</span> rclcpp::NodeOptions &amp; options);</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  <span class="comment">// Lifecycle Callback</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn <a class="code hl_function" href="classjoy2wrench_1_1Joy2WrenchStamped.html#a69d3118f2953495bb96fd56b31eaccf5">on_configure</a>(</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keyword">const</span> rclcpp_lifecycle::State &amp; previous_state) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn <a class="code hl_function" href="classjoy2wrench_1_1Joy2WrenchStamped.html#a69970b6dcf2c7bf2d16bc19fbee4867a">on_activate</a>(</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keyword">const</span> rclcpp_lifecycle::State &amp; previous_state) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn <a class="code hl_function" href="classjoy2wrench_1_1Joy2WrenchStamped.html#abbc34a5d6c58d1a5066d190a5aae4836">on_deactivate</a>(</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keyword">const</span> rclcpp_lifecycle::State &amp; previous_state) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn <a class="code hl_function" href="classjoy2wrench_1_1Joy2WrenchStamped.html#a444104d48dc5a6281cfbeca782bf9189">on_cleanup</a>(</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keyword">const</span> rclcpp_lifecycle::State &amp; previous_state) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn <a class="code hl_function" href="classjoy2wrench_1_1Joy2WrenchStamped.html#a7868fa6582abfe438f742626721b3cf1">on_shutdown</a>(</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">const</span> rclcpp_lifecycle::State &amp; previous_state) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  <span class="keywordtype">double</span> force_x_scale, force_y_scale, force_z_scale;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  <span class="keywordtype">double</span> torque_x_scale, torque_z_scale;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  rclcpp_lifecycle::LifecyclePublisher&lt;geometry_msgs::msg::WrenchStamped&gt;::SharedPtr pub_;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  rclcpp::Subscription&lt;joy_common_msgs::msg::Joy&gt;::SharedPtr sub_;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keywordtype">void</span> _joyCallback(<span class="keyword">const</span> joy_common_msgs::msg::Joy::SharedPtr msg);</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>};</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}  <span class="comment">// namespace joy2wrench</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="aclassjoy2wrench_1_1Joy2WrenchStamped_html"><div class="ttname"><a href="classjoy2wrench_1_1Joy2WrenchStamped.html">joy2wrench::Joy2WrenchStamped</a></div><div class="ttdef"><b>Definition:</b> joy2wrench.hpp:22</div></div>
+<div class="ttc" id="aclassjoy2wrench_1_1Joy2WrenchStamped_html_a444104d48dc5a6281cfbeca782bf9189"><div class="ttname"><a href="classjoy2wrench_1_1Joy2WrenchStamped.html#a444104d48dc5a6281cfbeca782bf9189">joy2wrench::Joy2WrenchStamped::on_cleanup</a></div><div class="ttdeci">rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State &amp;previous_state) override</div><div class="ttdoc">&quot;cleaningup&quot; State Callback</div><div class="ttdef"><b>Definition:</b> joy2wrench.cpp:69</div></div>
+<div class="ttc" id="aclassjoy2wrench_1_1Joy2WrenchStamped_html_a69970b6dcf2c7bf2d16bc19fbee4867a"><div class="ttname"><a href="classjoy2wrench_1_1Joy2WrenchStamped.html#a69970b6dcf2c7bf2d16bc19fbee4867a">joy2wrench::Joy2WrenchStamped::on_activate</a></div><div class="ttdeci">rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(const rclcpp_lifecycle::State &amp;previous_state) override</div><div class="ttdoc">&quot;activating&quot; State Callback</div><div class="ttdef"><b>Definition:</b> joy2wrench.cpp:47</div></div>
+<div class="ttc" id="aclassjoy2wrench_1_1Joy2WrenchStamped_html_a69d3118f2953495bb96fd56b31eaccf5"><div class="ttname"><a href="classjoy2wrench_1_1Joy2WrenchStamped.html#a69d3118f2953495bb96fd56b31eaccf5">joy2wrench::Joy2WrenchStamped::on_configure</a></div><div class="ttdeci">rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_configure(const rclcpp_lifecycle::State &amp;previous_state) override</div><div class="ttdoc">&quot;configuring&quot; State Callback</div><div class="ttdef"><b>Definition:</b> joy2wrench.cpp:26</div></div>
+<div class="ttc" id="aclassjoy2wrench_1_1Joy2WrenchStamped_html_a7868fa6582abfe438f742626721b3cf1"><div class="ttname"><a href="classjoy2wrench_1_1Joy2WrenchStamped.html#a7868fa6582abfe438f742626721b3cf1">joy2wrench::Joy2WrenchStamped::on_shutdown</a></div><div class="ttdeci">rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State &amp;previous_state) override</div><div class="ttdoc">&quot;shuttingdown&quot; State Callback</div><div class="ttdef"><b>Definition:</b> joy2wrench.cpp:81</div></div>
+<div class="ttc" id="aclassjoy2wrench_1_1Joy2WrenchStamped_html_abbc34a5d6c58d1a5066d190a5aae4836"><div class="ttname"><a href="classjoy2wrench_1_1Joy2WrenchStamped.html#abbc34a5d6c58d1a5066d190a5aae4836">joy2wrench::Joy2WrenchStamped::on_deactivate</a></div><div class="ttdeci">rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &amp;previous_state) override</div><div class="ttdoc">&quot;deactivating&quot; State Callback</div><div class="ttdef"><b>Definition:</b> joy2wrench.cpp:58</div></div>
+<div class="ttc" id="anamespacejoy2wrench_html"><div class="ttname"><a href="namespacejoy2wrench.html">joy2wrench</a></div><div class="ttdef"><b>Definition:</b> joy2wrench.hpp:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

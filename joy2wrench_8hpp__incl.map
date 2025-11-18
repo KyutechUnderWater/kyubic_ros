@@ -1,7 +1,7 @@
 <map id="src/control/manual/joy2wrench/include/joy2wrench/joy2wrench.hpp" name="src/control/manual/joy2wrench/include/joy2wrench/joy2wrench.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="316,5,524,60"/>
+<area shape="rect" id="node1" title="manual control library" alt="" coords="329,5,537,60"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,108,216,148"/>
 <area shape="rect" id="node3" title=" " alt="" coords="241,108,421,148"/>
-<area shape="rect" id="node4" title=" " alt="" coords="445,115,577,141"/>
-<area shape="rect" id="node5" title=" " alt="" coords="601,115,660,141"/>
+<area shape="rect" id="node4" title=" " alt="" coords="445,108,627,148"/>
+<area shape="rect" id="node5" title=" " alt="" coords="651,108,834,148"/>
 </map>
