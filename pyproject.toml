@@ -19,6 +19,7 @@ dependencies = [
     "numpy==1.26.4",
     "opencv-python==4.9.0.80",
     "viser>=1.0.4",
+    "pydot>=4.0.1",
 ]
 
 [tool.uv.pip]
