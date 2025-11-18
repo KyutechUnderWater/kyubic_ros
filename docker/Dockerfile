@@ -88,7 +88,7 @@ ENV ROS_DISTRO=$ros2_ver
 
 RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DISTRO-teleop-twist-keyboard ros-dev-tools \
 	ros-$ROS_DISTRO-ament-clang-format ros-$ROS_DISTRO-plotjuggler-ros ros-$ROS_DISTRO-v4l2-camera \
-	ros-$ROS_DISTRO-image-transport-plugins ros-$ROS_DISTRO-web-video-server && \
+	ros-$ROS_DISTRO-image-transport-plugins ros-$ROS_DISTRO-web-video-server ros-$ROS_DISTRO-navigation2 && \
 	echo "ros installed" && \
 	rosdep init && \
 	rosdep update && \
