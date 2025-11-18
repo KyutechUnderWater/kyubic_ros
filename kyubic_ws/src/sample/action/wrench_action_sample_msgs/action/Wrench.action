@@ -1,0 +1,8 @@
+# Goal: クライアントがサーバーに要求する内容
+int32 duration_sec
+---
+# Result: サーバーがクライアントに返す最終結果
+uint32 total_updates
+---
+# Feedback: サーバーがクライアントに送る途中経過
+geometry_msgs/WrenchStamped current_wrench

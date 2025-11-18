@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4"
+  main_tree_to_execute="MainTree">
+  <BehaviorTree ID="Auto">
+    <Sequence name="AutoSequence">
+      <LifecycleManager name="DeactivateManualNode"
+        node_name="manualNode"
+        transition="deactivate"
+        timeout_sec="1" />
+      <WrenchAction action_name="wrench_action"
+        duration_sec="10"
+        total_updates="{total_updates}" />
+      <FibonacciAction action_name="fibonacci"
+        order="5"
+        result_sequence="{result_sequence}" />
+      <AlwaysRunning name="AutoRunning" />
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Configure">
+    <Delay delay_msec="2000">
+      <Sequence name="ConfigureSequence">
+        <LifecycleManager name="ConfigureManualNode"
+          node_name="manualNode"
+          transition="configure"
+          timeout_sec="1" />
+        <LifecycleManager name="ConfigureEmergencyNode"
+          node_name="emergencyNode"
+          transition="configure"
+          timeout_sec="1" />
+      </Sequence>
+    </Delay>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Emergency">
+    <Sequence name="EmergencySequence">
+      <LifecycleManager name="ActivateEmergencyNode"
+        node_name="emergencyNode"
+        transition="activate"
+        timeout_sec="1" />
+      <AlwaysRunning name="EmergencyRunning" />
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="MainTree">
+    <Fallback>
+      <Sequence>
+        <SubTree ID="Configure" />
+        <ReactiveSequence>
+          <RetryUntilSuccessful num_attempts="10">
+            <CheckSensorsState />
+          </RetryUntilSuccessful>
+          <UpdateMode topic_name="/joy_common/joy_common"
+            manual_button="circle"
+            auto_button="cross"
+            mode="{mode}" />
+          <Switch2 name="mode_switch"
+            case_1="manual"
+            case_2="auto"
+            variable="{mode}">
+            <SubTree ID="Manual" />
+            <SubTree ID="Auto" />
+            <AlwaysFailure />
+          </Switch2>
+        </ReactiveSequence>
+      </Sequence>
+      <SubTree ID="Emergency" />
+    </Fallback>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Manual">
+    <Sequence name="ManualSequence">
+      <LifecycleManager name="ActivateManualNode"
+        node_name="manualNode"
+        transition="activate"
+        timeout_sec="1" />
+      <AlwaysRunning name="ManualRunning" />
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="AlwaysRunning"
+      editable="true" />
+    <Action ID="CheckSensorsState"
+      editable="true" />
+    <Action ID="FibonacciAction"
+      editable="true">
+      <input_port name="action_name" />
+      <input_port name="order" />
+      <output_port name="result_sequence" />
+    </Action>
+    <Action ID="LifecycleManager"
+      editable="true">
+      <input_port name="node_name" />
+      <input_port name="transition" />
+      <input_port name="timeout_sec" />
+    </Action>
+    <Action ID="UpdateMode"
+      editable="true">
+      <input_port name="topic_name" />
+      <input_port name="manual_button" />
+      <input_port name="auto_button" />
+      <output_port name="mode" />
+    </Action>
+    <Action ID="WrenchAction"
+      editable="true">
+      <input_port name="action_name" />
+      <input_port name="duration_sec" />
+      <output_port name="total_updates" />
+    </Action>
+  </TreeNodesModel>
+
+</root>
