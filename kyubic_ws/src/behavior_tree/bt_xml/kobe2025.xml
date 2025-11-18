@@ -7,12 +7,10 @@
         node_name="manualNode"
         transition="deactivate"
         timeout_sec="1" />
-      <WrenchAction name="WrenchAction"
-        action_name="wrench_action"
+      <WrenchAction action_name="wrench_action"
         duration_sec="10"
         total_updates="{total_updates}" />
-      <FibonacciAction name="FibonacciAction"
-        action_name="fibonacci"
+      <FibonacciAction action_name="fibonacci"
         order="5"
         result_sequence="{result_sequence}" />
       <AlwaysRunning name="AutoRunning" />
@@ -49,9 +47,10 @@
       <Sequence>
         <SubTree ID="Configure" />
         <ReactiveSequence>
-          <CheckSensorsState />
-          <UpdateMode
-            topic_name="/joy_common/joy_common"
+          <RetryUntilSuccessful num_attempts="10">
+            <CheckSensorsState />
+          </RetryUntilSuccessful>
+          <UpdateMode topic_name="/joy_common/joy_common"
             manual_button="circle"
             auto_button="cross"
             mode="{mode}" />
@@ -83,20 +82,14 @@
   <TreeNodesModel>
     <Action ID="AlwaysRunning"
       editable="true" />
-    <Action ID="WrenchAction"
-      editable="true">
-      <input_port name="action_name" />
-      <input_port name="duration_sec" />
-      <output_port name="total_updates" />
-    </Action>
+    <Action ID="CheckSensorsState"
+      editable="true" />
     <Action ID="FibonacciAction"
       editable="true">
       <input_port name="action_name" />
       <input_port name="order" />
       <output_port name="result_sequence" />
     </Action>
-    <Action ID="CheckSensorsState"
-      editable="true" />
     <Action ID="LifecycleManager"
       editable="true">
       <input_port name="node_name" />
@@ -109,6 +102,12 @@
       <input_port name="manual_button" />
       <input_port name="auto_button" />
       <output_port name="mode" />
+    </Action>
+    <Action ID="WrenchAction"
+      editable="true">
+      <input_port name="action_name" />
+      <input_port name="duration_sec" />
+      <output_port name="total_updates" />
     </Action>
   </TreeNodesModel>
 
