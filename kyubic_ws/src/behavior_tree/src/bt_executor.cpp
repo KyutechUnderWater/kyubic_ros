@@ -31,6 +31,7 @@ int main(int argc, char ** argv)
 
   // 1. Create the Node
   auto node = std::make_shared<rclcpp::Node>("bt_executor_node");
+  std::string bt_xml_file = node->declare_parameter<std::string>("bt_xml_file", "");
 
   // 2. Initialize BT Factory
   BT::BehaviorTreeFactory factory;
@@ -56,7 +57,7 @@ int main(int argc, char ** argv)
     return 1;
   }
 
-  std::string xml_file = pkg_share + "/bt_xml/kobe2025.xml";
+  std::string xml_file = pkg_share + "/bt_xml/" + bt_xml_file;
   RCLCPP_INFO(node->get_logger(), "Loading BT XML: %s", xml_file.c_str());
 
   // 5. Create tree
@@ -73,7 +74,7 @@ int main(int argc, char ** argv)
   printTreeRecursively(tree.rootNode());
 
   // Standard output logger
-  // auto logger = std::make_unique<BT::StdCoutLogger>(tree);
+  auto logger = std::make_unique<BT::StdCoutLogger>(tree);
 
   // 6. Timer to TICK the tree
   rclcpp::TimerBase::SharedPtr timer;

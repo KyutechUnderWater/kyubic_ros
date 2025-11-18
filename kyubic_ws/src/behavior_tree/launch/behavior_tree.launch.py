@@ -35,6 +35,10 @@ def generate_launch_description():
     # # WrenchPlanner が必要とする p_pid_controller のパス（仮）
     # p_pid_controller_path = get_package_share_directory("p_pid_controller")
 
+    behavior_tree_config = PathJoinSubstitution(
+        [FindPackageShare("behavior_tree"), "config", "behavior_tree.param.yaml"]
+    )
+
     joy_common_dir = PathJoinSubstitution([FindPackageShare("joy_common"), "launch"])
     joy2wrench_config = PathJoinSubstitution(
         [FindPackageShare("joy2wrench"), "config", "joy2wrench.param.yaml"]
@@ -109,7 +113,8 @@ def generate_launch_description():
     bt_manager_node = Node(
         package="behavior_tree",
         executable="behavior_tree",
-        name="bt_manager_node",
+        name="btExecutorNode",
+        parameters=[behavior_tree_config],
         output="screen",
     )
 

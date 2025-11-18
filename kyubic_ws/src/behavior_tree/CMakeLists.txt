@@ -30,6 +30,7 @@ ament_auto_add_executable(${PROJECT_NAME}
 
 install(DIRECTORY
   bt_xml
+  config
   launch
   DESTINATION share/${PROJECT_NAME}/
 )
