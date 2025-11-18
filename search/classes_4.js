@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['fixaxisplotjuggler_0',['FixAxisPlotjuggler',['../classtools_1_1plotjuggler_1_1FixAxisPlotjuggler.html',1,'tools::plotjuggler']]]
+  ['emergencysurfacing_0',['EmergencySurfacing',['../classemergency_1_1EmergencySurfacing.html',1,'emergency']]]
 ];

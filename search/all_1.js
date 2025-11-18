@@ -11,10 +11,11 @@ var searchData=
   ['anchor_5fpoints_5fdms_8',['ANCHOR_POINTS_DMS',['../namespacelocalization.html#a310f6a400b67bac345d5ab1d8cff52cb',1,'localization']]],
   ['ani_9',['ani',['../classtrajectory__viewer_1_1global__pose__viewer_1_1GlobalPosePlotter.html#aa4f9e71d2012cd55d7f0d6b982a1701b',1,'trajectory_viewer.global_pose_viewer.GlobalPosePlotter.ani()'],['../classtrajectory__viewer_1_1odom__viewer_1_1OdomPlotter.html#a647db6a5a523c23b6bd84bd733dc5827',1,'trajectory_viewer.odom_viewer.OdomPlotter.ani()']]],
   ['apply_5finitial_5fcamera_5fsettings_10',['apply_initial_camera_settings',['../classoak__create__mapping_1_1main_1_1HeadlessOakCameraNode.html#af948c5380a1e7fd391dabaca74ba936d',1,'oak_create_mapping::main::HeadlessOakCameraNode']]],
-  ['aqua_11',['aqua',['../classweb__controller_1_1main_1_1Colors.html#a0d9cfee1544c6705b4d80a80cf2de930',1,'web_controller::main::Colors']]],
-  ['atti_5fmotion_5frcomm1_12',['atti_motion_rcomm1',['../namespaceimu__driver_1_1g366.html#af8736f98cf693e3841940eabb89b1e12',1,'imu_driver::g366']]],
-  ['atti_5fmotion_5fwcomm1_13',['atti_motion_wcomm1',['../namespaceimu__driver_1_1g366.html#a80efb54277cc7ff567822fad4cc5a3e6',1,'imu_driver::g366']]],
-  ['atti_5fsf_14',['atti_sf',['../namespaceimu__driver_1_1g366.html#adf9f35c12cdd1d55abd57bdfbd8483ea',1,'imu_driver::g366']]],
-  ['attitude_15',['attitude',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a953d07eb3e34c8d2ecdbe4cc87ab0d0e',1,'trajectory_viewer::main::TrajectoryPlotter']]],
-  ['ax_16',['ax',['../classtrajectory__viewer_1_1global__pose__viewer_1_1GlobalPosePlotter.html#aac2254754e94aa8631d7dd6673a2cbcc',1,'trajectory_viewer.global_pose_viewer.GlobalPosePlotter.ax()'],['../classtrajectory__viewer_1_1odom__viewer_1_1OdomPlotter.html#a1c57abe76202850599a3c269bf093224',1,'trajectory_viewer.odom_viewer.OdomPlotter.ax()']]]
+  ['approachobject_11',['ApproachObject',['../classApproachObject.html#a64b24a328434b1075eca19dc1f035fc2',1,'ApproachObject::ApproachObject()'],['../classApproachObject.html',1,'ApproachObject']]],
+  ['aqua_12',['aqua',['../classweb__controller_1_1main_1_1Colors.html#a0d9cfee1544c6705b4d80a80cf2de930',1,'web_controller::main::Colors']]],
+  ['atti_5fmotion_5frcomm1_13',['atti_motion_rcomm1',['../namespaceimu__driver_1_1g366.html#af8736f98cf693e3841940eabb89b1e12',1,'imu_driver::g366']]],
+  ['atti_5fmotion_5fwcomm1_14',['atti_motion_wcomm1',['../namespaceimu__driver_1_1g366.html#a80efb54277cc7ff567822fad4cc5a3e6',1,'imu_driver::g366']]],
+  ['atti_5fsf_15',['atti_sf',['../namespaceimu__driver_1_1g366.html#adf9f35c12cdd1d55abd57bdfbd8483ea',1,'imu_driver::g366']]],
+  ['attitude_16',['attitude',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a953d07eb3e34c8d2ecdbe4cc87ab0d0e',1,'trajectory_viewer::main::TrajectoryPlotter']]],
+  ['ax_17',['ax',['../classtrajectory__viewer_1_1global__pose__viewer_1_1GlobalPosePlotter.html#aac2254754e94aa8631d7dd6673a2cbcc',1,'trajectory_viewer.global_pose_viewer.GlobalPosePlotter.ax()'],['../classtrajectory__viewer_1_1odom__viewer_1_1OdomPlotter.html#a1c57abe76202850599a3c269bf093224',1,'trajectory_viewer.odom_viewer.OdomPlotter.ax()']]]
 ];
