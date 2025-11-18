@@ -1,0 +1,31 @@
+<root BTCPP_format="4" main_tree_to_execute="MainTree">
+
+    <BehaviorTree ID="MainTree">
+        <Sequence>
+            <Script code="task_type := 'TaskA'" />
+            <SubTree ID="ExecuteTask" task_type="{task_type}" />
+
+            <AlwaysSuccess />
+            <Script code="task_type := 'TaskB'" />
+            <SubTree ID="ExecuteTask" task_type="{task_type}" />
+
+            <AlwaysSuccess />
+            <Script code="task_type := 'Unknown'" />
+            <SubTree ID="ExecuteTask" task_type="{task_type}" />
+        </Sequence>
+    </BehaviorTree>
+
+    <BehaviorTree ID="ExecuteTask">
+        <Switch variable="{task_type}"
+            case_1="TaskA"
+            case_2="TaskB">
+
+            <ApproachObject name="Approach" />
+
+            <GraspObject name="Grasp" />
+
+            <Patrol name="DefaultPatrol" />
+        </Switch>
+    </BehaviorTree>
+
+</root>
