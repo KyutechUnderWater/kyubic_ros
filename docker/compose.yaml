@@ -4,6 +4,7 @@ services:
   kyubic-ros:
     build:
       context: .
+      network: host
       args:
         ubuntu_ver: "24.04"
         ros2_ver: "jazzy"
