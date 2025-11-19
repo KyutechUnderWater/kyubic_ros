@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4"
   main_tree_to_execute="MainTree">
+
   <BehaviorTree ID="Auto">
     <Sequence name="AutoSequence">
-      <LifecycleManager name="DeactivateManualNode"
+      <!-- <LifecycleManager name="DeactivateManualNode"
         node_name="manualNode"
         transition="deactivate"
-        timeout_sec="1" />
-      <WrenchAction action_name="wrench_action"
-        duration_sec="10"
-        total_updates="{total_updates}" />
-      <FibonacciAction action_name="fibonacci"
-        order="5"
-        result_sequence="{result_sequence}" />
+        timeout_sec="1" /> -->
+      
+      <WaypointAction action_name="pdla_plan"
+        csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/sample/mapping_alt_generated.csv"
+        current_index="{current_index}" />
+      
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
   </BehaviorTree>
@@ -46,11 +46,14 @@
     <Fallback>
       <Sequence>
         <SubTree ID="Configure" />
-        <ReactiveSequence>
-          <RetryUntilSuccessful num_attempts="10">
+        <!-- [修正] 強制的に Auto (Waypoint) を実行 -->
+        <SubTree ID="Auto" />
+
+        <!-- <ReactiveSequence> -->
+          <!-- <RetryUntilSuccessful num_attempts="10">
             <CheckSensorsState />
-          </RetryUntilSuccessful>
-          <UpdateMode topic_name="/joy_common/joy_common"
+          </RetryUntilSuccessful> -->
+          <!-- <UpdateMode topic_name="/joy_common/joy_common"
             manual_button="circle"
             auto_button="cross"
             mode="{mode}" />
@@ -62,7 +65,7 @@
             <SubTree ID="Auto" />
             <AlwaysFailure />
           </Switch2>
-        </ReactiveSequence>
+        </ReactiveSequence> -->
       </Sequence>
       <SubTree ID="Emergency" />
     </Fallback>
@@ -84,12 +87,12 @@
       editable="true" />
     <Action ID="CheckSensorsState"
       editable="true" />
-    <Action ID="FibonacciAction"
+    <!-- <Action ID="FibonacciAction"
       editable="true">
       <input_port name="action_name" />
       <input_port name="order" />
       <output_port name="result_sequence" />
-    </Action>
+    </Action> -->
     <Action ID="LifecycleManager"
       editable="true">
       <input_port name="node_name" />
@@ -103,11 +106,16 @@
       <input_port name="auto_button" />
       <output_port name="mode" />
     </Action>
-    <Action ID="WrenchAction"
+    <!-- <Action ID="WrenchAction"
       editable="true">
       <input_port name="action_name" />
       <input_port name="duration_sec" />
       <output_port name="total_updates" />
+    </Action> -->
+    <Action ID="WaypointAction" editable="true">
+      <input_port name="action_name" default="pdla_plan"/>
+      <input_port name="csv_file_path"/>
+      <output_port name="current_index"/>
     </Action>
   </TreeNodesModel>
 

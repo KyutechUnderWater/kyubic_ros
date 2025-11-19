@@ -19,9 +19,8 @@
 #include "behavior_tree/always_running.hpp"
 #include "behavior_tree/check_sensors_state.hpp"
 #include "behavior_tree/lifecycle_manager.hpp"
-#include "behavior_tree/sample/fibonacci_action.hpp"
-#include "behavior_tree/sample/wrench_action.hpp"
 #include "behavior_tree/update_mode.hpp"
+#include "behavior_tree/waypoint_action.hpp"
 
 using namespace behavior_tree;
 
@@ -41,8 +40,7 @@ int main(int argc, char ** argv)
   factory.registerNodeType<CheckSensorsState>("CheckSensorsState", node);
   factory.registerNodeType<UpdateMode>("UpdateMode", node);
   factory.registerNodeType<LifecycleManager>("LifecycleManager", node);
-  factory.registerNodeType<WrenchAction>("WrenchAction", node);
-  factory.registerNodeType<FibonacciAction>("FibonacciAction", node);
+  factory.registerNodeType<WaypointAction>("WaypointAction", node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");
