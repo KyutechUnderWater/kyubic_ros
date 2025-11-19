@@ -12,9 +12,12 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
   <depend>rclcpp_components</depend>
-  <depend>ament_cmake_eigen</depend> <depend>planner_msgs</depend>
+  <depend>ament_cmake_eigen</depend>
+  <depend>planner_msgs</depend>
   <depend>localization_msgs</depend>
-  <depend>path_planner</depend> <test_depend>ament_lint_auto</test_depend>
+  <depend>path_planner</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
   <export>

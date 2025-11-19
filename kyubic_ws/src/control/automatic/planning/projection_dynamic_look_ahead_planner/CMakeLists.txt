@@ -35,22 +35,6 @@ rclcpp_components_register_node(pdla_planner_component
   EXECUTABLE pdla_planner_component_node
 )
 
-
-# # Actionの C++ 型サポート (typesupport) ターゲット名を取得
-# rosidl_get_typesupport_target(cpp_typesupport_target
-#   ${PROJECT_NAME} "rosidl_typesupport_cpp"
-# )
-#
-# # [追加] 型サポートをライブラリ (component) にリンク
-# target_link_libraries(pdla_planner_component
-#   "${cpp_typesupport_target}"
-# )
-#
-# # [追加] 型サポートを実行可能ファイル (node) にリンク
-# target_link_libraries(pdla_planner_component_node
-#   "${cpp_typesupport_target}"
-# )
-
 # Set install config
 install(TARGETS
   pdla_planner_component

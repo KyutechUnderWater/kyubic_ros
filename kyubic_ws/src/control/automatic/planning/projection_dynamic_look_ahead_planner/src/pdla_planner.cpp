@@ -222,6 +222,7 @@ void PDLAPlanner::_runPlannerLogic(
     Eigen::Vector3d v23 = p3 - p2;
 
     if (v02.dot(v23) <= 0 || v12.norm() == 0) {
+      // ±90度以上の方向転換，移動なしのとき，仮想目標点を実際の目標点にする
       virtual_goal_point = p2;
     } else {
       v02 = v02 * v12.norm() / v02.norm();
