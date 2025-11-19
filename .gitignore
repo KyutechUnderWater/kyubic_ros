@@ -217,3 +217,5 @@ docs
 .install.project_name
 .python-version
 rosbag2_*
+
+cache/
