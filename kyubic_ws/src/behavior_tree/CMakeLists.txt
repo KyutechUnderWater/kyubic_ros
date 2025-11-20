@@ -27,6 +27,7 @@ ament_auto_add_executable(${PROJECT_NAME}
   ./src/bt_nodes/lifecycle_manager.cpp
   ./src/bt_nodes/update_mode.cpp
   ./src/bt_nodes/waypoint_action.cpp
+  ./src/bt_nodes/qr_action.cpp
 )
 
 install(DIRECTORY

@@ -86,22 +86,18 @@ def generate_launch_description():
         output="screen",
     )
 
-    # 4. PDLA Action Server (経路追従計算)
-    # BTからのアクションリクエストを待ち受けます
     pdla_server_node = Node(
         package="projection_dynamic_look_ahead_planner",
         executable="pdla_planner_component_node",
-        name="pdla_planner", # アクション名 "/pdla_plan" の親になります
+        name="pdla_planner", 
         namespace="",
         output="screen",
         parameters=[pdla_config],
         remappings=[
-            ("odom", "/localization/odom"), # 必須: オドメトリ入力
+            ("odom", "/localization/odom"), 
         ],
     )
 
-    # 5. Wrench Planner ノード (制御計算)
-    # PDLAの出力を受け取り、力を計算します
     wrench_planner_node = Node(
         package="wrench_planner",
         executable="wrench_planner_component_node",
@@ -113,10 +109,21 @@ def generate_launch_description():
             {"p_pid_controller_path": p_pid_controller_path},
         ],
         remappings=[
-            # PDLAが出力する仮想目標点を購読
             ("goal_current_odom", "/goal_current_odom"),
-            # スラスタドライバへの出力
             ("robot_force", "/driver/robot_force"),
+        ],
+    )
+
+    qr_server_node = Node(
+        package="qr_planner",
+        executable="qr_planner_node",
+        name="qr_planner", 
+        namespace="",
+        output="screen",
+        # 必要に応じてパラメータを追加
+        # parameters=[{"remote_ip": "192.168.x.x"}],
+        remappings=[
+            ("odom", "/localization/odom"), 
         ],
     )
 
@@ -126,7 +133,8 @@ def generate_launch_description():
             manual_node,
             emergency_node,
             bt_manager_node,
-            pdla_server_node,    # [有効化]
-            wrench_planner_node, # [有効化]
+            pdla_server_node,    
+            wrench_planner_node, 
+            qr_server_node,  
         ]
     )

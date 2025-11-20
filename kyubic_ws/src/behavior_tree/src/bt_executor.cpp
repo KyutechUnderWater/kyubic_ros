@@ -19,6 +19,7 @@
 #include "behavior_tree/always_running.hpp"
 #include "behavior_tree/check_sensors_state.hpp"
 #include "behavior_tree/lifecycle_manager.hpp"
+#include "behavior_tree/qr_action.hpp"
 #include "behavior_tree/update_mode.hpp"
 #include "behavior_tree/waypoint_action.hpp"
 
@@ -41,6 +42,7 @@ int main(int argc, char ** argv)
   factory.registerNodeType<UpdateMode>("UpdateMode", node);
   factory.registerNodeType<LifecycleManager>("LifecycleManager", node);
   factory.registerNodeType<WaypointAction>("WaypointAction", node);
+  factory.registerNodeType<QrAction>("QrAction", node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");

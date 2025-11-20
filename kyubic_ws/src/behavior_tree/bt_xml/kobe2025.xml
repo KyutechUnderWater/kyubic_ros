@@ -13,6 +13,8 @@
         csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/sample/mapping_alt_generated.csv"
         current_index="{current_index}" />
       
+      <QrAction action_name="qr_action" />
+      
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
   </BehaviorTree>
@@ -116,6 +118,9 @@
       <input_port name="action_name" default="pdla_plan"/>
       <input_port name="csv_file_path"/>
       <output_port name="current_index"/>
+    </Action>
+    <Action ID="QrAction" editable="true">
+      <input_port name="action_name" default="qr_action"/>
     </Action>
   </TreeNodesModel>
 
