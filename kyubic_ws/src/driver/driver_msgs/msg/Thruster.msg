@@ -1,7 +1,6 @@
-float32 thrust_hfr     # [N]
-float32 thrust_hrr     # [N]
-float32 thrust_hrl     # [N]
-float32 thrust_hfl     # [N]
-float32 thrust_vmr     # [N]
-float32 thrust_vml     # [N]
-float32 total_thrust   # [N]
+int32 thruster1 
+int32 thruster2 
+int32 thruster3 
+int32 thruster4 
+int32 thruster5 
+int32 thruster6

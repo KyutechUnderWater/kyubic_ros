@@ -1,0 +1,2 @@
+bool battery_leak
+bool battery_rtc

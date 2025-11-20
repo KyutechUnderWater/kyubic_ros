@@ -22,11 +22,21 @@ find_package(sensor_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+	"msg/BatteryWarning.msg"
+	"msg/BuzzerState.msg"
 	"msg/Depth.msg"
 	"msg/DVL.msg"
-	"msg/IMU.msg"
-	"msg/Thruster.msg"
+	"msg/Environment.msg"
 	"msg/Gnss.msg"
+	"msg/IMU.msg"
+	"msg/LED.msg"
+	"msg/PowerState.msg"
+	"msg/PowerSwitch.msg"
+    "msg/RtcGnss.msg"
+    "msg/RtcTime.msg"
+	"msg/SystemPower.msg"
+	"msg/Thruster.msg"
+	
 	"srv/Command.srv"
 	DEPENDENCIES std_msgs
 	DEPENDENCIES geometry_msgs
