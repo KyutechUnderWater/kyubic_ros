@@ -7,10 +7,10 @@
  * @details LEDのduty比を受け取り，LED制御マイコンに命令する
  */
 
+#include <driver_msgs/msg/led.hpp>
+#include <proto_files/conversion_driver_msgs__LED.hpp>
+#include <protolink/client.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <serial/serial.hpp>
-#include <std_msgs/msg/float32.hpp>
-#include <string>
 
 /**
  * @namespace led_driver
@@ -32,15 +32,17 @@ public:
   explicit LEDDriver();
 
 private:
-  std::string portname;
-  int baudrate;
+  boost::asio::io_context io_context_;
+  std::string mcu_ip_addr;  // of microcontroller, etc.
+  uint16_t mcu_port;        // same as above
+  uint16_t this_port;       // of the computer executing this code
 
   float duty;
 
-  std::shared_ptr<serial::Serial> serial_;
-  rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr sub_;
+  using protoLED = protolink__driver_msgs__LED::driver_msgs__LED;
+  std::shared_ptr<protolink::udp_protocol::Publisher<protoLED>> protolink_publisher_;
 
-  void _led_callback(const std_msgs::msg::Float32 msg);
+  rclcpp::Subscription<driver_msgs::msg::LED>::SharedPtr sub_;
 };
 
 }  // namespace led_driver

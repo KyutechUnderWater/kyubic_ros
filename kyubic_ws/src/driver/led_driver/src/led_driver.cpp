@@ -2,7 +2,7 @@
  * @file led_driver.cpp
  * @brief LED driver
  * @author R.Ohnishi
- * @date 2024/10/27
+ * @date 2025/11/21
  *
  * @details LEDのduty比を受け取り，LED制御マイコンに命令する
  */
@@ -14,27 +14,20 @@ namespace led_driver
 
 LEDDriver::LEDDriver() : rclcpp::Node("led_driver")
 {
-  portname = this->declare_parameter("serial_port", "/dev/ttyACM0");
-  baudrate = this->declare_parameter("serial_speed", 115200);
+  mcu_ip_addr = this->declare_parameter("mcu_ip_addr", "192.168.9.5");
+  mcu_port = this->declare_parameter("mcu_port", 9000);
+  this_port = this->declare_parameter("this_port", 9000);
 
-  serial_ = std::make_shared<serial::Serial>(portname.c_str(), baudrate);
-  RCLCPP_INFO(this->get_logger(), "Connected %s", portname.c_str());
-
-  sub_ = create_subscription<std_msgs::msg::Float32>(
-    "led_duty", 10, std::bind(&LEDDriver::_led_callback, this, std::placeholders::_1));
-}
-
-void LEDDriver::_led_callback(const std_msgs::msg::Float32 msg)
-{
-  duty = msg.data;
-
-  if (duty < 0 || 1 < duty) {
-    RCLCPP_ERROR(this->get_logger(), "Out of range: duty is %f", duty);
-  } else {
-    uint8_t buf = uint8_t(duty * 100);
-    serial_->write(&buf, sizeof(buf));
-    RCLCPP_INFO(this->get_logger(), "Send: %d", buf);
-  }
+  protolink_publisher_ = std::make_shared<protolink::udp_protocol::Publisher<protoLED>>(
+    io_context_, mcu_ip_addr, mcu_port, this_port, this->get_logger());
+  sub_ = this->create_subscription<driver_msgs::msg::LED>(
+    "led_duty", 10, [this](const driver_msgs::msg::LED::SharedPtr _msg) {
+      protolink_publisher_->send(convert(*_msg));
+      RCLCPP_INFO(
+        this->get_logger(), "Protolink Publish  --->  led1: %d  led2: %d\n", _msg->led1,
+        _msg->led2);
+    });
+  RCLCPP_INFO(this->get_logger(), "Connected %s:%d", mcu_ip_addr.c_str(), mcu_port);
 }
 
 }  // namespace led_driver

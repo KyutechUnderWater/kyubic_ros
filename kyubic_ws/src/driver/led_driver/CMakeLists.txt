@@ -18,8 +18,13 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
+add_protolink_message_from_ros_message("driver_msgs" "LED")
+
 ament_auto_add_executable(${PROJECT_NAME}
   src/led_driver.cpp
+)
+target_link_libraries(${PROJECT_NAME}
+  driver_msgs__LED_proto
 )
 
 install(DIRECTORY
