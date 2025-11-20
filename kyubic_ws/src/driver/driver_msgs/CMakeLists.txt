@@ -19,6 +19,7 @@ find_package(ament_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(common_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -32,15 +33,16 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 	"msg/LED.msg"
 	"msg/PowerState.msg"
 	"msg/PowerSwitch.msg"
-    "msg/RtcGnss.msg"
-    "msg/RtcTime.msg"
+	"msg/RtcGnss.msg"
+	"msg/RtcTime.msg"
 	"msg/SystemPower.msg"
 	"msg/Thruster.msg"
-	
+
 	"srv/Command.srv"
 	DEPENDENCIES std_msgs
 	DEPENDENCIES geometry_msgs
 	DEPENDENCIES sensor_msgs
+	DEPENDENCIES common_msgs
 )
 
 ament_export_dependencies(rosidl_default_runtime)

@@ -1,3 +1,7 @@
+# message
+std_msgs/Header header
+common_msgs/Status status
+
 bool jetson
 bool dvl
 bool com

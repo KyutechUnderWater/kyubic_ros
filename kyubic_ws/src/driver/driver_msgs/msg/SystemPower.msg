@@ -1,3 +1,7 @@
+# message
+std_msgs/Header header
+common_msgs/Status status
+
 float32 log_voltage
 float32 log_current
 float32 log_power
