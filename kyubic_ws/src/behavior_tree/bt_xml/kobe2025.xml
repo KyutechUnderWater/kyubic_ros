@@ -8,6 +8,7 @@
         node_name="manualNode"
         transition="deactivate"
         timeout_sec="1" /> -->
+      <ResetLocalization service_name="/pdla_planner/reset_trigger" timeout_sec="2.0" />
       
       <WaypointAction action_name="pdla_plan"
         csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/sample/mapping_alt_generated.csv"
@@ -107,6 +108,10 @@
       <input_port name="manual_button" />
       <input_port name="auto_button" />
       <output_port name="mode" />
+    </Action>
+    <Action ID="ResetLocalization" editable="true">
+      <input_port name="service_name" default="/pdla_planner/reset_trigger"/>
+      <input_port name="timeout_sec" default="1.0"/>
     </Action>
     <!-- <Action ID="WrenchAction"
       editable="true">

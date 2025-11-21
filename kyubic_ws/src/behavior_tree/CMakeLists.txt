@@ -17,6 +17,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 find_package(planner_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 
 ament_auto_find_build_dependencies()
 
@@ -28,6 +29,7 @@ ament_auto_add_executable(${PROJECT_NAME}
   ./src/bt_nodes/update_mode.cpp
   ./src/bt_nodes/waypoint_action.cpp
   ./src/bt_nodes/qr_action.cpp
+  ./src/bt_nodes/reset_localization.cpp
 )
 
 install(DIRECTORY

@@ -17,6 +17,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(std_srvs REQUIRED)
+
 ament_auto_find_build_dependencies()
 
 # add library

@@ -47,7 +47,36 @@ PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_plann
     std::bind(&PDLAPlanner::handle_accepted, this, std::placeholders::_1),
     rcl_action_server_get_default_options(), callback_group_);
 
+  srv_reset_ = create_service<std_srvs::srv::Trigger>(
+    "~/reset_trigger",
+    std::bind(&PDLAPlanner::reset_callback, this, std::placeholders::_1, std::placeholders::_2));
+
   RCLCPP_INFO(this->get_logger(), "PDLA Action Server started. Waiting for goal...");
+}
+
+void PDLAPlanner::reset_callback(
+  const std_srvs::srv::Trigger::Request::SharedPtr,
+  const std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  std::lock_guard<std::mutex> lock(odom_mutex_);
+  if (!current_odom_) {
+    response->success = false;
+    response->message = "No odometry received yet.";
+    RCLCPP_WARN(this->get_logger(), "Cannot reset: No odometry data.");
+    return;
+  }
+
+  // 現在の値をオフセットとして保存
+  offset_x_ = current_odom_->pose.position.x;
+  offset_y_ = current_odom_->pose.position.y;
+  offset_z_depth_ = current_odom_->pose.position.z_depth;
+  offset_yaw_ = current_odom_->pose.orientation.z;
+
+  response->success = true;
+  response->message = "PDLA Planner origin reset.";
+  RCLCPP_INFO(
+    this->get_logger(), "Origin Reset -> X:%.2f, Y:%.2f, Depth:%.2f, Yaw:%.2f", offset_x_,
+    offset_y_, offset_z_depth_, offset_yaw_);
 }
 
 rclcpp_action::GoalResponse PDLAPlanner::handle_goal(
@@ -155,43 +184,76 @@ void PDLAPlanner::odometryCallback(const localization_msgs::msg::Odometry::Share
 void PDLAPlanner::_runPlannerLogic(
   const std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> & goal_handle)
 {
-  // ウェイポイント到達判定
-  if (step_idx == target_pose_.size() - 1) {
-    if (_checkReached(target_pose_.at(step_idx), reach_tolerance)) {
-      RCLCPP_INFO(this->get_logger(), "Reached end point!");
+  // [修正] オドメトリのコピーを作成し、オフセットと回転を適用する
+  std::shared_ptr<localization_msgs::msg::Odometry> odom_copy;
+  {
+    std::lock_guard<std::mutex> lock(odom_mutex_);
+    if (!current_odom_) {
+      RCLCPP_WARN_ONCE(this->get_logger(), "Waiting for first odometry message...");
+      return;
+    }
+    // 生データをコピー
+    odom_copy = std::make_shared<localization_msgs::msg::Odometry>(*current_odom_);
+  }
 
+  // [修正] 1. 位置のオフセット適用 (原点を0に移動)
+  odom_copy->pose.position.x -= offset_x_;
+  odom_copy->pose.position.y -= offset_y_;
+  odom_copy->pose.position.z_depth -= offset_z_depth_;
+  odom_copy->pose.orientation.z -= offset_yaw_;
+
+  // [修正] 2. 速度ベクトルの回転 (WrenchPlannerのD制御のため必須)
+  // グローバル座標系の速度を、オフセット角度分だけ逆回転させて仮想座標系に合わせます
+  double global_vx = odom_copy->twist.linear.x;
+  double global_vy = odom_copy->twist.linear.y;
+
+  // orientation.z が「度数法(Degree)」である前提の計算です (DVLの実装に準拠)
+  double theta_rad = -offset_yaw_ * std::numbers::pi / 180.0;
+
+  odom_copy->twist.linear.x = global_vx * cos(theta_rad) - global_vy * sin(theta_rad);
+  odom_copy->twist.linear.y = global_vx * sin(theta_rad) + global_vy * cos(theta_rad);
+
+  // --- これ以降のロジックはすべて補正済みの odom_copy を使用します ---
+
+  // 到達判定 (メンバ変数のcurrent_odom_を使わないよう、ここで直接判定します)
+  bool reached = false;
+  PoseData target = target_pose_.at(step_idx);
+  Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
+
+  double current_z_val = (target.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH)
+                           ? odom_copy->pose.position.z_depth
+                           : odom_copy->pose.position.z_altitude;
+
+  // 判定には補正後の値(odom_copy)を使います
+  if (
+    abs(target.x - odom_copy->pose.position.x) < tol.x &&
+    abs(target.y - odom_copy->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z &&
+    abs(target.roll - odom_copy->pose.orientation.x) < tol.roll &&
+    abs(target.yaw - odom_copy->pose.orientation.z) < tol.yaw) {
+    reached = true;
+  }
+
+  if (reached) {
+    if (step_idx == target_pose_.size() - 1) {
+      RCLCPP_INFO(this->get_logger(), "Reached end point!");
       auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
       result->success = true;
       goal_handle->succeed(result);
-
       std::lock_guard<std::mutex> lock(goal_mutex_);
       active_goal_handle_.reset();
       return;
-    }
-  } else {
-    if (_checkReached(target_pose_.at(step_idx), waypoint_tolerance)) {
+    } else {
       step_idx++;
       RCLCPP_INFO(this->get_logger(), "Reached %zu/%lu waypoint.", step_idx, target_pose_.size());
       _print_waypoint("Current", step_idx);
-
       if (step_idx < target_pose_.size() - 1) {
         _print_waypoint("Next   ", step_idx + 1);
       }
     }
   }
 
-  // 仮想目標点の計算
+  // 仮想目標点の計算 (座標変換後の odom_copy を使用)
   Eigen::Vector3d virtual_goal_point;
-
-  std::shared_ptr<localization_msgs::msg::Odometry> odom_copy;
-  {
-    std::lock_guard<std::mutex> lock(odom_mutex_);
-    if (!current_odom_) {
-      RCLCPP_WARN_ONCE(this->get_logger(), "Waiting for first odometry message...");
-      return;  // オドメトリが来るまで何もしない
-    }
-    odom_copy = current_odom_;
-  }
 
   if (step_idx == 0) {
     virtual_goal_point << target_pose_.at(0).x, target_pose_.at(0).y, target_pose_.at(0).z;
@@ -206,7 +268,9 @@ void PDLAPlanner::_runPlannerLogic(
     Eigen::Vector3d p2(current_step_pose.x, current_step_pose.y, current_step_pose.z);
     Eigen::Vector3d p3(next_step_pose.x, next_step_pose.y, next_step_pose.z);
 
+    // [修正] current_pose は補正済みの odom_copy から取得
     localization_msgs::msg::Pose current_pose = odom_copy->pose;
+
     Eigen::Vector3d p0;
     if (current_step_pose.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
       p0 << current_pose.position.x, current_pose.position.y, current_pose.position.z_depth;
@@ -222,7 +286,6 @@ void PDLAPlanner::_runPlannerLogic(
     Eigen::Vector3d v23 = p3 - p2;
 
     if (v02.dot(v23) <= 0 || v12.norm() == 0) {
-      // ±90度以上の方向転換，移動なしのとき，仮想目標点を実際の目標点にする
       virtual_goal_point = p2;
     } else {
       v02 = v02 * v12.norm() / v02.norm();
@@ -244,22 +307,25 @@ void PDLAPlanner::_runPlannerLogic(
     msg->targets.roll = target_pose_.at(step_idx).roll;
     msg->targets.yaw = target_pose_.at(step_idx).yaw;
 
-    msg->master.x = current_odom_->pose.position.x;
-    msg->master.y = current_odom_->pose.position.y;
-    msg->master.roll = current_odom_->pose.orientation.x;
-    msg->master.yaw = current_odom_->pose.orientation.z;
+    // [修正] WrenchPlannerに送るMasterの値も、補正済みの値を入れる
+    // これでWrenchPlannerは「ロボットは(0,0)付近にいる」と認識し、
+    // 目標点(CSVも0,0付近)との偏差を正しく計算できる。
+    msg->master.x = odom_copy->pose.position.x;
+    msg->master.y = odom_copy->pose.position.y;
+    msg->master.roll = odom_copy->pose.orientation.x;
+    msg->master.yaw = odom_copy->pose.orientation.z;
 
-    msg->slave.x = current_odom_->twist.linear.x;
-    msg->slave.y = current_odom_->twist.linear.y;
-    msg->slave.roll = current_odom_->twist.angular.x;
-    msg->slave.yaw = current_odom_->twist.angular.z;
+    msg->slave.x = odom_copy->twist.linear.x;
+    msg->slave.y = odom_copy->twist.linear.y;
+    msg->slave.roll = odom_copy->twist.angular.x;
+    msg->slave.yaw = odom_copy->twist.angular.z;
 
     if (target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-      msg->master.z = current_odom_->pose.position.z_depth;
-      msg->slave.z = current_odom_->twist.linear.z_depth;
+      msg->master.z = odom_copy->pose.position.z_depth;
+      msg->slave.z = odom_copy->twist.linear.z_depth;
     } else {
-      msg->master.z = current_odom_->pose.position.z_altitude;
-      msg->slave.z = current_odom_->twist.linear.z_altitude;
+      msg->master.z = odom_copy->pose.position.z_altitude;
+      msg->slave.z = odom_copy->twist.linear.z_altitude;
     }
     pub_->publish(std::move(msg));
   }
@@ -267,6 +333,7 @@ void PDLAPlanner::_runPlannerLogic(
   // Feedbackの送信
   {
     auto feedback = std::make_shared<planner_msgs::action::PDLA::Feedback>();
+    // [修正] モニタリング用に、リセット座標系での現在地を返す
     feedback->current_odom = *odom_copy;
     feedback->current_waypoint_index = static_cast<uint32_t>(step_idx);
     goal_handle->publish_feedback(feedback);

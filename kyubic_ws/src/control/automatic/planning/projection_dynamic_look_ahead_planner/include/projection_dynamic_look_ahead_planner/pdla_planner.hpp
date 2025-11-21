@@ -18,6 +18,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <rclcpp_action/server_goal_handle.hpp>
+#include <std_srvs/srv/trigger.hpp>
 
 namespace planner
 {
@@ -46,6 +47,13 @@ private:
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_;
   rclcpp_action::Server<planner_msgs::action::PDLA>::SharedPtr action_server_;
 
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_reset_;
+
+  double offset_x_ = 0.0;
+  double offset_y_ = 0.0;
+  double offset_z_depth_ = 0.0;
+  double offset_yaw_ = 0.0;
+
   // Action Callbacks
   rclcpp_action::GoalResponse handle_goal(
     const rclcpp_action::GoalUUID & uuid,
@@ -56,6 +64,10 @@ private:
     const std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> goal_handle);
 
   void odometryCallback(const localization_msgs::msg::Odometry::SharedPtr msg);
+
+  void reset_callback(
+    const std_srvs::srv::Trigger::Request::SharedPtr request,
+    const std_srvs::srv::Trigger::Response::SharedPtr response);
 
   void _runPlannerLogic(
     const std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> &
