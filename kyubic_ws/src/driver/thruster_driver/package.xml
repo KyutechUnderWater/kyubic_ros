@@ -9,10 +9,11 @@
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
-  <depend>serial</depend>
-  <depend>timer</depend>
+  <!-- <depend>serial</depend> -->
+  <!-- <depend>timer</depend> -->
   <depend>rclcpp</depend>
-  <depend>geometry_msgs</depend>
+  <!-- <depend>geometry_msgs</depend> -->
+  <depend>protolink</depend>
   <depend>driver_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>

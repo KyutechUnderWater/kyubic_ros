@@ -12,9 +12,10 @@
 
 #include <cstdint>
 #include <driver_msgs/msg/depth.hpp>
-#include <rclcpp/rclcpp.hpp>
-// #include <timer/timeout.hpp>
+#include <proto_files/conversion_driver_msgs__Depth.hpp>
 #include <protolink/client.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <timer/timeout.hpp>
 
 /**
  * @namespace depth_driver
@@ -37,16 +38,23 @@ public:
   explicit DepthDriver();
 
 private:
-  std::string portname;
-  int baudrate;
+  boost::asio::io_context io_context_;
+
+  // Network settings
+  uint16_t sub_port;
   uint64_t timeout;
 
   std::shared_ptr<timer::Timeout> timeout_;
-  std::shared_ptr<Bar30> bar30_;
+
+  std::mutex mutex_;
+
+  using protoDepth = protolink__driver_msgs__Depth::driver_msgs__Depth;
+  std::shared_ptr<protolink::udp_protocol::Subscriber<protoDepth>> protolink_subscriber_;
+
   rclcpp::Publisher<driver_msgs::msg::Depth>::SharedPtr pub_;
   rclcpp::TimerBase::SharedPtr timer_;
 
-  void _update();
+  void _check_timeout();
 };
 
 }  // namespace depth_driver

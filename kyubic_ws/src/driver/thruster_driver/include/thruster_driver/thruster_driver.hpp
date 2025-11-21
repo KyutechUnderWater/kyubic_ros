@@ -1,88 +1,76 @@
 /**
  * @file thruster_driver.hpp
- * @brief thruster driver
- * @author R.Ohnishi
- * @date 2024/10/30
+ * @brief Thruster driver
+ * @author K.Fujimoto
+ * @date 2025/11/21
  *
- * @details 各軸の推力をサブスクライブし，ESC制御マイコンに命令する
- *******************************************************************/
-
-#include <array>
-#include <cmath>
-#include <driver_msgs/msg/thruster.hpp>
-#include <geometry_msgs/msg/wrench_stamped.hpp>
-#include <rclcpp/rclcpp.hpp>
-#include <serial/serial.hpp>
-#include <std_msgs/msg/bool.hpp>
-#include <timer/timeout.hpp>
-
-/**
- * @namespace thruster_driver
- * @brief For thruster driver
+ * @details スラスターの出力値を受け取り，制御マイコンに命令する
  */
+
+#ifndef _THRUSTER_DRIVER_HPP
+#define _THRUSTER_DRIVER_HPP
+
+#include <driver_msgs/msg/thruster.hpp>
+#include <protolink/client.hpp>
+#include <rclcpp/rclcpp.hpp>
+
+// ビルド時に生成される変換用ヘッダー (ファイル名は環境に依存しますが、一般的にこの形式です)
+#include <proto_files/conversion_driver_msgs__Thruster.hpp>
+
 namespace thruster_driver
 {
 
-constexpr float theta_h = 30 * M_PI / 180;  //[rad]
-constexpr float theta_v = 30 * M_PI / 180;  //[rad]
+// 型エイリアス
+using RosThruster = driver_msgs::msg::Thruster;
+using ProtoThruster = protolink__driver_msgs__Thruster::driver_msgs__Thruster;
 
-// Distance from center of robot to center of thruster
-const float dist_hx = 0.19;  /// x-axis (horizontal)
-const float dist_hy = 0.14;  /// y-axis (horizontal)
-// TODO: 垂直方向スラスタの位置
-const float dist_vy = 0.19;  /// x-axis (vertical)
-const float dist_vz = 0.14;  /// y-axis (vertical)
-const float theta_dist_h = atan(dist_hy / dist_hx);
-const float theta_dist_v = atan(dist_vy / dist_vz);
+// =========================================================
+// Convert関数の実装 (ROS -> Protolink)
+// =========================================================
+inline ProtoThruster convert(const RosThruster & msg)
+{
+  ProtoThruster p_msg;
 
-// Force to Thrust, Torque to Thrust scale
-const float f_x_scale = 1 / (4 * cos(theta_h));
-const float f_y_scale = 1 / (4 * sin(theta_h));
-const float f_z_scale = 1 / (2 * cos(theta_v));
-const float t_x_scale =
-  1 / (2 * sqrt(pow(dist_vy, 2) + pow(dist_vz, 2)) * cos(theta_h - theta_dist_v));
-const float t_z_scale =
-  1 / (4 * sqrt(pow(dist_hx, 2) + pow(dist_hy, 2)) * cos(theta_h - theta_dist_h));
+  // HeaderやStatusは必要に応じてコピーしてください
+  // p_msg.mutable_header()->set_frame_id(msg.header.frame_id);
 
-const uint8_t NUM_THRUSTERS = 6;
+  // 6つのスラスター値をセット
+  p_msg.set_thruster1(msg.thruster1);
+  p_msg.set_thruster2(msg.thruster2);
+  p_msg.set_thruster3(msg.thruster3);
+  p_msg.set_thruster4(msg.thruster4);
+  p_msg.set_thruster5(msg.thruster5);
+  p_msg.set_thruster6(msg.thruster6);
+
+  return p_msg;
+}
+// =========================================================
 
 /**
- * @brief Thruster class
+ * @brief Thruster driver class
  */
 class ThrusterDriver : public rclcpp::Node
 {
 public:
   /**
-   * @brief Serial and ROS-topic setting
+   * @brief Serial & ROS-topic settng
    * @details Serial setting and Define a subscriber
    */
   explicit ThrusterDriver();
 
 private:
-  std::string portname;
-  int baudrate;
-  float max_thrust;
-  float max_thrust_per;
-  uint64_t timeout;
+  boost::asio::io_context io_context_;
+  std::string mcu_ip_addr;  // of microcontroller
+  uint16_t mcu_port;        // same as above
+  uint16_t this_port;       // of this computer
 
-  const char start_char = {'*'};
-  const char delim_char = {';'};
-  const char end_char = {'#'};
+  // Protolink Publisher
+  std::shared_ptr<protolink::udp_protocol::Publisher<ProtoThruster>> protolink_publisher_;
 
-  bool heartbeat = false;
-
-  std::shared_ptr<serial::Serial> serial_;
-  rclcpp::Publisher<driver_msgs::msg::Thruster>::SharedPtr pub_;
-  rclcpp::Subscription<geometry_msgs::msg::WrenchStamped>::SharedPtr sub_;
-  rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr sub_heartbeat_;
-
-  std::shared_ptr<timer::Timeout> timeout_;
-
-  std::array<float, NUM_THRUSTERS> _wrench2thrusts(
-    float f_x, float f_y, float f_z, float t_x, float t_z);
-  float _restrict_thrust(std::array<float, NUM_THRUSTERS> thrusts);
-  void robot_force_callback(const geometry_msgs::msg::WrenchStamped::SharedPtr msg);
-  void heartbeat_callback(const std_msgs::msg::Bool::SharedPtr msg);
+  // ROS Subscriber
+  rclcpp::Subscription<RosThruster>::SharedPtr sub_;
 };
 
 }  // namespace thruster_driver
+
+#endif

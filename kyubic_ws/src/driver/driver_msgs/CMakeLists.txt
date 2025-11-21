@@ -24,7 +24,7 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
 	"msg/BatteryWarning.msg"
-	"msg/BuzzerState.msg"
+	"msg/BuzzerSwitch.msg"
 	"msg/Depth.msg"
 	"msg/DVL.msg"
 	"msg/Environment.msg"
