@@ -25,6 +25,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
  "msg/WrenchPlan.msg"
  "action/PDLA.action"
  "action/QR.action"
+ "action/FindPinger.action"
  DEPENDENCIES p_pid_controller_msgs localization_msgs rclcpp_action
 )
 
