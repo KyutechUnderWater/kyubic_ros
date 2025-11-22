@@ -1,0 +1,8 @@
+/**:
+  ros__parameters:
+    portname: "/dev/logic_distro_xiao"
+    baudrate: 115200
+    mcu_ip_addr: "192.168.9.5"
+    mcu_port: 8000
+    this_port: 8000
+    timeout_ms: 1000

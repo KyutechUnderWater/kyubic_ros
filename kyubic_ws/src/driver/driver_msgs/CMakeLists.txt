@@ -23,6 +23,7 @@ find_package(common_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+	"./msg/Actuator.msg"
 	"./msg/ButtonBatteryState.msg"
 	"./msg/BoolStamped.msg"
 	"./msg/BuzzerSwitch.msg"
@@ -34,10 +35,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 	"./msg/Int32Stamped.msg"
 	"./msg/LED.msg"
 	"./msg/PowerState.msg"
-	"./msg/PowerSwitch.msg"
 	"./msg/RtcGnss.msg"
 	"./msg/RtcTime.msg"
-	"./msg/SystemPower.msg"
+	"./msg/SystemSwitch.msg"
+	"./msg/SystemStatus.msg"
 	"./msg/Thruster.msg"
 
 	"srv/Command.srv"

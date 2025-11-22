@@ -2,5 +2,5 @@
 std_msgs/Header header
 common_msgs/Status status
 
-int32 right 
-int32 left
+driver_msgs/Thruster thrusters
+driver_msgs/LED leds
