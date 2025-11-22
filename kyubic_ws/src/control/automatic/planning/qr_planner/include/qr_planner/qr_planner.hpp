@@ -36,7 +36,7 @@ struct PoseData
   float yaw;
   uint8_t z_mode;
   bool is_finished;
-
+  bool is_error = false;  // ★★★ 追加 ★★★
   // ★★★ 追加: 検出データ (Python: det_*) ★★★
   float det_x;     // 画像上のX座標
   float det_y;     // 画像上のY座標

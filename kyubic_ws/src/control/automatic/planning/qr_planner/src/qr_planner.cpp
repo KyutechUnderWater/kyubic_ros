@@ -34,7 +34,7 @@ QRPlanner::QRPlanner(const rclcpp::NodeOptions & options) : Node("qr_planner", o
   reach_tolerance.yaw = this->declare_parameter("reach_tolerance.yaw", 0.1);
 
   // Techno.py (PC) のIPとポート設定
-  remote_ip_ = this->declare_parameter("remote_ip", "192.168.9.245");
+  remote_ip_ = this->declare_parameter("remote_ip", "192.168.9.110");
   remote_port_ = this->declare_parameter("remote_port", 11111);
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
@@ -186,8 +186,14 @@ bool QRPlanner::parse_signal_to_pose(const std::string & data_str, PoseData & po
 
     if (cmd == "COMPLETE") {
       pose.is_finished = true;
+      pose.is_error = false;
+    } else if (cmd.find("ERROR") == 0 || cmd == "EXCEPTION") {
+      // ★★★ "ERROR"で始まるか、"EXCEPTION"ならエラー扱い ★★★
+      pose.is_finished = false;
+      pose.is_error = true;
     } else {
       pose.is_finished = false;
+      pose.is_error = false;
     }
 
     // 制御値 (Index 1-4)
@@ -283,8 +289,10 @@ void QRPlanner::odometryCallback(const localization_msgs::msg::Odometry::SharedP
 
   if (goal_handle->is_canceling()) {
     auto result = std::make_shared<QRAction::Result>();
-    result->success = false;
-    goal_handle->canceled(result);
+    // result->success = false;
+    // goal_handle->canceled(result);
+    result->success = true;
+    goal_handle->succeed(result);
 
     // ★★★ Zed Power OFF 送信 (キャンセル時) ★★★
     {
@@ -337,6 +345,56 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
     return;
   }
 
+  // --- ★★★ エラー時の処理 ★★★ ---
+  if (target_copy.is_error) {
+    RCLCPP_ERROR(
+      this->get_logger(), "*** ERROR DETECTED *** Publishing Safe Pose and Aborting Action.");
+
+    // 1. 安全座標のメッセージ作成
+    auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>();
+    msg->header.stamp = this->get_clock()->now();
+    msg->z_mode = planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH;
+
+    msg->targets.x = target_copy.x;  // 8.0
+    msg->targets.y = target_copy.y;  // 0.0
+    msg->targets.z = 0.5;            // 安全深度
+    msg->targets.yaw = 0.0;          // リセット
+    msg->targets.roll = 0.0;
+
+    // 現在値などはOdomからコピー
+    msg->master.x = odom_copy->pose.position.x;
+    msg->master.y = odom_copy->pose.position.y;
+    msg->master.z = odom_copy->pose.position.z_depth;
+    msg->master.roll = odom_copy->pose.orientation.x;
+    msg->master.yaw = odom_copy->pose.orientation.z;
+    msg->slave.x = odom_copy->twist.linear.x;
+    msg->slave.y = odom_copy->twist.linear.y;
+    msg->slave.z = odom_copy->twist.linear.z_depth;
+    msg->slave.roll = odom_copy->twist.angular.x;
+    msg->slave.yaw = odom_copy->twist.angular.z;
+
+    // 2. トピック送信 (安全座標へ行け！)
+    pub_->publish(std::move(msg));
+
+    // 3. Zed Power OFF (エラー終了時も切るべきなら)
+    {
+      std_msgs::msg::Bool pwr_msg;
+      pwr_msg.data = false;
+      zed_power_pub_->publish(pwr_msg);
+    }
+
+    // 4. アクション終了 (Aborted で返すのが作法だが、Succeededにするかは運用次第)
+    auto result = std::make_shared<QRAction::Result>();
+    result->success = false;  // エラーなので false
+    goal_handle->abort(result);
+
+    // 5. リセット
+    std::lock_guard<std::mutex> lock(goal_mutex_);
+    active_goal_handle_.reset();
+
+    return;  // ★ここでループを抜ける
+  }
+
   // ★★★ Feedback送信 (検出データを詰める) ★★★
   auto feedback = std::make_shared<QRAction::Feedback>();
   feedback->x = target_copy.det_x;
@@ -348,18 +406,26 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
   // 目標値パブリッシュ (制御指令値を詰める)
   auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>();
   msg->header.stamp = this->get_clock()->now();
-  msg->z_mode = target_copy.z_mode;
+  msg->z_mode = planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH;
 
-  msg->targets.x = target_copy.x;
-  msg->targets.y = target_copy.y;
-  msg->targets.z = target_copy.z;
-  msg->targets.yaw = target_copy.yaw;
+  // 通常時: 現在地(Odom) + 相対移動量(Target)
+  msg->targets.x = odom_copy->pose.position.x + target_copy.x;
+  msg->targets.y = odom_copy->pose.position.y + target_copy.y;
+  msg->targets.z = 0.5;  // 通常時は深度維持（または target_copy.z + odom...）
+  msg->targets.yaw = odom_copy->pose.orientation.z + target_copy.yaw;
   msg->targets.roll = 0.0;
 
   msg->master.x = odom_copy->pose.position.x;
   msg->master.y = odom_copy->pose.position.y;
+  // msg->master.z = 0;
   msg->master.roll = odom_copy->pose.orientation.x;
   msg->master.yaw = odom_copy->pose.orientation.z;
+
+  msg->slave.x = odom_copy->twist.linear.x;
+  msg->slave.y = odom_copy->twist.linear.y;
+  // msg->slave.z =0;
+  msg->slave.roll = odom_copy->twist.angular.x;
+  msg->slave.yaw = odom_copy->twist.angular.z;
 
   if (target_copy.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
     msg->master.z = odom_copy->pose.position.z_depth;
@@ -368,11 +434,6 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
     msg->master.z = odom_copy->pose.position.z_altitude;
     msg->slave.z = odom_copy->twist.linear.z_altitude;
   }
-
-  msg->slave.x = odom_copy->twist.linear.x;
-  msg->slave.y = odom_copy->twist.linear.y;
-  msg->slave.roll = odom_copy->twist.angular.x;
-  msg->slave.yaw = odom_copy->twist.angular.z;
 
   pub_->publish(std::move(msg));
 }
