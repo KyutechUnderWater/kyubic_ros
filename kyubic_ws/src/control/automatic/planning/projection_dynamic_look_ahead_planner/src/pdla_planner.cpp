@@ -184,7 +184,6 @@ void PDLAPlanner::odometryCallback(const localization_msgs::msg::Odometry::Share
 void PDLAPlanner::_runPlannerLogic(
   const std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> & goal_handle)
 {
-  // [修正] オドメトリのコピーを作成し、オフセットと回転を適用する
   std::shared_ptr<localization_msgs::msg::Odometry> odom_copy;
   {
     std::lock_guard<std::mutex> lock(odom_mutex_);
@@ -196,26 +195,21 @@ void PDLAPlanner::_runPlannerLogic(
     odom_copy = std::make_shared<localization_msgs::msg::Odometry>(*current_odom_);
   }
 
-  // [修正] 1. 位置のオフセット適用 (原点を0に移動)
+  // 1. 位置のオフセット適用 (原点を0に移動)
   odom_copy->pose.position.x -= offset_x_;
   odom_copy->pose.position.y -= offset_y_;
   odom_copy->pose.position.z_depth -= offset_z_depth_;
   odom_copy->pose.orientation.z -= offset_yaw_;
 
-  // [修正] 2. 速度ベクトルの回転 (WrenchPlannerのD制御のため必須)
-  // グローバル座標系の速度を、オフセット角度分だけ逆回転させて仮想座標系に合わせます
+  // 2. 速度ベクトルの回転 
   double global_vx = odom_copy->twist.linear.x;
   double global_vy = odom_copy->twist.linear.y;
 
-  // orientation.z が「度数法(Degree)」である前提の計算です (DVLの実装に準拠)
   double theta_rad = -offset_yaw_ * std::numbers::pi / 180.0;
 
   odom_copy->twist.linear.x = global_vx * cos(theta_rad) - global_vy * sin(theta_rad);
   odom_copy->twist.linear.y = global_vx * sin(theta_rad) + global_vy * cos(theta_rad);
 
-  // --- これ以降のロジックはすべて補正済みの odom_copy を使用します ---
-
-  // 到達判定 (メンバ変数のcurrent_odom_を使わないよう、ここで直接判定します)
   bool reached = false;
   PoseData target = target_pose_.at(step_idx);
   Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
@@ -224,7 +218,6 @@ void PDLAPlanner::_runPlannerLogic(
                            ? odom_copy->pose.position.z_depth
                            : odom_copy->pose.position.z_altitude;
 
-  // 判定には補正後の値(odom_copy)を使います
   if (
     abs(target.x - odom_copy->pose.position.x) < tol.x &&
     abs(target.y - odom_copy->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z &&
@@ -307,9 +300,9 @@ void PDLAPlanner::_runPlannerLogic(
     msg->targets.roll = target_pose_.at(step_idx).roll;
     msg->targets.yaw = target_pose_.at(step_idx).yaw;
 
-    // [修正] WrenchPlannerに送るMasterの値も、補正済みの値を入れる
+    // WrenchPlannerに送るMasterの値も、補正済みの値を入れる
     // これでWrenchPlannerは「ロボットは(0,0)付近にいる」と認識し、
-    // 目標点(CSVも0,0付近)との偏差を正しく計算できる。
+    // 目標点(CSVも0,0付近)との偏差を正しく計算できる
     msg->master.x = odom_copy->pose.position.x;
     msg->master.y = odom_copy->pose.position.y;
     msg->master.roll = odom_copy->pose.orientation.x;
@@ -333,7 +326,6 @@ void PDLAPlanner::_runPlannerLogic(
   // Feedbackの送信
   {
     auto feedback = std::make_shared<planner_msgs::action::PDLA::Feedback>();
-    // [修正] モニタリング用に、リセット座標系での現在地を返す
     feedback->current_odom = *odom_copy;
     feedback->current_waypoint_index = static_cast<uint32_t>(step_idx);
     goal_handle->publish_feedback(feedback);
