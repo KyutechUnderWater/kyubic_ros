@@ -37,7 +37,7 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
-  if (msg->status == driver_msgs::msg::IMU::STATUS_ERROR) {
+  if (msg->status.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The imu data is invalid");
     odom_msg->status.imu = localization_msgs::msg::Status::ERROR;
   } else {

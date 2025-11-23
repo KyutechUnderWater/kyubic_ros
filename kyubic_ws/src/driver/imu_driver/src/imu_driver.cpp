@@ -9,10 +9,6 @@
 
 #include "imu_driver/imu_driver.hpp"
 
-#include <cstdlib>
-#include <memory>
-#include <rclcpp/logging.hpp>
-
 using namespace std::chrono_literals;
 
 namespace imu_driver
@@ -67,7 +63,7 @@ void IMUDriver::_update()
     msg->header.stamp = this->get_clock()->now();
     msg->header.frame_id = "imu";
 
-    msg->status = driver_msgs::msg::IMU::STATUS_NORMAL;
+    msg->status.id = common_msgs::msg::Status::NORMAL;
 
     msg->temperature = data_->temp;
     msg->accel.x = data_->x_accl;
@@ -88,7 +84,7 @@ void IMUDriver::_update()
   } else {
     // Error if timeout, otherwise warning and wait
     if (timeout_->check(this->get_clock()->now())) {
-      msg->status = driver_msgs::msg::IMU::STATUS_ERROR;
+      msg->status.id = common_msgs::msg::Status::ERROR;
 
       RCLCPP_ERROR(
         this->get_logger(), "IMU driver timeout: %lu [ns]", timeout_->get_elapsed_time());

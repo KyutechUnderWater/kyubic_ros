@@ -1,7 +1,10 @@
-float32 thrust_hfr     # [N]
-float32 thrust_hrr     # [N]
-float32 thrust_hrl     # [N]
-float32 thrust_hfl     # [N]
-float32 thrust_vmr     # [N]
-float32 thrust_vml     # [N]
-float32 total_thrust   # [N]
+# message
+std_msgs/Header header
+common_msgs/Status status
+
+float32 thr1 
+float32 thr2 
+float32 thr3 
+float32 thr4 
+float32 thr5
+float32 thr6
