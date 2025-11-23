@@ -7,10 +7,14 @@
       <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
       
       <WaypointAction action_name="pdla_plan"
-        csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/sample/mapping_alt_generated.csv"
+        csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/kobe/gate_path.csv"
         current_index="{current_index}" />
       
-      <QrAction action_name="qr_action" />
+      <QrAction action_name="qr_action" 
+                target_x="{target_x}"
+                target_y="{target_y}"
+                target_z="{target_z}"
+                confidence="{target_confidence}"/>
       <FindPingerAction action_name="find_pinger" />
       <ReturnAction action_name="return_action" 
                     surface_depth="0.0" 
@@ -50,7 +54,7 @@
     <Fallback>
       <Sequence>
         <SubTree ID="Configure" />
-        <!-- [修正] 強制的に Auto (Waypoint) を実行 -->
+        <!-- 強制的に Auto (Waypoint) を実行 -->
         <SubTree ID="Auto" />
 
         <!-- <ReactiveSequence> -->
@@ -115,6 +119,10 @@
     </Action>
     <Action ID="QrAction" editable="true">
       <input_port name="action_name" default="qr_action"/>
+      <output_port name="target_x"/>
+      <output_port name="target_y"/>
+      <output_port name="target_z"/>
+      <output_port name="confidence"/>
     </Action>
     <Action ID="FindPingerAction" editable="true">
       <input_port name="action_name" default="find_pinger"/>

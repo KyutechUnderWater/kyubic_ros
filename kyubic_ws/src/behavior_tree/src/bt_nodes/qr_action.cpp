@@ -18,7 +18,12 @@ QrAction::QrAction(
 // ポート定義
 BT::PortsList QrAction::providedPorts()
 {
-  return {BT::InputPort<std::string>("action_name", "qr_action", "Action server name")};
+  return {
+    BT::InputPort<std::string>("action_name", "qr_action", "Action server name"),
+    BT::OutputPort<float>("target_x", "Target X position"),
+    BT::OutputPort<float>("target_y", "Target Y positon"),
+    BT::OutputPort<float>("target_z", "Target distance"),
+    BT::OutputPort<float>("confidence", "Detection confidence score")};
 }
 
 // ゴール設定
@@ -44,6 +49,17 @@ BT::NodeStatus QrAction::onResult(const WrappedResult & wr)
 }
 
 // フィードバック受信時の処理
-void QrAction::onFeedback(const std::shared_ptr<const Feedback> feedback) { (void)feedback; }
+void QrAction::onFeedback(const std::shared_ptr<const Feedback> feedback)
+{
+  setOutput("target_x", feedback->x);
+  setOutput("target_y", feedback->y);
+  setOutput("target_z", feedback->z);
+  setOutput("confidence", feedback->confidence);
+
+  RCLCPP_INFO_THROTTLE(
+    ros_node_->get_logger(), *ros_node_->get_clock(), 1000,
+    "QR Feedback: [x: %.2f, y: %.2f, z: %.2f, conf: %.2f]", feedback->x, feedback->y, feedback->z,
+    feedback->confidence);
+}
 
 }  // namespace behavior_tree

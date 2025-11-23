@@ -27,9 +27,7 @@ BT::PortsList WaypointAction::providedPorts()
     BT::InputPort<std::string>("action_name", "pdla_plan", "Action server name"),
     BT::OutputPort<uint32_t>("current_index", "Current executing waypoint index"),
     BT::OutputPort<localization_msgs::msg::Odometry>(
-      "current_pose", "Current robot pose from feedback")
-
-  };
+      "current_pose", "Current robot pose from feedback")};
 }
 
 // ゴール設定

@@ -1,19 +1,17 @@
 /**:
   ros__parameters:
-    # path_csv: "assets/test_generated.csv"
-    path_csv: "assets/sample/mapping_alt_generated.csv"
+    path_csv: "assets/kobe/gate_path.csv"
     look_ahead_scale: 1.0
 
-    # abs(target - current) < tolerance
     reach_tolerance:
-      x: 0.01
-      y: 0.01
-      z: 0.01
+      x: 0.1
+      y: 0.1
+      z: 0.1
       roll: 1.0
       yaw: 0.5
     waypoint_tolerance:
-      x: 0.05
-      y: 0.05
-      z: 0.05
+      x: 0.2
+      y: 0.2
+      z: 0.2
       roll: 2.0
-      yaw: 1.0
+      yaw: 5.0

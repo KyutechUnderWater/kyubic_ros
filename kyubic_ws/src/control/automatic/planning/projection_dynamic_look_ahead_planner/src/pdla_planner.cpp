@@ -51,7 +51,6 @@ PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_plann
 }
 
 rclcpp_action::GoalResponse PDLAPlanner::handle_goal(
-  RCLCPP_INFO(this->get_logger(), "[1] handle_goal called: Checking request...");
   const rclcpp_action::GoalUUID & uuid,
   std::shared_ptr<const planner_msgs::action::PDLA::Goal> goal)
 {

@@ -176,11 +176,11 @@ bool QRPlanner::parse_signal_to_pose(const std::string & data_str, PoseData & po
       parts.push_back(segment);
     }
 
-    // // ★★★ 9要素あるかチェック ★★★
-    // if (parts.size() != 9) {
-    //     // 互換性のため5要素(旧仕様)も許容する場合はここで分岐
-    //     return false;
-    // }
+    // ★★★ 9要素あるかチェック ★★★
+    if (parts.size() != 9) {
+      // 互換性のため5要素(旧仕様)も許容する場合はここで分岐
+      return false;
+    }
 
     std::string cmd = parts[0];
 
