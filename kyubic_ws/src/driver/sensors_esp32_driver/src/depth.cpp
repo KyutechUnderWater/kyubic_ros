@@ -75,7 +75,7 @@ void Depth::protolink_callback(const protoDepth & _msg)
   msg->header.frame_id = "power_link";
 
   pub_->publish(std::move(msg));
-  RCLCPP_INFO(
+  RCLCPP_DEBUG(
     this->get_logger(), "Publish ---> Depth: %2.2f  Temp: %2.2f", _msg.depth(), _msg.temperature());
 }
 

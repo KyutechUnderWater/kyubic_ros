@@ -41,11 +41,13 @@ void check_timeout(
 
     pub->publish(std::move(msg));
 
-    RCLCPP_ERROR(
-      node->get_logger(), "%s driver timeout: %lu [ns]", sensor_name.c_str(),
-      timeout->get_elapsed_time());
+    RCLCPP_ERROR_THROTTLE(
+      node->get_logger(), *node->get_clock(), timeout->get_timeout() * 1e-6,
+      "%s driver timeout: %lu [ns]", sensor_name.c_str(), timeout->get_elapsed_time());
   } else {
-    RCLCPP_WARN(node->get_logger(), "Failed to get %s data", sensor_name.c_str());
+    RCLCPP_WARN_THROTTLE(
+      node->get_logger(), *node->get_clock(), timeout->get_timeout() * 1e-6,
+      "Failed to get %s data", sensor_name.c_str());
     return;
   }
 }
