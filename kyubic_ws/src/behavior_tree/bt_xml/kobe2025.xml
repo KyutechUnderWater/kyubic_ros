@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4"
   main_tree_to_execute="MainTree">
+
   <BehaviorTree ID="Auto">
     <Sequence name="AutoSequence">
-      <LifecycleManager name="DeactivateManualNode"
-        node_name="manualNode"
-        transition="deactivate"
-        timeout_sec="1" />
-      <WrenchAction action_name="wrench_action"
-        duration_sec="10"
-        total_updates="{total_updates}" />
-      <FibonacciAction action_name="fibonacci"
-        order="5"
-        result_sequence="{result_sequence}" />
+      <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
+      
+      <WaypointAction action_name="pdla_plan"
+        csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/kobe/gate_path.csv"
+        current_index="{current_index}" />
+      
+      <QrAction action_name="qr_action" 
+                target_x="{target_x}"
+                target_y="{target_y}"
+                target_z="{target_z}"
+                confidence="{target_confidence}"/>
+      <FindPingerAction action_name="find_pinger" />
+      <ReturnAction action_name="return_action" 
+                    surface_depth="0.0" 
+                    xy_tolerance="0.1" 
+                    depth_tolerance="0.01"/>
+      
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
   </BehaviorTree>
@@ -46,11 +54,14 @@
     <Fallback>
       <Sequence>
         <SubTree ID="Configure" />
-        <ReactiveSequence>
-          <RetryUntilSuccessful num_attempts="10">
+        <!-- 強制的に Auto (Waypoint) を実行 -->
+        <SubTree ID="Auto" />
+
+        <!-- <ReactiveSequence> -->
+          <!-- <RetryUntilSuccessful num_attempts="10">
             <CheckSensorsState />
-          </RetryUntilSuccessful>
-          <UpdateMode topic_name="/joy_common/joy_common"
+          </RetryUntilSuccessful> -->
+          <!-- <UpdateMode topic_name="/joy_common/joy_common"
             manual_button="circle"
             auto_button="cross"
             mode="{mode}" />
@@ -62,7 +73,7 @@
             <SubTree ID="Auto" />
             <AlwaysFailure />
           </Switch2>
-        </ReactiveSequence>
+        </ReactiveSequence> -->
       </Sequence>
       <SubTree ID="Emergency" />
     </Fallback>
@@ -84,12 +95,6 @@
       editable="true" />
     <Action ID="CheckSensorsState"
       editable="true" />
-    <Action ID="FibonacciAction"
-      editable="true">
-      <input_port name="action_name" />
-      <input_port name="order" />
-      <output_port name="result_sequence" />
-    </Action>
     <Action ID="LifecycleManager"
       editable="true">
       <input_port name="node_name" />
@@ -103,11 +108,32 @@
       <input_port name="auto_button" />
       <output_port name="mode" />
     </Action>
-    <Action ID="WrenchAction"
-      editable="true">
-      <input_port name="action_name" />
-      <input_port name="duration_sec" />
-      <output_port name="total_updates" />
+    <Action ID="ResetLocalization" editable="true">
+      <input_port name="service_name" default="/localization/reset"/>
+      <input_port name="timeout_sec" default="1.0"/>
+    </Action>
+    <Action ID="WaypointAction" editable="true">
+      <input_port name="action_name" default="pdla_plan"/>
+      <input_port name="csv_file_path"/>
+      <output_port name="current_index"/>
+    </Action>
+    <Action ID="QrAction" editable="true">
+      <input_port name="action_name" default="qr_action"/>
+      <output_port name="target_x"/>
+      <output_port name="target_y"/>
+      <output_port name="target_z"/>
+      <output_port name="confidence"/>
+    </Action>
+    <Action ID="FindPingerAction" editable="true">
+      <input_port name="action_name" default="find_pinger"/>
+      <output_port name="current_yaw"/>
+      <output_port name="current_score"/>
+    </Action>
+    <Action ID="ReturnAction" editable="true">
+      <input_port name="action_name" default="return_action"/>
+      <input_port name="surface_depth" default="0.0"/>
+      <input_port name="xy_tolerance" default="0.1"/>
+      <input_port name="depth_tolerance" default="0.01"/>
     </Action>
   </TreeNodesModel>
 
