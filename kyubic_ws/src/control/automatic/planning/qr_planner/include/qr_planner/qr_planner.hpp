@@ -1,47 +1,56 @@
 /**
  * @file qr_planner.hpp
  * @brief UDP Goal Tracking with Action Server Interface
- * @author R.Ohnishi (Modified)
- * @date 2025/11/19
- ****************************************************************************/
+ */
 
-#ifndef _QR_PLANNER_HPP
-#define _QR_PLANNER_HPP
+#ifndef QR_PLANNER_HPP
+#define QR_PLANNER_HPP
 
-#include <mutex>
-#include <thread>
-#include <atomic>
-#include <vector>
-#include <string>
-
+#include <localization_msgs/msg/odometry.hpp>
+#include <planner_msgs/msg/wrench_plan.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
-#include <planner_msgs/msg/wrench_plan.hpp>
-#include <planner_msgs/action/qr.hpp>
-#include <localization_msgs/msg/odometry.hpp>
+#include <std_msgs/msg/bool.hpp>  // 追加: Zed Power用
 
-// // ★★★ 自パッケージのアクションヘッダ (ビルド時に自動生成される) ★★★
-// #include "qr_planner/action/qr.hpp"
+// アクション定義 (パッケージ名は環境に合わせてください。ここでは planner_msgs と仮定)
+#include <mutex>
+#include <planner_msgs/action/qr.hpp>
+#include <string>
+#include <thread>
+#include <vector>
 
 namespace planner
 {
 
-// ★★★ これがないとエラーになる (型エイリアス) ★★★
-using QRAction = planner_msgs::action::QR; 
+// アクション型のエイリアス
+using QRAction = planner_msgs::action::QR;
 using GoalHandleQR = rclcpp_action::ServerGoalHandle<QRAction>;
 
-struct PoseData {
-  double x = 0.0;
-  double y = 0.0;
-  double z = 0.0;
-  double roll = 0.0;
-  double yaw = 0.0;
-  uint8_t z_mode = 0;
-  bool is_finished = false;
+struct PoseData
+{
+  // 制御指令値 (Python: ctrl_*)
+  float x;
+  float y;
+  float z;
+  float roll;
+  float yaw;
+  uint8_t z_mode;
+  bool is_finished;
+  bool is_error = false;  // ★★★ 追加 ★★★
+  // ★★★ 追加: 検出データ (Python: det_*) ★★★
+  float det_x;     // 画像上のX座標
+  float det_y;     // 画像上のY座標
+  float det_z;     // 距離 (dist)
+  float det_conf;  // 信頼度
 };
 
-struct Tolerance {
-  double x; double y; double z; double roll; double yaw;
+struct Tolerance
+{
+  float x;
+  float y;
+  float z;
+  float roll;
+  float yaw;
 };
 
 class QRPlanner : public rclcpp::Node
@@ -51,54 +60,53 @@ public:
   ~QRPlanner();
 
 private:
-  // UDP
-  void udpReceiveThread();
-  bool parse_signal_to_pose(const std::string& data_str, PoseData& pose);
-  void sendStartSignal();
-
-  std::thread udp_thread_;
-  std::atomic<bool> stop_thread_{false};
-  int sock_fd_;
-  std::string remote_ip_;
-  int remote_port_;
-
-  // ★★★ Action Server (型を QRAction に統一) ★★★
-  rclcpp_action::Server<QRAction>::SharedPtr action_server_;
-
-  rclcpp_action::GoalResponse handle_goal(
-    const rclcpp_action::GoalUUID & uuid,
-    std::shared_ptr<const QRAction::Goal> goal);
-
-  rclcpp_action::CancelResponse handle_cancel(
-    const std::shared_ptr<GoalHandleQR> goal_handle);
-
-  void handle_accepted(
-    const std::shared_ptr<GoalHandleQR> goal_handle);
-
-  // Logic
+  // コールバック
   void odometryCallback(const localization_msgs::msg::Odometry::SharedPtr msg);
-  
-  // ★★★ 引数の型を修正 (PDLA -> GoalHandleQR) ★★★
-  void _runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_handle);
 
+  // アクションサーバー用コールバック
+  rclcpp_action::GoalResponse handle_goal(
+    const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const QRAction::Goal> goal);
+
+  rclcpp_action::CancelResponse handle_cancel(const std::shared_ptr<GoalHandleQR> goal_handle);
+
+  void handle_accepted(const std::shared_ptr<GoalHandleQR> goal_handle);
+
+  // ロジック
+  void _runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_handle);
   bool _checkReached(const PoseData & target, const Tolerance & tolerance);
 
-  // Variables
-  Tolerance reach_tolerance;
+  // UDP関連
+  void udpReceiveThread();
+  void sendStartSignal();
+  bool parse_signal_to_pose(const std::string & data_str, PoseData & pose);
+
+  // 変数
   rclcpp::CallbackGroup::SharedPtr callback_group_;
   rclcpp::Publisher<planner_msgs::msg::WrenchPlan>::SharedPtr pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_;
 
-  std::mutex odom_mutex_;
-  localization_msgs::msg::Odometry::SharedPtr current_odom_;
+  // ★★★ 追加: Zed Power Publisher ★★★
+  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr zed_power_pub_;
 
-  std::mutex goal_mutex_;
+  rclcpp_action::Server<QRAction>::SharedPtr action_server_;
   std::shared_ptr<GoalHandleQR> active_goal_handle_;
 
-  std::mutex pose_mutex_;
+  localization_msgs::msg::Odometry::SharedPtr current_odom_;
   PoseData target_pose_;
+  Tolerance reach_tolerance;
+
+  std::mutex odom_mutex_;
+  std::mutex pose_mutex_;
+  std::mutex goal_mutex_;
+
+  // UDP設定
+  std::string remote_ip_;
+  int remote_port_;
+  int sock_fd_;
+  std::thread udp_thread_;
+  bool stop_thread_;
 };
 
 }  // namespace planner
 
-#endif  // !_QR_PLANNER_HPP
+#endif

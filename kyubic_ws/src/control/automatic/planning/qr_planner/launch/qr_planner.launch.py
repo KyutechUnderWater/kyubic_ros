@@ -9,7 +9,7 @@ def generate_launch_description():
     # 引数定義: ターゲットPCのIPアドレス 
     remote_ip_arg = DeclareLaunchArgument(
         "remote_ip",
-        default_value="192.168.9.245", 
+        default_value="192.168.9.110", 
         description="IP address of the PC running techno.py"
     )
 
