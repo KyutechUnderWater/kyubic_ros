@@ -60,7 +60,7 @@ LogicDistroRP2040::LogicDistroRP2040(const rclcpp::NodeOptions & options)
   protolink_subscriber_ = std::make_shared<protolink::serial_protocol::Subscriber<ProtoPowerState>>(
     port_, std::bind(&LogicDistroRP2040::protolink_callback, this, std::placeholders::_1));
 
-  timer_ = create_wall_timer(10ms, std::bind(&LogicDistroRP2040::_check_timeout, this));
+  timer_ = create_wall_timer(100ms, std::bind(&LogicDistroRP2040::_check_timeout, this));
 }
 
 void LogicDistroRP2040::ros_callback(const driver_msgs::msg::SystemSwitch & _msg)
@@ -103,10 +103,13 @@ void LogicDistroRP2040::_check_timeout()
 
     pub_->publish(std::move(msg));
 
-    RCLCPP_ERROR(
-      this->get_logger(), "PowerState driver timeout: %lu [ns]", timeout_->get_elapsed_time());
+    RCLCPP_ERROR_THROTTLE(
+      this->get_logger(), *this->get_clock(), timeout_->get_timeout() * 1e-6,
+      "PowerState driver timeout: %lu [ns]", timeout_->get_elapsed_time());
   } else {
-    RCLCPP_WARN(this->get_logger(), "Failed to get PowerState data");
+    RCLCPP_WARN_THROTTLE(
+      this->get_logger(), *this->get_clock(), timeout_->get_timeout() * 1e-6,
+      "Failed to get PowerState data");
     return;
   }
 }
