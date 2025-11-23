@@ -14,7 +14,9 @@
   <depend>rclcpp_components</depend>
   
   <depend>planner_msgs</depend>
+  <depend>driver_msgs</depend>
   <depend>localization_msgs</depend>
+  <depend>common_msgs</depend>
 
   <depend>eigen</depend> <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

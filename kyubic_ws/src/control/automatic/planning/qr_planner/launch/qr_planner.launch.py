@@ -32,7 +32,7 @@ def generate_launch_description():
         
         Node(
             package="qr_planner",
-            namespace="planner",
+            namespace="sensors_esp32_driver",
             executable="qr_planner_node",  # ★ CMakeで定義した正しい名前
             name="qr_planner",             # ★ パッケージ名と統一!!!
             remappings=[

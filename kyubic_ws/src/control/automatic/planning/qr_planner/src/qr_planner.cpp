@@ -43,7 +43,8 @@ QRPlanner::QRPlanner(const rclcpp::NodeOptions & options) : Node("qr_planner", o
   pub_ = create_publisher<planner_msgs::msg::WrenchPlan>("goal_current_odom", qos);
 
   // ★★★ Zed Power Publisher ★★★
-  zed_power_pub_ = create_publisher<std_msgs::msg::Bool>("zed_power", qos);
+  // zed_power_pub_ = create_publisher<std_msgs::msg::Bool>("zed_power", qos);
+  zed_power_pub_ = create_publisher<driver_msgs::msg::BoolStamped>("zed_power", qos);
 
   sub_ = create_subscription<localization_msgs::msg::Odometry>(
     "odom", qos, std::bind(&QRPlanner::odometryCallback, this, std::placeholders::_1));
@@ -256,10 +257,18 @@ void QRPlanner::handle_accepted(const std::shared_ptr<GoalHandleQR> goal_handle)
     target_pose_.is_finished = false;
   }
 
-  // ★★★ Zed Power ON 送信 ★★★
+  // ★★★ 修正: BoolStamped メッセージ作成 (ON) ★★★
   {
-    std_msgs::msg::Bool pwr_msg;
-    pwr_msg.data = true;
+    driver_msgs::msg::BoolStamped pwr_msg;
+    pwr_msg.header.stamp = this->get_clock()->now();
+    pwr_msg.header.frame_id = "qr_planner";  // 適当なフレームIDを入れる
+
+    // status も初期化 (common_msgs/Status の中身によるが、デフォルトコンストラクタで一旦OK)
+    // もし必須フィールドがあるなら埋める必要がある
+    // pwr_msg.status.level = 0; // 例
+
+    pwr_msg.data = true;  // ON
+
     zed_power_pub_->publish(pwr_msg);
     RCLCPP_INFO(this->get_logger(), "Goal Accepted. Published zed_power = TRUE");
   }
@@ -294,10 +303,12 @@ void QRPlanner::odometryCallback(const localization_msgs::msg::Odometry::SharedP
     result->success = true;
     goal_handle->succeed(result);
 
-    // ★★★ Zed Power OFF 送信 (キャンセル時) ★★★
+    // ★★★ 修正: BoolStamped メッセージ作成 (OFF) ★★★
     {
-      std_msgs::msg::Bool pwr_msg;
-      pwr_msg.data = false;
+      driver_msgs::msg::BoolStamped pwr_msg;
+      pwr_msg.header.stamp = this->get_clock()->now();
+      pwr_msg.header.frame_id = "qr_planner";
+      pwr_msg.data = false;  // OFF
       zed_power_pub_->publish(pwr_msg);
       RCLCPP_INFO(this->get_logger(), "Canceled. Published zed_power = FALSE");
     }
@@ -329,8 +340,10 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
   if (target_copy.is_finished) {
     // ★★★ Zed Power OFF 送信 (完了時) ★★★
     {
-      std_msgs::msg::Bool pwr_msg;
-      pwr_msg.data = false;
+      driver_msgs::msg::BoolStamped pwr_msg;
+      pwr_msg.header.stamp = this->get_clock()->now();
+      pwr_msg.header.frame_id = "qr_planner";
+      pwr_msg.data = false;  // OFF
       zed_power_pub_->publish(pwr_msg);
       RCLCPP_INFO(this->get_logger(), "Finished. Published zed_power = FALSE");
     }
@@ -380,8 +393,10 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
 
     // 3. Zed Power OFF (エラー終了時も切るべきなら)
     {
-      std_msgs::msg::Bool pwr_msg;
-      pwr_msg.data = false;
+      driver_msgs::msg::BoolStamped pwr_msg;
+      pwr_msg.header.stamp = this->get_clock()->now();
+      pwr_msg.header.frame_id = "qr_planner";  // 適当なID
+      pwr_msg.data = false;                    // または false
       zed_power_pub_->publish(pwr_msg);
     }
 

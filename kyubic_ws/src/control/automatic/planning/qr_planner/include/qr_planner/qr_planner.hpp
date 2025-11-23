@@ -6,12 +6,12 @@
 #ifndef QR_PLANNER_HPP
 #define QR_PLANNER_HPP
 
+#include <driver_msgs/msg/bool_stamped.hpp>
 #include <localization_msgs/msg/odometry.hpp>
 #include <planner_msgs/msg/wrench_plan.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <std_msgs/msg/bool.hpp>  // 追加: Zed Power用
-
 // アクション定義 (パッケージ名は環境に合わせてください。ここでは planner_msgs と仮定)
 #include <mutex>
 #include <planner_msgs/action/qr.hpp>
@@ -86,8 +86,8 @@ private:
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_;
 
   // ★★★ 追加: Zed Power Publisher ★★★
-  rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr zed_power_pub_;
-
+  // rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr zed_power_pub_;
+  rclcpp::Publisher<driver_msgs::msg::BoolStamped>::SharedPtr zed_power_pub_;
   rclcpp_action::Server<QRAction>::SharedPtr action_server_;
   std::shared_ptr<GoalHandleQR> active_goal_handle_;
 
