@@ -355,10 +355,12 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
     msg->header.stamp = this->get_clock()->now();
     msg->z_mode = planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH;
 
-    msg->targets.x = target_copy.x;  // 8.0
-    msg->targets.y = target_copy.y;  // 0.0
-    msg->targets.z = 0.5;            // 安全深度
-    msg->targets.yaw = 0.0;          // リセット
+    // msg->targets.x = target_copy.x;  // 8.0
+    // msg->targets.y = target_copy.y;  // 0.0
+    msg->targets.x = odom_copy->pose.position.x + target_copy.x;  // 8.0
+    msg->targets.y = odom_copy->pose.position.y + target_copy.y;  // 0.0
+    msg->targets.z = 0.5;                                         // 安全深度
+    msg->targets.yaw = 0.0;                                       // リセット
     msg->targets.roll = 0.0;
 
     // 現在値などはOdomからコピー
@@ -385,8 +387,9 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
 
     // 4. アクション終了 (Aborted で返すのが作法だが、Succeededにするかは運用次第)
     auto result = std::make_shared<QRAction::Result>();
-    result->success = false;  // エラーなので false
-    goal_handle->abort(result);
+    result->success = true;  // エラーなので false
+    // goal_handle->abort(result);
+    goal_handle->succeed(result);
 
     // 5. リセット
     std::lock_guard<std::mutex> lock(goal_mutex_);
