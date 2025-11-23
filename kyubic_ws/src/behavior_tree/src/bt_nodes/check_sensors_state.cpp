@@ -15,11 +15,11 @@ CheckSensorsState::CheckSensorsState(
 {
   imu_sub_ = ros_node_->create_subscription<driver_msgs::msg::IMU>(
     "/driver/imu", 10,
-    [this](driver_msgs::msg::IMU::SharedPtr msg) { this->imu_state_ = msg->status; });
+    [this](driver_msgs::msg::IMU::SharedPtr msg) { this->imu_state_ = msg->status.id; });
 
   depth_sub_ = ros_node_->create_subscription<driver_msgs::msg::Depth>(
     "/driver/depth", 10,
-    [this](driver_msgs::msg::Depth::SharedPtr msg) { this->depth_state_ = msg->status; });
+    [this](driver_msgs::msg::Depth::SharedPtr msg) { this->depth_state_ = msg->status.id; });
 }
 
 BT::PortsList CheckSensorsState::providedPorts() { return {}; }

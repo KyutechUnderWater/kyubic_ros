@@ -57,6 +57,12 @@ public:
    * @return int64_t elapsed time [ns]
    */
   int64_t get_elapsed_time();
+
+  /**
+   * @brief Get timeout
+   * @return int64_t timeout [ns]
+   */
+  int64_t get_timeout();
 };
 
 }  // namespace timer

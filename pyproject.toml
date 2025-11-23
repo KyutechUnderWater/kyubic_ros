@@ -20,6 +20,9 @@ dependencies = [
     "opencv-python==4.9.0.80",
     "viser>=1.0.4",
     "pydot>=4.0.1",
+    "protobuf>=6.33.1",
+    "grpcio-tools>=1.76.0",
+    "jinja2>=3.1.6",
 ]
 
 [tool.uv.pip]

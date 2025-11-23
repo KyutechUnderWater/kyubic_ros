@@ -108,6 +108,23 @@ RUN gosu ros bash -c "mkdir -p /home/ros/Apps/Groot2 && cd /home/ros/Apps/Groot2
 	cd /home/ros/Apps/Groot2 && chmod +x Groot2-v1.6.1-x86_64.AppImage && ./Groot2-v1.6.1-x86_64.AppImage --appimage-extract && \
 	ln -s /home/ros/Apps/Groot2/squashfs-root/usr/bin/groot2 /usr/bin/groot2
 
+
+#############################################################
+## Install protolink dependencies (abseil-cpp, protobuf, etc)
+#############################################################
+RUN apt update && \
+	apt install -y libboost-all-dev libpaho-mqtt-dev libpaho-mqttpp-dev cmake ninja-build && \
+	git clone https://github.com/abseil/abseil-cpp.git /home/ros/build/abseil-cpp && cd /home/ros/build/abseil-cpp && \
+	cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local -DABSL_ENABLE_INSTALL=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON && \
+	cmake --build build --target install --parallel 20 && \
+	git clone -b v31.1 https://github.com/protocolbuffers/protobuf.git ${root}/protobuf && cd ${root}/protobuf && \
+	git submodule update --init --recursive && \
+	cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_BUILD_SHARED_LIBS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON && \
+	cmake --build build --parallel 20 && \
+	cmake --install build && \
+	echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib' >>/home/ros/.bashrc
+
+
 COPY ./entrypoint.sh /usr/bin
 COPY ./once_entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh /usr/bin/once_entrypoint.sh
