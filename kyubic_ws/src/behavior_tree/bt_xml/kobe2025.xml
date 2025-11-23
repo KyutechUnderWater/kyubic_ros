@@ -4,10 +4,14 @@
 
   <BehaviorTree ID="Auto">
     <Sequence name="AutoSequence">
+      <!-- <LifecycleManager name="DeactivateManualNode"
+        node_name="manualNode"
+        transition="deactivate"
+        timeout_sec="1" /> -->
       <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
       
       <WaypointAction action_name="pdla_plan"
-        csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/kobe/gate_path.csv"
+        csv_file_path="assets/kobe/gate_path.csv"
         current_index="{current_index}" />
       
       <QrAction action_name="qr_action" 

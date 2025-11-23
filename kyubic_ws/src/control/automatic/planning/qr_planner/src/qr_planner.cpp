@@ -387,7 +387,7 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
 
     // 4. アクション終了 (Aborted で返すのが作法だが、Succeededにするかは運用次第)
     auto result = std::make_shared<QRAction::Result>();
-    result->success = true;  // エラーなので false
+    result->success = true;
     // goal_handle->abort(result);
     goal_handle->succeed(result);
 

@@ -18,6 +18,8 @@ find_package(rclcpp_components REQUIRED)
 find_package(localization_msgs REQUIRED)
 find_package(planner_msgs REQUIRED)
 
+include_directories(include)
+
 # 自動的に依存関係を解決してビルド設定を行う
 ament_auto_find_build_dependencies() 
 
@@ -35,6 +37,16 @@ install(TARGETS
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+)
+
+# ヘッダーファイルのインストール
+install(DIRECTORY include/
+  DESTINATION include
+)
+
+# Launchファイルのインストール
+install(DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
 )
 
 ament_auto_package()

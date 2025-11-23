@@ -30,6 +30,12 @@ target_link_libraries(pdla_planner_component
   Eigen3::Eigen
 )
 
+ament_target_dependencies(pdla_planner_component
+  ament_index_cpp
+  rclcpp
+  rclcpp_action
+)
+
 # register components
 rclcpp_components_register_node(pdla_planner_component
   PLUGIN "planner::PDLAPlanner"

@@ -124,6 +124,7 @@ def generate_launch_description():
         # parameters=[{"remote_ip": "192.168.x.x"}],
         remappings=[
             ("odom", "/localization/odom"), 
+            ("zed_power", "/localization/zed_power"), 
         ],
     )
 

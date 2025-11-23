@@ -10,7 +10,9 @@
 #include "projection_dynamic_look_ahead_planner/pdla_planner.hpp"
 
 #include <Eigen/Dense>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cstddef>
+#include <filesystem>
 #include <rclcpp_action/rclcpp_action.hpp>
 
 namespace planner
@@ -79,11 +81,25 @@ void PDLAPlanner::handle_accepted(
   const std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> goal_handle)
 {
   std::lock_guard<std::mutex> lock(goal_mutex_);
-
   const auto goal = goal_handle->get_goal();
+
+  std::string file_path = goal->csv_file_path;
+  if (!file_path.empty() && file_path[0] != '/') {
+    try {
+      std::string package_share_dir = ament_index_cpp::get_package_share_directory("path_planner");
+
+      // パスを結合 (shareディレクトリ + XMLに書かれた相対パス)
+      file_path = package_share_dir + "/" + file_path;
+
+      RCLCPP_INFO(this->get_logger(), "Resolved relative path to: %s", file_path.c_str());
+    } catch (const std::exception & e) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to resolve package path: %s", e.what());
+    }
+  }
+
   PathCsvLoader loader;
   try {
-    loader.parse(goal->csv_file_path);
+    loader.parse(file_path);
   } catch (const std::exception & e) {
     RCLCPP_ERROR(this->get_logger(), "Failed to load or parse CSV file: %s", e.what());
     auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
