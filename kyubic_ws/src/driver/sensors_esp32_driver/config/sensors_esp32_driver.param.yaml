@@ -5,7 +5,7 @@
 /sensors_esp32_driver/button_battery_state_component:
   ros__parameters:
     sub_port: 9000
-    timeout_ms: 1000
+    timeout_ms: 5000
 
 /sensors_esp32_driver/buzzer_switch_component:
   ros__parameters:
@@ -16,12 +16,12 @@
   ros__parameters:
     this_port: 9002
     mcu_port: 9002
-    timeout_ms: 1000
+    timeout_ms: 500
 
 /sensors_esp32_driver/environment_component:
   ros__parameters:
     sub_port: 9003
-    timeout_ms: 1000
+    timeout_ms: 5000
 
 /sensors_esp32_driver/imu_reset_component:
   ros__parameters:
@@ -31,7 +31,7 @@
 /sensors_esp32_driver/leak_component:
   ros__parameters:
     sub_port: 9005
-    timeout_ms: 1000
+    timeout_ms: 5000
 
 /sensors_esp32_driver/rgb_component:
   ros__parameters:
@@ -41,12 +41,12 @@
 /sensors_esp32_driver/rtc_gnss_component:
   ros__parameters:
     sub_port: 9007
-    timeout_ms: 1000
+    timeout_ms: 5000
 
 /sensors_esp32_driver/rtc_time_component:
   ros__parameters:
     sub_port: 9008
-    timeout_ms: 1000
+    timeout_ms: 5000
 
 /sensors_esp32_driver/tilt_servo_component:
   ros__parameters:
