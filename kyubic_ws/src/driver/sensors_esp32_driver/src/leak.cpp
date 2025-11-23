@@ -9,7 +9,6 @@
 
 #include "sensors_esp32_driver/leak.hpp"
 
-#include <functional>
 #include <protolink/udp_protocol.hpp>
 
 #include "sensors_esp32_driver/common/utils.hpp"
@@ -22,7 +21,7 @@ namespace sensors_esp32_driver
 Leak::Leak(const rclcpp::NodeOptions & options) : rclcpp::Node("leak", options)
 {
   sub_port = this->declare_parameter("sub_port", 9000);
-  timeout_ms = this->declare_parameter("timeout", 1000);
+  timeout_ms = this->declare_parameter("timeout_ms", 1000);
 
   try {
     sock_ = protolink::udp_protocol::create_socket(io_context_, sub_port);
