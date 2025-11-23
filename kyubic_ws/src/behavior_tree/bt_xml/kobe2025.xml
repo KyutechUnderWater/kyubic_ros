@@ -4,17 +4,18 @@
 
   <BehaviorTree ID="Auto">
     <Sequence name="AutoSequence">
-      <!-- <LifecycleManager name="DeactivateManualNode"
-        node_name="manualNode"
-        transition="deactivate"
-        timeout_sec="1" /> -->
-      <ResetLocalization service_name="/pdla_planner/reset_trigger" timeout_sec="2.0" />
+      <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
       
       <WaypointAction action_name="pdla_plan"
         csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/sample/mapping_alt_generated.csv"
         current_index="{current_index}" />
       
       <QrAction action_name="qr_action" />
+      <FindPingerAction action_name="find_pinger" />
+      <ReturnAction action_name="return_action" 
+                    surface_depth="0.0" 
+                    xy_tolerance="0.1" 
+                    depth_tolerance="0.01"/>
       
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
@@ -90,12 +91,6 @@
       editable="true" />
     <Action ID="CheckSensorsState"
       editable="true" />
-    <!-- <Action ID="FibonacciAction"
-      editable="true">
-      <input_port name="action_name" />
-      <input_port name="order" />
-      <output_port name="result_sequence" />
-    </Action> -->
     <Action ID="LifecycleManager"
       editable="true">
       <input_port name="node_name" />
@@ -110,15 +105,9 @@
       <output_port name="mode" />
     </Action>
     <Action ID="ResetLocalization" editable="true">
-      <input_port name="service_name" default="/pdla_planner/reset_trigger"/>
+      <input_port name="service_name" default="/localization/reset"/>
       <input_port name="timeout_sec" default="1.0"/>
     </Action>
-    <!-- <Action ID="WrenchAction"
-      editable="true">
-      <input_port name="action_name" />
-      <input_port name="duration_sec" />
-      <output_port name="total_updates" />
-    </Action> -->
     <Action ID="WaypointAction" editable="true">
       <input_port name="action_name" default="pdla_plan"/>
       <input_port name="csv_file_path"/>
@@ -126,6 +115,17 @@
     </Action>
     <Action ID="QrAction" editable="true">
       <input_port name="action_name" default="qr_action"/>
+    </Action>
+    <Action ID="FindPingerAction" editable="true">
+      <input_port name="action_name" default="find_pinger"/>
+      <output_port name="current_yaw"/>
+      <output_port name="current_score"/>
+    </Action>
+    <Action ID="ReturnAction" editable="true">
+      <input_port name="action_name" default="return_action"/>
+      <input_port name="surface_depth" default="0.0"/>
+      <input_port name="xy_tolerance" default="0.1"/>
+      <input_port name="depth_tolerance" default="0.01"/>
     </Action>
   </TreeNodesModel>
 

@@ -47,39 +47,11 @@ PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_plann
     std::bind(&PDLAPlanner::handle_accepted, this, std::placeholders::_1),
     rcl_action_server_get_default_options(), callback_group_);
 
-  srv_reset_ = create_service<std_srvs::srv::Trigger>(
-    "~/reset_trigger",
-    std::bind(&PDLAPlanner::reset_callback, this, std::placeholders::_1, std::placeholders::_2));
-
   RCLCPP_INFO(this->get_logger(), "PDLA Action Server started. Waiting for goal...");
 }
 
-void PDLAPlanner::reset_callback(
-  const std_srvs::srv::Trigger::Request::SharedPtr,
-  const std_srvs::srv::Trigger::Response::SharedPtr response)
-{
-  std::lock_guard<std::mutex> lock(odom_mutex_);
-  if (!current_odom_) {
-    response->success = false;
-    response->message = "No odometry received yet.";
-    RCLCPP_WARN(this->get_logger(), "Cannot reset: No odometry data.");
-    return;
-  }
-
-  // 現在の値をオフセットとして保存
-  offset_x_ = current_odom_->pose.position.x;
-  offset_y_ = current_odom_->pose.position.y;
-  offset_z_depth_ = current_odom_->pose.position.z_depth;
-  offset_yaw_ = current_odom_->pose.orientation.z;
-
-  response->success = true;
-  response->message = "PDLA Planner origin reset.";
-  RCLCPP_INFO(
-    this->get_logger(), "Origin Reset -> X:%.2f, Y:%.2f, Depth:%.2f, Yaw:%.2f", offset_x_,
-    offset_y_, offset_z_depth_, offset_yaw_);
-}
-
 rclcpp_action::GoalResponse PDLAPlanner::handle_goal(
+  RCLCPP_INFO(this->get_logger(), "[1] handle_goal called: Checking request...");
   const rclcpp_action::GoalUUID & uuid,
   std::shared_ptr<const planner_msgs::action::PDLA::Goal> goal)
 {
@@ -191,25 +163,10 @@ void PDLAPlanner::_runPlannerLogic(
       RCLCPP_WARN_ONCE(this->get_logger(), "Waiting for first odometry message...");
       return;
     }
-    // 生データをコピー
     odom_copy = std::make_shared<localization_msgs::msg::Odometry>(*current_odom_);
   }
 
-  // 1. 位置のオフセット適用 (原点を0に移動)
-  odom_copy->pose.position.x -= offset_x_;
-  odom_copy->pose.position.y -= offset_y_;
-  odom_copy->pose.position.z_depth -= offset_z_depth_;
-  odom_copy->pose.orientation.z -= offset_yaw_;
-
-  // 2. 速度ベクトルの回転 
-  double global_vx = odom_copy->twist.linear.x;
-  double global_vy = odom_copy->twist.linear.y;
-
-  double theta_rad = -offset_yaw_ * std::numbers::pi / 180.0;
-
-  odom_copy->twist.linear.x = global_vx * cos(theta_rad) - global_vy * sin(theta_rad);
-  odom_copy->twist.linear.y = global_vx * sin(theta_rad) + global_vy * cos(theta_rad);
-
+  // ウェイポイント到達判定
   bool reached = false;
   PoseData target = target_pose_.at(step_idx);
   Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
@@ -245,7 +202,7 @@ void PDLAPlanner::_runPlannerLogic(
     }
   }
 
-  // 仮想目標点の計算 (座標変換後の odom_copy を使用)
+  // 仮想目標点の計算
   Eigen::Vector3d virtual_goal_point;
 
   if (step_idx == 0) {
@@ -261,7 +218,6 @@ void PDLAPlanner::_runPlannerLogic(
     Eigen::Vector3d p2(current_step_pose.x, current_step_pose.y, current_step_pose.z);
     Eigen::Vector3d p3(next_step_pose.x, next_step_pose.y, next_step_pose.z);
 
-    // [修正] current_pose は補正済みの odom_copy から取得
     localization_msgs::msg::Pose current_pose = odom_copy->pose;
 
     Eigen::Vector3d p0;
@@ -300,9 +256,6 @@ void PDLAPlanner::_runPlannerLogic(
     msg->targets.roll = target_pose_.at(step_idx).roll;
     msg->targets.yaw = target_pose_.at(step_idx).yaw;
 
-    // WrenchPlannerに送るMasterの値も、補正済みの値を入れる
-    // これでWrenchPlannerは「ロボットは(0,0)付近にいる」と認識し、
-    // 目標点(CSVも0,0付近)との偏差を正しく計算できる
     msg->master.x = odom_copy->pose.position.x;
     msg->master.y = odom_copy->pose.position.y;
     msg->master.roll = odom_copy->pose.orientation.x;
@@ -332,34 +285,10 @@ void PDLAPlanner::_runPlannerLogic(
   }
 }
 
-bool PDLAPlanner::_checkReached(PoseData & target, Tolerance tolerance)
-{
-  std::shared_ptr<localization_msgs::msg::Odometry> odom;
-  {
-    std::lock_guard<std::mutex> lock(odom_mutex_);
-    if (!current_odom_) {
-      return false;
-    }
-    odom = current_odom_;
-  }
-
-  double current_z;
-  if (target.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-    current_z = odom->pose.position.z_depth;
-  } else {
-    current_z = odom->pose.position.z_altitude;
-  }
-
-  if (
-    abs(target.x - odom->pose.position.x) < tolerance.x &&
-    abs(target.y - odom->pose.position.y) < tolerance.y &&
-    abs(target.z - current_z) < tolerance.z &&
-    abs(target.roll - odom->pose.orientation.x) < tolerance.roll &&
-    abs(target.yaw - odom->pose.orientation.z) < tolerance.yaw) {
-    return true;
-  }
-  return false;
-}
+// bool PDLAPlanner::_checkReached(PoseData & target, Tolerance tolerance)
+// {
+//   return false;
+// }
 
 void PDLAPlanner::_print_waypoint(std::string label, size_t step_idx)
 {
@@ -377,5 +306,5 @@ void PDLAPlanner::_print_waypoint(std::string label, size_t step_idx)
 
 }  // namespace planner
 
-#include <rclcpp_components/register_node_macro.hpp>
+#include "rclcpp_components/register_node_macro.hpp"
 RCLCPP_COMPONENTS_REGISTER_NODE(planner::PDLAPlanner)

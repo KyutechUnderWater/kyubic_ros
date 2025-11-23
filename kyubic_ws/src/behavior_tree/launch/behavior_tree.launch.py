@@ -127,6 +127,18 @@ def generate_launch_description():
         ],
     )
 
+    return_planner_node = Node(
+        package="return_mission_planner",
+        executable="return_planner_node",
+        name="return_planner",
+        namespace="",
+        output="screen",
+        remappings=[
+            ("odom", "/localization/odom"), # LocalizationのOdomに接続
+            ("goal_current_odom", "/goal_current_odom"), # WrenchPlannerへ接続
+        ],
+    )
+
     return LaunchDescription(
         [
             joy_common_launch,
@@ -136,5 +148,6 @@ def generate_launch_description():
             pdla_server_node,    
             wrench_planner_node, 
             qr_server_node,  
+            return_planner_node,
         ]
     )
