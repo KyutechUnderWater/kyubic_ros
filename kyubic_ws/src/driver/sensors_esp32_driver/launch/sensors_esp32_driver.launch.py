@@ -51,6 +51,10 @@ def generate_launch_description():
 
     composable_nodes = []
     for exe in executable_list:
+        node_remappings = []
+        if exe == "depth_component":
+            node_remappings.append(("depth", "/driver/depth"))
+
         composable_nodes.append(
             ComposableNode(
                 package="sensors_esp32_driver",
@@ -58,6 +62,7 @@ def generate_launch_description():
                 namespace="sensors_esp32_driver",
                 name=exe,
                 parameters=[config],
+                remappings=node_remappings,
                 extra_arguments=[{"use_intra_process_comms": True}],
             )
         )
