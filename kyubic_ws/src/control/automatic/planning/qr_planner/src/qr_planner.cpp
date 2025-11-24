@@ -150,7 +150,7 @@ void QRPlanner::udpReceiveThread()
     if (len > 0) {
       std::string data_str(buffer);
       // 受信データをデバッグ表示 (必要に応じてコメントアウト)
-      // RCLCPP_INFO(this->get_logger(), "[UDP Recv] Data: %s", data_str.c_str());
+      RCLCPP_INFO(this->get_logger(), "[UDP Recv] Data: %s", data_str.c_str());
 
       if (parse_signal_to_pose(data_str, temp_pose)) {
         std::lock_guard<std::mutex> lock(pose_mutex_);
@@ -372,7 +372,7 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
     // msg->targets.y = target_copy.y;  // 0.0
     msg->targets.x = odom_copy->pose.position.x + target_copy.x;  // 8.0
     msg->targets.y = odom_copy->pose.position.y + target_copy.y;  // 0.0
-    msg->targets.z = 0.5;                                         // 安全深度
+    msg->targets.z = 0.1;                                         // 安全深度
     msg->targets.yaw = 0.0;                                       // リセット
     msg->targets.roll = 0.0;
 
@@ -429,7 +429,7 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
   // 通常時: 現在地(Odom) + 相対移動量(Target)
   msg->targets.x = odom_copy->pose.position.x + target_copy.x;
   msg->targets.y = odom_copy->pose.position.y + target_copy.y;
-  msg->targets.z = 0.5;  // 通常時は深度維持（または target_copy.z + odom...）
+  msg->targets.z = 0.1;  // 通常時は深度維持（または target_copy.z + odom...）
   msg->targets.yaw = odom_copy->pose.orientation.z + target_copy.yaw;
   msg->targets.roll = 0.0;
 

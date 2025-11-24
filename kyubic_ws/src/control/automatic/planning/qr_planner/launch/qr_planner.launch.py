@@ -32,11 +32,13 @@ def generate_launch_description():
         
         Node(
             package="qr_planner",
-            namespace="sensors_esp32_driver",
+            namespace="",
             executable="qr_planner_node",  # ★ CMakeで定義した正しい名前
             name="qr_planner",             # ★ パッケージ名と統一!!!
             remappings=[
                 ("odom", "/localization/odom"), # ★ 推奨: 相対パスでremapした方が綺麗
+                ("zed_power", "/sensors_esp32_driver/zed_power"), # ★ 推奨: 相対パスでremapした方が綺麗
+                ("goal_current_odom", "/planner/goal_current_odom"), # ★ 推奨: 相対パスでremapした方が綺麗
             ],
             parameters=[{
                 "remote_ip": LaunchConfiguration("remote_ip"),
