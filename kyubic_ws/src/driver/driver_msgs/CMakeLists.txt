@@ -19,18 +19,33 @@ find_package(ament_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(common_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-	"msg/Depth.msg"
-	"msg/DVL.msg"
-	"msg/IMU.msg"
-	"msg/Thruster.msg"
-	"msg/Gnss.msg"
+	"./msg/Actuator.msg"
+	"./msg/ButtonBatteryState.msg"
+	"./msg/BoolStamped.msg"
+	"./msg/BuzzerSwitch.msg"
+	"./msg/Depth.msg"
+	"./msg/DVL.msg"
+	"./msg/Environment.msg"
+	"./msg/Gnss.msg"
+	"./msg/IMU.msg"
+	"./msg/Int32Stamped.msg"
+	"./msg/LED.msg"
+	"./msg/PowerState.msg"
+	"./msg/RtcGnss.msg"
+	"./msg/RtcTime.msg"
+	"./msg/SystemSwitch.msg"
+	"./msg/SystemStatus.msg"
+	"./msg/Thruster.msg"
+
 	"srv/Command.srv"
 	DEPENDENCIES std_msgs
 	DEPENDENCIES geometry_msgs
 	DEPENDENCIES sensor_msgs
+	DEPENDENCIES common_msgs
 )
 
 ament_export_dependencies(rosidl_default_runtime)
