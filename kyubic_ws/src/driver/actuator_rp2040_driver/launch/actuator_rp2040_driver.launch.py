@@ -27,6 +27,7 @@ def generate_launch_description():
         plugin="actuator_rp2040_driver::ActuatorRP2040",
         namespace="actuator_rp2040_driver",
         name="actuator_rp2040_driver",
+        remappings=[("robot_force", "/driver/robot_force")],
         parameters=[config],
         extra_arguments=[{"use_intra_process_comms": True}],
     )
