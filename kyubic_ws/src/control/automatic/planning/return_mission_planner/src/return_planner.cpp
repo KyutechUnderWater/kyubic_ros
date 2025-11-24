@@ -1,6 +1,6 @@
 /**
  * @file return_planner.cpp
- * @brief Action Server for Return (to Origin) and Surface task
+ * @brief Action Server for Return (to slightly offset Origin) and Surface task
  *************************************************************/
 
 #include "return_mission_planner/return_planner.hpp"
@@ -11,7 +11,6 @@
 namespace planner
 {
 
-// コンストラクタ
 ReturnPlanner::ReturnPlanner(const rclcpp::NodeOptions & options) : Node("return_planner", options)
 {
   rclcpp::QoS qos(rclcpp::KeepLast(1));
@@ -38,7 +37,8 @@ void ReturnPlanner::odometryCallback(const localization_msgs::msg::Odometry::Sha
 rclcpp_action::GoalResponse ReturnPlanner::handle_goal(
   const rclcpp_action::GoalUUID &, std::shared_ptr<const ReturnAction::Goal>)
 {
-  RCLCPP_INFO(this->get_logger(), "Received return goal request (Target: Origin 0,0)");
+  RCLCPP_INFO(
+    this->get_logger(), "Received return goal request (Target: Offset Origin -0.11,-0.11)");
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
@@ -56,12 +56,16 @@ void ReturnPlanner::handle_accepted(const std::shared_ptr<GoalHandleReturn> goal
 
 void ReturnPlanner::execute(const std::shared_ptr<GoalHandleReturn> goal_handle)
 {
-  RCLCPP_INFO(this->get_logger(), "Executing Return to Origin...");
+  RCLCPP_INFO(this->get_logger(), "Executing Return to Offset Origin...");
   const auto goal = goal_handle->get_goal();
   auto feedback = std::make_shared<ReturnAction::Feedback>();
   auto result = std::make_shared<ReturnAction::Result>();
 
   rclcpp::Rate loop_rate(20);
+
+  // targets
+  const double TARGET_X = -0.11;
+  const double TARGET_Y = -0.11;
 
   enum State
   {
@@ -89,16 +93,16 @@ void ReturnPlanner::execute(const std::shared_ptr<GoalHandleReturn> goal_handle)
       current_pose = *current_odom_;
     }
 
-    // 原点(0,0)からの距離
     double dist_xy = std::sqrt(
-      std::pow(current_pose.pose.position.x, 2) + std::pow(current_pose.pose.position.y, 2));
+      std::pow(TARGET_X - current_pose.pose.position.x, 2) +
+      std::pow(TARGET_Y - current_pose.pose.position.y, 2));
 
     // WrenchPlan作成
     auto plan = std::make_unique<planner_msgs::msg::WrenchPlan>();
     plan->header.stamp = this->now();
     plan->z_mode = 0;  // Depth Mode
 
-    // Master (現在地)
+    // Master
     plan->master.x = current_pose.pose.position.x;
     plan->master.y = current_pose.pose.position.y;
     plan->master.z = current_pose.pose.position.z_depth;
@@ -116,22 +120,20 @@ void ReturnPlanner::execute(const std::shared_ptr<GoalHandleReturn> goal_handle)
     plan->targets.yaw = 0.0;
 
     if (state == RETURNING) {
-      // 目標: (0, 0), 深度は維持
-      plan->targets.x = 0.0;
-      plan->targets.y = 0.0;
+      plan->targets.x = TARGET_X;
+      plan->targets.y = TARGET_Y;
       plan->targets.z = current_pose.pose.position.z_depth;
 
       feedback->state = "RETURNING";
       feedback->distance_to_target = dist_xy;
 
       if (dist_xy < goal->xy_tolerance) {
-        RCLCPP_INFO(this->get_logger(), "Reached Origin (XY). Switching to SURFACING.");
+        RCLCPP_INFO(this->get_logger(), "Reached Offset Origin (XY). Switching to SURFACING.");
         state = SURFACING;
       }
     } else if (state == SURFACING) {
-      // 目標: (0, 0), 深度は指定値へ
-      plan->targets.x = 0.0;
-      plan->targets.y = 0.0;
+      plan->targets.x = TARGET_X;
+      plan->targets.y = TARGET_Y;
       plan->targets.z = goal->surface_depth;
 
       double dist_z = std::abs(goal->surface_depth - current_pose.pose.position.z_depth);
@@ -141,7 +143,7 @@ void ReturnPlanner::execute(const std::shared_ptr<GoalHandleReturn> goal_handle)
       if (dist_z < goal->depth_tolerance) {
         RCLCPP_INFO(this->get_logger(), "Surfaced. Task Complete.");
         result->success = true;
-        result->message = "Returned to Origin and Surfaced";
+        result->message = "Returned to Offset Origin and Surfaced";
         goal_handle->succeed(result);
         return;
       }

@@ -11,7 +11,7 @@ def generate_launch_description():
         # 必要に応じてリマップ
         remappings=[
             ("odom", "/localization/odom"),
-            ("goal_current_odom", "/goal_current_odom"),
+            ("goal_current_odom", "/planner/goal_current_odom"),
         ],
     )
 
