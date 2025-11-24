@@ -15,6 +15,7 @@
   <depend>planner_msgs</depend>
   <depend>p_pid_controller</depend>
   <depend>p_pid_controller_msgs</depend>
+  <depend>localization_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
