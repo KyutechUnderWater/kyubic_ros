@@ -7,8 +7,6 @@
  * @details DVLで取得した速度を累積して，位置を算出
  *********************************************************/
 
-#include <cmath>
-#include <functional>
 #include <localization/dvl_odometry_component.hpp>
 #include <numbers>
 
