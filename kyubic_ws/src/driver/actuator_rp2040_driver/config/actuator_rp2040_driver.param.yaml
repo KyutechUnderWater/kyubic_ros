@@ -2,3 +2,6 @@
   ros__parameters:
     portname: /dev/actuator_rp2040
     baudrate: 115200
+    max_thrust: 80.0
+    max_thrust_per: 30.0
+    timeout: 2000000000.0

@@ -82,9 +82,9 @@ std::array<float, ActuatorRP2040::NUM_THRUSTERS> ActuatorRP2040::_wrench2thrusts
   thrusts.at(0) = -thrust_x + thrust_y + thrust_z_rot;  // HFR
   thrusts.at(1) = -thrust_x - thrust_y - thrust_z_rot;  // HFL
   thrusts.at(4) = thrust_x + thrust_y - thrust_z_rot;   // HRR
-  thrusts.at(3) = thrust_x - thrust_y + thrust_z_rot;   // HRL
+  thrusts.at(5) = thrust_x - thrust_y + thrust_z_rot;   // HRL
   thrusts.at(2) = thrust_z + thrust_x_rot;              // VL
-  thrusts.at(5) = thrust_z - thrust_x_rot;              // VR
+  thrusts.at(3) = thrust_z - thrust_x_rot;              // VR
   return thrusts;
 }
 
