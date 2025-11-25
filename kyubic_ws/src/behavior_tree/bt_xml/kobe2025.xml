@@ -8,13 +8,10 @@
         node_name="manualNode"
         transition="deactivate"
         timeout_sec="1" />
-
-      <WaypointAction action_name="pdla_plan"
+      <WaypointAction action_name="/planner/pdla_planner/pdla_plan"
         csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/sample/mapping_alt_generated.csv"
         current_index="{current_index}" />
-
-      <QrAction action_name="qr_action" />
-
+      <QrAction action_name="/planner/qr_planner/qr_plan" />
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
   </BehaviorTree>
@@ -88,17 +85,16 @@
       editable="true">
       <output_port name="leak" />
     </Action>
-    <!-- <Action ID="FibonacciAction"
-      editable="true">
-      <input_port name="action_name" />
-      <input_port name="order" />
-      <output_port name="result_sequence" />
-    </Action> -->
     <Action ID="LifecycleManager"
       editable="true">
       <input_port name="node_name" />
       <input_port name="transition" />
       <input_port name="timeout_sec" />
+    </Action>
+    <Action ID="QrAction"
+      editable="true">
+      <input_port name="action_name"
+        default="qr_action" />
     </Action>
     <Action ID="UpdateMode"
       editable="true">
@@ -107,13 +103,12 @@
       <input_port name="auto_button" />
       <output_port name="mode" />
     </Action>
-    <Action ID="WaypointAction" editable="true">
-      <input_port name="action_name" default="pdla_plan" />
+    <Action ID="WaypointAction"
+      editable="true">
+      <input_port name="action_name"
+        default="pdla_plan" />
       <input_port name="csv_file_path" />
       <output_port name="current_index" />
-    </Action>
-    <Action ID="QrAction" editable="true">
-      <input_port name="action_name" default="qr_action" />
     </Action>
   </TreeNodesModel>
 

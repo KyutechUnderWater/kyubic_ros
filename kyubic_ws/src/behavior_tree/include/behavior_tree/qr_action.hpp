@@ -1,8 +1,11 @@
 /**
  * @file qr_action.hpp
- * @brief Action client for QR Planner
- * @details Triggers the QR code tracking action via UDP
- *************************************************************/
+ * @brief Action client for QR tracking
+ * @author S.Itozono
+ * @date 2025/11/22
+ *
+ * @details QRコードトラッキングのAction ClientのBTノード
+ *******************************************************/
 
 #ifndef _QR_ACTION_HPP
 #define _QR_ACTION_HPP
