@@ -14,8 +14,6 @@
 #include <functional>
 #include <numbers>
 
-#include "driver_msgs/msg/imu.hpp"
-
 namespace localization
 {
 
@@ -37,7 +35,7 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
-  if (msg->status == driver_msgs::msg::IMU::STATUS_ERROR) {
+  if (msg->status.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The imu data is invalid");
     odom_msg->status.imu = localization_msgs::msg::Status::ERROR;
   } else {
@@ -46,13 +44,13 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
     const double cos180 = cos(std::numbers::pi);
 
     // z-axis transform
-    double gyro_x = msg->gyro.x * cos180 - msg->gyro.y * sin180;
-    double gyro_y = msg->gyro.x * sin180 + msg->gyro.y * cos180;
+    double gyro_x = msg->gyro.y;
+    double gyro_y = -msg->gyro.x;
 
-    roll = msg->orient.x * cos180 - msg->orient.y * sin180;
-    pitch = msg->orient.x * sin180 + msg->orient.y * cos180;
+    roll = msg->orient.y;
+    pitch = -msg->orient.x;
+    yaw = -msg->orient.z;
 
-    yaw = msg->orient.z;
     double yaw_offset = msg->orient.z - offset_angle.at(2);
     if (yaw_offset < -180) yaw_offset += 360;
     if (180 < yaw_offset) yaw_offset -= 360;

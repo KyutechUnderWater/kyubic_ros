@@ -4,17 +4,17 @@
 
   <BehaviorTree ID="Auto">
     <Sequence name="AutoSequence">
-      <!-- <LifecycleManager name="DeactivateManualNode"
+      <LifecycleManager name="DeactivateManualNode"
         node_name="manualNode"
         transition="deactivate"
-        timeout_sec="1" /> -->
-      
+        timeout_sec="1" />
+
       <WaypointAction action_name="pdla_plan"
         csv_file_path="/home/ros/kyubic_ros/kyubic_ws/install/path_planner/share/path_planner/assets/sample/mapping_alt_generated.csv"
         current_index="{current_index}" />
-      
+
       <QrAction action_name="qr_action" />
-      
+
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
   </BehaviorTree>
@@ -48,14 +48,11 @@
     <Fallback>
       <Sequence>
         <SubTree ID="Configure" />
-        <!-- [修正] 強制的に Auto (Waypoint) を実行 -->
-        <SubTree ID="Auto" />
-
-        <!-- <ReactiveSequence> -->
-          <!-- <RetryUntilSuccessful num_attempts="10">
-            <CheckSensorsState />
-          </RetryUntilSuccessful> -->
-          <!-- <UpdateMode topic_name="/joy_common/joy_common"
+        <ReactiveSequence>
+          <RetryUntilSuccessful num_attempts="10">
+            <CheckSensorsStatus leak="{leak}" />
+          </RetryUntilSuccessful>
+          <UpdateMode topic_name="/joy_common/joy_common"
             manual_button="circle"
             auto_button="cross"
             mode="{mode}" />
@@ -67,7 +64,7 @@
             <SubTree ID="Auto" />
             <AlwaysFailure />
           </Switch2>
-        </ReactiveSequence> -->
+        </ReactiveSequence>
       </Sequence>
       <SubTree ID="Emergency" />
     </Fallback>
@@ -87,8 +84,10 @@
   <TreeNodesModel>
     <Action ID="AlwaysRunning"
       editable="true" />
-    <Action ID="CheckSensorsState"
-      editable="true" />
+    <Action ID="CheckSensorsStatus"
+      editable="true">
+      <output_port name="leak" />
+    </Action>
     <!-- <Action ID="FibonacciAction"
       editable="true">
       <input_port name="action_name" />
@@ -108,19 +107,13 @@
       <input_port name="auto_button" />
       <output_port name="mode" />
     </Action>
-    <!-- <Action ID="WrenchAction"
-      editable="true">
-      <input_port name="action_name" />
-      <input_port name="duration_sec" />
-      <output_port name="total_updates" />
-    </Action> -->
     <Action ID="WaypointAction" editable="true">
-      <input_port name="action_name" default="pdla_plan"/>
-      <input_port name="csv_file_path"/>
-      <output_port name="current_index"/>
+      <input_port name="action_name" default="pdla_plan" />
+      <input_port name="csv_file_path" />
+      <output_port name="current_index" />
     </Action>
     <Action ID="QrAction" editable="true">
-      <input_port name="action_name" default="qr_action"/>
+      <input_port name="action_name" default="qr_action" />
     </Action>
   </TreeNodesModel>
 
