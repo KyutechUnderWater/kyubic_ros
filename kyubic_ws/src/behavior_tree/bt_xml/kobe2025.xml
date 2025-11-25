@@ -48,7 +48,7 @@
         <SubTree ID="Configure" />
         <ReactiveSequence>
           <RetryUntilSuccessful num_attempts="10">
-            <CheckSensorsState />
+            <CheckSensorsStatus leak="{leak}" />
           </RetryUntilSuccessful>
           <UpdateMode topic_name="/joy_common/joy_common"
             manual_button="circle"
@@ -82,8 +82,10 @@
   <TreeNodesModel>
     <Action ID="AlwaysRunning"
       editable="true" />
-    <Action ID="CheckSensorsState"
-      editable="true" />
+    <Action ID="CheckSensorsStatus"
+      editable="true">
+      <output_port name="leak" />
+    </Action>
     <Action ID="FibonacciAction"
       editable="true">
       <input_port name="action_name" />
