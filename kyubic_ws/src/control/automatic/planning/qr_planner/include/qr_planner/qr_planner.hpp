@@ -34,6 +34,7 @@ struct PoseData
   float yaw;
   uint8_t z_mode;
   bool is_finished;
+  bool is_searching;
   bool is_error = false;
   float det_x;     // 画像上のX座標
   float det_y;     // 画像上のY座標
@@ -85,6 +86,15 @@ private:
 
   std::shared_ptr<GoalHandleQR> active_goal_handle_;
   localization_msgs::msg::Odometry::SharedPtr current_odom_;
+
+  //計算ロジックを分離するための関数
+  std::unique_ptr<planner_msgs::msg::WrenchPlan> computeControlCommand(
+    const std::shared_ptr<localization_msgs::msg::Odometry> & odom, const PoseData & target);
+
+  // 関数宣言も忘れずに
+  void computeSearchMotion(
+    const std::shared_ptr<localization_msgs::msg::Odometry> & odom,
+    std::unique_ptr<planner_msgs::msg::WrenchPlan> & msg);
 
   PoseData target_pose_;
   Tolerance reach_tolerance;
