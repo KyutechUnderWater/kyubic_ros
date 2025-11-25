@@ -44,7 +44,7 @@ QRPlanner::QRPlanner(const rclcpp::NodeOptions & options) : Node("qr_planner", o
     "odom", qos, std::bind(&QRPlanner::odometryCallback, this, std::placeholders::_1));
 
   action_server_ = rclcpp_action::create_server<QRAction>(
-    this, "qr_action",
+    this, "qr_plan",
     std::bind(&QRPlanner::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
     std::bind(&QRPlanner::handle_cancel, this, std::placeholders::_1),
     std::bind(&QRPlanner::handle_accepted, this, std::placeholders::_1));
