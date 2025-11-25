@@ -9,8 +9,6 @@
 
 #include "wrench_planner/wrench_planner.hpp"
 
-#include <memory>
-
 namespace planner
 {
 
