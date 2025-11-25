@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4"
   main_tree_to_execute="MainTree">
-
   <BehaviorTree ID="Auto">
     <Sequence name="AutoSequence">
       <LifecycleManager name="DeactivateManualNode"
@@ -25,7 +24,6 @@
           csv_file_path="assets/kobe/left.csv" />
         <AlwaysFailure name="Invalid_Course_Selection" />
       </Switch2>
-
       <FindPingerAction action_name="find_pinger" />
 
       <Switch2 name="Inbound_Selector"
@@ -76,29 +74,34 @@
   </BehaviorTree>
 
   <BehaviorTree ID="MainTree">
-    <Fallback>
+    <Delay delay_msec="2000">
       <Sequence>
-        <SubTree ID="Configure" selected_course="{selected_course}" />
-        <ReactiveSequence>
-          <RetryUntilSuccessful num_attempts="10">
-            <CheckSensorsStatus leak="{leak}" />
-          </RetryUntilSuccessful>
-          <UpdateMode topic_name="/joy_common/joy_common"
-            manual_button="circle"
-            auto_button="cross"
-            mode="{mode}" />
-          <Switch2 name="mode_switch"
-            case_1="manual"
-            case_2="auto"
-            variable="{mode}">
-            <SubTree ID="Manual" />
-            <SubTree ID="Auto" selected_course="{selected_course}" />
-            <AlwaysFailure />
-          </Switch2>
-        </ReactiveSequence>
+        <BatteryCheck />
+        <Fallback>
+          <Sequence>
+            <SubTree ID="Configure" selected_course="{selected_course}" />
+            <ReactiveSequence>
+              <RetryUntilSuccessful num_attempts="10">
+                <CheckSensorsStatus leak="{leak}" />
+              </RetryUntilSuccessful>
+              <UpdateMode topic_name="/joy_common/joy_common"
+                manual_button="circle"
+                auto_button="cross"
+                mode="{mode}" />
+              <Switch2 name="mode_switch"
+                case_1="manual"
+                case_2="auto"
+                variable="{mode}">
+                <SubTree ID="Manual" />
+                <SubTree ID="Auto" selected_course="{selected_course}" />
+                <AlwaysFailure />
+              </Switch2>
+            </ReactiveSequence>
+          </Sequence>
+          <SubTree ID="Emergency" />
+        </Fallback>
       </Sequence>
-      <SubTree ID="Emergency" />
-    </Fallback>
+    </Delay>
   </BehaviorTree>
 
   <BehaviorTree ID="Manual">
@@ -115,9 +118,18 @@
   <TreeNodesModel>
     <Action ID="AlwaysRunning"
       editable="true" />
+    <Action ID="BatteryCheck"
+      editable="true" />
     <Action ID="CheckSensorsStatus"
       editable="true">
       <output_port name="leak" />
+    </Action>
+    <Action ID="FindPingerAction"
+      editable="true">
+      <input_port name="action_name"
+        default="find_pinger" />
+      <output_port name="current_yaw" />
+      <output_port name="current_score" />
     </Action>
     <Action ID="LifecycleManager"
       editable="true">

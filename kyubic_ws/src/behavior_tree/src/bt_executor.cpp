@@ -21,7 +21,8 @@
 
 // Custom BT Node
 #include "behavior_tree/always_running.hpp"
-#include "behavior_tree/check_sensors_status.hpp"
+#include "behavior_tree/check/battery_check.hpp"
+#include "behavior_tree/check/check_sensors_status.hpp"
 #include "behavior_tree/find_pinger_action.hpp"
 #include "behavior_tree/lifecycle_manager.hpp"
 #include "behavior_tree/qr_action.hpp"
@@ -48,6 +49,7 @@ int main(int argc, char ** argv)
   // 3. Register nodes
   factory.registerNodeType<AlwaysRunning>("AlwaysRunning", logger_pub);
   factory.registerNodeType<CheckSensorsStatus>("CheckSensorsStatus", logger_pub, node);
+  factory.registerNodeType<BatteryCheck>("BatteryCheck", logger_pub, node);
   factory.registerNodeType<UpdateMode>("UpdateMode", logger_pub, node);
   factory.registerNodeType<LifecycleManager>("LifecycleManager", logger_pub, node);
   factory.registerNodeType<WaypointAction>("WaypointAction", logger_pub, node);
