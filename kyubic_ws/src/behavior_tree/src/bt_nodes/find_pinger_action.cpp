@@ -16,11 +16,10 @@ FindPingerAction::FindPingerAction(
 
 BT::PortsList FindPingerAction::providedPorts()
 {
-  return {// sbl_node.py で指定されているアクション名は 'find_pinger'
-          BT::InputPort<std::string>("action_name", "find_pinger", "Action server name"),
-          // フィードバック情報をブラックボードに出力するためのポート
-          BT::OutputPort<float>("current_yaw", "Current estimated yaw from pinger"),
-          BT::OutputPort<float>("current_score", "Reliability score of estimation")};
+  return {
+    // sbl_node.py で指定されているアクション名は 'find_pinger'
+    BT::InputPort<std::string>("action_name", "find_pinger", "Action server name"),
+  };
 }
 
 bool FindPingerAction::setGoal(planner_msgs::action::FindPinger::Goal & goal)
@@ -43,16 +42,12 @@ BT::NodeStatus FindPingerAction::onResult(const WrappedResult & wr)
     return BT::NodeStatus::SUCCESS;
   } else {
     RCLCPP_ERROR(ros_node_->get_logger(), "FindPingerAction: Failed (Code: %d)", (int)wr.code);
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::SUCCESS;
   }
 }
 
 void FindPingerAction::onFeedback(const std::shared_ptr<const Feedback> feedback)
 {
-  // フィードバック情報をブラックボードに更新
-  setOutput("current_yaw", feedback->current_yaw);
-  setOutput("current_score", feedback->current_score);
-
   RCLCPP_INFO_THROTTLE(
     ros_node_->get_logger(), *ros_node_->get_clock(), 2000,
     "FindPinger Feedback: Yaw %.2f, Score %.2f", feedback->current_yaw, feedback->current_score);

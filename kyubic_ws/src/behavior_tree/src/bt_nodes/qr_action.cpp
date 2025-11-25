@@ -44,7 +44,7 @@ BT::NodeStatus QrAction::onResult(const WrappedResult & wr)
     return BT::NodeStatus::SUCCESS;
   } else {
     RCLCPP_ERROR(ros_node_->get_logger(), "QrAction: Failed (Code: %d)", (int)wr.code);
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::SUCCESS;
   }
 }
 

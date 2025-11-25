@@ -8,6 +8,7 @@
 #define _FIND_PINGER_ACTION_HPP
 
 #include <planner_msgs/action/find_pinger.hpp>
+#include <std_msgs/msg/string.hpp>
 
 #include "behavior_tree/common/ros_action_node.hpp"
 
@@ -31,6 +32,9 @@ public:
   BT::NodeStatus onResult(const WrappedResult & wr) override;
 
   void onFeedback(const std::shared_ptr<const Feedback> feedback) override;
+
+private:
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_feedback_;
 };
 
 }  // namespace behavior_tree

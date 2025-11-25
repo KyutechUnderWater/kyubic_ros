@@ -11,19 +11,11 @@
       <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
       
       <WaypointAction action_name="pdla_plan"
-        csv_file_path="assets/kobe/gate_path.csv"
-        current_index="{current_index}" />
+        csv_file_path="assets/kobe/gate_path.csv" />
       
-      <QrAction action_name="qr_action" 
-                target_x="{target_x}"
-                target_y="{target_y}"
-                target_z="{target_z}"
-                confidence="{target_confidence}"/>
+      <QrAction action_name="qr_action" />
       <FindPingerAction action_name="find_pinger" />
-      <ReturnAction action_name="return_action" 
-                    surface_depth="0.0" 
-                    xy_tolerance="0.1" 
-                    depth_tolerance="0.01"/>
+      <ReturnAction action_name="return_action" />
       
       <AlwaysRunning name="AutoRunning" />
     </Sequence>

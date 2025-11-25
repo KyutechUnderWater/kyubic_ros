@@ -25,9 +25,7 @@ BT::PortsList WaypointAction::providedPorts()
   return {
     BT::InputPort<std::string>("csv_file_path", "Path to the waypoint CSV file"),
     BT::InputPort<std::string>("action_name", "pdla_plan", "Action server name"),
-    BT::OutputPort<uint32_t>("current_index", "Current executing waypoint index"),
-    BT::OutputPort<localization_msgs::msg::Odometry>(
-      "current_pose", "Current robot pose from feedback")};
+  };
 }
 
 // ゴール設定
@@ -54,16 +52,13 @@ BT::NodeStatus WaypointAction::onResult(const WrappedResult & wr)
     return BT::NodeStatus::SUCCESS;
   } else {
     RCLCPP_ERROR(ros_node_->get_logger(), "WaypointAction: Failed (Code: %d)", (int)wr.code);
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::SUCCESS;
   }
 }
 
 // フィードバック受信時の処理
 void WaypointAction::onFeedback(const std::shared_ptr<const Feedback> feedback)
 {
-  setOutput("current_index", feedback->current_waypoint_index);
-  setOutput("current_pose", feedback->current_odom);
-
   RCLCPP_INFO_THROTTLE(
     ros_node_->get_logger(), *ros_node_->get_clock(), 2000,
     "WaypointAction Feedback: Current Index %u, x: %.2f, y: %.2f, z_depth: %.2f",
