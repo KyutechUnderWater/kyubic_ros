@@ -83,12 +83,13 @@ def generate_launch_description():
             ),
             ComposableNode(
                 name="wrench_planner_component",
-                namespace="planner/veocity_wrench_planner",
+                namespace="planner/wrench_planner",
                 package="wrench_planner",
                 plugin="planner::VelocityWrenchPlanner",
                 remappings=[
                     ("wrench_plan", "/planner/wrench_plan"),
                     ("odom", "/localization/odom"),
+                    ("goal_current_odom", "/planner/goal_current_odom"),
                 ],
                 parameters=[
                     {"p_pid_controller_path": p_pid_controller_path},
