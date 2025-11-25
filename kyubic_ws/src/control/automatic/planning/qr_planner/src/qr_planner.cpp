@@ -1,39 +1,36 @@
 /**
-* @file qr_planner.cpp
-* @brief UDP Goal Tracking with Action Server Interface
-* @author R.Ohnishi (Modified)
-* @date 2025/11/21
-****************************************************************************/
+ * @file qr_planner.cpp
+ * @brief QR-code Tracking with Action Server Interface
+ * @author K.Fujimoto
+ * @date 2025/11/23
+ *
+ * @details Jetsonで取得したQRコードをもとに，トラッキングする
+ ************************************************************/
 
 #include "qr_planner/qr_planner.hpp"
 
 #include <arpa/inet.h>
-#include <errno.h>
 #include <fcntl.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
-#include <Eigen/Dense>
 #include <cstring>
 #include <sstream>
 
 namespace planner
 {
 
-// Jetson側の受信ポート
-const int UDP_PORT = 22222;
-
 QRPlanner::QRPlanner(const rclcpp::NodeOptions & options) : Node("qr_planner", options)
 {
-  // パラメータ
   reach_tolerance.x = this->declare_parameter("reach_tolerance.x", 0.1);
   reach_tolerance.y = this->declare_parameter("reach_tolerance.y", 0.1);
   reach_tolerance.z = this->declare_parameter("reach_tolerance.z", 0.1);
   reach_tolerance.roll = this->declare_parameter("reach_tolerance.roll", 0.1);
   reach_tolerance.yaw = this->declare_parameter("reach_tolerance.yaw", 0.1);
 
-  // Techno.py (PC) のIPとポート設定
+  // IPとポート設定
+  udp_port = this->declare_parameter("udp_port", 22222);
   remote_ip_ = this->declare_parameter("remote_ip", "192.168.9.110");
   remote_port_ = this->declare_parameter("remote_port", 11111);
 
@@ -41,15 +38,11 @@ QRPlanner::QRPlanner(const rclcpp::NodeOptions & options) : Node("qr_planner", o
   callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
 
   pub_ = create_publisher<planner_msgs::msg::WrenchPlan>("goal_current_odom", qos);
-
-  // ★★★ Zed Power Publisher ★★★
-  // zed_power_pub_ = create_publisher<std_msgs::msg::Bool>("zed_power", qos);
   zed_power_pub_ = create_publisher<driver_msgs::msg::BoolStamped>("zed_power", qos);
 
   sub_ = create_subscription<localization_msgs::msg::Odometry>(
     "odom", qos, std::bind(&QRPlanner::odometryCallback, this, std::placeholders::_1));
 
-  // Action Server 作成
   action_server_ = rclcpp_action::create_server<QRAction>(
     this, "qr_action",
     std::bind(&QRPlanner::handle_goal, this, std::placeholders::_1, std::placeholders::_2),
@@ -61,7 +54,7 @@ QRPlanner::QRPlanner(const rclcpp::NodeOptions & options) : Node("qr_planner", o
   target_pose_.y = 0.0;
   target_pose_.z = 0.0;
   target_pose_.yaw = 0.0;
-  target_pose_.det_x = 0.0;  // 初期化
+  target_pose_.det_x = 0.0;
   target_pose_.det_y = 0.0;
   target_pose_.det_z = 0.0;
   target_pose_.det_conf = 0.0;
@@ -73,7 +66,7 @@ QRPlanner::QRPlanner(const rclcpp::NodeOptions & options) : Node("qr_planner", o
   sock_fd_ = -1;
   udp_thread_ = std::thread(&QRPlanner::udpReceiveThread, this);
 
-  RCLCPP_INFO(this->get_logger(), "QR Planner (Action + UDP) started. Recv Port: %d", UDP_PORT);
+  RCLCPP_INFO(this->get_logger(), "QR Planner (Action + UDP) started. Recv Port: %d", udp_port);
   RCLCPP_INFO(
     this->get_logger(), "QR Planner ready. Waiting for Action Goal to trigger START signal...");
 }
@@ -104,7 +97,7 @@ void QRPlanner::sendStartSignal()
 
   // 念のため2回送信
   sendto(sock, msg.c_str(), msg.size(), 0, (struct sockaddr *)&addr, sizeof(addr));
-  usleep(100000);  // 0.1s wait
+  usleep(1000000);  // wait wakeup(1s)
   sendto(sock, msg.c_str(), msg.size(), 0, (struct sockaddr *)&addr, sizeof(addr));
 
   close(sock);
@@ -112,7 +105,7 @@ void QRPlanner::sendStartSignal()
     this->get_logger(), ">>> Sent START signal to %s:%d <<<", remote_ip_.c_str(), remote_port_);
 }
 
-// --- UDP Thread (受信) ---
+// UDP Thread (受信)
 void QRPlanner::udpReceiveThread()
 {
   sock_fd_ = socket(AF_INET, SOCK_DGRAM, 0);
@@ -125,10 +118,10 @@ void QRPlanner::udpReceiveThread()
   memset(&my_addr, 0, sizeof(my_addr));
   my_addr.sin_family = AF_INET;
   my_addr.sin_addr.s_addr = INADDR_ANY;
-  my_addr.sin_port = htons(UDP_PORT);
+  my_addr.sin_port = htons(udp_port);
 
   if (bind(sock_fd_, (struct sockaddr *)&my_addr, sizeof(my_addr)) < 0) {
-    RCLCPP_ERROR(this->get_logger(), "UDP Bind failed on port %d.", UDP_PORT);
+    RCLCPP_ERROR(this->get_logger(), "UDP Bind failed on port %d.", udp_port);
     close(sock_fd_);
     return;
   }
@@ -149,7 +142,6 @@ void QRPlanner::udpReceiveThread()
 
     if (len > 0) {
       std::string data_str(buffer);
-      // 受信データをデバッグ表示 (必要に応じてコメントアウト)
       RCLCPP_INFO(this->get_logger(), "[UDP Recv] Data: %s", data_str.c_str());
 
       if (parse_signal_to_pose(data_str, temp_pose)) {
@@ -177,19 +169,12 @@ bool QRPlanner::parse_signal_to_pose(const std::string & data_str, PoseData & po
       parts.push_back(segment);
     }
 
-    // // ★★★ 9要素あるかチェック ★★★
-    // if (parts.size() != 9) {
-    //     // 互換性のため5要素(旧仕様)も許容する場合はここで分岐
-    //     return false;
-    // }
-
     std::string cmd = parts[0];
 
     if (cmd == "COMPLETE") {
       pose.is_finished = true;
       pose.is_error = false;
     } else if (cmd.find("ERROR") == 0 || cmd == "EXCEPTION") {
-      // ★★★ "ERROR"で始まるか、"EXCEPTION"ならエラー扱い ★★★
       pose.is_finished = false;
       pose.is_error = true;
     } else {
@@ -203,17 +188,18 @@ bool QRPlanner::parse_signal_to_pose(const std::string & data_str, PoseData & po
     pose.z = std::stof(parts[3]);
     pose.yaw = std::stof(parts[4]);
 
-    // ★★★ 検出値 (Index 5-8) ★★★
+    // 検出値 (Index 5-8)
     pose.det_x = std::stof(parts[5]);
     pose.det_y = std::stof(parts[6]);
-    pose.det_z = std::stof(parts[7]);  // dist
+    pose.det_z = std::stof(parts[7]);
     pose.det_conf = std::stof(parts[8]);
 
     pose.z_mode = planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH;
 
     // デバッグ: 制御値と検出値を表示
-    // RCLCPP_INFO(this->get_logger(), "Parsed: CMD=%s | Ctrl(X:%.1f) | Det(X:%.1f, Dist:%.2f)",
-    //    cmd.c_str(), pose.x, pose.det_x, pose.det_z);
+    RCLCPP_DEBUG(
+      this->get_logger(), "Parsed: CMD=%s | Ctrl(X:%.1f) | Det(X:%.1f, Dist:%.2f)", cmd.c_str(),
+      pose.x, pose.det_x, pose.det_z);
 
     return true;
   } catch (...) {
@@ -221,7 +207,7 @@ bool QRPlanner::parse_signal_to_pose(const std::string & data_str, PoseData & po
   }
 }
 
-// --- Action Server Callbacks ---
+// Action Server Callbacks
 rclcpp_action::GoalResponse QRPlanner::handle_goal(
   const rclcpp_action::GoalUUID & uuid, std::shared_ptr<const QRAction::Goal> goal)
 {
@@ -257,29 +243,23 @@ void QRPlanner::handle_accepted(const std::shared_ptr<GoalHandleQR> goal_handle)
     target_pose_.is_finished = false;
   }
 
-  // ★★★ 修正: BoolStamped メッセージ作成 (ON) ★★★
+  // BoolStamped メッセージ作成 (ON)
   {
     driver_msgs::msg::BoolStamped pwr_msg;
     pwr_msg.header.stamp = this->get_clock()->now();
-    pwr_msg.header.frame_id = "qr_planner";  // 適当なフレームIDを入れる
-
-    // status も初期化 (common_msgs/Status の中身によるが、デフォルトコンストラクタで一旦OK)
-    // もし必須フィールドがあるなら埋める必要がある
-    // pwr_msg.status.level = 0; // 例
-
+    pwr_msg.header.frame_id = "qr_planner";
     pwr_msg.data = true;  // ON
 
     zed_power_pub_->publish(pwr_msg);
     RCLCPP_INFO(this->get_logger(), "Goal Accepted. Published zed_power = TRUE");
   }
 
-  // Jetsonを起こす
+  // Wakeup Jetson
   RCLCPP_INFO(this->get_logger(), "Sending START signal to Jetson...");
   sendStartSignal();
 }
 
 // --- Main Logic ---
-
 void QRPlanner::odometryCallback(const localization_msgs::msg::Odometry::SharedPtr msg)
 {
   {
@@ -298,12 +278,10 @@ void QRPlanner::odometryCallback(const localization_msgs::msg::Odometry::SharedP
 
   if (goal_handle->is_canceling()) {
     auto result = std::make_shared<QRAction::Result>();
-    // result->success = false;
-    // goal_handle->canceled(result);
-    result->success = true;
-    goal_handle->succeed(result);
+    result->success = false;
+    goal_handle->canceled(result);
 
-    // ★★★ 修正: BoolStamped メッセージ作成 (OFF) ★★★
+    // BoolStamped メッセージ作成 (OFF)
     {
       driver_msgs::msg::BoolStamped pwr_msg;
       pwr_msg.header.stamp = this->get_clock()->now();
@@ -338,7 +316,7 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
 
   // 完了時
   if (target_copy.is_finished) {
-    // ★★★ Zed Power OFF 送信 (完了時) ★★★
+    // Zed Power OFF 送信
     {
       driver_msgs::msg::BoolStamped pwr_msg;
       pwr_msg.header.stamp = this->get_clock()->now();
@@ -358,7 +336,7 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
     return;
   }
 
-  // --- ★★★ エラー時の処理 ★★★ ---
+  // エラー時の処理
   if (target_copy.is_error) {
     RCLCPP_ERROR(
       this->get_logger(), "*** ERROR DETECTED *** Publishing Safe Pose and Aborting Action.");
@@ -368,13 +346,11 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
     msg->header.stamp = this->get_clock()->now();
     msg->z_mode = planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH;
 
-    // msg->targets.x = target_copy.x;  // 8.0
-    // msg->targets.y = target_copy.y;  // 0.0
-    msg->targets.x = odom_copy->pose.position.x + target_copy.x;  // 8.0
-    msg->targets.y = odom_copy->pose.position.y + target_copy.y;  // 0.0
-    msg->targets.z = 0.1;                                         // 安全深度
-    msg->targets.yaw = 0.0;                                       // リセット
+    msg->targets.x = odom_copy->pose.position.x;  // 0.0
+    msg->targets.y = odom_copy->pose.position.y;  // 0.0
+    msg->targets.z = 0.1;                         // 安全深度
     msg->targets.roll = 0.0;
+    msg->targets.yaw = 0.0;  // リセット
 
     // 現在値などはOdomからコピー
     msg->master.x = odom_copy->pose.position.x;
@@ -391,29 +367,28 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
     // 2. トピック送信 (安全座標へ行け！)
     pub_->publish(std::move(msg));
 
-    // 3. Zed Power OFF (エラー終了時も切るべきなら)
+    // 3. Zed Power OFF
     {
       driver_msgs::msg::BoolStamped pwr_msg;
       pwr_msg.header.stamp = this->get_clock()->now();
-      pwr_msg.header.frame_id = "qr_planner";  // 適当なID
-      pwr_msg.data = false;                    // または false
+      pwr_msg.header.frame_id = "qr_planner";
+      pwr_msg.data = false;
       zed_power_pub_->publish(pwr_msg);
     }
 
-    // 4. アクション終了 (Aborted で返すのが作法だが、Succeededにするかは運用次第)
+    // 4. アクション終了 (Aborted で返す)
     auto result = std::make_shared<QRAction::Result>();
-    result->success = true;  // エラーなので false
-    // goal_handle->abort(result);
-    goal_handle->succeed(result);
+    result->success = false;
+    goal_handle->abort(result);
 
     // 5. リセット
     std::lock_guard<std::mutex> lock(goal_mutex_);
     active_goal_handle_.reset();
 
-    return;  // ★ここでループを抜ける
+    return;
   }
 
-  // ★★★ Feedback送信 (検出データを詰める) ★★★
+  // Feedback送信 (検出データを詰める)
   auto feedback = std::make_shared<QRAction::Feedback>();
   feedback->x = target_copy.det_x;
   feedback->y = target_copy.det_y;
@@ -429,19 +404,17 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
   // 通常時: 現在地(Odom) + 相対移動量(Target)
   msg->targets.x = odom_copy->pose.position.x + target_copy.x;
   msg->targets.y = odom_copy->pose.position.y + target_copy.y;
-  msg->targets.z = 0.1;  // 通常時は深度維持（または target_copy.z + odom...）
-  msg->targets.yaw = odom_copy->pose.orientation.z + target_copy.yaw;
+  msg->targets.z = 0.1;
   msg->targets.roll = 0.0;
+  msg->targets.yaw = odom_copy->pose.orientation.z + target_copy.yaw;
 
   msg->master.x = odom_copy->pose.position.x;
   msg->master.y = odom_copy->pose.position.y;
-  // msg->master.z = 0;
   msg->master.roll = odom_copy->pose.orientation.x;
   msg->master.yaw = odom_copy->pose.orientation.z;
 
   msg->slave.x = odom_copy->twist.linear.x;
   msg->slave.y = odom_copy->twist.linear.y;
-  // msg->slave.z =0;
   msg->slave.roll = odom_copy->twist.angular.x;
   msg->slave.yaw = odom_copy->twist.angular.z;
 
