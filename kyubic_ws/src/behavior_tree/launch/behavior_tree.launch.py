@@ -27,13 +27,6 @@ def generate_launch_description():
     )
 
     # ノードの定義
-    joy_common_launch = IncludeLaunchDescription(
-        PathJoinSubstitution([joy_common_dir, "joy_common.launch.py"]),
-        launch_arguments={
-            "log_level": "warn",
-        }.items(),
-    )
-
     plannler_launch = IncludeLaunchDescription(
         PathJoinSubstitution([planner_launcher_dir, "planner_launcher.launch.py"]),
         launch_arguments={
@@ -75,11 +68,9 @@ def generate_launch_description():
         parameters=[behavior_tree_config],
         output="screen",
     )
-    
 
     return LaunchDescription(
         [
-            joy_common_launch,
             plannler_launch,
             manual_node,
             emergency_node,

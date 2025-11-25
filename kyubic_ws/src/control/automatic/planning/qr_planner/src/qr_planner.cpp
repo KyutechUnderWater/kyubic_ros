@@ -174,12 +174,19 @@ bool QRPlanner::parse_signal_to_pose(const std::string & data_str, PoseData & po
     if (cmd == "COMPLETE") {
       pose.is_finished = true;
       pose.is_error = false;
+      pose.is_searching = false;
     } else if (cmd.find("ERROR") == 0 || cmd == "EXCEPTION") {
       pose.is_finished = false;
       pose.is_error = true;
+      pose.is_searching = false;
+    } else if (cmd == "SEARCH") {
+      pose.is_finished = false;
+      pose.is_error = false;
+      pose.is_searching = true;
     } else {
       pose.is_finished = false;
       pose.is_error = false;
+      pose.is_searching = false;
     }
 
     // 制御値 (Index 1-4)
@@ -364,7 +371,7 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
     msg->slave.roll = odom_copy->twist.angular.x;
     msg->slave.yaw = odom_copy->twist.angular.z;
 
-    // 2. トピック送信 (安全座標へ行け！)
+    // 2. トピック送信 (安全座標へ)
     pub_->publish(std::move(msg));
 
     // 3. Zed Power OFF
@@ -404,9 +411,29 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
   // 通常時: 現在地(Odom) + 相対移動量(Target)
   msg->targets.x = odom_copy->pose.position.x + target_copy.x;
   msg->targets.y = odom_copy->pose.position.y + target_copy.y;
-  msg->targets.z = 0.1;
+  msg->targets.z = 0.2;
   msg->targets.roll = 0.0;
   msg->targets.yaw = odom_copy->pose.orientation.z + target_copy.yaw;
+
+  // 捜索時
+  int direction = 1;
+  int limit_angle = 45;
+  if (target_copy.is_searching) {
+    float current_angle = odom_copy->pose.orientation.z;
+    // 45以上になったら「引くモード(-1)」へ切り替え
+    if (current_angle >= limit_angle) {
+      direction = -1;
+      RCLCPP_INFO(this->get_logger(), "反時計回り");
+    }
+    // -45以下になったら「足すモード(1)」へ切り替え
+    else if (current_angle <= -limit_angle) {
+      direction = 1;
+      RCLCPP_INFO(this->get_logger(), "時計回り");
+    }
+    // directionを掛けることで「+」と「-」を切り替える
+    msg->targets.yaw = odom_copy->pose.orientation.z + (direction * target_copy.yaw);
+  }
+  //
 
   msg->master.x = odom_copy->pose.position.x;
   msg->master.y = odom_copy->pose.position.y;
