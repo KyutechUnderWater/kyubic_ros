@@ -15,6 +15,7 @@
 #include <joy_common/joy_common.hpp>
 #include <joy_common_msgs/msg/joy.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
 
 namespace behavior_tree
 {
@@ -34,7 +35,9 @@ public:
    * @param ros_node Shared pointer to the ROS 2 node used for subscription.
    */
   UpdateMode(
-    const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node);
+    const std::string & name, const BT::NodeConfig & config,
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub,
+    rclcpp::Node::SharedPtr ros_node);
 
   /**
    * @brief Defines the input and output ports for this node.
@@ -62,6 +65,7 @@ private:
   bool _check_value(std::variant<bool, double> value);
 
   rclcpp::Node::SharedPtr ros_node_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub_;
   rclcpp::Subscription<joy_common_msgs::msg::Joy>::SharedPtr joy_sub_;
   joy_common_msgs::msg::Joy::SharedPtr joy_msg_;
   joy_common::ButtonMap button_map_;

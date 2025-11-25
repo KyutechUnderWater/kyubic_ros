@@ -11,9 +11,12 @@
 
 #include <behaviortree_cpp/basic_types.h>
 
+#include <format>
+
 CheckSensorsStatus::CheckSensorsStatus(
-  const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node)
-: BT::ConditionNode(name, config), ros_node_(ros_node)
+  const std::string & name, const BT::NodeConfig & config,
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub, rclcpp::Node::SharedPtr ros_node)
+: BT::ConditionNode(name, config), ros_node_(ros_node), logger_pub_(logger_pub)
 {
   imu_monitor_ = std::make_shared<SensorMonitor>(ros_node_->get_clock()->now(), 2 * 1e9);
   depth_monitor_ = std::make_shared<SensorMonitor>(ros_node_->get_clock()->now(), 2 * 1e9);
@@ -41,13 +44,26 @@ BT::PortsList CheckSensorsStatus::providedPorts()
   return {BT::OutputPort("leak", "current leak sensor value")};
 }
 
+void CheckSensorsStatus::logger(rclcpp::Time now)
+{
+  std::string s = std::format(
+    "imu: {}, depth: {}, dvl: {}, leak: {}", imu_monitor_->is_healthy(now),
+    depth_monitor_->is_healthy(now), dvl_monitor_->is_healthy(now), leak_monitor_->is_healthy(now));
+
+  auto msg = std::make_unique<std_msgs::msg::String>();
+  msg->data = "[CheckSensorsStatus] " + s;
+  logger_pub_->publish(std::move(msg));
+}
+
 BT::NodeStatus CheckSensorsStatus::tick()
 {
+  auto now = ros_node_->get_clock()->now();
+
+  logger(now);
+
   if (
-    imu_monitor_->is_healthy(ros_node_->get_clock()->now()) ||
-    depth_monitor_->is_healthy(ros_node_->get_clock()->now()) ||
-    dvl_monitor_->is_healthy(ros_node_->get_clock()->now()) ||
-    leak_monitor_->is_healthy(ros_node_->get_clock()->now())) {
+    imu_monitor_->is_healthy(now) || depth_monitor_->is_healthy(now) ||
+    dvl_monitor_->is_healthy(now) || leak_monitor_->is_healthy(now)) {
     return BT::NodeStatus::SUCCESS;
   }
 

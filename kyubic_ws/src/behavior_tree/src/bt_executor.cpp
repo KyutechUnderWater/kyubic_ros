@@ -13,15 +13,21 @@
 
 #include <ament_index_cpp/get_package_prefix.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <rclcpp/create_publisher.hpp>
+#include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
+
+#include "behavior_tree/filtered_logger.hpp"
 
 // Custom BT Node
 #include "behavior_tree/always_running.hpp"
 #include "behavior_tree/check_sensors_status.hpp"
+#include "behavior_tree/find_pinger_action.hpp"
 #include "behavior_tree/lifecycle_manager.hpp"
-#include "behavior_tree/sample/fibonacci_action.hpp"
-#include "behavior_tree/sample/wrench_action.hpp"
+#include "behavior_tree/qr_action.hpp"
+#include "behavior_tree/reset_localization.hpp"
 #include "behavior_tree/update_mode.hpp"
+#include "behavior_tree/waypoint_action.hpp"
 
 using namespace behavior_tree;
 
@@ -33,16 +39,21 @@ int main(int argc, char ** argv)
   auto node = std::make_shared<rclcpp::Node>("bt_executor_node");
   std::string bt_xml_file = node->declare_parameter<std::string>("bt_xml_file", "");
 
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub =
+    node->create_publisher<std_msgs::msg::String>("logger", 10);
+
   // 2. Initialize BT Factory
   BT::BehaviorTreeFactory factory;
 
   // 3. Register nodes
-  factory.registerNodeType<AlwaysRunning>("AlwaysRunning");
-  factory.registerNodeType<CheckSensorsStatus>("CheckSensorsStatus", node);
-  factory.registerNodeType<UpdateMode>("UpdateMode", node);
-  factory.registerNodeType<LifecycleManager>("LifecycleManager", node);
-  factory.registerNodeType<WrenchAction>("WrenchAction", node);
-  factory.registerNodeType<FibonacciAction>("FibonacciAction", node);
+  factory.registerNodeType<AlwaysRunning>("AlwaysRunning", logger_pub);
+  factory.registerNodeType<CheckSensorsStatus>("CheckSensorsStatus", logger_pub, node);
+  factory.registerNodeType<UpdateMode>("UpdateMode", logger_pub, node);
+  factory.registerNodeType<LifecycleManager>("LifecycleManager", logger_pub, node);
+  factory.registerNodeType<WaypointAction>("WaypointAction", logger_pub, node);
+  factory.registerNodeType<QrAction>("QrAction", logger_pub, node);
+  factory.registerNodeType<ResetLocalization>("ResetLocalization", logger_pub, node);
+  factory.registerNodeType<FindPingerAction>("FindPingerAction", logger_pub, node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");
@@ -74,7 +85,8 @@ int main(int argc, char ** argv)
   printTreeRecursively(tree.rootNode());
 
   // Standard output logger
-  auto logger = std::make_unique<BT::StdCoutLogger>(tree);
+  // auto logger = std::make_unique<BT::StdCoutLogger>(tree);
+  FilteredStdCoutLogger logger_filtered(tree);
 
   // 6. Timer to TICK the tree
   rclcpp::TimerBase::SharedPtr timer;

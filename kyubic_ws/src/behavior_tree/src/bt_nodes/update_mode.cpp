@@ -13,8 +13,9 @@ namespace behavior_tree
 {
 
 UpdateMode::UpdateMode(
-  const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node)
-: BT::SyncActionNode(name, config), ros_node_(ros_node)
+  const std::string & name, const BT::NodeConfig & config,
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub, rclcpp::Node::SharedPtr ros_node)
+: BT::SyncActionNode(name, config), ros_node_(ros_node), logger_pub_(logger_pub)
 {
   button_map_ = joy_common::get_button_map();
 
@@ -47,7 +48,8 @@ BT::NodeStatus UpdateMode::tick()
 {
   std::lock_guard<std::mutex> lock(mutex_);
   if (!joy_msg_) {
-    return BT::NodeStatus::FAILURE;
+    setOutput<std::string>("mode", "manual");
+    return BT::NodeStatus::SUCCESS;
   }
 
   BT::Expected<std::string> manual_name = getInput<std::string>("manual_button");

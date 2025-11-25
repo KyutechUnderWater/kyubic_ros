@@ -39,17 +39,13 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
     RCLCPP_ERROR(this->get_logger(), "The imu data is invalid");
     odom_msg->status.imu = localization_msgs::msg::Status::ERROR;
   } else {
-    // define
-    const double sin180 = sin(std::numbers::pi);
-    const double cos180 = cos(std::numbers::pi);
-
     // z-axis transform
     double gyro_x = msg->gyro.y;
     double gyro_y = -msg->gyro.x;
 
     roll = msg->orient.y;
     pitch = -msg->orient.x;
-    yaw = -msg->orient.z;
+    yaw = msg->orient.z;
 
     double yaw_offset = msg->orient.z - offset_angle.at(2);
     if (yaw_offset < -180) yaw_offset += 360;

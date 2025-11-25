@@ -1,22 +1,20 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>projection_dynamic_look_ahead_planner</name>
-  <version>0.1.0</version>
-  <description>Tracking through the path (Action Server Version)</description>
-  <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
+  <name>qr_planner</name>
+  <version>0.0.1</version>
+  <description>UDP based QR Goal Tracking Planner</description>
+  <maintainer email="kyutech.robosub@gmail.com">Kazuya Fujimoto</maintainer>
   <license>Apache License 2.0</license>
 
-  <buildtool_depend>ament_cmake_auto</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
   <depend>rclcpp_components</depend>
-  <depend>ament_cmake_eigen</depend>
   <depend>planner_msgs</depend>
+  <depend>driver_msgs</depend>
   <depend>localization_msgs</depend>
-  <depend>path_planner</depend>
-  <depend>ament_index_cpp</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

@@ -14,6 +14,7 @@
 
 #include <lifecycle_msgs/srv/change_state.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
 
 namespace behavior_tree
 {
@@ -33,7 +34,9 @@ public:
    * @param ros_node Shared pointer to the ROS 2 node
    */
   LifecycleManager(
-    const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node);
+    const std::string & name, const BT::NodeConfig & config,
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub,
+    rclcpp::Node::SharedPtr ros_node);
 
   /**
    * @brief Defines the ports used by this node
@@ -60,6 +63,7 @@ public:
 
 private:
   rclcpp::Node::SharedPtr ros_node_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub_;
   rclcpp::Client<lifecycle_msgs::srv::ChangeState>::SharedPtr change_state_client_;
 
   std::shared_future<lifecycle_msgs::srv::ChangeState::Response::SharedPtr> future_response_;

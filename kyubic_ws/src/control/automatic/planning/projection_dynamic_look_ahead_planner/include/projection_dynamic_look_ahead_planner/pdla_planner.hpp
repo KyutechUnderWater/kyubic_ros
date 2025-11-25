@@ -1,12 +1,3 @@
-/**
- * @file pdla_planner.hpp
- * @brief Tracking through the pass with Projection Dynamic Look-Ahead Planner (Action Server)
- * @author R.Ohnishi
- * @date 2025/11/06 (Modified)
- *
- * @details ベクトル射影を用いた動的前方注視制御による経路追従 (Action Server)
- ********************************************************************************************/
-
 #ifndef _PDLA_PLANNER_HPP
 #define _PDLA_PLANNER_HPP
 
@@ -75,4 +66,4 @@ private:
 
 }  // namespace planner
 
-#endif  // !_PLDA_PLANNER_HPP
+#endif  // !_PDLA_PLANNER_HPP

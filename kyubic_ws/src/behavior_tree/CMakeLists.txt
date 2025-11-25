@@ -16,6 +16,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
+
 ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(${PROJECT_NAME}
@@ -26,7 +27,11 @@ ament_auto_add_executable(${PROJECT_NAME}
   ./src/bt_nodes/always_running.cpp
   ./src/bt_nodes/lifecycle_manager.cpp
   ./src/bt_nodes/update_mode.cpp
-)
+  ./src/bt_nodes/waypoint_action.cpp
+  ./src/bt_nodes/qr_action.cpp
+  ./src/bt_nodes/reset_localization.cpp
+  ./src/bt_nodes/find_pinger_action.cpp
+  )
 
 install(DIRECTORY
   bt_xml

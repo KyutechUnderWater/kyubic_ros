@@ -7,7 +7,7 @@
   <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
   <license>Apache License 2.0</license>
 
-  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <depend>timer</depend>
   <depend>ament_index_cpp</depend>
@@ -17,14 +17,14 @@
   <depend>rclcpp_lifecycle</depend>
   <depend>behaviortree_cpp</depend>
   <depend>joy_common</depend>
+
   <depend>lifecycle_msgs</depend>
-  <depend>common_msgs</depend>
+  <depend>planner_msgs</depend>
   <depend>driver_msgs</depend>
+  <depend>localization_msgs</depend>
   <depend>joy_common_msgs</depend>
   <depend>action_tutorials_interfaces</depend>
   <depend>wrench_action_sample_msgs</depend>
-  <!-- <depend>projection_dynamic_look_ahead_planner</depend> -->
-  <!-- <depend>wrench_planner</depend> -->
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

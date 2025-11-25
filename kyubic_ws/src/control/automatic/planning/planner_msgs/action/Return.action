@@ -1,0 +1,13 @@
+# Goal
+float64 surface_depth                    # 浮上目標深度 (m)
+float64 xy_tolerance                     # 到達判定誤差 (m)
+float64 depth_tolerance                  # 深度判定誤差 (m)
+---
+# Result
+bool success
+string message
+---
+# Feedback
+localization_msgs/Odometry current_odom  # 現在地
+float64 distance_to_target               # 残り距離
+string state                             # "RETURNING" or "SURFACING"

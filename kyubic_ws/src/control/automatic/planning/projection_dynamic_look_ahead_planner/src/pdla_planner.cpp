@@ -10,7 +10,9 @@
 #include "projection_dynamic_look_ahead_planner/pdla_planner.hpp"
 
 #include <Eigen/Dense>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cstddef>
+#include <filesystem>
 #include <rclcpp_action/rclcpp_action.hpp>
 
 namespace planner
@@ -79,11 +81,25 @@ void PDLAPlanner::handle_accepted(
   const std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> goal_handle)
 {
   std::lock_guard<std::mutex> lock(goal_mutex_);
-
   const auto goal = goal_handle->get_goal();
+
+  std::string file_path = goal->csv_file_path;
+  if (!file_path.empty() && file_path[0] != '/') {
+    try {
+      std::string package_share_dir = ament_index_cpp::get_package_share_directory("path_planner");
+
+      // パスを結合 (shareディレクトリ + XMLに書かれた相対パス)
+      file_path = package_share_dir + "/" + file_path;
+
+      RCLCPP_INFO(this->get_logger(), "Resolved relative path to: %s", file_path.c_str());
+    } catch (const std::exception & e) {
+      RCLCPP_ERROR(this->get_logger(), "Failed to resolve package path: %s", e.what());
+    }
+  }
+
   PathCsvLoader loader;
   try {
-    loader.parse(goal->csv_file_path);
+    loader.parse(file_path);
   } catch (const std::exception & e) {
     RCLCPP_ERROR(this->get_logger(), "Failed to load or parse CSV file: %s", e.what());
     auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
@@ -155,25 +171,46 @@ void PDLAPlanner::odometryCallback(const localization_msgs::msg::Odometry::Share
 void PDLAPlanner::_runPlannerLogic(
   const std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> & goal_handle)
 {
-  // ウェイポイント到達判定
-  if (step_idx == target_pose_.size() - 1) {
-    if (_checkReached(target_pose_.at(step_idx), reach_tolerance)) {
-      RCLCPP_INFO(this->get_logger(), "Reached end point!");
+  std::shared_ptr<localization_msgs::msg::Odometry> odom_copy;
+  {
+    std::lock_guard<std::mutex> lock(odom_mutex_);
+    if (!current_odom_) {
+      RCLCPP_WARN_ONCE(this->get_logger(), "Waiting for first odometry message...");
+      return;
+    }
+    odom_copy = std::make_shared<localization_msgs::msg::Odometry>(*current_odom_);
+  }
 
+  // ウェイポイント到達判定
+  bool reached = false;
+  PoseData target = target_pose_.at(step_idx);
+  Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
+
+  double current_z_val = (target.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH)
+                           ? odom_copy->pose.position.z_depth
+                           : odom_copy->pose.position.z_altitude;
+
+  if (
+    abs(target.x - odom_copy->pose.position.x) < tol.x &&
+    abs(target.y - odom_copy->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z &&
+    abs(target.roll - odom_copy->pose.orientation.x) < tol.roll &&
+    abs(target.yaw - odom_copy->pose.orientation.z) < tol.yaw) {
+    reached = true;
+  }
+
+  if (reached) {
+    if (step_idx == target_pose_.size() - 1) {
+      RCLCPP_INFO(this->get_logger(), "Reached end point!");
       auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
       result->success = true;
       goal_handle->succeed(result);
-
       std::lock_guard<std::mutex> lock(goal_mutex_);
       active_goal_handle_.reset();
       return;
-    }
-  } else {
-    if (_checkReached(target_pose_.at(step_idx), waypoint_tolerance)) {
+    } else {
       step_idx++;
       RCLCPP_INFO(this->get_logger(), "Reached %zu/%lu waypoint.", step_idx, target_pose_.size());
       _print_waypoint("Current", step_idx);
-
       if (step_idx < target_pose_.size() - 1) {
         _print_waypoint("Next   ", step_idx + 1);
       }
@@ -182,16 +219,6 @@ void PDLAPlanner::_runPlannerLogic(
 
   // 仮想目標点の計算
   Eigen::Vector3d virtual_goal_point;
-
-  std::shared_ptr<localization_msgs::msg::Odometry> odom_copy;
-  {
-    std::lock_guard<std::mutex> lock(odom_mutex_);
-    if (!current_odom_) {
-      RCLCPP_WARN_ONCE(this->get_logger(), "Waiting for first odometry message...");
-      return;  // オドメトリが来るまで何もしない
-    }
-    odom_copy = current_odom_;
-  }
 
   if (step_idx == 0) {
     virtual_goal_point << target_pose_.at(0).x, target_pose_.at(0).y, target_pose_.at(0).z;
@@ -207,6 +234,7 @@ void PDLAPlanner::_runPlannerLogic(
     Eigen::Vector3d p3(next_step_pose.x, next_step_pose.y, next_step_pose.z);
 
     localization_msgs::msg::Pose current_pose = odom_copy->pose;
+
     Eigen::Vector3d p0;
     if (current_step_pose.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
       p0 << current_pose.position.x, current_pose.position.y, current_pose.position.z_depth;
@@ -222,7 +250,6 @@ void PDLAPlanner::_runPlannerLogic(
     Eigen::Vector3d v23 = p3 - p2;
 
     if (v02.dot(v23) <= 0 || v12.norm() == 0) {
-      // ±90度以上の方向転換，移動なしのとき，仮想目標点を実際の目標点にする
       virtual_goal_point = p2;
     } else {
       v02 = v02 * v12.norm() / v02.norm();
@@ -244,22 +271,22 @@ void PDLAPlanner::_runPlannerLogic(
     msg->targets.roll = target_pose_.at(step_idx).roll;
     msg->targets.yaw = target_pose_.at(step_idx).yaw;
 
-    msg->master.x = current_odom_->pose.position.x;
-    msg->master.y = current_odom_->pose.position.y;
-    msg->master.roll = current_odom_->pose.orientation.x;
-    msg->master.yaw = current_odom_->pose.orientation.z;
+    msg->master.x = odom_copy->pose.position.x;
+    msg->master.y = odom_copy->pose.position.y;
+    msg->master.roll = odom_copy->pose.orientation.x;
+    msg->master.yaw = odom_copy->pose.orientation.z;
 
-    msg->slave.x = current_odom_->twist.linear.x;
-    msg->slave.y = current_odom_->twist.linear.y;
-    msg->slave.roll = current_odom_->twist.angular.x;
-    msg->slave.yaw = current_odom_->twist.angular.z;
+    msg->slave.x = odom_copy->twist.linear.x;
+    msg->slave.y = odom_copy->twist.linear.y;
+    msg->slave.roll = odom_copy->twist.angular.x;
+    msg->slave.yaw = odom_copy->twist.angular.z;
 
     if (target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-      msg->master.z = current_odom_->pose.position.z_depth;
-      msg->slave.z = current_odom_->twist.linear.z_depth;
+      msg->master.z = odom_copy->pose.position.z_depth;
+      msg->slave.z = odom_copy->twist.linear.z_depth;
     } else {
-      msg->master.z = current_odom_->pose.position.z_altitude;
-      msg->slave.z = current_odom_->twist.linear.z_altitude;
+      msg->master.z = odom_copy->pose.position.z_altitude;
+      msg->slave.z = odom_copy->twist.linear.z_altitude;
     }
     pub_->publish(std::move(msg));
   }
@@ -273,34 +300,10 @@ void PDLAPlanner::_runPlannerLogic(
   }
 }
 
-bool PDLAPlanner::_checkReached(PoseData & target, Tolerance tolerance)
-{
-  std::shared_ptr<localization_msgs::msg::Odometry> odom;
-  {
-    std::lock_guard<std::mutex> lock(odom_mutex_);
-    if (!current_odom_) {
-      return false;
-    }
-    odom = current_odom_;
-  }
-
-  double current_z;
-  if (target.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-    current_z = odom->pose.position.z_depth;
-  } else {
-    current_z = odom->pose.position.z_altitude;
-  }
-
-  if (
-    abs(target.x - odom->pose.position.x) < tolerance.x &&
-    abs(target.y - odom->pose.position.y) < tolerance.y &&
-    abs(target.z - current_z) < tolerance.z &&
-    abs(target.roll - odom->pose.orientation.x) < tolerance.roll &&
-    abs(target.yaw - odom->pose.orientation.z) < tolerance.yaw) {
-    return true;
-  }
-  return false;
-}
+// bool PDLAPlanner::_checkReached(PoseData & target, Tolerance tolerance)
+// {
+//   return false;
+// }
 
 void PDLAPlanner::_print_waypoint(std::string label, size_t step_idx)
 {
@@ -318,5 +321,5 @@ void PDLAPlanner::_print_waypoint(std::string label, size_t step_idx)
 
 }  // namespace planner
 
-#include <rclcpp_components/register_node_macro.hpp>
+#include "rclcpp_components/register_node_macro.hpp"
 RCLCPP_COMPONENTS_REGISTER_NODE(planner::PDLAPlanner)

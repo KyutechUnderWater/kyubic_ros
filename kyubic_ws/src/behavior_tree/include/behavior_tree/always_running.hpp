@@ -12,6 +12,9 @@
 
 #include <behaviortree_cpp/action_node.h>
 
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
+
 namespace behavior_tree
 {
 
@@ -28,7 +31,9 @@ public:
    * @param name Node name
    * @param config Node configuration
    */
-  AlwaysRunning(const std::string & name, const BT::NodeConfig & config);
+  AlwaysRunning(
+    const std::string & name, const BT::NodeConfig & config,
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub);
 
   /**
    * @brief Defines the ports used by this node.
@@ -52,6 +57,9 @@ public:
    * @brief Called when the node is halted.
    */
   void onHalted() override;
+
+private:
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub_;
 };
 
 }  // namespace behavior_tree

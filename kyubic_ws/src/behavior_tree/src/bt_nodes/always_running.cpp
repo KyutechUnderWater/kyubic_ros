@@ -9,17 +9,27 @@
 
 #include "behavior_tree/always_running.hpp"
 
+#include <memory>
+
 namespace behavior_tree
 {
 
-AlwaysRunning::AlwaysRunning(const std::string & name, const BT::NodeConfig & config)
-: BT::StatefulActionNode(name, config)
+AlwaysRunning::AlwaysRunning(
+  const std::string & name, const BT::NodeConfig & config,
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub)
+: BT::StatefulActionNode(name, config), logger_pub_(logger_pub)
 {
 }
 
 BT::PortsList AlwaysRunning::providedPorts() { return {}; }
 
-BT::NodeStatus AlwaysRunning::onStart() { return BT::NodeStatus::RUNNING; }
+BT::NodeStatus AlwaysRunning::onStart()
+{
+  auto msg = std::make_unique<std_msgs::msg::String>();
+  msg->data = "[AlwaysRunning] Running";
+  logger_pub_->publish(std::move(msg));
+  return BT::NodeStatus::RUNNING;
+}
 
 BT::NodeStatus AlwaysRunning::onRunning() { return BT::NodeStatus::RUNNING; }
 
