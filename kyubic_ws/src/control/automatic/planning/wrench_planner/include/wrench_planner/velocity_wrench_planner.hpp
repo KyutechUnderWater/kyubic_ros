@@ -30,6 +30,7 @@ private:
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
   localization_msgs::msg::Odometry::SharedPtr odom_;
+  bool is_update = false;
 
   std::mutex mutex_;
 
