@@ -1,9 +1,17 @@
+/**
+ * @file waypoint_action.hpp
+ * @brief Action client for PDLA Planner
+ * @author S.Itozono
+ * @date 2025/11/19
+ *
+ * @details PDLA Action ServerにCSVパスを送り、経路追従を実行するBTノード
+ ***********************************************************************/
+
 #ifndef _WAYPOINT_ACTION_HPP
 #define _WAYPOINT_ACTION_HPP
 
 #include <planner_msgs/action/pdla.hpp>
-// [修正] 自作の抽象クラスをインクルード
-// ※このファイルのパスは実際の配置場所に合わせる必要があります
+
 #include "behavior_tree/common/ros_action_node.hpp"
 
 namespace behavior_tree
