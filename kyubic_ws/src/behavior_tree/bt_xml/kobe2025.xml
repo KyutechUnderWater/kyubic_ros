@@ -12,8 +12,39 @@
       <WaypointAction action_name="pdla_plan"
         csv_file_path="assets/kobe/gate_path.csv" />
       <QrAction action_name="qr_action" />
+      <Switch2 name="Outbound_Selector" 
+               variable="{selected_course}" 
+               case_1="A" 
+               case_2="B">
+         
+         <WaypointAction name="Go_Right"
+                         action_name="pdla_plan"
+                         csv_file_path="assets/kobe/right.csv" />
+
+         <WaypointAction name="Go_Left"
+                         action_name="pdla_plan"
+                         csv_file_path="assets/kobe/left.csv" />
+          <AlwaysFailure name="Invalid_Course_Selection"/> 
+      </Switch2>
+
       <FindPingerAction action_name="find_pinger" />
-      <ReturnAction action_name="return_action" />
+
+      <Switch2 name="Inbound_Selector" 
+               variable="{selected_course}" 
+               case_1="A" 
+               case_2="B">
+         
+         <WaypointAction name="Return_Right"
+                         action_name="pdla_plan"
+                         csv_file_path="assets/kobe/return_right.csv" />
+
+         <WaypointAction name="Return_Left"
+                         action_name="pdla_plan"
+                         csv_file_path="assets/kobe/return_left.csv" />
+         
+         <AlwaysFailure name="Invalid_Course_Selection"/>
+      </Switch2>
+      
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
   </BehaviorTree>
@@ -110,27 +141,14 @@
       <input_port name="timeout_sec" default="1.0" />
     </Action>
     <Action ID="WaypointAction" editable="true">
-      <input_port name="action_name" default="pdla_plan" />
-      <input_port name="csv_file_path" />
-      <output_port name="current_index" />
+      <input_port name="action_name" default="pdla_plan"/>
+      <input_port name="csv_file_path"/>
     </Action>
     <Action ID="QrAction" editable="true">
-      <input_port name="action_name" default="qr_action" />
-      <output_port name="target_x" />
-      <output_port name="target_y" />
-      <output_port name="target_z" />
-      <output_port name="confidence" />
+      <input_port name="action_name" default="qr_action"/>
     </Action>
     <Action ID="FindPingerAction" editable="true">
-      <input_port name="action_name" default="find_pinger" />
-      <output_port name="current_yaw" />
-      <output_port name="current_score" />
-    </Action>
-    <Action ID="ReturnAction" editable="true">
-      <input_port name="action_name" default="return_action" />
-      <input_port name="surface_depth" default="0.0" />
-      <input_port name="xy_tolerance" default="0.1" />
-      <input_port name="depth_tolerance" default="0.01" />
+      <input_port name="action_name" default="find_pinger"/>
     </Action>
   </TreeNodesModel>
 
