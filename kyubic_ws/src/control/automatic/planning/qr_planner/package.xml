@@ -4,24 +4,20 @@
   <name>qr_planner</name>
   <version>0.0.1</version>
   <description>UDP based QR Goal Tracking Planner</description>
-  <maintainer email="user@todo.todo">User</maintainer>
-  <license>TODO: License declaration</license>
+  <maintainer email="kyutech.robosub@gmail.com">Kazuya Fujimoto</maintainer>
+  <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
   <depend>rclcpp_components</depend>
-  
   <depend>planner_msgs</depend>
+  <depend>driver_msgs</depend>
   <depend>localization_msgs</depend>
 
-  <depend>eigen</depend> <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
-
-  <buildtool_depend>rosidl_default_generators</buildtool_depend>
-  <depend>action_msgs</depend>
-  <member_of_group>rosidl_interface_packages</member_of_group>
 
   <export>
     <build_type>ament_cmake</build_type>
