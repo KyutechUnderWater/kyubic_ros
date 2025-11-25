@@ -21,7 +21,8 @@ ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(${PROJECT_NAME}
   ./src/bt_executor.cpp
-  ./src/bt_nodes/check_sensors_status.cpp
+  ./src/bt_nodes/check/check_sensors_status.cpp
+  ./src/bt_nodes/check/battery_check.cpp
   ./src/bt_nodes/sample/fibonacci_action.cpp
   ./src/bt_nodes/sample/wrench_action.cpp
   ./src/bt_nodes/always_running.cpp

@@ -7,11 +7,7 @@
  * @details 各種センサ情報を取得し，エラーが出ているか確認する
  ************************************************************/
 
-#include "behavior_tree/check_sensors_status.hpp"
-
-#include <behaviortree_cpp/basic_types.h>
-
-#include <format>
+#include "behavior_tree/check/check_sensors_status.hpp"
 
 CheckSensorsStatus::CheckSensorsStatus(
   const std::string & name, const BT::NodeConfig & config,
