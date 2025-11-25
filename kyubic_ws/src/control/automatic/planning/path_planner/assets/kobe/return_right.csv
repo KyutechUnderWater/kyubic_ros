@@ -2,6 +2,6 @@ parameter_label,value,x,y,z,z_mode,roll,yaw,blank,catmull_x,catmull_y,catmull_z,
 checkpoint_end_row,3.0,1.0,0.3,0.3,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,0.0,0.0
 catmull_rom,0.0,0.0,0.3,0.3,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,0.0,0.0
 catmull_end_row,3.0,0.0,0.3,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,0.0,0.0
-catmull_density,0.0,,,,,,,,,,,,,
-catmull_min_distance,0.0,,,,,,,,,,,,,
-catmull_orient_LERP,0.0,,,,,,,,,,,,,
+catmull_density,0.0,,,,,,,,,,,,,,
+catmull_min_distance,0.0,,,,,,,,,,,,,,
+catmull_orient_LERP,0.0,,,,,,,,,,,,,,
