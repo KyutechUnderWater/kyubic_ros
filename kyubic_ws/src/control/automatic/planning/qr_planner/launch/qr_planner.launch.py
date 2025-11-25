@@ -23,7 +23,7 @@ def generate_launch_description():
             log_level_arg,
             Node(
                 package="qr_planner",
-                namespace="",
+                namespace="planner",
                 executable="qr_planner_node",
                 name="qr_planner",
                 remappings=[
@@ -41,4 +41,3 @@ def generate_launch_description():
             ),
         ]
     )
-
