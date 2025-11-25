@@ -116,12 +116,12 @@ bool Listener::_parse()
 
   // velocity
   dvl_data.x_vel_bottom =
-    (concat_bit_int16(buffer[X_VEL_BTM], buffer[X_VEL_BTM + 1]) * cos(M_PI_4) -
-     concat_bit_int16(buffer[Y_VEL_BTM], buffer[Y_VEL_BTM + 1]) * sin(M_PI_4)) *
+    (concat_bit_int16(buffer[X_VEL_BTM], buffer[X_VEL_BTM + 1]) * cos(3 * M_PI_4) -
+     concat_bit_int16(buffer[Y_VEL_BTM], buffer[Y_VEL_BTM + 1]) * sin(3 * M_PI_4)) *
     0.001;
   dvl_data.y_vel_bottom =
-    (concat_bit_int16(buffer[X_VEL_BTM], buffer[X_VEL_BTM + 1]) * sin(M_PI_4) +
-     concat_bit_int16(buffer[Y_VEL_BTM], buffer[Y_VEL_BTM + 1]) * cos(M_PI_4)) *
+    (concat_bit_int16(buffer[X_VEL_BTM], buffer[X_VEL_BTM + 1]) * sin(3 * M_PI_4) +
+     concat_bit_int16(buffer[Y_VEL_BTM], buffer[Y_VEL_BTM + 1]) * cos(3 * M_PI_4)) *
     (-0.001);
   dvl_data.z_vel_bottom = concat_bit_int16(buffer[Z_VEL_BTM], buffer[Z_VEL_BTM + 1]) * 0.001;
   dvl_data.e_vel_bottom = concat_bit_int16(buffer[E_VEL_BTM], buffer[E_VEL_BTM + 1]);

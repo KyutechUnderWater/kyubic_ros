@@ -1,8 +1,11 @@
 /**
- * @file qr_action.cpp
- * @brief Action client for QR Planner
- * @details Sends 'start=true' to the qr_planner action server
- *************************************************************/
+ * @file qr_action.hpp
+ * @brief Action client for QR tracking
+ * @author S.Itozono
+ * @date 2025/11/22
+ *
+ * @details QRコードトラッキングのAction ClientのBTノード
+ *******************************************************/
 
 #include "behavior_tree/qr_action.hpp"
 
@@ -15,7 +18,6 @@ QrAction::QrAction(
 {
 }
 
-// ポート定義
 BT::PortsList QrAction::providedPorts()
 {
   return {
@@ -26,21 +28,19 @@ BT::PortsList QrAction::providedPorts()
     BT::OutputPort<float>("confidence", "Detection confidence score")};
 }
 
-// ゴール設定
 bool QrAction::setGoal(planner_msgs::action::QR::Goal & goal)
 {
   goal.start = true;
 
-  RCLCPP_INFO(
+  RCLCPP_DEBUG(
     ros_node_->get_logger(), "QrAction: Sending Goal (start=true) to %s", action_name.c_str());
   return true;
 }
 
-// 結果受信時の処理
 BT::NodeStatus QrAction::onResult(const WrappedResult & wr)
 {
   if (wr.code == rclcpp_action::ResultCode::SUCCEEDED && wr.result->success) {
-    RCLCPP_INFO(ros_node_->get_logger(), "QrAction: Succeeded");
+    RCLCPP_DEBUG(ros_node_->get_logger(), "QrAction: Succeeded");
     return BT::NodeStatus::SUCCESS;
   } else {
     RCLCPP_ERROR(ros_node_->get_logger(), "QrAction: Failed (Code: %d)", (int)wr.code);

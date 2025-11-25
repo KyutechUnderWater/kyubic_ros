@@ -1,3 +1,7 @@
+# message
+std_msgs/Header header
+common_msgs/Status status
+
 sensor_msgs/NavSatFix fix
 float64 azimuth
 float64 geoid_altitude
