@@ -66,6 +66,9 @@ def generate_launch_description():
         executable="behavior_tree",
         name="btExecutorNode",
         parameters=[behavior_tree_config],
+        remappings=[
+            ("power_state", "/logic_distro_rp2040_driver/power_state"),
+        ],
         output="screen",
     )
 

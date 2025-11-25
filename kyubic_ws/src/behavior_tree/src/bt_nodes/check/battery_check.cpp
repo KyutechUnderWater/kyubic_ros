@@ -19,7 +19,7 @@ BatteryCheck::BatteryCheck(
   act_voltage_(0.0)
 {
   power_sub_ = ros_node_->create_subscription<driver_msgs::msg::PowerState>(
-    "/driver/power_state", 10, [this](driver_msgs::msg::PowerState::SharedPtr msg) {
+    "power_state", 10, [this](driver_msgs::msg::PowerState::SharedPtr msg) {
       logic_voltage_ = msg->log_voltage;
       act_voltage_ = msg->act_voltage;
     });
