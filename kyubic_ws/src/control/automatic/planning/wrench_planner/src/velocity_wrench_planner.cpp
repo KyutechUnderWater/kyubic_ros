@@ -29,7 +29,7 @@ void VelocityWrenchPlanner::wrenchPlanCallback(planner_msgs::msg::WrenchPlan::Sh
 {
   std::lock_guard<std::mutex> lock(mutex_);
 
-  if (!odom_) {
+  if (!odom_ || !is_update) {
     RCLCPP_WARN(this->get_logger(), "Waiting for Odometry data... cannot publish WrenchPlan yet.");
     return;
   }
@@ -47,6 +47,7 @@ void VelocityWrenchPlanner::wrenchPlanCallback(planner_msgs::msg::WrenchPlan::Sh
     RCLCPP_ERROR(this->get_logger(), "Z mode(%d) is invalid.", _msg->z_mode);
   }
 
+  is_update = false;
   pub_->publish(std::move(*_msg));
   RCLCPP_DEBUG(this->get_logger(), "Published WrenchPlan");
 }
@@ -54,6 +55,7 @@ void VelocityWrenchPlanner::wrenchPlanCallback(planner_msgs::msg::WrenchPlan::Sh
 void VelocityWrenchPlanner::odomCallback(const localization_msgs::msg::Odometry::SharedPtr _msg)
 {
   std::lock_guard<std::mutex> lock(mutex_);
+  is_update = true;
   odom_ = _msg;
 }
 
