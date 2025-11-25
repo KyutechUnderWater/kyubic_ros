@@ -22,7 +22,6 @@
 #include "behavior_tree/lifecycle_manager.hpp"
 #include "behavior_tree/qr_action.hpp"
 #include "behavior_tree/reset_localization.hpp"
-#include "behavior_tree/return_action.hpp"
 #include "behavior_tree/update_mode.hpp"
 #include "behavior_tree/waypoint_action.hpp"
 
@@ -48,7 +47,6 @@ int main(int argc, char ** argv)
   factory.registerNodeType<QrAction>("QrAction", node);
   factory.registerNodeType<ResetLocalization>("ResetLocalization", node);
   factory.registerNodeType<FindPingerAction>("FindPingerAction", node);
-  factory.registerNodeType<ReturnAction>("ReturnAction", node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");

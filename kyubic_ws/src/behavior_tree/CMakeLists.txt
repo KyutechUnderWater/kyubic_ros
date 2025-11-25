@@ -32,8 +32,7 @@ ament_auto_add_executable(${PROJECT_NAME}
   ./src/bt_nodes/qr_action.cpp
   ./src/bt_nodes/reset_localization.cpp
   ./src/bt_nodes/find_pinger_action.cpp
-  ./src/bt_nodes/return_action.cpp 
-)
+  )
 
 install(DIRECTORY
   bt_xml
