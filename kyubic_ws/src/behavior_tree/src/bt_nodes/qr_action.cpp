@@ -13,19 +13,15 @@ namespace behavior_tree
 {
 
 QrAction::QrAction(
-  const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node)
-: RosActionNode(name, config, ros_node)
+  const std::string & name, const BT::NodeConfig & config,
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub, rclcpp::Node::SharedPtr ros_node)
+: RosActionNode(name, config, ros_node), logger_pub_(logger_pub)
 {
 }
 
 BT::PortsList QrAction::providedPorts()
 {
-  return {
-    BT::InputPort<std::string>("action_name", "qr_action", "Action server name"),
-    BT::OutputPort<float>("target_x", "Target X position"),
-    BT::OutputPort<float>("target_y", "Target Y positon"),
-    BT::OutputPort<float>("target_z", "Target distance"),
-    BT::OutputPort<float>("confidence", "Detection confidence score")};
+  return {BT::InputPort<std::string>("action_name", "qr_action", "Action server name")};
 }
 
 bool QrAction::setGoal(planner_msgs::action::QR::Goal & goal)
@@ -51,15 +47,15 @@ BT::NodeStatus QrAction::onResult(const WrappedResult & wr)
 // フィードバック受信時の処理
 void QrAction::onFeedback(const std::shared_ptr<const Feedback> feedback)
 {
-  setOutput("target_x", feedback->x);
-  setOutput("target_y", feedback->y);
-  setOutput("target_z", feedback->z);
-  setOutput("confidence", feedback->confidence);
+  std::string s = std::format(
+    "QR Feedback: [x: {:.2f}, y: {:.2f}, z: {:.2f}, conf: {:.2f}]", feedback->x, feedback->y,
+    feedback->z, feedback->confidence);
 
-  RCLCPP_INFO_THROTTLE(
-    ros_node_->get_logger(), *ros_node_->get_clock(), 1000,
-    "QR Feedback: [x: %.2f, y: %.2f, z: %.2f, conf: %.2f]", feedback->x, feedback->y, feedback->z,
-    feedback->confidence);
+  auto msg = std::make_unique<std_msgs::msg::String>();
+  msg->data = "[QrAction] " + s;
+
+  logger_pub_->publish(std::move(msg));
+  RCLCPP_INFO_THROTTLE(ros_node_->get_logger(), *ros_node_->get_clock(), 1000, "%s", s.c_str());
 }
 
 }  // namespace behavior_tree

@@ -13,8 +13,9 @@ namespace behavior_tree
 {
 
 UpdateMode::UpdateMode(
-  const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node)
-: BT::SyncActionNode(name, config), ros_node_(ros_node)
+  const std::string & name, const BT::NodeConfig & config,
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub, rclcpp::Node::SharedPtr ros_node)
+: BT::SyncActionNode(name, config), ros_node_(ros_node), logger_pub_(logger_pub)
 {
   button_map_ = joy_common::get_button_map();
 

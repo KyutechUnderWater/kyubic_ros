@@ -19,6 +19,7 @@
 #include <driver_msgs/msg/imu.hpp>
 #include <mutex>
 #include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <timer/timeout.hpp>
 
 /**
@@ -34,7 +35,9 @@ public:
    * @param ros_node Shared pointer to the ROS 2 node used for subscriptions.
    */
   CheckSensorsStatus(
-    const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node);
+    const std::string & name, const BT::NodeConfig & config,
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub,
+    rclcpp::Node::SharedPtr ros_node);
 
   /**
    * @brief Defines the input and output ports for this node.
@@ -51,10 +54,13 @@ public:
 
 private:
   rclcpp::Node::SharedPtr ros_node_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub_;
   rclcpp::Subscription<driver_msgs::msg::IMU>::SharedPtr imu_sub_;
   rclcpp::Subscription<driver_msgs::msg::Depth>::SharedPtr depth_sub_;
   rclcpp::Subscription<driver_msgs::msg::DVL>::SharedPtr dvl_sub_;
   rclcpp::Subscription<driver_msgs::msg::BoolStamped>::SharedPtr leak_sub_;
+
+  void logger(rclcpp::Time now);
 
   /**
    * @brief センサーごとの監視データを管理する構造体

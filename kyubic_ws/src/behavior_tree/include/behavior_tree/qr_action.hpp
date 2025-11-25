@@ -11,6 +11,8 @@
 #define _QR_ACTION_HPP
 
 #include <planner_msgs/action/qr.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
 
 #include "behavior_tree/common/ros_action_node.hpp"
 
@@ -28,7 +30,9 @@ public:
    * @brief Constructor matching the custom base class signature
    */
   QrAction(
-    const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node);
+    const std::string & name, const BT::NodeConfig & config,
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub,
+    rclcpp::Node::SharedPtr ros_node);
 
   /**
    * @brief Define ports
@@ -50,6 +54,9 @@ public:
    * @brief Feedback callback (Empty for QR action but required to implement)
    */
   void onFeedback(const std::shared_ptr<const Feedback> feedback) override;
+
+private:
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub_;
 };
 
 }  // namespace behavior_tree

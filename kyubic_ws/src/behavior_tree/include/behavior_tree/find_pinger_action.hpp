@@ -8,6 +8,7 @@
 #define _FIND_PINGER_ACTION_HPP
 
 #include <planner_msgs/action/find_pinger.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "behavior_tree/common/ros_action_node.hpp"
@@ -23,7 +24,9 @@ class FindPingerAction : public RosActionNode<planner_msgs::action::FindPinger>
 {
 public:
   FindPingerAction(
-    const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node);
+    const std::string & name, const BT::NodeConfig & config,
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub,
+    rclcpp::Node::SharedPtr ros_node);
 
   static BT::PortsList providedPorts();
 
@@ -34,7 +37,7 @@ public:
   void onFeedback(const std::shared_ptr<const Feedback> feedback) override;
 
 private:
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_feedback_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub_;
 };
 
 }  // namespace behavior_tree

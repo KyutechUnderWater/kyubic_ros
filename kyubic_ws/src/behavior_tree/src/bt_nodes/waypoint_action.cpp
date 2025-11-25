@@ -15,8 +15,9 @@ namespace behavior_tree
 {
 
 WaypointAction::WaypointAction(
-  const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node)
-: RosActionNode(name, config, ros_node)
+  const std::string & name, const BT::NodeConfig & config,
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub, rclcpp::Node::SharedPtr ros_node)
+: RosActionNode(name, config, ros_node), logger_pub_(logger_pub)
 {
 }
 
@@ -56,11 +57,14 @@ BT::NodeStatus WaypointAction::onResult(const WrappedResult & wr)
 
 void WaypointAction::onFeedback(const std::shared_ptr<const Feedback> feedback)
 {
-  RCLCPP_DEBUG_THROTTLE(
-    ros_node_->get_logger(), *ros_node_->get_clock(), 2000,
-    "WaypointAction Feedback: Current Index %u, x: %.2f, y: %.2f, z_depth: %.2f",
+  std::string s = std::format(
+    "WaypointAction Feedback: Current Index {:2d}, x: {:.2f}, y: {:.2f}, z_depth: {:.2f}",
     feedback->current_waypoint_index, feedback->current_odom.pose.position.x,
     feedback->current_odom.pose.position.y, feedback->current_odom.pose.position.z_depth);
+
+  auto msg = std::make_unique<std_msgs::msg::String>();
+  msg->data = "[QrAction] " + s;
+  RCLCPP_DEBUG_THROTTLE(ros_node_->get_logger(), *ros_node_->get_clock(), 2000, "%s", s.c_str());
 }
 
 }  // namespace behavior_tree

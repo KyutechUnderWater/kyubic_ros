@@ -13,6 +13,9 @@
 
 #include <ament_index_cpp/get_package_prefix.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <memory>
+#include <rclcpp/create_publisher.hpp>
+#include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 // Custom BT Node
@@ -35,18 +38,21 @@ int main(int argc, char ** argv)
   auto node = std::make_shared<rclcpp::Node>("bt_executor_node");
   std::string bt_xml_file = node->declare_parameter<std::string>("bt_xml_file", "");
 
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub =
+    node->create_publisher<std_msgs::msg::String>("logger", 10);
+
   // 2. Initialize BT Factory
   BT::BehaviorTreeFactory factory;
 
   // 3. Register nodes
-  factory.registerNodeType<AlwaysRunning>("AlwaysRunning");
-  factory.registerNodeType<CheckSensorsStatus>("CheckSensorsStatus", node);
-  factory.registerNodeType<UpdateMode>("UpdateMode", node);
-  factory.registerNodeType<LifecycleManager>("LifecycleManager", node);
-  factory.registerNodeType<WaypointAction>("WaypointAction", node);
-  factory.registerNodeType<QrAction>("QrAction", node);
-  factory.registerNodeType<ResetLocalization>("ResetLocalization", node);
-  factory.registerNodeType<FindPingerAction>("FindPingerAction", node);
+  factory.registerNodeType<AlwaysRunning>("AlwaysRunning", logger_pub);
+  factory.registerNodeType<CheckSensorsStatus>("CheckSensorsStatus", logger_pub, node);
+  factory.registerNodeType<UpdateMode>("UpdateMode", logger_pub, node);
+  factory.registerNodeType<LifecycleManager>("LifecycleManager", logger_pub, node);
+  factory.registerNodeType<WaypointAction>("WaypointAction", logger_pub, node);
+  factory.registerNodeType<QrAction>("QrAction", logger_pub, node);
+  factory.registerNodeType<ResetLocalization>("ResetLocalization", logger_pub, node);
+  factory.registerNodeType<FindPingerAction>("FindPingerAction", logger_pub, node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");

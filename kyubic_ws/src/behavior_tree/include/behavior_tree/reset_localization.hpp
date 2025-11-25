@@ -5,6 +5,7 @@
 
 #include <localization_msgs/srv/reset.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
 
 namespace behavior_tree
 {
@@ -13,7 +14,9 @@ class ResetLocalization : public BT::StatefulActionNode
 {
 public:
   ResetLocalization(
-    const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node);
+    const std::string & name, const BT::NodeConfig & config,
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub,
+    rclcpp::Node::SharedPtr ros_node);
 
   static BT::PortsList providedPorts();
 
@@ -23,6 +26,7 @@ public:
 
 private:
   rclcpp::Node::SharedPtr ros_node_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub_;
   rclcpp::Client<localization_msgs::srv::Reset>::SharedPtr client_;
   std::shared_future<localization_msgs::srv::Reset::Response::SharedPtr> future_response_;
   std::string last_service_name_;
