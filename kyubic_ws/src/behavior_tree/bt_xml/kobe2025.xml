@@ -9,20 +9,20 @@
         transition="deactivate"
         timeout_sec="1" />
       <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
-      <WaypointAction action_name="pdla_plan"
+      <WaypointAction action_name="planner/pdla_planner/pdla_plan"
         csv_file_path="assets/kobe/gate_path.csv" />
-      <QrAction action_name="qr_action" />
+      <QrAction action_name="/planner/qr_planner/qr_plan" />
       <Switch2 name="Outbound_Selector" 
                variable="{selected_course}" 
                case_1="A" 
                case_2="B">
          
          <WaypointAction name="Go_Right"
-                         action_name="pdla_plan"
+                         action_name="planner/pdla_planner/pdla_plan"
                          csv_file_path="assets/kobe/right.csv" />
 
          <WaypointAction name="Go_Left"
-                         action_name="pdla_plan"
+                         action_name="planner/pdla_planner/pdla_plan"
                          csv_file_path="assets/kobe/left.csv" />
           <AlwaysFailure name="Invalid_Course_Selection"/> 
       </Switch2>
@@ -35,11 +35,11 @@
                case_2="B">
          
          <WaypointAction name="Return_Right"
-                         action_name="pdla_plan"
+                         action_name="planner/pdla_planner/pdla_plan"
                          csv_file_path="assets/kobe/return_right.csv" />
 
          <WaypointAction name="Return_Left"
-                         action_name="pdla_plan"
+                         action_name="planner/pdla_planner/pdla_plan"
                          csv_file_path="assets/kobe/return_left.csv" />
          
          <AlwaysFailure name="Invalid_Course_Selection"/>
@@ -124,11 +124,6 @@
       <input_port name="transition" />
       <input_port name="timeout_sec" />
     </Action>
-    <Action ID="QrAction"
-      editable="true">
-      <input_port name="action_name"
-        default="qr_action" />
-    </Action>
     <Action ID="UpdateMode"
       editable="true">
       <input_port name="topic_name" />
@@ -141,7 +136,7 @@
       <input_port name="timeout_sec" default="1.0" />
     </Action>
     <Action ID="WaypointAction" editable="true">
-      <input_port name="action_name" default="pdla_plan"/>
+      <input_port name="action_name" default="planner/pdla_planner/pdla_plan"/>
       <input_port name="csv_file_path"/>
     </Action>
     <Action ID="QrAction" editable="true">
