@@ -51,7 +51,7 @@ BT::NodeStatus WaypointAction::onResult(const WrappedResult & wr)
     return BT::NodeStatus::SUCCESS;
   } else {
     RCLCPP_ERROR(ros_node_->get_logger(), "WaypointAction: Failed (Code: %d)", (int)wr.code);
-    return BT::NodeStatus::SUCCESS;
+    return BT::NodeStatus::FAILURE;
   }
 }
 

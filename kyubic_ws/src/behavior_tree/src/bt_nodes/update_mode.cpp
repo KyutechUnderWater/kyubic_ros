@@ -48,7 +48,8 @@ BT::NodeStatus UpdateMode::tick()
 {
   std::lock_guard<std::mutex> lock(mutex_);
   if (!joy_msg_) {
-    return BT::NodeStatus::FAILURE;
+    setOutput<std::string>("mode", "manual");
+    return BT::NodeStatus::SUCCESS;
   }
 
   BT::Expected<std::string> manual_name = getInput<std::string>("manual_button");

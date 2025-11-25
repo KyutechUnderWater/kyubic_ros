@@ -13,10 +13,11 @@
 
 #include <ament_index_cpp/get_package_prefix.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
-#include <memory>
 #include <rclcpp/create_publisher.hpp>
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
+
+#include "behavior_tree/filtered_logger.hpp"
 
 // Custom BT Node
 #include "behavior_tree/always_running.hpp"
@@ -86,7 +87,8 @@ int main(int argc, char ** argv)
   printTreeRecursively(tree.rootNode());
 
   // Standard output logger
-  auto logger = std::make_unique<BT::StdCoutLogger>(tree);
+  // auto logger = std::make_unique<BT::StdCoutLogger>(tree);
+  FilteredStdCoutLogger logger_filtered(tree);
 
   // 6. Timer to TICK the tree
   rclcpp::TimerBase::SharedPtr timer;
