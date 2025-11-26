@@ -10,8 +10,6 @@
 #include "wrench_planner/zero_order_hold.hpp"
 
 #include <lifecycle_msgs/msg/state.hpp>
-#include <memory>
-#include <rclcpp/logging.hpp>
 
 namespace planner
 {
@@ -94,7 +92,7 @@ void ZeroOrderHold::wrenchPlanCallback(planner_msgs::msg::WrenchPlan::SharedPtr 
 
   if (copy_slave(odom_)) {
     is_update = false;
-    pub_->publish(std::move(*plan_));
+    pub_->publish(*plan_);
     RCLCPP_DEBUG(this->get_logger(), "Published WrenchPlan");
   }
 }
@@ -110,7 +108,7 @@ void ZeroOrderHold::odomCallback(const localization_msgs::msg::Odometry::SharedP
   odom_ = _msg;
 
   if (timeout_->check(this->get_clock()->now())) {
-    if (copy_slave(_msg)) pub_->publish(std::move(*plan_));
+    if (copy_slave(_msg)) pub_->publish(*plan_);
   }
 }
 
