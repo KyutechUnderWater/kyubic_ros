@@ -7,6 +7,10 @@
         node_name="manualNode"
         transition="deactivate"
         timeout_sec="1" />
+      <LifecycleManager name="ActivateZOHNode"
+        node_name="planner/wrench_planner/wrench_planner_component"
+        transition="activate"
+        timeout_sec="1" />
       <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
         csv_file_path="assets/kobe/gate_path.csv" />
@@ -55,6 +59,10 @@
           node_name="manualNode"
           transition="configure"
           timeout_sec="1" />
+        <LifecycleManager name="ConfigureZOHNode"
+          node_name="planner/wrench_planner/wrench_planner_component"
+          transition="configure"
+          timeout_sec="1" />
         <LifecycleManager name="ConfigureEmergencyNode"
           node_name="emergencyNode"
           transition="configure"
@@ -65,6 +73,10 @@
 
   <BehaviorTree ID="Emergency">
     <Sequence name="EmergencySequence">
+      <LifecycleManager name="DeactivateZOHNode"
+        node_name="planner/wrench_planner/wrench_planner_component"
+        transition="deactivate"
+        timeout_sec="1" />
       <LifecycleManager name="ActivateEmergencyNode"
         node_name="emergencyNode"
         transition="activate"
