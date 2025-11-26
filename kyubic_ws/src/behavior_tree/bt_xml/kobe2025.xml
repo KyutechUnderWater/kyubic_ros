@@ -7,19 +7,19 @@
         node_name="manualNode"
         transition="deactivate"
         timeout_sec="1" />
+      <ResetLocalization service_name="/localization/reset"
+        timeout_sec="2.0" />
       <LifecycleManager name="ActivateZOHNode"
         node_name="planner/wrench_planner/wrench_planner_component"
         transition="activate"
         timeout_sec="1" />
-      <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
         csv_file_path="assets/kobe/gate_path.csv" />
       <QrAction action_name="/planner/qr_planner/qr_plan" />
-
       <Switch2 name="Outbound_Selector"
-        variable="{selected_course}"
         case_1="A"
-        case_2="B">
+        case_2="B"
+        variable="{selected_course}">
         <WaypointAction name="Go_Right"
           action_name="planner/pdla_planner/pdla_plan"
           csv_file_path="assets/kobe/right.csv" />
@@ -29,23 +29,18 @@
         <AlwaysFailure name="Invalid_Course_Selection" />
       </Switch2>
       <FindPingerAction action_name="find_pinger" />
-
       <Switch2 name="Inbound_Selector"
-        variable="{selected_course}"
         case_1="A"
-        case_2="B">
-
+        case_2="B"
+        variable="{selected_course}">
         <WaypointAction name="Return_Right"
           action_name="planner/pdla_planner/pdla_plan"
           csv_file_path="assets/kobe/return_right.csv" />
-
         <WaypointAction name="Return_Left"
           action_name="planner/pdla_planner/pdla_plan"
           csv_file_path="assets/kobe/return_left.csv" />
-
         <AlwaysFailure name="Invalid_Course_Selection" />
       </Switch2>
-
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
   </BehaviorTree>
@@ -91,7 +86,8 @@
         <BatteryCheck />
         <Fallback>
           <Sequence>
-            <SubTree ID="Configure" selected_course="{selected_course}" />
+            <SubTree ID="Configure"
+              selected_course="{selected_course}" />
             <ReactiveSequence>
               <RetryUntilSuccessful num_attempts="10">
                 <CheckSensorsStatus leak="{leak}" />
@@ -105,7 +101,8 @@
                 case_2="auto"
                 variable="{mode}">
                 <SubTree ID="Manual" />
-                <SubTree ID="Auto" selected_course="{selected_course}" />
+                <SubTree ID="Auto"
+                  selected_course="{selected_course}" />
                 <AlwaysFailure />
               </Switch2>
             </ReactiveSequence>
@@ -140,14 +137,24 @@
       editable="true">
       <input_port name="action_name"
         default="find_pinger" />
-      <output_port name="current_yaw" />
-      <output_port name="current_score" />
     </Action>
     <Action ID="LifecycleManager"
       editable="true">
       <input_port name="node_name" />
       <input_port name="transition" />
       <input_port name="timeout_sec" />
+    </Action>
+    <Action ID="QrAction"
+      editable="true">
+      <input_port name="action_name"
+        default="qr_action" />
+    </Action>
+    <Action ID="ResetLocalization"
+      editable="true">
+      <input_port name="service_name"
+        default="/localization/reset" />
+      <input_port name="timeout_sec"
+        default="1.0" />
     </Action>
     <Action ID="UpdateMode"
       editable="true">
@@ -156,19 +163,11 @@
       <input_port name="auto_button" />
       <output_port name="mode" />
     </Action>
-    <Action ID="ResetLocalization" editable="true">
-      <input_port name="service_name" default="/localization/reset" />
-      <input_port name="timeout_sec" default="1.0" />
-    </Action>
-    <Action ID="WaypointAction" editable="true">
-      <input_port name="action_name" default="planner/pdla_planner/pdla_plan" />
+    <Action ID="WaypointAction"
+      editable="true">
+      <input_port name="action_name"
+        default="planner/pdla_planner/pdla_plan" />
       <input_port name="csv_file_path" />
-    </Action>
-    <Action ID="QrAction" editable="true">
-      <input_port name="action_name" default="qr_action" />
-    </Action>
-    <Action ID="FindPingerAction" editable="true">
-      <input_port name="action_name" default="find_pinger" />
     </Action>
   </TreeNodesModel>
 
