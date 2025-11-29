@@ -20,6 +20,7 @@ export HISTTIMEFORMAT="%F %T  "
 export RCUTILS_COLORIZED_OUTPUT=1
 export ROS_DOMAIN_ID=1
 source /home/ros/kyubic_ros/.venv/bin/activate
+source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
 EOT'
 
 # Add aliases to .bash_aliases
