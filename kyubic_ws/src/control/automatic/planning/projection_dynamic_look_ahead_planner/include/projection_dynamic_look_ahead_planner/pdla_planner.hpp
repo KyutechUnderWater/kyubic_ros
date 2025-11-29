@@ -40,6 +40,7 @@ private:
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_;
   rclcpp_action::Server<planner_msgs::action::PDLA>::SharedPtr action_server_;
 
+  rclcpp::TimerBase::SharedPtr timer_;
   std::shared_ptr<timer::Timeout> timeout;
 
   // Action Callbacks
@@ -58,6 +59,8 @@ private:
       goal_handle);
   bool _checkReached(PoseData & target_pose, Tolerance tolerance);
   void _print_waypoint(std::string label, size_t step_idx);
+
+  void timerCallback();
 
   std::vector<PoseData> target_pose_;
 
