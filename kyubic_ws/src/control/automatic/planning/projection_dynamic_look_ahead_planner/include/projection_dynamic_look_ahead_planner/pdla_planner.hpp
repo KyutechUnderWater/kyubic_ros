@@ -1,6 +1,7 @@
 #ifndef _PDLA_PLANNER_HPP
 #define _PDLA_PLANNER_HPP
 
+#include <cstdint>
 #include <localization_msgs/msg/odometry.hpp>
 #include <mutex>
 #include <path_planner/path_csv_loader.hpp>
@@ -9,6 +10,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <rclcpp_action/server_goal_handle.hpp>
+#include <timer/timeout.hpp>
 
 namespace planner
 {
@@ -28,6 +30,7 @@ public:
   explicit PDLAPlanner(const rclcpp::NodeOptions & options);
 
 private:
+  uint64_t timeout_ms;
   double look_ahead_scale;
   Tolerance reach_tolerance, waypoint_tolerance;
 
@@ -36,6 +39,9 @@ private:
   rclcpp::Publisher<planner_msgs::msg::WrenchPlan>::SharedPtr pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_;
   rclcpp_action::Server<planner_msgs::action::PDLA>::SharedPtr action_server_;
+
+  rclcpp::TimerBase::SharedPtr timer_;
+  std::shared_ptr<timer::Timeout> timeout;
 
   // Action Callbacks
   rclcpp_action::GoalResponse handle_goal(
@@ -53,6 +59,8 @@ private:
       goal_handle);
   bool _checkReached(PoseData & target_pose, Tolerance tolerance);
   void _print_waypoint(std::string label, size_t step_idx);
+
+  void timerCallback();
 
   std::vector<PoseData> target_pose_;
 
