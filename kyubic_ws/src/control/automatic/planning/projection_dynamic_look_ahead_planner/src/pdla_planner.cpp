@@ -12,7 +12,6 @@
 #include <Eigen/Dense>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <cstddef>
-#include <filesystem>
 #include <rclcpp_action/rclcpp_action.hpp>
 
 namespace planner
@@ -20,6 +19,8 @@ namespace planner
 
 PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_planner", options)
 {
+  timeout_ms = this->declare_parameter("timeout_ms", 10000);
+
   look_ahead_scale = this->declare_parameter("look_ahead_scale", 1.0);
 
   reach_tolerance.x = this->declare_parameter("reach_tolerance.x", 0.0);
@@ -33,6 +34,8 @@ PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_plann
   waypoint_tolerance.z = this->declare_parameter("waypoint_tolerance.z", 0.0);
   waypoint_tolerance.roll = this->declare_parameter("waypoint_tolerance.roll", 0.0);
   waypoint_tolerance.yaw = this->declare_parameter("waypoint_tolerance.yaw", 0.0);
+
+  timeout = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
   callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
@@ -82,6 +85,8 @@ void PDLAPlanner::handle_accepted(
 {
   std::lock_guard<std::mutex> lock(goal_mutex_);
   const auto goal = goal_handle->get_goal();
+
+  timeout->reset(this->get_clock()->now());
 
   std::string file_path = goal->csv_file_path;
   if (!file_path.empty() && file_path[0] != '/') {
@@ -162,6 +167,17 @@ void PDLAPlanner::odometryCallback(const localization_msgs::msg::Odometry::Share
     std::lock_guard<std::mutex> lock(goal_mutex_);
     active_goal_handle_.reset();
     RCLCPP_INFO(this->get_logger(), "Goal canceled.");
+    return;
+  }
+
+  if (timeout->check(this->get_clock()->now())) {
+    auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
+    result->success = false;
+    goal_handle->abort(result);
+
+    std::lock_guard<std::mutex> lock(goal_mutex_);
+    active_goal_handle_.reset();
+    RCLCPP_ERROR(this->get_logger(), "Timeout reached! Aborting goal.");
     return;
   }
 
