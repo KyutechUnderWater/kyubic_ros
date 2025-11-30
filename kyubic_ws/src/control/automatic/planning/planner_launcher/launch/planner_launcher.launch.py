@@ -15,6 +15,7 @@ def generate_launch_description():
             "pdla_planner.param.yaml",
         ]
     )
+
     path_planner_path = FindPackageShare("path_planner")
 
     cfg_qr_planner = PathJoinSubstitution(
