@@ -159,9 +159,6 @@ docker compose $compose_env_var start
 echo '⚡Initialize and Build'
 docker compose $compose_env_var exec kyubic-ros bash -c "/usr/bin/once_entrypoint.sh $passwd" >>${path}/.install.log 2>&1
 
-## Install nvim
-docker compose $compose_env_var exec kyubic-ros gosu ros bash -c "../docker/nvim_setup.sh $passwd" >>${path}/.install.log 2>&1
-
 ## Stop Container
 docker compose $compose_env_var stop
 #############################################################################
