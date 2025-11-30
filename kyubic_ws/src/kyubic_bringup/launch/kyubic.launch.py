@@ -11,6 +11,9 @@ def generate_launch_description():
     localization_dir = PathJoinSubstitution(
         [FindPackageShare("localization"), "launch"]
     )
+    # behavior_tree_dir = PathJoinSubstitution(
+    #     [FindPackageShare("behavior_tree"), "launch"]
+    # )
 
     return LaunchDescription(
         [
@@ -30,5 +33,11 @@ def generate_launch_description():
                     "log_level": "warn",
                 }.items(),
             ),
+            # IncludeLaunchDescription(
+            #     PathJoinSubstitution([behavior_tree_dir, "behavior_tree.launch.py"]),
+            #     launch_arguments={
+            #         "log_level": "warn",
+            #     }.items(),
+            # ),
         ]
     )
