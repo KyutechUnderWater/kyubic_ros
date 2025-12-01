@@ -144,7 +144,6 @@ RUN echo 'export HISTTIMEFORMAT="%F %T  "'  >> /home/ros/.bashrc && \
 	echo 'source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash'  >> /home/ros/.bashrc
 
 
-
 COPY ./entrypoint.sh /usr/bin
 COPY ./once_entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh /usr/bin/once_entrypoint.sh
