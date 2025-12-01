@@ -18,7 +18,6 @@ gosu ros bash -l -c 'cd ~/kyubic_ros && uv venv --system-site-packages && uv syn
 gosu ros bash -c 'cat << EOT >> ~/.bashrc
 export ROS_DOMAIN_ID=1
 source /home/ros/kyubic_ros/.venv/bin/activate
-source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
 EOT'
 
 # Add aliases to .bash_aliases

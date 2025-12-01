@@ -140,7 +140,9 @@ RUN chmod +x /home/ros/Apps/nvim/nvim_setup.sh && \
 ## Set Environment
 ######################################
 RUN echo 'export HISTTIMEFORMAT="%F %T  "'  >> /home/ros/.bashrc && \
-	echo 'export RCUTILS_COLORIZED_OUTPUT=1'  >> /home/ros/.bashrc
+	echo 'export RCUTILS_COLORIZED_OUTPUT=1'  >> /home/ros/.bashrc && \
+	echo 'source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash'  >> /home/ros/.bashrc
+
 
 
 COPY ./entrypoint.sh /usr/bin
