@@ -125,6 +125,24 @@ RUN apt update && \
 	echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib' >>/home/ros/.bashrc
 
 
+######################################
+## Install Neovim
+######################################
+COPY ./nvim_setup.sh /home/ros/Apps/nvim/nvim_setup.sh
+RUN chmod +x /home/ros/Apps/nvim/nvim_setup.sh && \
+	/home/ros/Apps/nvim/nvim_setup.sh && \
+	chown -R ros:ros /home/ros && \
+	gosu ros bash -i -c 'nvim --headless +Lazy +qa' && \
+	gosu ros bash -i -c 'nvim --headless -c "autocmd User MasonToolsUpdateCompleted quitall" -c "MasonToolsInstall"'
+
+
+######################################
+## Set Environment
+######################################
+RUN echo 'export HISTTIMEFORMAT="%F %T  "'  >> /home/ros/.bashrc && \
+	echo 'export RCUTILS_COLORIZED_OUTPUT=1'  >> /home/ros/.bashrc
+
+
 COPY ./entrypoint.sh /usr/bin
 COPY ./once_entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh /usr/bin/once_entrypoint.sh
