@@ -50,7 +50,7 @@ int main(int argc, char ** argv)
   factory.registerNodeType<AlwaysRunning>("AlwaysRunning", logger_pub);
   factory.registerNodeType<CheckSensorsStatus>("CheckSensorsStatus", logger_pub, node);
   factory.registerNodeType<BatteryCheck>("BatteryCheck", logger_pub, node);
-  factory.registerNodeType<UpdateMode>("UpdateMode", logger_pub, node);
+  factory.registerNodeType<UpdateMode>("UpdateMode", logger_pub, node, 500);
   factory.registerNodeType<LifecycleManager>("LifecycleManager", logger_pub, node);
   factory.registerNodeType<WaypointAction>("WaypointAction", logger_pub, node);
   factory.registerNodeType<QrAction>("QrAction", logger_pub, node);

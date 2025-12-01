@@ -73,7 +73,7 @@ BT::NodeStatus UpdateMode::tick()
 {
   std::lock_guard<std::mutex> lock(mutex_);
   // If timeout
-  if (timeout_->check(ros_node_->get_clock()->now())) {
+  if (timeout_->is_timeout(ros_node_->get_clock()->now())) {
     return BT::NodeStatus::FAILURE;
   }
 

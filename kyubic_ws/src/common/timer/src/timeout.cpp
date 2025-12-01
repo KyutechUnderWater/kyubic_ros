@@ -19,10 +19,10 @@ Timeout::Timeout(rclcpp::Time start_time, int64_t timeout)
 
 void Timeout::reset(rclcpp::Time start_time) { this->start_time = start_time; }
 
-bool Timeout::check(rclcpp::Time now)
+bool Timeout::is_timeout(rclcpp::Time now)
 {
   elapsed_time = now - start_time;
-  if (elapsed_time.nanoseconds() > timeout) {
+  if (timeout != 0 && elapsed_time.nanoseconds() > timeout) {
     return true;
   }
   return false;

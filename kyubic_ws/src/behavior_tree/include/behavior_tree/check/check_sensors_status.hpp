@@ -94,7 +94,7 @@ private:
     bool is_healthy(rclcpp::Time now)
     {
       std::lock_guard<std::mutex> lock(mutex);
-      if (timer->check(now)) {
+      if (timer->is_timeout(now)) {
         return false;
       }
       return true;
