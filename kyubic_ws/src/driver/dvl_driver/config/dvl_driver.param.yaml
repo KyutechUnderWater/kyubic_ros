@@ -3,4 +3,4 @@
     ip_address: 192.168.9.10
     listener_port: 1036
     sender_port: 1033
-    timeout: 2000000000 # [ns]
+    timeout_ms: 2000 # [ms]

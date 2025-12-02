@@ -47,7 +47,7 @@ public:
 private:
   std::string portname;
   int baudrate;
-  int64_t timeout;
+  uint64_t timeout_ms;
 
   std::shared_ptr<timer::Timeout> timeout_;
   std::shared_ptr<g366::G366> g366_;

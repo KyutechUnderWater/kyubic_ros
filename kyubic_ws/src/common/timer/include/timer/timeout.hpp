@@ -50,7 +50,7 @@ public:
    * @param now current time
    * @return bool true if timeout, otherwise false
    */
-  bool check(rclcpp::Time now);
+  bool is_timeout(rclcpp::Time now);
 
   /**
    * @brief Get elapsed time

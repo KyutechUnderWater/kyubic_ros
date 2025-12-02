@@ -38,7 +38,7 @@ private:
   std::string address;
   int listener_port;
   int sender_port;
-  uint64_t timeout;
+  uint64_t timeout_ms;
 
   const std::string CRCF = "\r\n";
   bool command_mode = false;

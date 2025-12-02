@@ -96,7 +96,7 @@ void LogicDistroRP2040::_check_timeout()
 {
   std::lock_guard<std::mutex> lock(mutex_);
 
-  if (timeout_->check(this->get_clock()->now())) {
+  if (timeout_->is_timeout(this->get_clock()->now())) {
     auto msg = std::make_unique<driver_msgs::msg::PowerState>();
     msg->header.stamp = this->get_clock()->now();
     msg->status.id = common_msgs::msg::Status::ERROR;
