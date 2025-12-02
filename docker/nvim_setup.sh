@@ -1,14 +1,22 @@
 #!/bin/bash
 
 HOME_DIR=/home/ros
+export NVM_DIR="$HOME_DIR/.nvm"
 
 # Install Requirement pkg
-echo $1 | sudo -S apt update
-sudo apt install -y build-essential cmake ripgrep xsel fuse3 cargo zip curl git
+apt update
+apt install -y build-essential cmake ripgrep xsel fuse3 cargo zip curl git
 
 # installs NVM (Node Version Manager)
+mkdir -p $NVM_DIR
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-\. "$HOME/.nvm/nvm.sh"
+cat <<EOT >>$HOME_DIR/.bashrc
+export NVM_DIR="/home/ros/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+EOT
+
+\. "$NVM_DIR/nvm.sh"
 
 # download and install Node.js
 nvm install 24
@@ -23,11 +31,11 @@ npm -v # should print `11.3.0`
 orig_path=$(pwd)
 mkdir -p $HOME_DIR/Apps/nvim && nvim_dir=$_ && cd $nvim_dir
 curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage
-sudo chmod u+x ./nvim-linux-x86_64.appimage && $_ --version
+chmod u+x ./nvim-linux-x86_64.appimage && $_ --version
 if [[ $? == 0 ]]; then
-	sudo ln -s $nvim_dir/nvim-linux-x86_64.appimage /usr/bin/nvim
+	ln -s $nvim_dir/nvim-linux-x86_64.appimage /usr/bin/nvim
 else
-	./nvim-linux-x86_64.appimage --appimage-extract >&/dev/null && sudo ln -s $nvim_dir/squashfs-root/usr/bin/nvim /usr/bin/nvim
+	./nvim-linux-x86_64.appimage --appimage-extract >&/dev/null && ln -s $nvim_dir/squashfs-root/usr/bin/nvim /usr/bin/nvim
 fi
 cd $orig_path
 

@@ -9,7 +9,8 @@
 
 #ifndef _BATTERY_CHECK_HPP
 #define _BATTERY_CHECK_HPP
-#include <behaviortree_cpp/condition_node.h>
+
+#include <behaviortree_cpp/action_node.h>
 
 #include <atomic>
 #include <driver_msgs/msg/power_state.hpp>
@@ -19,7 +20,7 @@
 /**
  * @brief Condition node to check the health status of battery voltage.
  */
-class BatteryCheck : public BT::ConditionNode
+class BatteryCheck : public BT::StatefulActionNode
 {
 public:
   /**
@@ -32,18 +33,27 @@ public:
     const std::string & name, const BT::NodeConfig & config,
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub,
     rclcpp::Node::SharedPtr ros_node);
+
   /**
    * @brief Defines the input and output ports for this node.
    * @return A list of ports.
    */
   static BT::PortsList providedPorts();
+
   /**
-   * @brief Checks the current voltage of the battery.
-   * @details Identifies 4S/6S battery based on voltage threshold (16.8V).
-   * @return BT::NodeStatus::SUCCESS if voltage is healthy.
-   * BT::NodeStatus::FAILURE if voltage is low.
+   * @brief Start logic
    */
-  BT::NodeStatus tick() override;
+  BT::NodeStatus onStart() override;
+
+  /**
+   * @brief Performs the battery check logic.
+   */
+  BT::NodeStatus onRunning() override;
+
+  /**
+   * @brief Called when the node is halted.
+   */
+  void onHalted() override;
 
 private:
   rclcpp::Node::SharedPtr ros_node_;
@@ -51,6 +61,7 @@ private:
   rclcpp::Subscription<driver_msgs::msg::PowerState>::SharedPtr power_sub_;
 
   std::atomic<float> logic_voltage_, act_voltage_;
+  std::atomic<bool> topic_received_;
 
   bool is_battery_good(float voltage);
   void logger(bool logic_check, bool act_check);

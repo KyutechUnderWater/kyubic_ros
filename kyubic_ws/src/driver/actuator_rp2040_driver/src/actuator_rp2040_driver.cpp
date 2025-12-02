@@ -33,10 +33,10 @@ ActuatorRP2040::ActuatorRP2040(const rclcpp::NodeOptions & options)
   baudrate = this->declare_parameter("baudrate", 115200);
   max_thrust = this->declare_parameter("max_thrust", 80.0f);
   max_thrust_per = this->declare_parameter("max_thrust_per", 30.0f);
-  timeout_sec = this->declare_parameter("timeout", 1.0);
+  timeout_ms = this->declare_parameter("timeout_ms", 0);
 
   // Initialize Heartbeat Timeout
-  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_sec);
+  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
   // Initialize Serial Port
   try {
@@ -124,7 +124,7 @@ void ActuatorRP2040::wrench_callback(geometry_msgs::msg::WrenchStamped::SharedPt
   float total_thrust = 0.0;
 
   // Check timeout with timer library
-  if (timeout_->check(this->get_clock()->now())) {
+  if (timeout_->is_timeout(this->get_clock()->now())) {
     RCLCPP_WARN(this->get_logger(), "HeartBeat timeout. Thrusts set 0[N].");
     thrusts.fill(0.0f);
   } else {
