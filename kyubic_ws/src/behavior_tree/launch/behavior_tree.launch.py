@@ -69,6 +69,11 @@ def generate_launch_description():
         remappings=[
             ("power_state", "/logic_distro_rp2040_driver/power_state"),
         ],
+        arguments=[
+                "--ros-args",
+                "--log-level",
+                "info",
+                ],
         output="screen",
     )
 
