@@ -334,7 +334,7 @@ void PDLAPlanner::timerCallback()
     return;
   }
 
-  if (timeout_ms > 0 && timeout->check(this->get_clock()->now())) {
+  if (timeout_ms > 0 && timeout->is_timeout(this->get_clock()->now())) {
     auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
     result->success = false;
     active_goal_handle_->abort(result);
