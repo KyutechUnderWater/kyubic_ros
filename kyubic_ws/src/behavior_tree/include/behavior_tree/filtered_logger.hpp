@@ -16,8 +16,9 @@ public:
   {
     // 1. 除外フィルタ（UpdateMode, CheckSensorStatus を無視）
     if (
-      node.name() == "UpdateMode" || node.name() == "CheckSensorsStatus" ||
-      node.name() == "RetryUntilSuccessful") {
+      (status == BT::NodeStatus::SUCCESS || status == BT::NodeStatus::RUNNING) &&
+      (node.name() == "UpdateMode" || node.name() == "CheckSensorsStatus" ||
+       node.name() == "RetryUntilSuccessful")) {
       return;
     }
 
