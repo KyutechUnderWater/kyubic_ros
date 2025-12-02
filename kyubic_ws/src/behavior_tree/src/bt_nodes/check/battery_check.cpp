@@ -62,6 +62,7 @@ bool BatteryCheck::is_battery_good(float voltage)
       return false;
     }
   }
+  RCLCPP_INFO(ros_node_->get_logger(), "Battery: %.2f V", voltage);
   return true;
 }
 

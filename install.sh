@@ -8,7 +8,8 @@ Options:
 	-p, --project-name string    Name of patckage to install
 	-c, --cmd-tools4client       Registering commands to shut down and ping kyubic remotely
 	    --nvidia                 if nvidia drivers are available, they are used
-	    --no-cache               Whether to build Dockerfile without cache  \n
+	    --no-cache               Whether to build Dockerfile without cache
+	    --no-build               Whether to create container without cache  \n
 EOF
 
 # Argument Parser
@@ -19,6 +20,7 @@ ArgumentParser() {
 	local project_name=""
 	local nvidia=false
 	local no_cache=""
+	local no_build=""
 	local cmd_tools4client=false
 
 	while (($# > 0)); do
@@ -49,6 +51,11 @@ ArgumentParser() {
 			shift
 			;;
 
+		--no-build)
+			no_build="--no-build"
+			shift
+			;;
+
 		-c | --cmd-tools4client)
 			cmd_tools4client=true
 			shift
@@ -66,6 +73,7 @@ ArgumentParser() {
 		["project_name"]=\"${project_name}\"
 		["nvidia"]=$nvidia
 		["no_cache"]=$no_cache
+		["no_build"]=$no_build
 		["cmd_tools4client"]=$cmd_tools4client
 	)"
 }
@@ -81,6 +89,7 @@ fi
 project_name=${args["project_name"]}
 nvidia=${args["nvidia"]}
 no_cache=${args["no_cache"]}
+no_build=${args["no_build"]}
 cmd_tools4client=${args["cmd_tools4client"]}
 
 path=$(pwd)
@@ -150,17 +159,17 @@ cd ./docker || exit
 docker compose $compose_env_var config
 
 # Create and Start container
-echo '💿 Dockerfile Build. Logfile path is ${path}/.install.log. Wait for the build to complete...'
-docker compose $compose_env_var build ${no_cache} >>${path}/.install.log
+if [ "$no_build" = "" ]; then
+	echo '💿 Dockerfile Build. Logfile path is ${path}/.install.log. Wait for the build to complete...'
+	docker compose $compose_env_var build ${no_cache} >>${path}/.install.log
+fi
+
 docker compose $compose_env_var create
 docker compose $compose_env_var start
 
 ## Run setup
 echo '⚡Initialize and Build'
 docker compose $compose_env_var exec kyubic-ros bash -c "/usr/bin/once_entrypoint.sh $passwd" >>${path}/.install.log 2>&1
-
-## Install nvim
-docker compose $compose_env_var exec kyubic-ros gosu ros bash -c "../docker/nvim_setup.sh $passwd" >>${path}/.install.log 2>&1
 
 ## Stop Container
 docker compose $compose_env_var stop
