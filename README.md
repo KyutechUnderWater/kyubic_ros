@@ -28,14 +28,16 @@ Create docker container and Setup continer (user password, enviroment variable, 
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git
-cd kyubic_ros && . install.sh
+cd kyubic_ros && git submodule update --init --recursive
+. install.sh
 ```
 
 (Optional) If you want to use CUDA
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git
-cd kyubic_ros && . install.sh --nvidia
+cd kyubic_ros && git submodule update --init --recursive
+. install.sh --nvidia
 ```
 
 > [!NOTE]
@@ -80,7 +82,8 @@ exit # or <ctrl + d>
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git -b humble kyubic_ros_humble
-cd $_ && . install.sh -p humble
+cd $_ && git submodule update --init --recursive
+. install.sh -p humble && \
 ros2_start_humble  # Start container and Run bash
 ```
 
@@ -96,7 +99,8 @@ First environment:
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git kyubic_ros_first
-cd $_ && . install.sh
+cd $_ && git submodule update --init --recursive
+. install.sh && \
 ros2_start  # Start container and Run bash
 ```
 
@@ -104,7 +108,8 @@ Second environment:
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git kyubic_ros_second
-cd $_ && . install.sh -p second  # Set project name
+cd $_ && git submodule update --init --recursive
+. install.sh -p second && \  # Set project name
 ros2_start_second  # Start container and Run bash
 ```
 
@@ -112,7 +117,8 @@ First CUDA environment:
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git kyubic_ros_first_cuda
-cd $_ && . install.sh --nvidia
+cd $_ && git submodule update --init --recursive
+. install.sh --nvidia && \
 ros2_start_nvidia  # Start container and Run bash
 ```
 
@@ -120,6 +126,7 @@ Second CUDA environment:
 
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git kyubic_ros_second_cuda
-cd $_ && . install.sh --nvidia -p second  # Set project name
+cd $_ && git submodule update --init --recursive
+. install.sh --nvidia -p second && \  # Set project name
 ros2_start_second_nvidia  # Start container and Run bash
 ```
