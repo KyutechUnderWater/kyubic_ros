@@ -52,6 +52,7 @@ bool BatteryCheck::is_battery_good(float voltage)
       return false;
     }
   }
+  RCLCPP_INFO(ros_node_->get_logger(), "Low Battery (4S): %.2f V <= 13.2 V", voltage);
   return true;
 }
 
