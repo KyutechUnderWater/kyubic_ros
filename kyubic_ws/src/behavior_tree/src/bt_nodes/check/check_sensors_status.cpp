@@ -55,7 +55,7 @@ BT::NodeStatus CheckSensorsStatus::tick()
 {
   auto now = ros_node_->get_clock()->now();
 
-  logger(now);
+  //logger(now);
 
   if (
     imu_monitor_->is_healthy(now) || depth_monitor_->is_healthy(now) ||
