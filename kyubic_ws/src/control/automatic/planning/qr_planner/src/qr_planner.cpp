@@ -355,7 +355,7 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
 
     msg->targets.x = odom_copy->pose.position.x;  // 0.0
     msg->targets.y = odom_copy->pose.position.y;  // 0.0
-    msg->targets.z = 0.1;                         // 安全深度
+    msg->targets.z = 0.3;                         // 安全深度
     msg->targets.roll = 0.0;
     msg->targets.yaw = 0.0;  // リセット
 
@@ -411,7 +411,7 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
   // 通常時: 現在地(Odom) + 相対移動量(Target)
   msg->targets.x = odom_copy->pose.position.x + target_copy.x;
   msg->targets.y = odom_copy->pose.position.y + target_copy.y;
-  msg->targets.z = 0.2;
+  msg->targets.z = 0.3;
   msg->targets.roll = 0.0;
   msg->targets.yaw = odom_copy->pose.orientation.z + target_copy.yaw;
 

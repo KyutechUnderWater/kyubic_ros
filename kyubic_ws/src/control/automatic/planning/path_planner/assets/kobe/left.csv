@@ -1,6 +1,6 @@
 parameter_label,value,x,y,z,z_mode,roll,yaw,blank,catmull_x,catmull_y,catmull_z,catmull_z_mode,catmull_roll,catmull_yaw
-checkpoint_end_row,2.0,0.5,0.3,0.3,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,0.0,0.0
-catmull_rom,0.0,0.8,0.3,0.3,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,0.0,0.0
+checkpoint_end_row,2.0,2.0,0.0,0.3,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,0.0,0.0
+catmull_rom,0.0,3.0,0.0,0.3,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,0.0,0.0
 catmull_end_row,2.0,,,,,,,,,,,,,,
 catmull_density,0.0,,,,,,,,,,,,,,
 catmull_min_distance,0.0,,,,,,,,,,,,,,
