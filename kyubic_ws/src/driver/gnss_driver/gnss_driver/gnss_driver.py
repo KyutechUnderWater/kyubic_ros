@@ -4,9 +4,9 @@ from sensor_msgs.msg import NavSatFix, NavSatStatus
 from std_msgs.msg import Float64
 from std_msgs.msg import Float32MultiArray
 from driver_msgs.msg import Gnss
+import sys
 import socket
 import pynmea2
-import math
 
 
 class GnssPublisher(Node):
@@ -57,6 +57,7 @@ class GnssPublisher(Node):
         try:
             self.get_logger().info(f"Connecting to {self.tcp_ip}:{self.tcp_port}...")
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.settimeout(1.0)
             self.socket.connect((self.tcp_ip, self.tcp_port))
             self.get_logger().info("Connection successful.")
 
@@ -226,6 +227,7 @@ class GnssPublisher(Node):
 
         except Exception as e:
             self.get_logger().error(f"Error: {e}")
+            sys.exit(1)
         finally:
             if self.socket:
                 self.socket.close()

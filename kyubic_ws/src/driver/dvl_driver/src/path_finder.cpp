@@ -32,12 +32,24 @@ void error(const char * msg)
 
 // TODO: socket通信のラッパーライブラリを作る
 // TODO: socketのcloseをデコンストラクタに入れる
-Listener::Listener(const char * _address, const int _port, const int _timeout)
-: address(_address), port(_port), timeout(_timeout)
+Listener::Listener(const char * _address, const int _port, const int _timeout_ms)
+: address(_address), port(_port), timeout_ms(_timeout_ms)
 {
   // AF_INET: IPv4, SOCK_STREAM: TCP
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
     error("ERROR opening socket");
+  }
+
+  // Set time out
+  struct timeval tv;
+  tv.tv_sec = static_cast<int>(timeout_ms / 1000);
+  tv.tv_usec = (timeout_ms - tv.tv_sec * 1000) * 1000;
+  std::cout << "Set timeout -> " << tv.tv_sec << "[s] " << tv.tv_usec << "[us]" << std::endl;
+  if (setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv)) < 0) {
+    std::cout << "ERROR setting connect timeout" << std::endl;
+  }
+  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
+    std::cout << "ERROR setting recv timeout" << std::endl;
   }
 
   server.sin_family = AF_INET;
@@ -46,15 +58,6 @@ Listener::Listener(const char * _address, const int _port, const int _timeout)
 
   if (connect(sockfd, (struct sockaddr *)&server, sizeof(server)) < 0) {
     error("DVL Listener: ERROR connecting");
-  }
-
-  // Set time out
-  struct timeval tv;
-  tv.tv_sec = static_cast<int>(timeout / 1000);
-  tv.tv_usec = (timeout - tv.tv_sec * 1000) * 1000;
-  std::cout << tv.tv_sec << " " << tv.tv_usec << std::endl;
-  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
-    std::cout << "ERROR setting socket timeout" << std::endl;
   }
 
   std::cout << "DVL Listener Start!!!" << std::endl;
@@ -184,8 +187,8 @@ void Listener::print_info()
   std::cout << "bit_array is cleard  " << std::endl;
 }
 
-Sender::Sender(const char * _address, const int _port, const int _timeout)
-: address(_address), port(_port), timeout(_timeout)
+Sender::Sender(const char * _address, const int _port, const int _timeout_ms)
+: address(_address), port(_port), timeout_ms(_timeout_ms)
 {
   // AF_INET: IPv4, SOCK_STREAM: TCP
   if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -202,8 +205,8 @@ Sender::Sender(const char * _address, const int _port, const int _timeout)
 
   // Set time out
   struct timeval tv;
-  tv.tv_sec = static_cast<int>(timeout / 1000);
-  tv.tv_usec = (timeout - tv.tv_sec * 1000) * 1000;
+  tv.tv_sec = static_cast<int>(timeout_ms / 1000);
+  tv.tv_usec = (timeout_ms - tv.tv_sec * 1000) * 1000;
   if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0) {
     error("ERROR setting socket timeout");
   }
