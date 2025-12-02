@@ -83,7 +83,7 @@ def generate_launch_description():
                 ],  # enable intra-process communication
             ),
             ComposableNode(
-                name="wrench_planner_component",
+                name="velocity_wrench_planner_component",
                 namespace="planner/wrench_planner",
                 package="wrench_planner",
                 plugin="planner::VelocityWrenchPlanner",
