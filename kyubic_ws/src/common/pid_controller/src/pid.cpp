@@ -53,6 +53,8 @@ std::array<double, 3> PositionPID::get_each_term()
   return std::to_array(term);
 }
 
+void PositionPID::set_offset(double offset) { this->offset = offset; }
+
 void PositionPID::reset_integral() { i = 0.0; }
 
 VelocityPID::VelocityPID(const VelocityPIDParameter param)
@@ -92,6 +94,8 @@ double VelocityPID::update(double current, double target)
 
   return std::clamp(u + offset, lo, hi);
 }
+
+void VelocityPID::set_offset(double offset) { this->offset = offset; }
 
 void VelocityPID::reset() { pre_u = 0.0; }
 
