@@ -28,9 +28,7 @@ def generate_launch_description():
     )
 
     # launchファイルのパス
-    planner_launcher_dir = PathJoinSubstitution(
-        [FindPackageShare("planner_launcher"), "launch"]
-    )
+    planner_launcher_dir = PathJoinSubstitution([FindPackageShare("planner_launcher"), "launch"])
 
     # ノードの定義
     plannler_launch = IncludeLaunchDescription(
@@ -76,10 +74,10 @@ def generate_launch_description():
             ("power_state", "/logic_distro_rp2040_driver/power_state"),
         ],
         arguments=[
-                "--ros-args",
-                "--log-level",
-                "info",
-                ],
+            "--ros-args",
+            "--log-level",
+            "info",
+        ],
         output="screen",
     )
 

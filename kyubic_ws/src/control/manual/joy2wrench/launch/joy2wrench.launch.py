@@ -82,6 +82,4 @@ def generate_launch_description():
         ],
     )
 
-    return LaunchDescription(
-        [log_level_arg, action_component_container, lifecycle_manager]
-    )
+    return LaunchDescription([log_level_arg, action_component_container, lifecycle_manager])

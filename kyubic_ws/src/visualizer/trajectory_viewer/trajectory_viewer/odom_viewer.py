@@ -28,9 +28,7 @@ class OdomPlotter(Node):
         self.STATUS_ERROR = 2
 
         # odomトピックのサブスクライバを作成
-        self.subscription = self.create_subscription(
-            Odometry, "odom", self.odom_callback, 10
-        )
+        self.subscription = self.create_subscription(Odometry, "odom", self.odom_callback, 10)
         self.get_logger().info(f"'{self.subscription.topic_name}' の購読を開始")
 
         # Matplotlibのグラフと軸を準備
@@ -41,9 +39,7 @@ class OdomPlotter(Node):
         self.setup_plot()
 
         # アニメーションを作成
-        self.ani = animation.FuncAnimation(
-            self.fig, self.update_plot, interval=100, blit=False
-        )
+        self.ani = animation.FuncAnimation(self.fig, self.update_plot, interval=100, blit=False)
 
     def setup_plot(self):
         """グラフの初期設定"""
@@ -64,9 +60,7 @@ class OdomPlotter(Node):
             or msg.status.imu == self.STATUS_ERROR
             or msg.status.dvl == self.STATUS_ERROR
         ):
-            self.get_logger().warn(
-                "エラー状態のデータを受信したため、プロットをスキップします。"
-            )
+            self.get_logger().warn("エラー状態のデータを受信したため、プロットをスキップします。")
             return
 
         # ロックを取得してリストにデータを追加

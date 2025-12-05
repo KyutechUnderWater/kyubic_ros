@@ -7,9 +7,7 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    config = PathJoinSubstitution(
-        [FindPackageShare("emergency"), "config", "emergency.param.yaml"]
-    )
+    config = PathJoinSubstitution([FindPackageShare("emergency"), "config", "emergency.param.yaml"])
     log_level_arg = DeclareLaunchArgument(
         "log_level",
         default_value=["debug"],
@@ -42,6 +40,4 @@ def generate_launch_description():
         ],
     )
 
-    return LaunchDescription(
-        [log_level_arg, emergency_surfacing_node, lifecycle_manager]
-    )
+    return LaunchDescription([log_level_arg, emergency_surfacing_node, lifecycle_manager])

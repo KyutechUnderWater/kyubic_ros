@@ -28,4 +28,3 @@ def generate_launch_description():
     )
 
     return LaunchDescription([log_level_arg, gnss_node])
-

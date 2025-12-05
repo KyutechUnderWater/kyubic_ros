@@ -63,9 +63,7 @@ class NodeManager:
         node_name = node["node_name"]
         if node_name not in self.processes:
             # ノードを起動
-            process = subprocess.Popen(
-                ["ros2", "run", node["package"], node["executable"]]
-            )
+            process = subprocess.Popen(["ros2", "run", node["package"], node["executable"]])
             self.processes[node_name] = process
             self.node_status[node_name]["label"].config(text="Running")
             self.node_status[node_name]["button"].config(text=f"Stop {node['name']}")
@@ -104,14 +102,10 @@ class NodeManager:
                 node_name = node["node_name"]
                 if node_name in active_nodes:
                     self.node_status[node_name]["label"].config(text="Running")
-                    self.node_status[node_name]["button"].config(
-                        text=f"Stop {node['name']}"
-                    )
+                    self.node_status[node_name]["button"].config(text=f"Stop {node['name']}")
                 else:
                     self.node_status[node_name]["label"].config(text="Stopped")
-                    self.node_status[node_name]["button"].config(
-                        text=f"Start {node['name']}"
-                    )
+                    self.node_status[node_name]["button"].config(text=f"Start {node['name']}")
 
             time.sleep(1)
 

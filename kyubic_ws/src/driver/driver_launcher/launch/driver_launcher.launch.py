@@ -36,12 +36,12 @@ def generate_launch_description():
                     "log_level": LaunchConfiguration("log_level"),
                 }.items(),
             ),
-            IncludeLaunchDescription(
-                PathJoinSubstitution([dvl_driver_dir, "dvl_driver.launch.py"]),
-                launch_arguments={
-                    "log_level": LaunchConfiguration("log_level"),
-                }.items(),
-            ),
+            # IncludeLaunchDescription(
+            #     PathJoinSubstitution([dvl_driver_dir, "dvl_driver.launch.py"]),
+            #     launch_arguments={
+            #         "log_level": LaunchConfiguration("log_level"),
+            #     }.items(),
+            # ),
             # IncludeLaunchDescription(
             #     PathJoinSubstitution([gnss_driver_dir, "gnss_driver.launch.py"]),
             #     launch_arguments={
@@ -60,9 +60,7 @@ def generate_launch_description():
                 }.items(),
             ),
             IncludeLaunchDescription(
-                PathJoinSubstitution(
-                    [sensors_esp32_driver_dir, "sensors_esp32_driver.launch.py"]
-                ),
+                PathJoinSubstitution([sensors_esp32_driver_dir, "sensors_esp32_driver.launch.py"]),
                 launch_arguments={
                     "log_level": LaunchConfiguration("log_level"),
                 }.items(),

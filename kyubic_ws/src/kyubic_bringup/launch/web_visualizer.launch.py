@@ -13,20 +13,20 @@ def generate_launch_description():
         description="Logging level",
     )
 
-    joy_common_dir = PathJoinSubstitution([FindPackageShare("joy_common"), "launch"])
-    kyubic_bringup_dir = PathJoinSubstitution([FindPackageShare("kyubic_bringup_dir"), "launch"])
+    web_controller_dir = PathJoinSubstitution([FindPackageShare("web_controller"), "launch"])
+    dashboard_dir = PathJoinSubstitution([FindPackageShare("dashboard"), "launch"])
 
     return LaunchDescription(
         [
             log_level_arg,
             IncludeLaunchDescription(
-                PathJoinSubstitution[joy_common_dir, "joy_common.launch.py"],
+                PathJoinSubstitution([web_controller_dir, "web_controller.launch.py"]),
                 launch_arguments={
                     "log_level": LaunchConfiguration("log_level"),
                 }.items(),
             ),
             IncludeLaunchDescription(
-                PathJoinSubstitution([kyubic_bringup_dir, "client_visualizer.launch.py"]),
+                PathJoinSubstitution([dashboard_dir, "dashboard.launch.py"]),
                 launch_arguments={
                     "log_level": LaunchConfiguration("log_level"),
                 }.items(),
