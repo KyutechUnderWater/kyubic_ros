@@ -13,20 +13,20 @@ def generate_launch_description():
         description="Logging level",
     )
 
-    rt_pose_plotter_dir = PathJoinSubstitution([FindPackageShare("rt_pose_plotter"), "launch"])
-    trajectory_viewer_dir = PathJoinSubstitution([FindPackageShare("trajectory_viewer"), "launch"])
+    web_controller_dir = PathJoinSubstitution([FindPackageShare("web_controller"), "launch"])
+    dashboard_dir = PathJoinSubstitution([FindPackageShare("dashboard"), "launch"])
 
     return LaunchDescription(
         [
             log_level_arg,
             IncludeLaunchDescription(
-                PathJoinSubstitution([rt_pose_plotter_dir, "rt_pose_plotter.launch.py"]),
+                PathJoinSubstitution([web_controller_dir, "web_controller.launch.py"]),
                 launch_arguments={
                     "log_level": LaunchConfiguration("log_level"),
                 }.items(),
             ),
             IncludeLaunchDescription(
-                PathJoinSubstitution([trajectory_viewer_dir, "trajectory_viewer.launch.py"]),
+                PathJoinSubstitution([dashboard_dir, "dashboard.launch.py"]),
                 launch_arguments={
                     "log_level": LaunchConfiguration("log_level"),
                 }.items(),
