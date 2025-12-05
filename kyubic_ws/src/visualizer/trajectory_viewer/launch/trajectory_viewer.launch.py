@@ -12,9 +12,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             IncludeLaunchDescription(
-                PathJoinSubstitution(
-                    [trajectory_viewer_launcher_dir, "odom_viewer.launch.py"]
-                ),
+                PathJoinSubstitution([trajectory_viewer_launcher_dir, "odom_viewer.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                     # "odom_topic_name": "/localization/odom",

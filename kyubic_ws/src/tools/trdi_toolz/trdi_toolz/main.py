@@ -23,9 +23,7 @@ class DVLCommandClient(Node):
             depth=10,
         )
 
-        self.cli = self.create_client(
-            CommandService, "dvl_command", qos_profile=qos_profile
-        )
+        self.cli = self.create_client(CommandService, "dvl_command", qos_profile=qos_profile)
         self.get_logger().info("サービス dvl_command を待機中...")
 
         # サービスが利用可能になるまで待機
@@ -33,9 +31,7 @@ class DVLCommandClient(Node):
             if not rclpy.ok():
                 self.get_logger().error("ROS2がシャットダウンされました。")
                 sys.exit(0)
-            self.get_logger().info(
-                "サービス dvl_command はまだ利用できません。再試行中..."
-            )
+            self.get_logger().info("サービス dvl_command はまだ利用できません。再試行中...")
         self.get_logger().info("サービス dvl_command が利用可能になりました。")
 
         self._future = None
@@ -82,8 +78,7 @@ def main():
 
     dvl_client = DVLCommandClient()
 
-    ros_thread = threading.Thread(
-        target=rclpy_thread_function, args=(dvl_client,))
+    ros_thread = threading.Thread(target=rclpy_thread_function, args=(dvl_client,))
     ros_thread.daemon = True  # メインスレッド終了時に一緒に終了
     ros_thread.start()
 

@@ -14,9 +14,7 @@ def generate_launch_description():
     )
 
     joy_common_dir = PathJoinSubstitution([FindPackageShare("joy_common"), "launch"])
-    kyubic_bringup_dir = PathJoinSubstitution(
-        [FindPackageShare("kyubic_bringup_dir"), "launch"]
-    )
+    kyubic_bringup_dir = PathJoinSubstitution([FindPackageShare("kyubic_bringup_dir"), "launch"])
 
     return LaunchDescription(
         [
@@ -28,9 +26,7 @@ def generate_launch_description():
                 }.items(),
             ),
             IncludeLaunchDescription(
-                PathJoinSubstitution(
-                    [kyubic_bringup_dir, "client_visualizer.launch.py"]
-                ),
+                PathJoinSubstitution([kyubic_bringup_dir, "client_visualizer.launch.py"]),
                 launch_arguments={
                     "log_level": LaunchConfiguration("log_level"),
                 }.items(),

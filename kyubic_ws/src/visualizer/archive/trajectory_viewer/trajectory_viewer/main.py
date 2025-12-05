@@ -34,9 +34,7 @@ class RosCommunicator(Node, QObject):
 
     # 軌跡プロット用の位置データシグナル
     new_position_signal = pyqtSignal(float, float, float, float, float, float)
-    new_anchor_signal = pyqtSignal(
-        float, float, float, float, float, float, float, float
-    )
+    new_anchor_signal = pyqtSignal(float, float, float, float, float, float, float, float)
 
     def __init__(self):
         # 親クラスのコンストラクタをそれぞれ呼び出す
@@ -44,9 +42,7 @@ class RosCommunicator(Node, QObject):
         QObject.__init__(self)
 
         # --- Subscriber設定 ---
-        self.subscription = self.create_subscription(
-            Odometry, "odom", self.odom_callback, 10
-        )
+        self.subscription = self.create_subscription(Odometry, "odom", self.odom_callback, 10)
         self.sub_marker = self.create_subscription(
             MarkerArray, "/fixed_locations", self.marker_callback, 10
         )
@@ -67,9 +63,7 @@ class RosCommunicator(Node, QObject):
         """'odom' トピックのコールバック"""
         pos = msg.pose.position
         orient = msg.pose.orientation
-        self.new_position_signal.emit(
-            pos.x, -pos.y, -pos.z_depth, orient.x, orient.y, orient.z
-        )
+        self.new_position_signal.emit(pos.x, -pos.y, -pos.z_depth, orient.x, orient.y, orient.z)
 
     def marker_callback(self, msg):
         """'odom' トピックのコールバック"""
@@ -108,8 +102,8 @@ class RosCommunicator(Node, QObject):
         self.target_roll_value = roll
         self.target_yaw_value = yaw
         self.get_logger().info(
-            f"Target values updated: x={x:.2f}, y={y:.2f}, z={z:.2f}, roll={
-                roll:.2f}, yaw={yaw:.2f}. Publishing will start/continue."
+            f"Target values updated: x={x:.2f}, y={y:.2f}, z={z:.2f}, roll={roll:.2f}, yaw={
+                yaw:.2f}. Publishing will start/continue."
         )
 
 
@@ -178,9 +172,7 @@ class TrajectoryPlotter(gl.GLViewWidget):
         self.addItem(self.anchor_item4)
 
         self.trajectory_points = np.empty((0, 3))
-        self.trajectory_points = np.vstack(
-            [self.trajectory_points, np.array([0.0, 0.0, 0.0])]
-        )
+        self.trajectory_points = np.vstack([self.trajectory_points, np.array([0.0, 0.0, 0.0])])
         self.attitude = np.zeros(3)
 
         self.plot_item = gl.GLLinePlotItem(

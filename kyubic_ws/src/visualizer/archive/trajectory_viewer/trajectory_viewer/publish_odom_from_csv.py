@@ -15,9 +15,7 @@ except ImportError:
         "Error: Could not import custom messages. "
         "Please ensure 'localization_msgs' package is built in your ROS2 workspace."
     )
-    print(
-        "Example: from your_package_name.msg import Odometry, Point, EulerAngle, Pose, Twist"
-    )
+    print("Example: from your_package_name.msg import Odometry, Point, EulerAngle, Pose, Twist")
     sys.exit(1)
 
 import sys
@@ -55,9 +53,7 @@ class OdometryPublisher(Node):
         self.current_segment_start_index = (
             0  # 現在補間中のセグメントの開始点（CSVの行インデックス）
         )
-        self.interpolation_step = (
-            0  # 現在のセグメント内での補間ステップ数 (0.0 から 1.0 まで)
-        )
+        self.interpolation_step = 0  # 現在のセグメント内での補間ステップ数 (0.0 から 1.0 まで)
         self.steps_per_segment = (
             1.0 / self.publish_interval_sec
         )  # 1秒あたり何ステップ進むか（CSVが1秒ごとのキーポイントと仮定）
@@ -76,9 +72,7 @@ class OdometryPublisher(Node):
     def load_csv_data(self):
         try:
             df = pd.read_csv(self.csv_file_path)
-            self.get_logger().info(
-                f"Successfully loaded CSV from: {self.csv_file_path}"
-            )
+            self.get_logger().info(f"Successfully loaded CSV from: {self.csv_file_path}")
             self.get_logger().info(f"Columns: {df.columns.tolist()}")
 
             required_columns = [
@@ -95,9 +89,7 @@ class OdometryPublisher(Node):
                 rclpy.shutdown()
 
             # 必要な列だけを抽出し、NaNを0に変換
-            df_filtered = (
-                df[required_columns].fillna(0.0).astype(float)
-            )  # float型に明示的に変換
+            df_filtered = df[required_columns].fillna(0.0).astype(float)  # float型に明示的に変換
 
             return df_filtered
 

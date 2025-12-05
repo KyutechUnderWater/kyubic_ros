@@ -79,8 +79,7 @@ def catmull_rom_chain(points: np.ndarray, num_points: int) -> list:
     )
     all_splines = [catmull_rom_spline(*next(point_quadruples), num_points)]
     all_splines += [
-        np.delete(catmull_rom_spline(*pq, num_points), 0, axis=0)
-        for pq in point_quadruples
+        np.delete(catmull_rom_spline(*pq, num_points), 0, axis=0) for pq in point_quadruples
     ]
     return flatten(all_splines)
 
@@ -285,9 +284,7 @@ def main():
         df_points = pd.DataFrame(points_list, columns=catmull_header).round(4)
 
         df = pd.concat([df_param, df_checkpoints, df_blank, df_points], axis=1)
-        df.to_csv(
-            args.csv_path.with_name(f"{args.csv_path.stem}_generated.csv"), index=False
-        )
+        df.to_csv(args.csv_path.with_name(f"{args.csv_path.stem}_generated.csv"), index=False)
         print(df)
 
 
