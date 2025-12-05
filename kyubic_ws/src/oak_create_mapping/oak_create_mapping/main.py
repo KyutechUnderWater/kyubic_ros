@@ -119,12 +119,8 @@ class HeadlessOakCameraNode(Node):
 
     def setup_queues(self):
         """デバイスから入出力キューを取得する"""
-        self.h265_queue = self.device.getOutputQueue(
-            name="h265", maxSize=30, blocking=False
-        )
-        self.still_queue = self.device.getOutputQueue(
-            name="still", maxSize=4, blocking=False
-        )
+        self.h265_queue = self.device.getOutputQueue(name="h265", maxSize=30, blocking=False)
+        self.still_queue = self.device.getOutputQueue(name="still", maxSize=4, blocking=False)
         self.control_queue = self.device.getInputQueue("control")
 
     def apply_initial_camera_settings(self):
@@ -209,9 +205,7 @@ class HeadlessOakCameraNode(Node):
 
     def convert_to_mp4(self):
         if not self.h265_filepath or not self.h265_filepath.exists():
-            self.get_logger().error(
-                f"一時ファイル {self.h265_filepath} が見つかりません。"
-            )
+            self.get_logger().error(f"一時ファイル {self.h265_filepath} が見つかりません。")
             return
         mp4_filepath = self.h265_filepath.with_suffix(".mp4")
         command = [
@@ -254,10 +248,10 @@ class HeadlessOakCameraNode(Node):
                 in_still = self.still_queue.get()
                 if in_still is not None:
                     now = self.get_clock().now()
-                    timestamp = f"{now.nanoseconds // 1_000_000_000}.{now.nanoseconds % 1_000_000_000}"
-                    save_filepath = (
-                        self.save_dir / f"image{self.image_count}_{timestamp}.jpg"
+                    timestamp = (
+                        f"{now.nanoseconds // 1_000_000_000}.{now.nanoseconds % 1_000_000_000}"
                     )
+                    save_filepath = self.save_dir / f"image{self.image_count}_{timestamp}.jpg"
 
                     cv2.imwrite(str(save_filepath), in_still.getCvFrame())
                     self.get_logger().info(f"静止画を保存しました: {save_filepath}")

@@ -72,9 +72,7 @@ class GlobalPosePlotter(Node):
             or msg.status.imu == self.STATUS_ERROR
             or msg.status.dvl == self.STATUS_ERROR
         ):
-            self.get_logger().warn(
-                "エラー状態のデータを受信したため、プロットをスキップします。"
-            )
+            self.get_logger().warn("エラー状態のデータを受信したため、プロットをスキップします。")
             return
 
         # ロックを取得してリストにデータを追加
@@ -108,9 +106,7 @@ def main(args=None):
     rclpy.init(args=args)
     global_pose_plotter = GlobalPosePlotter()
 
-    spin_thread = threading.Thread(
-        target=rclpy.spin, args=(global_pose_plotter,), daemon=True
-    )
+    spin_thread = threading.Thread(target=rclpy.spin, args=(global_pose_plotter,), daemon=True)
     spin_thread.start()
 
     try:

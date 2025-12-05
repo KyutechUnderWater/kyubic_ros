@@ -1,15 +1,30 @@
-#include "joy2wrench/joy2wrench.hpp"
+/**
+ * @file joy2wrench.cpp
+ * @brief manual control library
+ * @author R.Ohnishi
+ * @date 2024/11/27
+ *
+ * @details joy stickの情報をロボットの操作量に変換
+ **************************************************/
 
-#include <cassert>
-#include <iostream>
+#include "joy2wrench/joy2wrench.hpp"
 
 using namespace std::chrono_literals;
 
 namespace joy2wrench
 {
-Joy2WrenchStamped::Joy2WrenchStamped() : Node("joy_to_wrench_stamped")
+
+Joy2WrenchStamped::Joy2WrenchStamped(const rclcpp::NodeOptions & options)
+: rclcpp_lifecycle::LifecycleNode("joy_to_wrench_stamped_lifecycle", options)
 {
-  device_name = this->declare_parameter("device_name", "");
+}
+
+/**
+ * @brief "configuring" State Callback
+ */
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+Joy2WrenchStamped::on_configure(const rclcpp_lifecycle::State &)
+{
   force_x_scale = this->declare_parameter("force_x_scale", 1.0);
   force_y_scale = this->declare_parameter("force_y_scale", 1.0);
   force_z_scale = this->declare_parameter("force_z_scale", 1.0);
@@ -18,64 +33,85 @@ Joy2WrenchStamped::Joy2WrenchStamped() : Node("joy_to_wrench_stamped")
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
   pub_ = create_publisher<geometry_msgs::msg::WrenchStamped>("robot_force", qos);
-  sub_ = create_subscription<sensor_msgs::msg::Joy>(
-    "joy", 10, std::bind(&Joy2WrenchStamped::_joyCallback, this, std::placeholders::_1));
+  sub_ = create_subscription<joy_common_msgs::msg::Joy>(
+    "joy_common", 10, std::bind(&Joy2WrenchStamped::_joyCallback, this, std::placeholders::_1));
+
+  RCLCPP_INFO(get_logger(), "Configuration successful. Transitioning to Inactive.");
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-void Joy2WrenchStamped::_joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
+/**
+ * @brief "activating" State Callback
+ */
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+Joy2WrenchStamped::on_activate(const rclcpp_lifecycle::State & state)
 {
+  LifecycleNode::on_activate(state);
+  RCLCPP_INFO(get_logger(), "Activation successful. Transitioning to Active.");
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+}
+
+/**
+ * @brief "deactivating" State Callback
+ */
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+Joy2WrenchStamped::on_deactivate(const rclcpp_lifecycle::State & state)
+{
+  RCLCPP_INFO(get_logger(), "Deactivation successful. Transitioning to Inactive.");
+  LifecycleNode::on_deactivate(state);
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+}
+
+/**
+ * @brief "cleaningup" State Callback
+ */
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+Joy2WrenchStamped::on_cleanup(const rclcpp_lifecycle::State &)
+{
+  pub_.reset();
+  sub_.reset();
+  RCLCPP_INFO(get_logger(), "Cleanup successful. Transitioning to Unconfigured.");
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+}
+
+/**
+ * @brief "shuttingdown" State Callback
+ */
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+Joy2WrenchStamped::on_shutdown(const rclcpp_lifecycle::State &)
+{
+  pub_.reset();
+  sub_.reset();
+  RCLCPP_INFO(get_logger(), "Shutdown successful.");
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+}
+
+void Joy2WrenchStamped::_joyCallback(const joy_common_msgs::msg::Joy::SharedPtr msg)
+{
+  if (!pub_) return;
+
   auto wrench_msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
   wrench_msg->header = msg->header;
 
-  // TODO: PS3有線追加
-  if (device_name == "PLAYSTATION(R)3 Controller") {
-    wrench_msg->wrench.force.x = msg->axes[1] * force_x_scale;
-    wrench_msg->wrench.force.y = msg->axes[0] * -force_y_scale;
-    wrench_msg->wrench.force.z = msg->axes[4] * -force_z_scale;
+  wrench_msg->wrench.force.x = msg->stick.ly * force_x_scale;
+  wrench_msg->wrench.force.y = msg->stick.lx * -force_y_scale;
+  wrench_msg->wrench.force.z = msg->stick.ry * -force_z_scale;
 
-    if (msg->axes[2] < 1 && msg->axes[5]) {
-      wrench_msg->wrench.torque.x = -(msg->axes[2] - 1) * -torque_x_scale;
-    } else if (msg->axes[2] && msg->axes[5] < 1) {
-      wrench_msg->wrench.torque.x = -(msg->axes[5] - 1) * torque_x_scale;
-    } else {
-      wrench_msg->wrench.torque.x = 0.0;
-    }
-
-    wrench_msg->wrench.torque.z = msg->axes[3] * -torque_z_scale;
-  } else if (device_name == "Logicool Dual Action") {
-    wrench_msg->wrench.force.x = msg->axes[1] * force_x_scale;
-    wrench_msg->wrench.force.y = msg->axes[0] * -force_y_scale;
-    wrench_msg->wrench.force.z = msg->axes[3] * -force_z_scale;
-
-    if (msg->buttons[6] && !msg->buttons[7]) {
-      wrench_msg->wrench.torque.x = -torque_x_scale;
-    } else if (!msg->buttons[6] && msg->buttons[7]) {
-      wrench_msg->wrench.torque.x = torque_x_scale;
-    } else {
-      wrench_msg->wrench.torque.x = 0.0;
-    }
-
-    wrench_msg->wrench.torque.z = msg->axes[2] * -torque_z_scale;
+  if (msg->buttons.l2 < 1 && msg->buttons.r2) {
+    wrench_msg->wrench.torque.x = -(msg->buttons.l2 - 1) * -torque_x_scale;
+  } else if (msg->buttons.l2 && msg->buttons.r2 < 1) {
+    wrench_msg->wrench.torque.x = -(msg->buttons.r2 - 1) * torque_x_scale;
   } else {
-    std::cerr << "Not found device: " << device_name << std::endl;
+    wrench_msg->wrench.torque.x = 0.0;
   }
+
   wrench_msg->wrench.torque.y = 0.0;
+  wrench_msg->wrench.torque.z = msg->stick.rx * -torque_z_scale;
 
   pub_->publish(std::move(wrench_msg));
 }
+
 }  // namespace joy2wrench
 
-int main(int argc, char * argv[])
-{
-  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
-  rclcpp::init(argc, argv);
-
-  try {
-    auto node = std::make_shared<joy2wrench::Joy2WrenchStamped>();
-    rclcpp::spin(node);
-  } catch (std::exception & e) {
-    std::cout << e.what() << std::endl;
-  }
-  rclcpp::shutdown();
-  return 0;
-}
+#include "rclcpp_components/register_node_macro.hpp"
+RCLCPP_COMPONENTS_REGISTER_NODE(joy2wrench::Joy2WrenchStamped)

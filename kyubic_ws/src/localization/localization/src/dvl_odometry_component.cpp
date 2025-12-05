@@ -8,9 +8,6 @@
  *********************************************************/
 
 #include <localization/dvl_odometry_component.hpp>
-
-#include <cmath>
-#include <functional>
 #include <numbers>
 
 using namespace std::chrono_literals;

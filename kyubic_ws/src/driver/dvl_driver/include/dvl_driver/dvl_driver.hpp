@@ -7,15 +7,13 @@
  * @details DVL(Path Finder) のデータを取得して，Topicを流す
  ************************************************************/
 
-#include "dvl_driver/path_finder.hpp"
-
-#include <rclcpp/rclcpp.hpp>
-#include <timer/timeout.hpp>
-
 #include <driver_msgs/msg/dvl.hpp>
 #include <driver_msgs/srv/command.hpp>
-
+#include <rclcpp/rclcpp.hpp>
 #include <string>
+#include <timer/timeout.hpp>
+
+#include "dvl_driver/path_finder.hpp"
 
 /**
  * @namespace dvl_driver
@@ -40,7 +38,7 @@ private:
   std::string address;
   int listener_port;
   int sender_port;
-  uint64_t timeout;
+  uint64_t timeout_ms;
 
   const std::string CRCF = "\r\n";
   bool command_mode = false;

@@ -41,9 +41,7 @@ class WebVisualizerNode(Node):
     A ROS2 node that creates a web-based visualizer for a robot using Viser.
     """
 
-    def __init__(
-        self, server: viser.ViserServer, mesh_path: Path, pub_targets_period: float
-    ):
+    def __init__(self, server: viser.ViserServer, mesh_path: Path, pub_targets_period: float):
         super().__init__("web_visualizer_node")
         self.server = server
         self.mesh_path = mesh_path
@@ -53,9 +51,7 @@ class WebVisualizerNode(Node):
 
         # --- State Variables ---
         self.trajectory_points = np.array(((0, 0, 0), (0, 0, 0))).reshape(1, 2, 3)
-        self.trajectory_colors = np.array((Colors.orange, Colors.orange)).reshape(
-            1, 2, 3
-        )
+        self.trajectory_colors = np.array((Colors.orange, Colors.orange)).reshape(1, 2, 3)
 
         self.targets = Targets()
 
@@ -81,9 +77,7 @@ class WebVisualizerNode(Node):
         # --- 3. ROS2 Publishers and Subscribers ---
         self._setup_ros_communication()
 
-        self.get_logger().info(
-            "Web Visualizer Node started. Open the Viser URL in your browser."
-        )
+        self.get_logger().info("Web Visualizer Node started. Open the Viser URL in your browser.")
 
     def _setup_3d_scene(self):
         """Initializes the 3D scene in Viser, including the robot mesh and camera views."""
@@ -168,9 +162,7 @@ class WebVisualizerNode(Node):
                 self.gui_target_posi = self.server.gui.add_vector3(
                     "Position (x,y,z)[m]", initial_value=(0.0, 0.0, 0.0), step=0.01
                 )
-                self.gui_z_type = self.server.gui.add_dropdown(
-                    "z-type", ("depth", "altitude")
-                )
+                self.gui_z_type = self.server.gui.add_dropdown("z-type", ("depth", "altitude"))
 
                 # Orientation Input
                 self.gui_target_orient = self.server.gui.add_vector2(
@@ -254,9 +246,7 @@ class WebVisualizerNode(Node):
         self.target_publisher = self.create_publisher(Targets, "targets", 10)
 
         # Subscribers for receiving robot and camera data
-        self.odom_subscriber = self.create_subscription(
-            Odometry, "odom", self.odom_callback, 10
-        )
+        self.odom_subscriber = self.create_subscription(Odometry, "odom", self.odom_callback, 10)
         self.target_subscriber = self.create_subscription(
             Targets, "targets", self.target_callback, 10
         )
@@ -344,9 +334,9 @@ class WebVisualizerNode(Node):
         self.robot.wxyz = (wxyz[3], wxyz[0], wxyz[1], wxyz[2])
 
     def update_trajectory(self, pos):
-        point = np.array(
-            (self.trajectory_points[-1][1], (pos.x, -pos.y, -pos.z_depth))
-        ).reshape(1, 2, 3)
+        point = np.array((self.trajectory_points[-1][1], (pos.x, -pos.y, -pos.z_depth))).reshape(
+            1, 2, 3
+        )
         color = np.array((Colors.orange, Colors.orange)).reshape(1, 2, 3)
         self.trajectory_points = np.concatenate([self.trajectory_points, point])
         self.trajectory_colors = np.concatenate([self.trajectory_colors, color])
@@ -371,9 +361,7 @@ class WebVisualizerNode(Node):
 
     def clear_trajectory(self):
         self.trajectory_points = np.array(((0, 0, 0), (0, 0, 0))).reshape(1, 2, 3)
-        self.trajectory_colors = np.array((Colors.orange, Colors.orange)).reshape(
-            1, 2, 3
-        )
+        self.trajectory_colors = np.array((Colors.orange, Colors.orange)).reshape(1, 2, 3)
         self.trajectory.points = self.trajectory_points
         self.trajectory.colors = self.trajectory_colors
 
@@ -384,13 +372,11 @@ class WebVisualizerNode(Node):
             posi: tuple[float, float, float] = self.gui_target_posi.value
             self.targets.pose.x = posi[0]
             self.targets.pose.y = posi[1]
+            self.targets.pose.z = posi[2] if posi[2] > 0 else 0.0
 
-            z_value = posi[2] if posi[2] > 0 else 0.0
             if self.gui_z_type.value == "altitude":
-                self.targets.pose.z_altitude = z_value
                 self.targets.z_mode = Targets.Z_MODE_ALTITUDE
             else:
-                self.targets.pose.z_depth = z_value
                 self.targets.z_mode = Targets.Z_MODE_DEPTH
 
             orient: tuple[float, float] = self.gui_target_orient.value
@@ -413,9 +399,7 @@ class WebVisualizerNode(Node):
                 self.publish_button.color = Colors.yellow
 
                 # Create timer
-                self.publish_timer = self.create_timer(
-                    self.pub_targets_period, self.publish_target
-                )
+                self.publish_timer = self.create_timer(self.pub_targets_period, self.publish_target)
                 self.get_logger().info("Started publishing targets.")
             else:
                 # Update button element
@@ -445,12 +429,10 @@ def main(args=None):
     rclpy.init(args=args)
 
     # Create viser server
-    server = viser.ViserServer()
+    server = viser.ViserServer(port=8081)
 
     # Create ROS2 node
-    robot_mesh_path = Path(
-        f"{os.path.dirname(__file__)}/../assets/KYUBIC_transformed.stl"
-    )
+    robot_mesh_path = Path(f"{os.path.dirname(__file__)}/../assets/KYUBIC_transformed.stl")
     visualizer_node = WebVisualizerNode(server, robot_mesh_path, 1)
 
     # Execute ROS2 spin in a separate thread so that it does not block the main thread.

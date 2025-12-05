@@ -280,11 +280,10 @@ void G366::print_diag_status(uint16_t status)
   std::cout << "diag status: " << status << std::endl;
 
   if (st_err_all) {
-    std::cout << "Error: Self-Test ->"
-              << " X-Gyro(" << (st_err_xgyro ? "NG" : "OK") << ")"
-              << " Y-Gyro(" << (st_err_ygyro ? "NG" : "OK") << ")"
-              << " Z-Gyro(" << (st_err_zgyro ? "NG" : "OK") << ")"
-              << " ACCl(" << (st_err_accl ? "NG" : "OK") << ")" << std::endl;
+    std::cout << "Error: Self-Test ->" << " X-Gyro(" << (st_err_xgyro ? "NG" : "OK") << ")"
+              << " Y-Gyro(" << (st_err_ygyro ? "NG" : "OK") << ")" << " Z-Gyro("
+              << (st_err_zgyro ? "NG" : "OK") << ")" << " ACCl(" << (st_err_accl ? "NG" : "OK")
+              << ")" << std::endl;
   }
   if (set_err) std::cout << "Error: Settings" << std::endl;
   if (dlta_ovf) std::cout << "Error: Delta Angle over-flow" << std::endl;

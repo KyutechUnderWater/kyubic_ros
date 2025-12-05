@@ -9,12 +9,11 @@
 
 #include "localization/depth_odometry_component.hpp"
 
+#include <functional>
+#include <numeric>
 #include <rclcpp/logging.hpp>
 
 #include "localization_msgs/msg/status.hpp"
-
-#include <functional>
-#include <numeric>
 
 namespace localization
 {
@@ -40,7 +39,7 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
   // return if msg is invalid, otherwaise calculate depth velocity
-  if (msg->status == driver_msgs::msg::Depth::STATUS_ERROR) {
+  if (msg->status.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The depth data is invalid");
     odom_msg->status.depth = localization_msgs::msg::Status::ERROR;
   } else {

@@ -19,7 +19,20 @@ dependencies = [
     "numpy==1.26.4",
     "opencv-python==4.9.0.80",
     "viser>=1.0.4",
+    "pydot>=4.0.1",
+    "protobuf>=6.33.1",
+    "grpcio-tools>=1.76.0",
+    "jinja2>=3.1.6",
+    "nicegui>=3.3.1",
 ]
 
 [tool.uv.pip]
 system = true
+
+[tool.ruff]
+line-length = 100
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.8",
+]

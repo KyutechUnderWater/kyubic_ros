@@ -14,10 +14,6 @@ def generate_launch_description():
         "pdla_planner.param.yaml",
     )
 
-    path_planner_path = os.path.join(
-        get_package_share_directory("path_planner"),
-    )
-
     log_level_arg = DeclareLaunchArgument(
         "log_level",
         default_value=["info"],
@@ -31,11 +27,11 @@ def generate_launch_description():
                 package="projection_dynamic_look_ahead_planner",
                 namespace="planner",
                 executable="pdla_planner_component_node",
+                name="pdla_planner",
                 remappings=[
                     ("/planner/odom", "/localization/odom"),
                 ],
                 parameters=[
-                    {"path_planner_path": path_planner_path},
                     cfg_pdla_planner,
                 ],
                 output="screen",

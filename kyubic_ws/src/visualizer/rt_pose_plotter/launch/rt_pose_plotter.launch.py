@@ -12,7 +12,7 @@ def generate_launch_description():
     )
     targets_topic_arg = DeclareLaunchArgument(
         "targets_topic",
-        default_value="/controller/p_pid_controller/targets",
+        default_value="/rt_pose_plotter/targets",
         description="Topic name for the odometry message",
     )
 
@@ -24,8 +24,8 @@ def generate_launch_description():
         executable="rt_pose_plotter",
         output="screen",
         remappings=[
-            ("/rt_pose_plotter/odom", LaunchConfiguration("odom_topic")),
-            ("/rt_pose_plotter/targets", LaunchConfiguration("targets_topic")),
+            ("odom", LaunchConfiguration("odom_topic")),
+            ("targets", LaunchConfiguration("targets_topic")),
         ],
     )
 

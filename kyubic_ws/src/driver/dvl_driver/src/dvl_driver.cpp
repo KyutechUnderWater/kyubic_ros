@@ -22,8 +22,8 @@ DVLDriver::DVLDriver() : Node("dvl_driver")
   address = this->declare_parameter("ip_address", "0.0.0.0");
   listener_port = this->declare_parameter("listener_port", 8888);
   sender_port = this->declare_parameter("sender_port", 8889);
-  timeout = this->declare_parameter("timeout", 0);
-  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout);
+  timeout_ms = this->declare_parameter("timeout_ms", 0);
+  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
   // Connect TCP
   listener_ = std::make_shared<path_finder::Listener>(address.c_str(), listener_port, 500);
@@ -110,18 +110,18 @@ void DVLDriver::update()
 
     // Set status based on error-velocity-bottom
     if (dvl_data_->e_vel_bottom == 0) {
-      msg->status = driver_msgs::msg::DVL::STATUS_NORMAL;
+      msg->status.id = common_msgs::msg::Status::NORMAL;
     } else if (dvl_data_->e_vel_bottom == -32768) {
-      msg->status = driver_msgs::msg::DVL::STATUS_ERROR;
+      msg->status.id = common_msgs::msg::Status::ERROR;
     } else {
-      msg->status = driver_msgs::msg::DVL::STATUS_WARNING;
+      msg->status.id = common_msgs::msg::Status::NORMAL;
     }
 
     RCLCPP_INFO(this->get_logger(), "Update DVL data, error_vel_btm: %d", msg->velocity_error);
   } else {
     // Error if timeout, otherwise warning and wait
-    if (timeout_->check(this->get_clock()->now())) {
-      msg->status = driver_msgs::msg::DVL::STATUS_ERROR;
+    if (timeout_->is_timeout(this->get_clock()->now())) {
+      msg->status.id = common_msgs::msg::Status::ERROR;
       RCLCPP_ERROR(this->get_logger(), "Don't update DVL data.");
     } else {
       RCLCPP_WARN(this->get_logger(), "Failed DVL data acquisition.");

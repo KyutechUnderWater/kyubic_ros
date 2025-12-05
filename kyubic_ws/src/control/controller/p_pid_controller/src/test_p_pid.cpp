@@ -60,12 +60,12 @@ void TestPPID::update()
       odom_status.depth != localization_msgs::msg::Status::ERROR &&
       z_mode == p_pid_controller_msgs::msg::Targets::Z_MODE_DEPTH) {
       force_z = p_pid_ctrl_->pid_z_update(
-        current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.z_depth);
+        current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.z);
     } else if (
       odom_status.dvl != localization_msgs::msg::Status::ERROR &&
       z_mode == p_pid_controller_msgs::msg::Targets::Z_MODE_ALTITUDE) {
       force_z = -p_pid_ctrl_->pid_z_update(
-        current_twst.linear.z_altitude, current_pose.position.z_altitude, target_pose.z_altitude);
+        current_twst.linear.z_altitude, current_pose.position.z_altitude, target_pose.z);
     }
 
     {
@@ -86,10 +86,10 @@ void TestPPID::update()
     }
     if (z_mode == p_pid_controller_msgs::msg::Targets::Z_MODE_DEPTH) {
       force_z = p_pid_ctrl_->pid_z_update(
-        current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.z_depth);
+        current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.z);
     } else if (z_mode == p_pid_controller_msgs::msg::Targets::Z_MODE_ALTITUDE) {
       force_z = -p_pid_ctrl_->pid_z_update(
-        current_twst.linear.z_altitude, current_pose.position.z_altitude, target_pose.z_altitude);
+        current_twst.linear.z_altitude, current_pose.position.z_altitude, target_pose.z);
     } else {
       RCLCPP_ERROR(this->get_logger(), "z_mode is failure");
       return;

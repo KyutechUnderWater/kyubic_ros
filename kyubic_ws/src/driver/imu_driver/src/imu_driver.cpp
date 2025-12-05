@@ -9,11 +9,6 @@
 
 #include "imu_driver/imu_driver.hpp"
 
-#include <rclcpp/logging.hpp>
-
-#include <cstdlib>
-#include <memory>
-
 using namespace std::chrono_literals;
 
 namespace imu_driver
@@ -23,8 +18,8 @@ IMUDriver::IMUDriver() : Node("imu_driver")
 {
   portname = this->declare_parameter("serial_port", "/dev/ttyACM0");
   baudrate = this->declare_parameter("serial_speed", 115200);
-  timeout = this->declare_parameter("timeout", 0);
-  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout);
+  timeout_ms = this->declare_parameter("timeout_ms", 0);
+  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
   g366_ = std::make_shared<g366::G366>(portname.c_str(), baudrate);
   RCLCPP_INFO(this->get_logger(), "Connected %s > %d", portname.c_str(), baudrate);
@@ -68,7 +63,7 @@ void IMUDriver::_update()
     msg->header.stamp = this->get_clock()->now();
     msg->header.frame_id = "imu";
 
-    msg->status = driver_msgs::msg::IMU::STATUS_NORMAL;
+    msg->status.id = common_msgs::msg::Status::NORMAL;
 
     msg->temperature = data_->temp;
     msg->accel.x = data_->x_accl;
@@ -88,8 +83,8 @@ void IMUDriver::_update()
     RCLCPP_INFO(this->get_logger(), "Update imu data");
   } else {
     // Error if timeout, otherwise warning and wait
-    if (timeout_->check(this->get_clock()->now())) {
-      msg->status = driver_msgs::msg::IMU::STATUS_ERROR;
+    if (timeout_->is_timeout(this->get_clock()->now())) {
+      msg->status.id = common_msgs::msg::Status::ERROR;
 
       RCLCPP_ERROR(
         this->get_logger(), "IMU driver timeout: %lu [ns]", timeout_->get_elapsed_time());

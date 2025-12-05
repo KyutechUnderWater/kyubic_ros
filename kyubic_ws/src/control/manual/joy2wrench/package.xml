@@ -2,16 +2,20 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>joy2wrench</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>Convert from joy type to wrench type</description>
   <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <depend>rclcpp</depend>
-  <depend>sensor_msgs</depend>
+  <depend>rclcpp_components</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>joy_common_msgs</depend>
   <depend>geometry_msgs</depend>
+
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

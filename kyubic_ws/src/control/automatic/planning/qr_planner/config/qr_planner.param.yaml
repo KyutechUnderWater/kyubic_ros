@@ -1,0 +1,5 @@
+/**:
+  ros__parameters:
+    remote_ip: "192.168.9.110"  # IP address of the PC running techno.py
+    remote_port: 11111          # Port number of the PC running techno.py
+    reach_tolerance.x: 0.1

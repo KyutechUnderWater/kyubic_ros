@@ -1,0 +1,6 @@
+[submodule "kyubic_ws/src/BehaviorTree.CPP"]
+	path = kyubic_ws/src/extra/BehaviorTree.CPP
+	url = git@github.com:KyutechUnderWater/BehaviorTree.CPP.git
+[submodule "kyubic_ws/src/protolink"]
+	path = kyubic_ws/src/extra/protolink
+	url = https://github.com/KyutechUnderWater/protolink.git

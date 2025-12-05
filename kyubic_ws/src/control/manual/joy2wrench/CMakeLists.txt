@@ -18,8 +18,23 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-ament_auto_add_executable(${PROJECT_NAME}
+# Add library
+## joy2wrench_component
+ament_auto_add_library(joy2wrench_component SHARED
   src/joy2wrench.cpp
+)
+
+rclcpp_components_register_node(joy2wrench_component
+  PLUGIN "joy2wrench::Joy2WrenchStamped"
+  EXECUTABLE joy2wrench_component_node
+)
+
+# set install config
+install(TARGETS
+  joy2wrench_component
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
 install(DIRECTORY

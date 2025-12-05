@@ -10,10 +10,9 @@
 #ifndef _G366_HPP
 #define _G366_HPP
 
-#include <serial/serial.hpp>
-
 #include <cstdint>
 #include <memory>
+#include <serial/serial.hpp>
 
 /**
  * @namespace imu_driver

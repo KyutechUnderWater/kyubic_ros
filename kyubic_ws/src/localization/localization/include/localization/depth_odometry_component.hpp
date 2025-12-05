@@ -13,10 +13,9 @@
 #ifndef _DEPTH_ODOMETRY_HPP
 #define _DEPTH_ODOMETRY_HPP
 
-#include <rclcpp/rclcpp.hpp>
-
 #include <driver_msgs/msg/depth.hpp>
 #include <localization_msgs/msg/odometry.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
 
 /**

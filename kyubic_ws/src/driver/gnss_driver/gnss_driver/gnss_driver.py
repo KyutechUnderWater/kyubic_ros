@@ -4,9 +4,9 @@ from sensor_msgs.msg import NavSatFix, NavSatStatus
 from std_msgs.msg import Float64
 from std_msgs.msg import Float32MultiArray
 from driver_msgs.msg import Gnss
+import sys
 import socket
 import pynmea2
-import math
 
 
 class GnssPublisher(Node):
@@ -20,9 +20,7 @@ class GnssPublisher(Node):
 
         # パラメータを取得
         self.tcp_ip = self.get_parameter("tcp_ip").get_parameter_value().string_value
-        self.tcp_port = (
-            self.get_parameter("tcp_port").get_parameter_value().integer_value
-        )
+        self.tcp_port = self.get_parameter("tcp_port").get_parameter_value().integer_value
         self.hdop_error_factor = (
             self.get_parameter("hdop_error_factor").get_parameter_value().double_value
         )
@@ -57,6 +55,7 @@ class GnssPublisher(Node):
         try:
             self.get_logger().info(f"Connecting to {self.tcp_ip}:{self.tcp_port}...")
             self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.settimeout(1.0)
             self.socket.connect((self.tcp_ip, self.tcp_port))
             self.get_logger().info("Connection successful.")
 
@@ -84,17 +83,11 @@ class GnssPublisher(Node):
                                 self.latest_azimuth = msg.heading
 
                         elif isinstance(msg, pynmea2.types.talker.VTG):
-                            if (
-                                hasattr(msg, "true_track")
-                                and msg.true_track is not None
-                            ):
+                            if hasattr(msg, "true_track") and msg.true_track is not None:
                                 self.latest_azimuth = msg.true_track
 
                         elif isinstance(msg, pynmea2.types.talker.RMC):
-                            if (
-                                hasattr(msg, "true_course")
-                                and msg.true_course is not None
-                            ):
+                            if hasattr(msg, "true_course") and msg.true_course is not None:
                                 self.latest_azimuth = msg.true_course
 
                         elif isinstance(msg, pynmea2.types.talker.GSV):
@@ -124,15 +117,12 @@ class GnssPublisher(Node):
 
                                 # self.snr_publisher_.publish(snr_msg)
                                 self.get_logger().info(
-                                    f"Published satellite SNRs ({
-                                        len(self.gsv_sats)
-                                    } sats): {self.gsv_sats}"
+                                    f"Published satellite SNRs ({len(self.gsv_sats)} sats): {
+                                        self.gsv_sats
+                                    }"
                                 )
 
-                        elif (
-                            isinstance(msg, pynmea2.types.talker.GGA)
-                            and msg.latitude != 0.0
-                        ):
+                        elif isinstance(msg, pynmea2.types.talker.GGA) and msg.latitude != 0.0:
                             gnss_data_msg = Gnss()
                             now = self.get_clock().now().to_msg()
 
@@ -163,9 +153,7 @@ class GnssPublisher(Node):
                                 if hdop > 0:
                                     # 通常の処理
                                     h_variance = (self.hdop_error_factor * hdop) ** 2
-                                    v_variance = (
-                                        self.hdop_error_factor * hdop * 1.5
-                                    ) ** 2
+                                    v_variance = (self.hdop_error_factor * hdop * 1.5) ** 2
 
                                     fix_msg.position_covariance[0] = h_variance
                                     fix_msg.position_covariance[4] = h_variance
@@ -190,9 +178,7 @@ class GnssPublisher(Node):
                                     )
                             except (ValueError, TypeError, AttributeError):
                                 # hdopがNone, 空文字列, または不正な値だった場合
-                                fix_msg.position_covariance_type = (
-                                    NavSatFix.COVARIANCE_TYPE_UNKNOWN
-                                )
+                                fix_msg.position_covariance_type = NavSatFix.COVARIANCE_TYPE_UNKNOWN
                                 self.get_logger().info(
                                     f"Publishing: time = {fix_msg.header.stamp.sec}, "
                                     f"qual ={fix_msg.status.status}, lat ={msg.latitude:.6f}, long ={msg.longitude:.6f}, "
@@ -206,9 +192,7 @@ class GnssPublisher(Node):
                             # Float64メッセージ（方位）の作成と配信
                             if self.latest_azimuth is not None:
                                 azimuth_msg = Float64()
-                                azimuth_msg.data = (
-                                    self.latest_azimuth
-                                )  # データを直接代入
+                                azimuth_msg.data = self.latest_azimuth  # データを直接代入
 
                                 # self.heading_publisher_.publish(azimuth_msg)
                                 gnss_data_msg.azimuth = azimuth_msg.data
@@ -226,6 +210,7 @@ class GnssPublisher(Node):
 
         except Exception as e:
             self.get_logger().error(f"Error: {e}")
+            sys.exit(1)
         finally:
             if self.socket:
                 self.socket.close()

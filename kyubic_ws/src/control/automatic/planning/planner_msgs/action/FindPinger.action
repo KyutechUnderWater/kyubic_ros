@@ -1,0 +1,10 @@
+# Goal
+bool start
+---
+# Result
+bool success
+float32 final_yaw
+---
+# Feedback
+float32 current_yaw
+float32 current_score

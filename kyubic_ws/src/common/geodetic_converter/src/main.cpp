@@ -7,11 +7,11 @@
  * @details 測地座標系 <-> 平面直角座標系 の相互変換のサンプル
  ************************************************************/
 
-#include "geodetic_converter/geodetic_converter.hpp"
-
 #include <array>
 #include <iomanip>
 #include <iostream>
+
+#include "geodetic_converter/geodetic_converter.hpp"
 
 int main()
 {

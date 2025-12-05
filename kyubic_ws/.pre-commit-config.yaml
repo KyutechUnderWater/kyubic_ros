@@ -4,7 +4,11 @@ repos:
     -   id: ament-clang-format
         name: ament_clang_format
         entry: ament_clang_format --reformat
-        # language: system で、source 済みの環境にあるコマンドを実行
+        language: system  # language: system で、source 済みの環境にあるコマンドを実行
+        files: \.(cpp|hpp|c|h)$  # C/C++のソースファイルのみを対象にする
+
+    -   id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
         language: system
-        # C/C++のソースファイルのみを対象にする
-        files: \.(cpp|hpp|c|h)$
+        types: [python]

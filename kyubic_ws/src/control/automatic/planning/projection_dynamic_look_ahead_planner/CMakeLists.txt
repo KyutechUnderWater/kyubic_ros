@@ -16,15 +16,24 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
 ament_auto_find_build_dependencies()
 
 # add library
 ament_auto_add_library(pdla_planner_component SHARED
   ./src/pdla_planner.cpp
 )
+
+# target link libraries
 target_link_libraries(pdla_planner_component
   Eigen3::Eigen
+)
+
+ament_target_dependencies(pdla_planner_component
+  ament_index_cpp
+  rclcpp
+  rclcpp_action
 )
 
 # register components
@@ -33,7 +42,7 @@ rclcpp_components_register_node(pdla_planner_component
   EXECUTABLE pdla_planner_component_node
 )
 
-# set install config
+# Set install config
 install(TARGETS
   pdla_planner_component
   ARCHIVE DESTINATION lib

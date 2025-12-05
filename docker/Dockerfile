@@ -88,7 +88,8 @@ ENV ROS_DISTRO=$ros2_ver
 
 RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DISTRO-teleop-twist-keyboard ros-dev-tools \
 	ros-$ROS_DISTRO-ament-clang-format ros-$ROS_DISTRO-plotjuggler-ros ros-$ROS_DISTRO-v4l2-camera \
-	ros-$ROS_DISTRO-image-transport-plugins ros-$ROS_DISTRO-web-video-server && \
+	ros-$ROS_DISTRO-image-transport-plugins ros-$ROS_DISTRO-web-video-server ros-$ROS_DISTRO-navigation2 \
+	ros-$ROS_DISTRO-generate-parameter-library && \
 	echo "ros installed" && \
 	rosdep init && \
 	rosdep update && \
@@ -100,13 +101,48 @@ RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DI
 	echo "succesfully"
 
 ######################################
-## Install zellij
+## Install Groot2
 ######################################
-RUN gosu ros bash -c "mkdir -p /home/ros/Apps/Zellij && cd /home/ros/Apps/Zellij && \
-	curl -OL https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz && \
-	tar -xvf zellij*.tar.gz" && \
-	chmod +x /home/ros/Apps/Zellij/zellij && \
-	ln -s /home/ros/Apps/Zellij/zellij /usr/bin/zellij
+RUN gosu ros bash -c "mkdir -p /home/ros/Apps/Groot2 && cd /home/ros/Apps/Groot2 && \
+	curl -OL https://s3.us-west-1.amazonaws.com/download.behaviortree.dev/groot2_linux_installer/Groot2-v1.6.1-x86_64.AppImage" && \
+	cd /home/ros/Apps/Groot2 && chmod +x Groot2-v1.6.1-x86_64.AppImage && ./Groot2-v1.6.1-x86_64.AppImage --appimage-extract && \
+	ln -s /home/ros/Apps/Groot2/squashfs-root/usr/bin/groot2 /usr/bin/groot2
+
+
+#############################################################
+## Install protolink dependencies (abseil-cpp, protobuf, etc)
+#############################################################
+RUN apt update && \
+	apt install -y libboost-all-dev libpaho-mqtt-dev libpaho-mqttpp-dev cmake ninja-build && \
+	git clone https://github.com/abseil/abseil-cpp.git /home/ros/build/abseil-cpp && cd /home/ros/build/abseil-cpp && \
+	cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local -DABSL_ENABLE_INSTALL=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON && \
+	cmake --build build --target install --parallel 20 && \
+	git clone -b v31.1 https://github.com/protocolbuffers/protobuf.git ${root}/protobuf && cd ${root}/protobuf && \
+	git submodule update --init --recursive && \
+	cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=Release -Dprotobuf_BUILD_TESTS=OFF -Dprotobuf_BUILD_SHARED_LIBS=ON -DCMAKE_POSITION_INDEPENDENT_CODE=ON && \
+	cmake --build build --parallel 20 && \
+	cmake --install build && \
+	echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib' >>/home/ros/.bashrc
+
+
+######################################
+## Install Neovim
+######################################
+COPY ./nvim_setup.sh /home/ros/Apps/nvim/nvim_setup.sh
+RUN chmod +x /home/ros/Apps/nvim/nvim_setup.sh && \
+	/home/ros/Apps/nvim/nvim_setup.sh && \
+	chown -R ros:ros /home/ros && \
+	gosu ros bash -i -c 'nvim --headless +Lazy +qa' && \
+	gosu ros bash -i -c 'nvim --headless -c "autocmd User MasonToolsUpdateCompleted quitall" -c "MasonToolsInstall"'
+
+
+######################################
+## Set Environment
+######################################
+RUN echo 'export HISTTIMEFORMAT="%F %T  "'  >> /home/ros/.bashrc && \
+	echo 'export RCUTILS_COLORIZED_OUTPUT=1'  >> /home/ros/.bashrc && \
+	echo 'source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash'  >> /home/ros/.bashrc
+
 
 COPY ./entrypoint.sh /usr/bin
 COPY ./once_entrypoint.sh /usr/bin

@@ -12,14 +12,14 @@
 #ifndef _DVL_ODOMETRY_HPP
 #define _DVL_ODOMETRY_HPP
 
-#include <rclcpp/rclcpp.hpp>
-#include <rclcpp/service.hpp>
-
-#include "std_srvs/srv/trigger.hpp"
 #include <driver_msgs/msg/dvl.hpp>
 #include <driver_msgs/msg/imu.hpp>
 #include <localization_msgs/msg/odometry.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/service.hpp>
 #include <std_srvs/srv/trigger.hpp>
+
+#include "std_srvs/srv/trigger.hpp"
 
 /**
  * @namespace localization
