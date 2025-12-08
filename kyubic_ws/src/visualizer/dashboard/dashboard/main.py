@@ -311,7 +311,6 @@ class MonitorNode(Node):
     def __init__(self, state: RobotState):
         super().__init__("web_monitor_node")
         self.state = state
-        self.suppress_publish = False
         self._init_params()
         self._init_subs_pubs()
 
@@ -408,17 +407,14 @@ class MonitorNode(Node):
         d.act_curr = msg.act_current / 200.0
 
     def cb_sys_switch(self, msg):
-        if not self.suppress_publish:
-            self.suppress_publish = True
-            s = self.state.switches
-            s.jetson = msg.jetson
-            s.dvl = msg.dvl
-            s.com = msg.com
-            s.ex1 = msg.ex1
-            s.ex2 = msg.ex2
-            s.actuator = msg.actuator
-            s.status_id = msg.status.id
-            self.suppress_publish = False
+        s = self.state.switches
+        s.jetson = msg.jetson
+        s.dvl = msg.dvl
+        s.com = msg.com
+        s.ex1 = msg.ex1
+        s.ex2 = msg.ex2
+        s.actuator = msg.actuator
+        s.status_id = msg.status.id
 
     def cb_sys_status(self, msg):
         d = self.state.sys_stat
@@ -427,12 +423,6 @@ class MonitorNode(Node):
         d.actuator_power = msg.actuator_power
         d.logic_relay = msg.logic_relay
         d.usb_power = msg.usb_power
-
-        # Sync switches state
-        self.suppress_publish = True
-        self.state.switches.jetson = msg.jetson
-        self.state.switches.actuator = msg.actuator_power
-        self.suppress_publish = False
 
     def publish_switch_command(self):
         s = self.state.switches
@@ -560,8 +550,6 @@ def control_switch_modern(label: str, state_obj: SwitchState, attr_name: str):
 
         def on_change(e):
             setattr(state_obj, attr_name, e.value)
-            if node_instance and not node_instance.suppress_publish:
-                node_instance.publish_switch_command()
 
         s = ui.switch(on_change=on_change).bind_value_from(state_obj, attr_name)
         s.props('color="cyan-4" keep-color size="lg" dense')
@@ -724,12 +712,29 @@ def render_status_column(state: RobotState) -> dict:
         refs["card_ctrl"] = card_ctrl
         with card_ctrl:
             label_header("System Control", "toggle_on")
+
+            # 各スイッチの表示
             control_switch_modern("JETSON", state.switches, "jetson")
             control_switch_modern("DVL", state.switches, "dvl")
             control_switch_modern("COMMS", state.switches, "com")
             control_switch_modern("AUX 1", state.switches, "ex1")
             control_switch_modern("AUX 2", state.switches, "ex2")
             control_switch_modern("ACTUATOR", state.switches, "actuator")
+
+            # --- SET ボタン ---
+            def on_click_set():
+                if node_instance:
+                    node_instance.publish_switch_command()
+                    ui.notify("SEND: System Switch Command", type="info", color=UIColors.NEON_CYAN)
+                else:
+                    ui.notify("ROS Node Not Connected", type="warning")
+
+            ui.button("SET Switch", on_click=on_click_set).classes(
+                "w-full text-lg font-bold tracking-widest h-12 shadow-lg"
+            ).props('color="cyan-4" icon="send" no-caps').style(
+                f"text-shadow: 0 0 5px rgba(0,0,0,0.5);"
+            )
+
     return refs
 
 
@@ -778,11 +783,20 @@ def render_nav_column(state: RobotState) -> dict:
             with ui.row().classes("items-center justify-between w-full"):
                 with ui.column():
                     ui.label("IMU (HEADING)").classes("text-sm font-bold text-slate-500")
+
+                    # Heading
                     ui.label().bind_text_from(
                         state.imu,
                         "orient_z",
-                        backward=lambda x: f"{math.degrees(x):05.1f}°",
-                    ).classes("text-4xl font-bold stat-value text-orange-400")
+                        backward=lambda x: f"{x:3.2f}°",
+                    ).classes("text-4xl font-bold stat-value text-orange-400 leading-none")
+
+                    # Temperature
+                    with ui.row().classes("items-center gap-2 mt-2"):
+                        ui.icon("device_thermostat", size="xs").classes("text-slate-500")
+                        ui.label().bind_text_from(
+                            state.imu, "temp", backward=lambda x: f"{x:.1f}°C"
+                        ).classes("text-lg font-bold stat-value text-slate-300")
                 ui.button(
                     "Restart",
                     on_click=lambda: node_instance.publish_imu_reset() if node_instance else None,
