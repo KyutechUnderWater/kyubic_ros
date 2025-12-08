@@ -16,7 +16,6 @@ def generate_launch_description():
     actuator_rp2040_driver_dir = PathJoinSubstitution(
         [FindPackageShare("actuator_rp2040_driver"), "launch"]
     )
-    dvl_driver_dir = PathJoinSubstitution([FindPackageShare("dvl_driver"), "launch"])
     gnss_driver_dir = PathJoinSubstitution([FindPackageShare("gnss_driver"), "launch"])
     logic_distro_rp2040_driver_dir = PathJoinSubstitution(
         [FindPackageShare("logic_distro_rp2040_driver"), "launch"]
@@ -24,6 +23,7 @@ def generate_launch_description():
     sensors_esp32_driver_dir = PathJoinSubstitution(
         [FindPackageShare("sensors_esp32_driver"), "launch"]
     )
+    imu_driver_dir = PathJoinSubstitution([FindPackageShare("imu_driver"), "launch"])
 
     return LaunchDescription(
         [
@@ -36,12 +36,6 @@ def generate_launch_description():
                     "log_level": LaunchConfiguration("log_level"),
                 }.items(),
             ),
-            # IncludeLaunchDescription(
-            #     PathJoinSubstitution([dvl_driver_dir, "dvl_driver.launch.py"]),
-            #     launch_arguments={
-            #         "log_level": LaunchConfiguration("log_level"),
-            #     }.items(),
-            # ),
             # IncludeLaunchDescription(
             #     PathJoinSubstitution([gnss_driver_dir, "gnss_driver.launch.py"]),
             #     launch_arguments={
@@ -61,6 +55,12 @@ def generate_launch_description():
             ),
             IncludeLaunchDescription(
                 PathJoinSubstitution([sensors_esp32_driver_dir, "sensors_esp32_driver.launch.py"]),
+                launch_arguments={
+                    "log_level": LaunchConfiguration("log_level"),
+                }.items(),
+            ),
+            IncludeLaunchDescription(
+                PathJoinSubstitution([imu_driver_dir, "imu_driver.launch.py"]),
                 launch_arguments={
                     "log_level": LaunchConfiguration("log_level"),
                 }.items(),
