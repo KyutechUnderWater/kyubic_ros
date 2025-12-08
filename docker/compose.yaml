@@ -25,3 +25,4 @@ services:
       - TERM=xterm-256color
       - USER_ID=$USER_ID
       - GROUP_ID=$GROUP_ID
+      - TZ=Asia/Tokyo
