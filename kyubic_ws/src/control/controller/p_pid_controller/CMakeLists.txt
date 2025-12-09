@@ -32,15 +32,26 @@ ament_auto_add_library(test_p_pid_component SHARED
   ./src/test_p_pid.cpp
 )
 
+## measure_parameter_component
+ament_auto_add_library(measure_parameter_component SHARED
+  ./src/measure_parameter.cpp
+)
+
 rclcpp_components_register_node(test_p_pid_component
   PLUGIN "controller::TestPPID"
   EXECUTABLE test_p_pid_component_node
+)
+
+rclcpp_components_register_node(measure_parameter_component
+  PLUGIN "controller::MeasureParam"
+  EXECUTABLE measure_parameter_component_node
 )
 
 
 # set install config
 install(TARGETS
   test_p_pid_component
+  measure_parameter_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin

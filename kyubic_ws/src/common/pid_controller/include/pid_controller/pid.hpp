@@ -69,6 +69,12 @@ public:
   std::array<double, 3> get_each_term();
 
   /**
+   * @brief Set offset
+   * @param offset offset parameter
+   */
+  void set_offset(double offset);
+
+  /**
    * @brief Update PID cycle
    * @param current Process value
    * @param target Setting value
@@ -133,6 +139,12 @@ public:
    * @details Calculate PID
    */
   double update(double current, double target);
+
+  /**
+   * @brief Set offset
+   * @param offset offset parameter
+   */
+  void set_offset(double offset);
 
   /**
    * @brief Reset previous output
