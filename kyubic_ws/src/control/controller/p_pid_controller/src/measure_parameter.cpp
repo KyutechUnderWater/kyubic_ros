@@ -16,8 +16,6 @@
 #include <cstdlib>
 #include <fstream>
 #include <numeric>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/time.hpp>
 
 using namespace std::chrono_literals;
 
@@ -55,9 +53,15 @@ bool MeasureParam::_measure_z()
   buf_sens[idx] = odom_->pose.position.z_depth;
   buf_out[idx] = force_z;
 
-  double ave_depth =
-    std::accumulate(buf_sens.begin(), buf_sens.end(), 0.0) / static_cast<double>(buf_sens.size());
-  if (std::abs(target_z_depth - ave_depth) < 0.05) {
+  // Mean Absolute Deviation
+  double mad_depth =
+    std::accumulate(
+      buf_sens.begin(), buf_sens.end(), 0.0,
+      [this](double acc, double val) { return acc + std::abs(val - target_z_depth); }) /
+    static_cast<double>(buf_sens.size());
+
+  // If depth is stable, calculate force avelage
+  if (mad_depth < 0.05) {
     param_z =
       std::accumulate(buf_out.begin(), buf_out.end(), 0.0) / static_cast<double>(buf_out.size());
     return true;
@@ -69,11 +73,17 @@ bool MeasureParam::_measure_roll()
 {
   size_t idx = count++ % buf_size;
   buf_sens[idx] = odom_->pose.orientation.x;
-  buf_out[idx] = torque_roll / sin(odom_->pose.orientation.x);
+  buf_out[idx] = torque_roll / sin(odom_->pose.orientation.x * std::numbers::pi / 180.0);
 
-  double ave_roll =
-    std::accumulate(buf_sens.begin(), buf_sens.end(), 0.0) / static_cast<double>(buf_sens.size());
-  if (std::abs(target_roll - ave_roll) < 5) {
+  // Mean Absolute Deviation
+  double mad_roll =
+    std::accumulate(
+      buf_sens.begin(), buf_sens.end(), 0.0,
+      [this](double acc, double val) { return acc + std::abs(val - target_roll); }) /
+    static_cast<double>(buf_sens.size());
+
+  // If roll is stable, calculate torque avelage
+  if (mad_roll < 5) {
     param_roll =
       std::accumulate(buf_out.begin(), buf_out.end(), 0.0) / static_cast<double>(buf_out.size());
     return true;
@@ -112,7 +122,7 @@ void MeasureParam::measure()
 
   if (z_measuring) {
     if (z_measured = _measure_z(); z_measured) {
-      RCLCPP_INFO(get_logger(), "Z-Axis measurement: successfull");
+      RCLCPP_INFO(get_logger(), "Z-Axis measurement: successfull. param_z is  %f[N]", param_z);
       z_measuring = false;
     } else if ((this->get_clock()->now() - start_time).seconds() > timeout) {
       RCLCPP_ERROR(this->get_logger(), "Z-Axis measurement: faild");
@@ -131,7 +141,7 @@ void MeasureParam::measure()
 
   if (roll_measuring) {
     if (roll_measured = _measure_roll(); roll_measured) {
-      RCLCPP_INFO(get_logger(), "Roll measurement: successfull");
+      RCLCPP_INFO(get_logger(), "Roll measurement: successfull. param_roll is %f[Nm]", param_roll);
       _save_yaml();
       rclcpp::shutdown();
     } else if ((this->get_clock()->now() - start_time).seconds() > timeout) {
@@ -160,8 +170,7 @@ void MeasureParam::pid_update()
       RCLCPP_WARN(this->get_logger(), "only z-axis control: %lf[N]", force_z);
     }
   } else {
-    double force_z = 0.0;
-    force_z = p_pid_ctrl_->pid_z_update(
+    double force_z = p_pid_ctrl_->pid_z_update(
       current_twst.linear.z_depth, current_pose.position.z_depth, target_z_depth);
 
     double torque_x =
