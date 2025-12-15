@@ -63,7 +63,7 @@ public:
 
   /**
    * @brief calculate P-PID Controller
-   * @details If odometru data is updated, update pid step.
+   * @details If odometry data is updated, update pid step.
    */
   void update();
 };

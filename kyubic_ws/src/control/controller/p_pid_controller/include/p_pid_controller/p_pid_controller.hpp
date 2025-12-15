@@ -33,6 +33,7 @@ private:
   // Define unique name(axes)
   std::array<std::string, 5> name = {"x", "y", "z", "roll", "yaw"};
   std::map<std::string, pid_controller::VelocityP_PIDParameter> pid_params;
+  double roll_sf;
 
   /**
    * @brief Load gain from yaml file
@@ -48,6 +49,9 @@ public:
   double pid_z_update(double current_slave, double current_master, double target_master);
   double pid_roll_update(double current_slave, double current_master, double target);
   double pid_yaw_update(double current_slave, double current_master, double target);
+
+  void set_z_offset(double force);
+  void set_roll_offset(double roll_deg);
 
   void pid_x_reset();
   void pid_y_reset();

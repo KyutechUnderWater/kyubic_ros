@@ -22,20 +22,19 @@ def generate_launch_description():
     )
 
     action_component_container = ComposableNodeContainer(
-        name="test_p_pid_component_container",
+        name="measure_parameter_component_container",
         namespace="test",
         package="rclcpp_components",
         executable="component_container",
         composable_node_descriptions=[
             ComposableNode(
-                name="test_p_pid_component",
+                name="measure_paramter_component",
                 namespace="controller/p_pid_controller",
                 package="p_pid_controller",
-                plugin="controller::TestPPID",
+                plugin="controller::MeasureParam",
                 remappings=[
-                    ("targets", "/rt_pose_plotter/targets"),
-                    ("odom", "/localization/odom"),
-                    ("robot_force", "/driver/robot_force"),
+                    ("/controller/p_pid_controller/odom", "/localization/odom"),
+                    ("/controller/p_pid_controller/robot_force", "/driver/robot_force"),
                 ],
                 parameters=[{"pid_gain_yaml": config_path}],
                 extra_arguments=[

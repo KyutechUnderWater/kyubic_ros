@@ -310,8 +310,8 @@ class WebVisualizerNode(Node):
             self.target_buffer = self._init_plot_data()
             self.target_buffer["x"].append(msg.pose.x)
             self.target_buffer["y"].append(msg.pose.y)
-            self.target_buffer["z_depth"].append(msg.pose.z_depth)
-            self.target_buffer["z_altitude"].append(msg.pose.z_altitude)
+            self.target_buffer["z_depth"].append(msg.pose.z)
+            self.target_buffer["z_altitude"].append(msg.pose.z)
             self.target_buffer["roll"].append(msg.pose.roll)
             self.target_buffer["yaw"].append(msg.pose.yaw)
 

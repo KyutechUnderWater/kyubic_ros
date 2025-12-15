@@ -11,9 +11,8 @@
 
 #include <yaml-cpp/yaml.h>
 
-#include <array>
+#include <cmath>
 #include <iostream>
-#include <memory>
 
 namespace controller
 {
@@ -33,6 +32,7 @@ P_PIDController::P_PIDController(const std::string & yaml_path)
 bool P_PIDController::_load_gain_from_yaml(const std::string & yaml_path)
 {
   std::map<std::string, pid_controller::VelocityP_PIDParameter> pid_params;
+  double roll_scale_factor;  // B*h, T = B*h*sin(θ), h = segment GM
 
   try {
     // Load Yaml File
@@ -64,6 +64,10 @@ bool P_PIDController::_load_gain_from_yaml(const std::string & yaml_path)
         param.vpid_param.offset = vpid_node["offset"].as<double>();
       }
 
+      if (key == "roll" && vpid_node["roll_scale_factor"]) {
+        roll_scale_factor = vpid_node["roll_scale_factor"].as<double>();
+      }
+
       // Store
       pid_params[key] = param;
     }
@@ -76,6 +80,7 @@ bool P_PIDController::_load_gain_from_yaml(const std::string & yaml_path)
   }
 
   this->pid_params = pid_params;
+  this->roll_sf = roll_scale_factor;
 
   return true;
 }
@@ -120,6 +125,13 @@ std::array<double, 5> P_PIDController::update(std::array<std::array<double, 3>, 
     u.at(5) = list_pid_.at(i)->update(data.at(i).at(0), data.at(i).at(1), data.at(i).at(2));
   }
   return u;
+}
+
+void P_PIDController::set_z_offset(double force) { pid_roll_->set_param_offset(force); }
+
+void P_PIDController::set_roll_offset(double roll_deg)
+{
+  pid_roll_->set_param_offset(roll_sf * sin(roll_deg * std::numbers::pi / 180));
 }
 
 void P_PIDController::pid_x_reset() { return pid_x_->reset(); }
