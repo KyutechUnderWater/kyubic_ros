@@ -48,17 +48,20 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
     double dt = (now - pre_time).nanoseconds() * 1e-9;
     pre_time = now;
 
-    // calculate moving avelage
-    pos_z_list.at(idx) = fresh_water ? msg->depth * sea2fresh_scale : msg->depth;
-    double pos_z_sum = std::accumulate(pos_z_list.begin(), pos_z_list.end(), 0.0);
-    pos_z = pos_z_sum / static_cast<double>(pos_z_list.size());
+    // calculate exponential moving average
+    pos_z = EMA_ALPHA * msg->depth + (1.0 - EMA_ALPHA) * pre_pos_z;
 
     // calculate depth velocity
     double vel_z = (pos_z - pre_pos_z) / dt;
 
+    // calculate moving avelage
+    vel_z_list.at(idx) = vel_z;
+    double vel_z_sum = std::accumulate(vel_z_list.begin(), vel_z_list.end(), 0.0);
+    vel_z = vel_z_sum / static_cast<double>(vel_z_list.size());
+
     // prepare for next step
     pre_pos_z = pos_z;
-    if (++idx == pos_z_list.size()) idx = 0;
+    if (++idx == vel_z_list.size()) idx = 0;
 
     // Publish
     {

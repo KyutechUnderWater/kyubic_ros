@@ -28,14 +28,6 @@ def generate_launch_description():
     return LaunchDescription(
         [
             log_level_arg,
-            IncludeLaunchDescription(
-                PathJoinSubstitution(
-                    [actuator_rp2040_driver_dir, "actuator_rp2040_driver.launch.py"]
-                ),
-                launch_arguments={
-                    "log_level": LaunchConfiguration("log_level"),
-                }.items(),
-            ),
             # IncludeLaunchDescription(
             #     PathJoinSubstitution([gnss_driver_dir, "gnss_driver.launch.py"]),
             #     launch_arguments={

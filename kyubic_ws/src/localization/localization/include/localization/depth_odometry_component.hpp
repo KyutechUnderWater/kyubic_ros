@@ -25,8 +25,11 @@
 namespace localization
 {
 
+/** @brief parameter of Exponential Moving Average */
+const float EMA_ALPHA = 0.4;
+
 /** @brief Number of TAP for simple moving average */
-const int DEPTH_SMA_SUMPLE_NUM = 16;
+const int DEPTH_SMA_SUMPLE_NUM = 32;
 
 /** @brief Convert to sea to fresh density */
 const float sea2fresh_scale = 1029.0 / 1000.0;
@@ -47,7 +50,7 @@ private:
   double pre_pos_z = 0.0;
 
   uint8_t idx = 0;
-  std::array<double, DEPTH_SMA_SUMPLE_NUM> pos_z_list;  /// for simple moving average
+  std::array<double, DEPTH_SMA_SUMPLE_NUM> vel_z_list;  /// for simple moving average
   double offset_pos_z = 0.0;
   double pos_z = 0.0;
 
