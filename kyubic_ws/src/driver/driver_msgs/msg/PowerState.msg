@@ -2,11 +2,11 @@
 std_msgs/Header header
 common_msgs/Status status
 
-float32 log_voltage
-float32 log_current
-float32 log_power
-float32 act_voltage
-float32 act_current
-float32 act_power
+float32 log_voltage  # [V]
+float32 log_current  # [A]
+float32 log_power    # [W]
+float32 act_voltage  # [V]
+float32 act_current  # [A]
+float32 act_power    # [W]
 float32 log_temp
 float32 act_temp

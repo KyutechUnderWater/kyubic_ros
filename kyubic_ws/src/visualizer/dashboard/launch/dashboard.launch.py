@@ -22,6 +22,8 @@ def generate_launch_description():
                     ("system_status", "/sensors_esp32_driver/system_status"),
                     ("system_switch", "/logic_distro_rp2040_driver/system_switch"),
                     ("imu", "/driver/imu"),
+                    ("imu_reset", "/sensors_esp32_driver/imu_reset"),
+                    ("tilt_servo", "/sensors_esp32_driver/tilt_servo"),
                 ],
                 output="screen",
             )
