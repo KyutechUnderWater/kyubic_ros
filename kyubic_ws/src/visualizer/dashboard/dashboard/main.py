@@ -2,7 +2,7 @@ import math
 import threading
 import time
 from dataclasses import dataclass
-from typing import Optional, List, Callable
+from typing import Optional, Callable
 
 from nicegui import ui, app
 
@@ -25,6 +25,7 @@ try:
         SystemSwitch,
         SystemStatus,
         BoolStamped,
+        Int32Stamped,
     )
 
     ROS_AVAILABLE = True
@@ -282,6 +283,11 @@ class RobotState:
         self.depth = DepthData()
         self.sys_stat = SystemStatusData()
         self.switches = SwitchState()
+        self.tilt_angle: int = 90
+
+        self.topic_alive_ctrl = False  # System Control
+        self.topic_alive_tilt = False  # Tilt Serve
+
         self.warning_count = 0
 
     def check_global_voltage_warning(self) -> bool:
@@ -313,6 +319,7 @@ class MonitorNode(Node):
         self.state = state
         self._init_params()
         self._init_subs_pubs()
+        self._init_timers()
 
     def _init_params(self):
         cfg = self.state.config
@@ -341,12 +348,13 @@ class MonitorNode(Node):
         self.create_subscription(IMU, "imu", self.cb_imu, 10)
         self.create_subscription(PowerState, "power_state", self.cb_power, 10)
         self.create_subscription(SystemStatus, "system_status", self.cb_sys_status, 10)
-        self.create_subscription(SystemSwitch, "system_switch", self.cb_sys_switch, 10)
 
         self.pub_sys_switch = self.create_publisher(SystemSwitch, "system_switch", 10)
-        self.pub_imu_reset = self.create_publisher(
-            BoolStamped, "/sensors_esp32_driver/imu_reset", 10
-        )
+        self.pub_imu_reset = self.create_publisher(BoolStamped, "imu_reset", 10)
+        self.pub_tilt = self.create_publisher(Int32Stamped, "tilt_servo", 10)
+
+    def _init_timers(self):
+        self.create_timer(1.0, self.update_topic_status)
 
     def cb_params(self, params):
         cfg = self.state.config
@@ -406,16 +414,6 @@ class MonitorNode(Node):
         d.act_volt = msg.act_voltage
         d.act_curr = msg.act_current
 
-    def cb_sys_switch(self, msg):
-        s = self.state.switches
-        s.jetson = msg.jetson
-        s.dvl = msg.dvl
-        s.com = msg.com
-        s.ex1 = msg.ex1
-        s.ex8 = msg.ex8
-        s.actuator = msg.actuator
-        s.status_id = msg.status.id
-
     def cb_sys_status(self, msg):
         d = self.state.sys_stat
         self._update_common(d, msg)
@@ -443,6 +441,51 @@ class MonitorNode(Node):
         msg.data = True
         self.pub_imu_reset.publish(msg)
         ui.notify("IMU Zero-Reset Command Sent", type="info", color=UIColors.NEON_CYAN)
+
+    def publish_tilt_command(self):
+        msg = Int32Stamped()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.status.id = 0
+        msg.data = int(self.state.tilt_angle)
+        self.pub_tilt.publish(msg)
+
+    def _is_remote_node_alive(self, topic_name: str, mode: str) -> bool:
+        """
+        指定したトピックに相手がいるか確認する
+        :param topic_name: トピック名
+        :param mode: 'sub' (自分が受信側=相手はPub) or 'pub' (自分が送信側=相手はSub)
+        :return: 接続確認できればTrue
+        """
+        # ダミーモード(ROS無し)の場合は常にTrue
+        if not hasattr(self, "count_publishers"):
+            return True
+
+        resolved_name = self.resolve_topic_name(topic_name)
+
+        try:
+            if mode == "sub":
+                # 相手(Publisher)がいるか数える
+                return self.count_publishers(resolved_name) > 0
+            elif mode == "pub":
+                # 相手(Subscriber)がいるか数える
+                return self.count_subscribers(resolved_name) > 0
+            else:
+                return False
+        except Exception:
+            return False
+
+    def update_topic_status(self):
+        """定期実行されるステータス更新関数"""
+
+        # 1. System Contril
+        self.state.topic_alive_ctrl = (
+            0 if self._is_remote_node_alive(topic_name="system_switch", mode="pub") else 2
+        )
+
+        # 2. Camera Tilt
+        self.state.topic_alive_tilt = (
+            0 if self._is_remote_node_alive(topic_name="tilt_servo", mode="pub") else 2
+        )
 
 
 # Global Node Reference (UI callbacks need this)
@@ -721,7 +764,7 @@ def render_status_column(state: RobotState) -> dict:
             control_switch_modern("EX8", state.switches, "ex8")
             control_switch_modern("ACTUATOR", state.switches, "actuator")
 
-            # --- SET ボタン ---
+            # SET Button
             def on_click_set():
                 if node_instance:
                     node_instance.publish_switch_command()
@@ -735,6 +778,41 @@ def render_status_column(state: RobotState) -> dict:
                 f"text-shadow: 0 0 5px rgba(0,0,0,0.5);"
             )
 
+        card_tilt = CyberCard()
+        refs["card_tilt"] = card_tilt
+        with card_tilt:
+            label_header("Camera Tilt", "videocam")
+
+            with ui.row().classes("w-full items-center justify-between gap-2"):
+                with ui.row().classes("items-center gap-3"):
+                    ui.label("ANGLE").classes("text-xl font-bold stat-value").style(
+                        f"color: {UIColors.TEXT_MAIN}"
+                    )
+
+                    ui.number(value=0).bind_value(state, "tilt_angle").props(
+                        'outlined dense input-class="text-xl text-center text-cyan-400 font-mono font-bold"'
+                    ).classes("w-24").style(
+                        f"background-color: rgba(0,0,0,0.2); border-color: {UIColors.NEON_CYAN};"
+                    )
+
+                    ui.label("deg").classes("text-sm font-bold text-slate-500")
+
+                def on_click_tilt_set():
+                    if node_instance:
+                        node_instance.publish_tilt_command()
+                        ui.notify(
+                            f"SENT: Tilt Angle {state.tilt_angle}°",
+                            type="info",
+                            color=UIColors.NEON_CYAN,
+                        )
+                    else:
+                        ui.notify("ROS Node Not Connected", type="warning")
+
+                ui.button("SET", on_click=on_click_tilt_set).classes(
+                    "font-bold tracking-widest h-10 shadow-lg px-6"
+                ).props('color="purple-5" icon="publish" no-caps').style(
+                    f"text-shadow: 0 0 5px rgba(0,0,0,0.5);"
+                )
     return refs
 
 
@@ -897,7 +975,8 @@ def index():
 
         stat_timeout = state.sys_stat.is_timeout(cfg.timeout_sys_status)
         ui_refs["card_stat"].update_status(state.sys_stat.status_id, stat_timeout)
-        ui_refs["card_ctrl"].update_status(state.sys_stat.status_id, stat_timeout)
+        ui_refs["card_ctrl"].update_status(0, state.topic_alive_ctrl == 2)
+        ui_refs["card_tilt"].update_status(0, state.topic_alive_tilt == 2)
 
         ui_refs["card_dvl"].update_status(
             state.dvl.status_id, state.dvl.is_timeout(cfg.timeout_dvl)
