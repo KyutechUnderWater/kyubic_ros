@@ -112,7 +112,7 @@ void TestPPID::update()
     force_x = _force_x * cos(z_rad) - _force_y * sin(z_rad);
     force_y = _force_x * sin(z_rad) + _force_y * cos(z_rad);
 
-    RCLCPP_DEBUG(
+    RCLCPP_INFO(
       this->get_logger(), "P-PID -> x: %f  y: %f  z: %f  z_mode: %u  roll: %f  yaw: %f", force_x,
       force_y, force_z, z_mode, torque_x, torque_z);
 
