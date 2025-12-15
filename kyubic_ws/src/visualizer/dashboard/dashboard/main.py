@@ -261,11 +261,11 @@ class SystemStatusData(SensorData):
 
 @dataclass
 class SwitchState:
-    jetson: bool = False
-    dvl: bool = False
-    com: bool = False
-    ex1: bool = False
-    ex2: bool = False
+    jetson: bool = True
+    dvl: bool = True
+    com: bool = True
+    ex1: bool = True
+    ex8: bool = True
     actuator: bool = False
     status_id: int = 0
 
@@ -402,9 +402,9 @@ class MonitorNode(Node):
         d = self.state.power
         self._update_common(d, msg)
         d.log_volt = msg.log_voltage
-        d.log_curr = msg.log_current / 200.0
+        d.log_curr = msg.log_current
         d.act_volt = msg.act_voltage
-        d.act_curr = msg.act_current / 200.0
+        d.act_curr = msg.act_current
 
     def cb_sys_switch(self, msg):
         s = self.state.switches
@@ -412,7 +412,7 @@ class MonitorNode(Node):
         s.dvl = msg.dvl
         s.com = msg.com
         s.ex1 = msg.ex1
-        s.ex2 = msg.ex2
+        s.ex8 = msg.ex8
         s.actuator = msg.actuator
         s.status_id = msg.status.id
 
@@ -433,7 +433,7 @@ class MonitorNode(Node):
         msg.dvl = s.dvl
         msg.com = s.com
         msg.ex1 = s.ex1
-        msg.ex2 = s.ex2
+        msg.ex8 = s.ex8
         msg.actuator = s.actuator
         self.pub_sys_switch.publish(msg)
 
@@ -715,10 +715,10 @@ def render_status_column(state: RobotState) -> dict:
 
             # 各スイッチの表示
             control_switch_modern("JETSON", state.switches, "jetson")
-            control_switch_modern("DVL", state.switches, "dvl")
-            control_switch_modern("COMMS", state.switches, "com")
-            control_switch_modern("AUX 1", state.switches, "ex1")
-            control_switch_modern("AUX 2", state.switches, "ex2")
+            control_switch_modern("DVL (NC)", state.switches, "dvl")
+            control_switch_modern("COM (DVL)", state.switches, "com")
+            control_switch_modern("EX1", state.switches, "ex1")
+            control_switch_modern("EX8", state.switches, "ex8")
             control_switch_modern("ACTUATOR", state.switches, "actuator")
 
             # --- SET ボタン ---
@@ -941,7 +941,9 @@ def main():
     t.start()
 
     # UIの起動
-    ui.run(title="KYUBIC SYSTEM", port=8080, reload=False, dark=True)
+    ui.run(
+        title="KYUBIC SYSTEM", host="192.168.9.100", port=8080, reload=False, dark=True, show=False
+    )
 
 
 if __name__ == "__main__":
