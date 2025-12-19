@@ -24,6 +24,7 @@ def generate_launch_description():
                     ("imu", "/driver/imu"),
                     ("imu_reset", "/sensors_esp32_driver/imu_reset"),
                     ("tilt_servo", "/sensors_esp32_driver/tilt_servo"),
+                    ("led", "/actuator_rp2040_driver/led"),
                 ],
                 output="screen",
             )

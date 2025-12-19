@@ -7,7 +7,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     command_srv_arg = DeclareLaunchArgument(
         "command_srv",
-        default_value="/driver/dvl_command",
+        default_value="/driver/dvl_driver/command",
         description="Service name for the dvl command",
     )
 
