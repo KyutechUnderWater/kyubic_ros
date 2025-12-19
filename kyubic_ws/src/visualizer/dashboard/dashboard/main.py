@@ -21,6 +21,7 @@ try:
         Depth,
         Environment,
         IMU,
+        LED,
         PowerState,
         SystemSwitch,
         SystemStatus,
@@ -228,7 +229,6 @@ class PowerData(SensorData):
 class DvlData(SensorData):
     vel_x: float = 0.0
     vel_y: float = 0.0
-    error: float = 0.0
     altitude: float = 0.0
     speed_norm: float = 0.0
 
@@ -263,10 +263,10 @@ class SystemStatusData(SensorData):
 @dataclass
 class SwitchState:
     jetson: bool = True
-    dvl: bool = True
+    dvl: bool = False
     com: bool = True
-    ex1: bool = True
-    ex8: bool = True
+    ex1: bool = False
+    ex8: bool = False
     actuator: bool = False
     status_id: int = 0
 
@@ -283,10 +283,15 @@ class RobotState:
         self.depth = DepthData()
         self.sys_stat = SystemStatusData()
         self.switches = SwitchState()
+
         self.tilt_angle: int = 90
+
+        self.led_right: int = 1100  # (1100:OFF ~ 1900:MAX)
+        self.led_left: int = 1100
 
         self.topic_alive_ctrl = False  # System Control
         self.topic_alive_tilt = False  # Tilt Serve
+        self.topic_alive_led = False  # LED Control
 
         self.warning_count = 0
 
@@ -352,6 +357,7 @@ class MonitorNode(Node):
         self.pub_sys_switch = self.create_publisher(SystemSwitch, "system_switch", 10)
         self.pub_imu_reset = self.create_publisher(BoolStamped, "imu_reset", 10)
         self.pub_tilt = self.create_publisher(Int32Stamped, "tilt_servo", 10)
+        self.pub_led = self.create_publisher(LED, "led", 10)
 
     def _init_timers(self):
         self.create_timer(1.0, self.update_topic_status)
@@ -383,7 +389,6 @@ class MonitorNode(Node):
         self._update_common(d, msg)
         d.vel_x = msg.velocity.x
         d.vel_y = msg.velocity.y
-        d.error = msg.velocity_error
         d.altitude = msg.altitude
         d.speed_norm = math.sqrt(msg.velocity.x**2 + msg.velocity.y**2)
 
@@ -449,6 +454,14 @@ class MonitorNode(Node):
         msg.data = int(self.state.tilt_angle)
         self.pub_tilt.publish(msg)
 
+    def publish_led_command(self):
+        msg = LED()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.status.id = 0
+        msg.right = int(self.state.led_right)
+        msg.left = int(self.state.led_left)
+        self.pub_led.publish(msg)
+
     def _is_remote_node_alive(self, topic_name: str, mode: str) -> bool:
         """
         指定したトピックに相手がいるか確認する
@@ -485,6 +498,11 @@ class MonitorNode(Node):
         # 2. Camera Tilt
         self.state.topic_alive_tilt = (
             0 if self._is_remote_node_alive(topic_name="tilt_servo", mode="pub") else 2
+        )
+
+        # 3. LED Control
+        self.state.topic_alive_led = (
+            0 if self._is_remote_node_alive(topic_name="led", mode="pub") else 2
         )
 
 
@@ -573,10 +591,11 @@ def circular_gauge_modern(
                     f"color: {UIColors.TEXT_MAIN}; text-shadow: 0 2px 4px var(--shadow-color);"
                 )
 
-        ui.label(label).classes("text-sm font-bold mt-2 uppercase tracking-wide").style(
-            f"color: {UIColors.TEXT_SUB}"
-        )
-        ui.label(unit).classes("text-xs font-bold").style(f"color: {UIColors.TEXT_SUB}")
+        with ui.row().classes("items-baseline gap-1 mt-2"):
+            ui.label(label).classes("text-sm font-bold uppercase tracking-wide").style(
+                f"color: {UIColors.TEXT_SUB}"
+            )
+            ui.label(f" [{unit}]").classes("text-xs font-bold").style(f"color: {UIColors.TEXT_SUB}")
         return p
 
 
@@ -685,14 +704,15 @@ def render_power_column(state: RobotState) -> dict:
             ui.label("LOGIC CIRCUIT").classes(
                 "text-ms font-bold text-cyan-500 mb-2 pl-1 border-l-2 border-cyan-500"
             )
-            with ui.row().classes("w-full justify-between mb-4 bg-slate-800/50 p-3 rounded-lg"):
+            with ui.row().classes("w-full justify-between mb-4 px-1"):
                 value_item("Voltage", "V", state.power, "log_volt", color=UIColors.TEXT_MAIN)
                 value_item("Current", "A", state.power, "log_curr", color=UIColors.TEXT_SUB)
+
             # Actuator Power
             ui.label("ACTUATOR CIRCUIT").classes(
                 "text-ms font-bold text-orange-500 mb-2 pl-1 border-l-2 border-orange-500"
             )
-            with ui.row().classes("w-full justify-between bg-slate-800/50 p-3 rounded-lg"):
+            with ui.row().classes("w-full justify-between px-1"):
                 value_item("Voltage", "V", state.power, "act_volt", color=UIColors.TEXT_MAIN)
                 value_item("Current", "A", state.power, "act_curr", color=UIColors.TEXT_SUB)
 
@@ -728,7 +748,7 @@ def render_power_column(state: RobotState) -> dict:
                 ui.label("PRESSURE").classes("text-sm font-bold text-slate-400")
                 ui.label().bind_text_from(
                     state.env, "press", backward=lambda x: f"{x:.0f} hPa"
-                ).classes("text-2xl font-bold stat-value text-white")
+                ).classes("text-2xl font-bold stat-value").style(f"color: {UIColors.TEXT_MAIN}")
     return refs
 
 
@@ -778,41 +798,6 @@ def render_status_column(state: RobotState) -> dict:
                 f"text-shadow: 0 0 5px rgba(0,0,0,0.5);"
             )
 
-        card_tilt = CyberCard()
-        refs["card_tilt"] = card_tilt
-        with card_tilt:
-            label_header("Camera Tilt", "videocam")
-
-            with ui.row().classes("w-full items-center justify-between gap-2"):
-                with ui.row().classes("items-center gap-3"):
-                    ui.label("ANGLE").classes("text-xl font-bold stat-value").style(
-                        f"color: {UIColors.TEXT_MAIN}"
-                    )
-
-                    ui.number(value=0).bind_value(state, "tilt_angle").props(
-                        'outlined dense input-class="text-xl text-center text-cyan-400 font-mono font-bold"'
-                    ).classes("w-24").style(
-                        f"background-color: rgba(0,0,0,0.2); border-color: {UIColors.NEON_CYAN};"
-                    )
-
-                    ui.label("deg").classes("text-sm font-bold text-slate-500")
-
-                def on_click_tilt_set():
-                    if node_instance:
-                        node_instance.publish_tilt_command()
-                        ui.notify(
-                            f"SENT: Tilt Angle {state.tilt_angle}°",
-                            type="info",
-                            color=UIColors.NEON_CYAN,
-                        )
-                    else:
-                        ui.notify("ROS Node Not Connected", type="warning")
-
-                ui.button("SET", on_click=on_click_tilt_set).classes(
-                    "font-bold tracking-widest h-10 shadow-lg px-6"
-                ).props('color="purple-5" icon="publish" no-caps').style(
-                    f"text-shadow: 0 0 5px rgba(0,0,0,0.5);"
-                )
     return refs
 
 
@@ -874,7 +859,9 @@ def render_nav_column(state: RobotState) -> dict:
                         ui.icon("device_thermostat", size="xs").classes("text-slate-500")
                         ui.label().bind_text_from(
                             state.imu, "temp", backward=lambda x: f"{x:.1f}°C"
-                        ).classes("text-lg font-bold stat-value text-slate-300")
+                        ).classes("text-lg font-bold stat-value").style(
+                            f"color: {UIColors.TEXT_SUB}"
+                        )
                 ui.button(
                     "Restart",
                     on_click=lambda: node_instance.publish_imu_reset() if node_instance else None,
@@ -913,6 +900,108 @@ def render_nav_column(state: RobotState) -> dict:
     return refs
 
 
+def render_led_column(state: RobotState) -> dict:
+    """4列目（LED Control）の構築"""
+    refs = {}
+    with ui.column().classes("col-span-1 gap-6"):
+        # ==========================================
+        # LED Control
+        # ==========================================
+        card_led = CyberCard()
+        refs["card_led"] = card_led
+        with card_led:
+            label_header("Light Control", "lightbulb")
+
+            # --- Slider Helper Function ---
+            def render_led_slider(label, attr_name):
+                with ui.column().classes("w-full mb-1 gap-0"):
+                    # 1. Main Label & Value
+                    with ui.row().classes("w-full justify-between items-end mb-1"):
+                        ui.label(label).classes("text-sm font-bold text-slate-400")
+                        ui.label().bind_text_from(state, attr_name).classes(
+                            "text-lg font-mono font-bold text-cyan-400"
+                        )
+
+                    # 2. Scale Labels
+                    with ui.row().classes("w-full justify-between px-1"):
+                        ui.label("OFF (1100)").classes("text-[10px] font-bold text-slate-600")
+                        ui.label("MAX (1900)").classes("text-[10px] font-bold text-slate-600")
+
+                    # 3. Slider (Range: 1100 - 1900)
+                    ui.slider(min=1100, max=1900, step=10).bind_value(state, attr_name).props(
+                        'color="cyan-4" track-color="grey-8"'
+                    ).classes("w-full")
+
+            # Left & Right Sliders
+            render_led_slider("LEFT LAMP", "led_left")
+            ui.separator().classes("bg-slate-700 my-2")
+            render_led_slider("RIGHT LAMP", "led_right")
+
+            # Send Button
+            def on_click_led_set():
+                if node_instance:
+                    node_instance.publish_led_command()
+                    ui.notify(
+                        f"SENT: LED L:{state.led_left} R:{state.led_right}",
+                        type="info",
+                        color=UIColors.NEON_CYAN,
+                    )
+                else:
+                    ui.notify("ROS Node Not Connected", type="warning")
+
+            ui.button("SET LIGHTS", on_click=on_click_led_set).classes(
+                "w-full text-lg font-bold tracking-widest h-12 shadow-lg mt-4"
+            ).props('color="cyan-4" icon="wb_incandescent" no-caps').style(
+                f"text-shadow: 0 0 5px rgba(0,0,0,0.5);"
+            )
+
+        # ==========================================
+        # Camera Tilt Control
+        # ==========================================
+        card_tilt = CyberCard()
+        refs["card_tilt"] = card_tilt
+        with card_tilt:
+            label_header("Camera Tilt", "videocam")
+
+            with ui.row().classes("w-full items-center justify-between gap-2"):
+                # ラベルと入力ボックス
+                with ui.row().classes("items-center gap-3"):
+                    ui.label("ANGLE").classes("text-xl font-bold stat-value").style(
+                        f"color: {UIColors.TEXT_MAIN}"
+                    )
+
+                    ui.number(value=0).bind_value(state, "tilt_angle").props(
+                        f'outlined dense input-class="text-xl text-center font-mono font-bold" input-style="color: {
+                            UIColors.NEON_CYAN
+                        }"'
+                    ).classes("w-24").style(
+                        f"background-color: var(--bg-base); border: 1px solid {UIColors.NEON_CYAN};"
+                    )
+
+                    ui.label("deg").classes("text-sm font-bold").style(
+                        f"color: {UIColors.TEXT_SUB}"
+                    )
+
+                # 送信ボタン
+                def on_click_tilt_set():
+                    if node_instance:
+                        node_instance.publish_tilt_command()
+                        ui.notify(
+                            f"SENT: Tilt Angle {state.tilt_angle}°",
+                            type="info",
+                            color=UIColors.NEON_CYAN,
+                        )
+                    else:
+                        ui.notify("ROS Node Not Connected", type="warning")
+
+                ui.button("SET", on_click=on_click_tilt_set).classes(
+                    "font-bold tracking-widest h-10 shadow-lg px-6"
+                ).props('color="purple-5" icon="publish" no-caps').style(
+                    f"text-shadow: 0 0 5px rgba(0,0,0,0.5);"
+                )
+    return refs
+
+
 # ==========================================
 # Section 7: Main Entry & Loop
 # ==========================================
@@ -931,15 +1020,16 @@ def index():
     )
 
     with main_layout:
-        with ui.grid().classes("grid-cols-1 lg:grid-cols-3 gap-6 w-full max-w-7xl mx-auto"):
+        with ui.grid().classes("grid-cols-1 lg:grid-cols-4 gap-6 w-full max-w-7xl mx-auto"):
             # UIパーツを構築し、動的に更新が必要な要素への参照を受け取る
             refs_col1 = render_power_column(app_state)
             refs_col2 = render_status_column(app_state)
             refs_col3 = render_nav_column(app_state)
+            refs_col4 = render_led_column(app_state)
 
     # 3. Update Loop Logic
     # 複数の辞書に分かれた参照をマージしてアクセスしやすくする
-    ui_refs = {**refs_col1, **refs_col2, **refs_col3}
+    ui_refs = {**refs_col1, **refs_col2, **refs_col3, **refs_col4}
 
     def update_ui():
         state = app_state
@@ -988,6 +1078,8 @@ def index():
             state.depth.status_id, state.depth.is_timeout(cfg.timeout_depth)
         )
 
+        ui_refs["card_led"].update_status(0, state.topic_alive_led == 2)
+
         # --- E. Global Alert ---
         if state.check_global_voltage_warning():
             main_layout.classes(add="global-alert")
@@ -1020,9 +1112,7 @@ def main():
     t.start()
 
     # UIの起動
-    ui.run(
-        title="KYUBIC SYSTEM", host="192.168.9.100", port=8080, reload=False, dark=True, show=False
-    )
+    ui.run(title="KYUBIC SYSTEM", port=8080, reload=False, dark=True, show=False)
 
 
 if __name__ == "__main__":
