@@ -104,6 +104,7 @@ class PlotUnitWidget(QWidget):
         self.plot_widget2 = pg.ViewBox()
         self.plot_widget2.setMouseEnabled(y=False)
         self.plot_widget2.enableAutoRange(axis="x", enable=True)
+        self.plot_widget2.invertY(invert_y)
         self.plot_widget.scene().addItem(self.plot_widget2)
         self.plot_widget.showAxis("right")
         self.plot_widget.setLabel("right", y2_label, units=unit2)
