@@ -72,7 +72,7 @@ void Depth::protolink_callback(const protoDepth & _msg)
   auto msg =
     std::make_unique<driver_msgs::msg::Depth>(protolink__driver_msgs__Depth::convert(_msg));
   msg->header.stamp = this->get_clock()->now();
-  msg->header.frame_id = "power_link";
+  msg->header.frame_id = "depth";
 
   pub_->publish(std::move(msg));
   RCLCPP_DEBUG(
