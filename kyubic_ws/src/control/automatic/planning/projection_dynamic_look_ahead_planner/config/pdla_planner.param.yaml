@@ -3,7 +3,7 @@
     #path_csv: "assets/kobe/gate_path.csv"
     path_csv: "assets/kobe/sample.csv"
 
-    timeout_ms: 30000
+    timeout_ms: 10000 # [ms]
     look_ahead_scale: 1.0
 
     reach_tolerance:
