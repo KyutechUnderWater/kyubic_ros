@@ -41,6 +41,7 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
   // return if msg is invalid, otherwaise calculate depth velocity
   if (msg->status.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The depth data is invalid");
+    odom_msg->header = msg->header;
     odom_msg->status.depth = localization_msgs::msg::Status::ERROR;
   } else {
     // calculate period (delta t)
