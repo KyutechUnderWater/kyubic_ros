@@ -37,6 +37,7 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 
   if (msg->status.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The imu data is invalid");
+    odom_msg->header = msg->header;
     odom_msg->status.imu = localization_msgs::msg::Status::ERROR;
   } else {
     // z-axis transform

@@ -125,7 +125,8 @@ void ActuatorRP2040::wrench_callback(geometry_msgs::msg::WrenchStamped::SharedPt
 
   // Check timeout with timer library
   if (timeout_->is_timeout(this->get_clock()->now())) {
-    RCLCPP_WARN(this->get_logger(), "HeartBeat timeout. Thrusts set 0[N].");
+    RCLCPP_WARN_THROTTLE(
+      this->get_logger(), *this->get_clock(), 1000, "HeartBeat timeout. Thrusts set 0[N].");
     thrusts.fill(0.0f);
   } else {
     float force_x = _msg->wrench.force.x;

@@ -43,10 +43,11 @@ void check_timeout(
 
     RCLCPP_ERROR_THROTTLE(
       node->get_logger(), *node->get_clock(), timeout->get_timeout() * 1e-6,
-      "%s driver timeout: %lu [ms]", sensor_name.c_str(), timeout->get_elapsed_time() * 1e-6);
+      "%s driver timeout: %lu [ms]", sensor_name.c_str(),
+      (uint64_t)(timeout->get_elapsed_time() * 1e-6));
   } else {
     RCLCPP_WARN_THROTTLE(
-      node->get_logger(), *node->get_clock(), timeout->get_timeout() * 1e-6,
+      node->get_logger(), *node->get_clock(), timeout->get_timeout() * 1e-6 / 2,
       "Failed to get %s data", sensor_name.c_str());
     return;
   }
