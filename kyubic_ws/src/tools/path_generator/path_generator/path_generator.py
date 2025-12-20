@@ -79,8 +79,7 @@ def catmull_rom_chain(points: np.ndarray, num_points: int) -> list:
     )
     all_splines = [catmull_rom_spline(*next(point_quadruples), num_points)]
     all_splines += [
-        np.delete(catmull_rom_spline(*pq, num_points), 0, axis=0)
-        for pq in point_quadruples
+        np.delete(catmull_rom_spline(*pq, num_points), 0, axis=0) for pq in point_quadruples
     ]
     return flatten(all_splines)
 
@@ -158,122 +157,117 @@ def main():
         df_default.to_csv(args.csv_path, index=False)
         exit()
 
-    if not args.only_show:
-        data = pd.read_csv(args.csv_path).replace({np.nan: None})  # Red points
+    data = pd.read_csv(args.csv_path).replace({np.nan: None})  # Red points
 
-        # Extract parameter
-        _param = data[data["parameter_label"].notnull()][["parameter_label", "value"]]
-        param = Parameter(
-            **dict(zip(_param["parameter_label"].to_list(), _param["value"].to_list()))
+    # Extract parameter
+    _param = data[data["parameter_label"].notnull()][["parameter_label", "value"]]
+    param = Parameter(**dict(zip(_param["parameter_label"].to_list(), _param["value"].to_list())))
+
+    # Extract checkpoints
+    checkpoints = data[["x", "y", "z", "z_mode", "roll", "yaw"]]
+    checkpoints_list = []
+    if param.checkpoint_end_row is not None:
+        checkpoints = checkpoints.iloc[0 : int(param.checkpoint_end_row)]
+        assert checkpoints.notnull().all().all(), "Error: checkpoints include nan."
+    else:
+        idx = 0
+        for point in checkpoints.values:
+            if all(point == None):
+                break
+            assert not any(point == None), f"Error: {point} include nan. {idx + 1}"
+            idx += 1
+        checkpoints = checkpoints.iloc[0:idx]
+        param.checkpoint_end_row = idx
+
+    # Check for duplicates
+    for i in range(1, len(checkpoints)):
+        assert not checkpoints.iloc[i - 1].equals(checkpoints.iloc[i]), (
+            f"Error: Duplicate found in line {i + 1}"
         )
 
-        # Extract checkpoints
-        checkpoints = data[["x", "y", "z", "z_mode", "roll", "yaw"]]
-        checkpoints_list = []
-        if param.checkpoint_end_row is not None:
-            checkpoints = checkpoints.iloc[0 : int(param.checkpoint_end_row)]
-            assert checkpoints.notnull().all().all(), "Error: checkpoints include nan."
-        else:
-            idx = 0
-            for point in checkpoints.values:
-                if all(point == None):
-                    break
-                assert not any(point == None), f"Error: {point} include nan. {idx + 1}"
-                idx += 1
-            checkpoints = checkpoints.iloc[0:idx]
-            param.checkpoint_end_row = idx
+    # Divide by z mode and only rotation behavior
+    pose = checkpoints[["x", "y", "z"]]
+    mode = checkpoints["z_mode"]
+    start = 0
+    for end in range(1, len(mode)):
+        if mode.iloc[end - 1] != mode[end] or ((pose.iloc[end - 1] - pose.iloc[end]) == 0).all():
+            checkpoints_list.append(checkpoints.iloc[start:end])
+            start = end
+    checkpoints_list.append(checkpoints.iloc[start : len(mode)])
 
-        # Check for duplicates
-        for i in range(1, len(checkpoints)):
-            assert not checkpoints.iloc[i - 1].equals(checkpoints.iloc[i]), (
-                f"Error: Duplicate found in line {i + 1}"
+    # 各区間の分割数
+    if param.catmull_density is not None:
+        NUM_POINTS: int = int(param.catmull_density)
+    else:
+        NUM_POINTS: int = 100  # Density of blue chain points between two red points
+
+    points_list = []
+    for ckpts in checkpoints_list:
+        # 座標が１つの場合は，曲線生成せずに追加
+        if len(ckpts) == 1:
+            points_list.append(ckpts.values)
+            continue
+
+        nd_ckpts = ckpts[["x", "y", "z"]].values.astype(float)
+
+        # 始点と終点の追加(スタートとゴール時の方向ベクトル)
+        nd_ckpts = np.insert(nd_ckpts, 0, 2 * nd_ckpts[0] - nd_ckpts[1], axis=0)
+        nd_ckpts = np.insert(
+            nd_ckpts,
+            len(nd_ckpts),
+            2 * nd_ckpts[-1] - nd_ckpts[-2],
+            axis=0,
+        )
+
+        chain_points = catmull_rom_chain(nd_ckpts, NUM_POINTS)
+        assert (
+            len(chain_points) == num_segments(nd_ckpts) * (NUM_POINTS - 1) + 1
+        )  # 400 blue points for this example
+
+        # z_mode, rollとyawを追加
+        nd_orients = ckpts[["z_mode", "roll", "yaw"]].values.astype(float)
+        chain_orients = np.vstack(
+            [
+                nd_orients[i - 1]
+                + (nd_orients[i] - nd_orients[i - 1])
+                * (j / (NUM_POINTS - 2) if param.catmull_orient_LERP == 1 else 1)
+                for i in range(1, len(nd_orients))
+                for j in range(NUM_POINTS - 1)
+            ]
+        )
+        chain_orients = np.vstack([nd_orients[0], chain_orients])
+        chain_pose = np.hstack([chain_points, chain_orients])
+
+        # point間距離の最小値をもとに，ダウンサンプリング
+        def _calc_distance(points: np.ndarray) -> np.ndarray:
+            return np.linalg.norm(
+                np.array(points)[1:] - np.array(points)[:-1],
+                ord=2,
+                axis=1,
             )
 
-        # Divide by z mode and only rotation behavior
-        pose = checkpoints[["x", "y", "z"]]
-        mode = checkpoints["z_mode"]
-        start = 0
-        for end in range(1, len(mode)):
+        dist = 0
+        points = [chain_pose[0]]
+        for i, d in enumerate(_calc_distance(chain_pose[:, :3]), 1):
+            dist += d
             if (
-                mode.iloc[end - 1] != mode[end]
-                or ((pose.iloc[end - 1] - pose.iloc[end]) == 0).all()
+                dist > param.catmull_min_distance
+                or i % (NUM_POINTS - 1) == 0
+                or i == len(chain_pose) - 1
             ):
-                checkpoints_list.append(checkpoints.iloc[start:end])
-                start = end
-        checkpoints_list.append(checkpoints.iloc[start : len(mode)])
+                print(i)
+                print(chain_pose[i])
+                dist = 0
+                points.append(chain_pose[i])
+        points_list.append(points)
 
-        # 各区間の分割数
-        if param.catmull_density is not None:
-            NUM_POINTS: int = int(param.catmull_density)
-        else:
-            NUM_POINTS: int = 100  # Density of blue chain points between two red points
+        ax = plt.figure().add_subplot(projection="3d")
+        ax.plot(*zip(*np.array(points)[:, :3]), c="blue")
+        ax.plot(*zip(*nd_ckpts.tolist()), c="red", linestyle="none", marker="o")
+        ax.set_aspect("equal")
+        plt.show()
 
-        points_list = []
-        for ckpts in checkpoints_list:
-            # 座標が１つの場合は，曲線生成せずに追加
-            if len(ckpts) == 1:
-                points_list.append(ckpts.values)
-                continue
-
-            nd_ckpts = ckpts[["x", "y", "z"]].values.astype(float)
-
-            # 始点と終点の追加(スタートとゴール時の方向ベクトル)
-            nd_ckpts = np.insert(nd_ckpts, 0, 2 * nd_ckpts[0] - nd_ckpts[1], axis=0)
-            nd_ckpts = np.insert(
-                nd_ckpts,
-                len(nd_ckpts),
-                2 * nd_ckpts[-1] - nd_ckpts[-2],
-                axis=0,
-            )
-
-            chain_points = catmull_rom_chain(nd_ckpts, NUM_POINTS)
-            assert (
-                len(chain_points) == num_segments(nd_ckpts) * (NUM_POINTS - 1) + 1
-            )  # 400 blue points for this example
-
-            # z_mode, rollとyawを追加
-            nd_orients = ckpts[["z_mode", "roll", "yaw"]].values.astype(float)
-            chain_orients = np.vstack(
-                [
-                    nd_orients[i - 1]
-                    + (nd_orients[i] - nd_orients[i - 1])
-                    * (j / (NUM_POINTS - 2) if param.catmull_orient_LERP == 1 else 1)
-                    for i in range(1, len(nd_orients))
-                    for j in range(NUM_POINTS - 1)
-                ]
-            )
-            chain_orients = np.vstack([nd_orients[0], chain_orients])
-            chain_pose = np.hstack([chain_points, chain_orients])
-
-            # point間距離の最小値をもとに，ダウンサンプリング
-            def _calc_distance(points: np.ndarray) -> np.ndarray:
-                return np.linalg.norm(
-                    np.array(points)[1:] - np.array(points)[:-1],
-                    ord=2,
-                    axis=1,
-                )
-
-            dist = 0
-            points = [chain_pose[0]]
-            for i, d in enumerate(_calc_distance(chain_pose[:, :3]), 1):
-                dist += d
-                if (
-                    dist > param.catmull_min_distance
-                    or i % (NUM_POINTS - 1) == 0
-                    or i == len(chain_pose) - 1
-                ):
-                    print(i)
-                    print(chain_pose[i])
-                    dist = 0
-                    points.append(chain_pose[i])
-            points_list.append(points)
-
-            ax = plt.figure().add_subplot(projection="3d")
-            ax.plot(*zip(*np.array(points)[:, :3]), c="blue")
-            ax.plot(*zip(*nd_ckpts.tolist()), c="red", linestyle="none", marker="o")
-            ax.set_aspect("equal")
-            plt.show()
-
+    if not args.only_show:
         points_list = flatten(points_list)
         param.catmull_rom = 1
         param.catmull_end_row = len(points_list)
@@ -285,9 +279,7 @@ def main():
         df_points = pd.DataFrame(points_list, columns=catmull_header).round(4)
 
         df = pd.concat([df_param, df_checkpoints, df_blank, df_points], axis=1)
-        df.to_csv(
-            args.csv_path.with_name(f"{args.csv_path.stem}_generated.csv"), index=False
-        )
+        df.to_csv(args.csv_path.with_name(f"{args.csv_path.stem}_generated.csv"), index=False)
         print(df)
 
 

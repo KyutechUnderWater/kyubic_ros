@@ -1,76 +1,101 @@
 /**
  * @file dvl_driver.hpp
- * @brief DVL driver
+ * @brief DVL driver Node Definition
  * @author R.Ohnishi
  * @date 2024/10/30
  *
- * @details DVL(Path Finder) のデータを取得して，Topicを流す
- ************************************************************/
+ * @details DVL(Path Finder) のPD0/PD5データを取得して，Topicを流す
+ *****************************************************************/
+
+#ifndef _DVL_DRIVER_HPP
+#define _DVL_DRIVER_HPP
 
 #include <driver_msgs/msg/dvl.hpp>
 #include <driver_msgs/srv/command.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <string>
-#include <timer/timeout.hpp>
 
 #include "dvl_driver/path_finder.hpp"
+#include "timer/timeout.hpp"
 
 /**
  * @namespace dvl_driver
- * @brief For dvl driver
+ * @brief Namespace for DVL driver components
  */
 namespace dvl_driver
 {
 
 /**
- * @brief DVL driver class
+ * @class DVLDriver
+ * @brief ROS 2 Node for interfacing with Teledyne Pathfinder DVL
  */
 class DVLDriver : public rclcpp::Node
 {
 public:
   /**
-   * @brief Connect Path Finder and Set Topic
+   * @brief Constructor. Establishes connection and initializes publishers/services.
    */
   explicit DVLDriver();
+
+  /**
+   * @brief Destructor. Sends break command to stop DVL output.
+   */
   ~DVLDriver();
 
 private:
   std::string address;
   int listener_port;
   int sender_port;
-  uint64_t timeout;
+  int64_t timeout_ms;
+  bool turning;
 
   const std::string CRCF = "\r\n";
   bool command_mode = false;
+  bool break_cmd = false;
   std::shared_ptr<timer::Timeout> timeout_;
 
+  // DVL Interface
   std::shared_ptr<path_finder::Sender> sender_;
   std::shared_ptr<path_finder::Listener> listener_;
 
+  // ROS Interface
   rclcpp::Publisher<driver_msgs::msg::DVL>::SharedPtr pub_;
   rclcpp::Service<driver_msgs::srv::Command>::SharedPtr srv_;
   rclcpp::TimerBase::SharedPtr timer_;
 
   /**
-   * @brief Send a break command for startup
-   * @return True if successful, False otherwise
+   * @brief Initialize DVL connection (Send break, check response)
+   * @return true if initialization successful
    */
   bool setup();
 
   /**
-   * @brief Get dvl data
-   * @return True if successful, False otherwise
+   * @brief Perform one update cycle (Ping -> Listen)
+   * @return true if data received successfully
    */
   bool _update();
 
   /**
-   * @brief Publish data
+   * @brief Timer callback to process DVL data and publish messages
    */
   void update();
 
+  /**
+   * @brief Helper to calculate average altitude from beam ranges
+   * @param ranges Array of 4 beam ranges in meters
+   * @return Average altitude in meters (0.0 if no valid beams)
+   */
+  double _calculate_average_altitude(const float ranges[4]);
+
+  /**
+   * @brief Service callback to send raw commands to DVL
+   * @param request Service request containing command string
+   * @param response Service response containing DVL output
+   */
   void sendCommandCallback(
     const driver_msgs::srv::Command::Request::SharedPtr request,
     driver_msgs::srv::Command::Response::SharedPtr response);
 };
 
 }  // namespace dvl_driver
+
+#endif  // _DVL_DRIVER_HPP

@@ -1,0 +1,19 @@
+/**:
+  ros__parameters:
+    # --- タイムアウト設定 (秒) ---
+    # 各センサーからのデータ受信がこの時間を超えて途絶えると、UI上で枠線が赤く点滅
+    timeout:
+      power: 5.0
+      env: 5.0
+      sys_status: 5.0
+      dvl: 1.0
+      imu: 0.5
+      depth: 0.5
+
+    # --- 電圧警告設定 (V) ---
+    # 画面全体が赤く点滅する条件
+    # 条件: 4C(電圧 <= warn_low) OR 6C(warn_high_start <= 電圧 <= warn_high_end)
+    voltage:
+      warn_low: 13.0
+      warn_high_start: 17.0
+      warn_high_end: 19.8

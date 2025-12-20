@@ -51,7 +51,7 @@ BT::NodeStatus WaypointAction::onResult(const WrappedResult & wr)
     return BT::NodeStatus::SUCCESS;
   } else {
     RCLCPP_ERROR(ros_node_->get_logger(), "WaypointAction: Failed (Code: %d)", (int)wr.code);
-    return BT::NodeStatus::FAILURE;
+    return BT::NodeStatus::SUCCESS;
   }
 }
 
@@ -63,7 +63,10 @@ void WaypointAction::onFeedback(const std::shared_ptr<const Feedback> feedback)
     feedback->current_odom.pose.position.y, feedback->current_odom.pose.position.z_depth);
 
   auto msg = std::make_unique<std_msgs::msg::String>();
-  msg->data = "[QrAction] " + s;
+  msg->data = "[WaypointAction] " + s;
+
+  logger_pub_->publish(std::move(msg));
+
   RCLCPP_DEBUG_THROTTLE(ros_node_->get_logger(), *ros_node_->get_clock(), 2000, "%s", s.c_str());
 }
 

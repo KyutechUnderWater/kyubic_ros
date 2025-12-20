@@ -70,12 +70,8 @@ class OakCameraSubscriber(Node):
         # 4. デバイスの初期化とキューの取得
         try:
             self.device = dai.Device(self.pipeline)
-            self.h265_queue = self.device.getOutputQueue(
-                name="h265", maxSize=30, blocking=False
-            )
-            self.still_queue = self.device.getOutputQueue(
-                name="still", maxSize=4, blocking=False
-            )
+            self.h265_queue = self.device.getOutputQueue(name="h265", maxSize=30, blocking=False)
+            self.still_queue = self.device.getOutputQueue(name="still", maxSize=4, blocking=False)
             self.get_logger().info("OAK-1カメラの準備ができました。")
         except Exception as e:
             self.get_logger().error(f"OAK-1カメラの初期化に失敗: {e}")
@@ -153,9 +149,7 @@ class OakCameraSubscriber(Node):
         timestamp = time.strftime("%Y-%m-%d_%H-%M-%S")
         self.h265_filepath = self.save_dir / f"video_{timestamp}.h265"
         self.h265_file_handle = open(self.h265_filepath, "wb")
-        self.get_logger().info(
-            f"動画撮影を開始しました。一時ファイル: {self.h265_filepath}"
-        )
+        self.get_logger().info(f"動画撮影を開始しました。一時ファイル: {self.h265_filepath}")
 
     def video_stop_callback(self, msg):
         if not self.is_recording:
@@ -173,9 +167,7 @@ class OakCameraSubscriber(Node):
     def convert_to_mp4(self):
         """H.265ファイルをMP4に変換する"""
         if not self.h265_filepath or not self.h265_filepath.exists():
-            self.get_logger().error(
-                f"一時ファイル {self.h265_filepath} が見つかりません。"
-            )
+            self.get_logger().error(f"一時ファイル {self.h265_filepath} が見つかりません。")
             return
 
         mp4_filepath = self.h265_filepath.with_suffix(".mp4")
@@ -194,9 +186,7 @@ class OakCameraSubscriber(Node):
         try:
             self.get_logger().info(f"変換中: {self.h265_filepath} -> {mp4_filepath}")
             subprocess.run(command, check=True, capture_output=True, text=True)
-            self.get_logger().info(
-                f"変換成功。一時ファイル {self.h265_filepath} を削除します。"
-            )
+            self.get_logger().info(f"変換成功。一時ファイル {self.h265_filepath} を削除します。")
             os.remove(self.h265_filepath)
         except subprocess.CalledProcessError as e:
             self.get_logger().error(f"FFmpegでの変換に失敗しました。エラー: {e.stderr}")
@@ -221,9 +211,7 @@ class OakCameraSubscriber(Node):
                     seconds = now.nanoseconds // 1_000_000_000
                     nanoseconds = now.nanoseconds % 1_000_000_000
                     timestamp = f"{seconds}.{nanoseconds}"
-                    save_filepath = (
-                        self.save_dir / f"image{self.image_count}_{timestamp}.jpg"
-                    )
+                    save_filepath = self.save_dir / f"image{self.image_count}_{timestamp}.jpg"
                     still_frame = in_still.getCvFrame()
                     cv2.imwrite(str(save_filepath), still_frame)
                     self.get_logger().info(f"静止画を保存しました: {save_filepath}")

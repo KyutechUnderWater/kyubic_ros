@@ -1,6 +1,7 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 
+
 def generate_launch_description():
     return_planner_node = Node(
         package="return_mission_planner",
@@ -15,6 +16,4 @@ def generate_launch_description():
         ],
     )
 
-    return LaunchDescription([
-        return_planner_node
-    ])
+    return LaunchDescription([return_planner_node])

@@ -18,40 +18,42 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-add_protolink_message_from_ros_message("driver_msgs" "Int32Stamped")
 add_protolink_message_from_ros_message("driver_msgs" "BoolStamped")
 add_protolink_message_from_ros_message("driver_msgs" "ButtonBatteryState")
 add_protolink_message_from_ros_message("driver_msgs" "BuzzerSwitch")
+add_protolink_message_from_ros_message("driver_msgs" "Depth")
 add_protolink_message_from_ros_message("driver_msgs" "Environment")
+add_protolink_message_from_ros_message("driver_msgs" "Int32Stamped")
+add_protolink_message_from_ros_message("driver_msgs" "PowerState")
 add_protolink_message_from_ros_message("driver_msgs" "RtcGnss")
 add_protolink_message_from_ros_message("driver_msgs" "RtcTime")
-add_protolink_message_from_ros_message("driver_msgs" "Depth")
 add_protolink_message_from_ros_message("driver_msgs" "SystemStatus")
-add_protolink_message_from_ros_message("driver_msgs" "PowerState")
 
 ament_auto_add_library(${PROJECT_NAME}_component SHARED
-  src/button_battery_state.cpp
-  src/buzzer_switch.cpp
-  src/depth.cpp
-  src/environment.cpp
-  src/imu_reset.cpp
-  src/leak.cpp
-  src/rgb.cpp
-  src/tilt_servo.cpp
-  src/rtc_gnss.cpp
-  src/rtc_time.cpp
-  src/zed_power.cpp
+  ./src/button_battery_state.cpp
+  ./src/buzzer_switch.cpp
+  ./src/depth.cpp
+  ./src/environment.cpp
+  ./src/imu_reset.cpp
+  ./src/leak.cpp
+  ./src/rgb.cpp
+  ./src/system_status.cpp
+  ./src/tilt_servo.cpp
+  ./src/rtc_gnss.cpp
+  ./src/rtc_time.cpp
+  ./src/zed_power.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}_component
   driver_msgs__ButtonBatteryState_proto
   driver_msgs__BoolStamped_proto
-  driver_msgs__Int32Stamped_proto
   driver_msgs__BuzzerSwitch_proto
+  driver_msgs__Depth_proto
   driver_msgs__Environment_proto
+  driver_msgs__Int32Stamped_proto
   driver_msgs__RtcGnss_proto
   driver_msgs__RtcTime_proto
-  driver_msgs__Depth_proto
+  driver_msgs__SystemStatus_proto
 )
 
 # MACRO rclcpp_components_register_node
@@ -73,6 +75,7 @@ register_components(Leak               leak)
 register_components(RGB                rgb)
 register_components(RtcGnss            rtc_gnss)
 register_components(RtcTime            rtc_time)
+register_components(SystemStatus       system_status)
 register_components(TiltServo          tilt_servo)
 register_components(ZedPower           zed_power)
 

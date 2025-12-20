@@ -219,3 +219,4 @@ docs
 rosbag2_*
 
 cache/
+.welcome-displayed

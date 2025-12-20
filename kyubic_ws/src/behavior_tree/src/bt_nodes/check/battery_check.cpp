@@ -12,22 +12,30 @@
 BatteryCheck::BatteryCheck(
   const std::string & name, const BT::NodeConfig & config,
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub, rclcpp::Node::SharedPtr ros_node)
-: BT::ConditionNode(name, config),
+: BT::StatefulActionNode(name, config),
   ros_node_(ros_node),
   logger_pub_(logger_pub),
   logic_voltage_(0.0),
-  act_voltage_(0.0)
+  act_voltage_(0.0),
+  topic_received_(false)
 {
   power_sub_ = ros_node_->create_subscription<driver_msgs::msg::PowerState>(
-    "power_state", 10, [this](driver_msgs::msg::PowerState::SharedPtr msg) {
+    "power_state", 1, [this](driver_msgs::msg::PowerState::SharedPtr msg) {
       logic_voltage_ = msg->log_voltage;
       act_voltage_ = msg->act_voltage;
+      topic_received_ = true;
     });
 }
 BT::PortsList BatteryCheck::providedPorts() { return {}; }
 
-BT::NodeStatus BatteryCheck::tick()
+BT::NodeStatus BatteryCheck::onStart() { return BT::NodeStatus::RUNNING; }
+
+BT::NodeStatus BatteryCheck::onRunning()
 {
+  if (!topic_received_) {
+    return BT::NodeStatus::RUNNING;
+  }
+
   bool logic_check = is_battery_good(logic_voltage_);
   bool act_check = is_battery_good(act_voltage_);
 
@@ -38,6 +46,8 @@ BT::NodeStatus BatteryCheck::tick()
   }
   return BT::NodeStatus::SUCCESS;
 }
+
+void BatteryCheck::onHalted() {}
 
 bool BatteryCheck::is_battery_good(float voltage)
 {
@@ -52,6 +62,7 @@ bool BatteryCheck::is_battery_good(float voltage)
       return false;
     }
   }
+  RCLCPP_INFO(ros_node_->get_logger(), "Battery: %.2f V", voltage);
   return true;
 }
 

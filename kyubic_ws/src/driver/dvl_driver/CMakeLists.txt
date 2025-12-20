@@ -19,8 +19,10 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(${PROJECT_NAME}
-  src/path_finder.cpp
-  src/dvl_driver.cpp
+  ./src/path_finder.cpp
+  ./src/dvl_driver.cpp
+  ./src/pd0_parser.cpp
+  ./src/pd5_parser.cpp
 )
 
 install(DIRECTORY

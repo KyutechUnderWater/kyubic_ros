@@ -81,31 +81,28 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
 
 void Localization::depth_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
-  RCLCPP_DEBUG(this->get_logger(), "Updated Depth odometry");
-  all_updated |= 4;
-
   odom_msg_->header = msg->header;
   odom_msg_->status.depth = msg->status.depth;
   odom_msg_->pose.position.z_depth = msg->pose.position.z_depth;
   odom_msg_->twist.linear.z_depth = msg->twist.linear.z_depth;
+
+  all_updated |= 4;
+  RCLCPP_DEBUG(this->get_logger(), "Updated Depth odometry");
 }
 
 void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
-  RCLCPP_DEBUG(this->get_logger(), "Updated IMU transformed");
-  all_updated |= 2;
-
   odom_msg_->header = msg->header;
   odom_msg_->status.imu = msg->status.imu;
   odom_msg_->pose.orientation = msg->pose.orientation;
   odom_msg_->twist.angular = msg->twist.angular;
+
+  all_updated |= 2;
+  RCLCPP_DEBUG(this->get_logger(), "Updated IMU transformed");
 }
 
 void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
-  RCLCPP_DEBUG(this->get_logger(), "Updated DVL odometry");
-  all_updated |= 1;
-
   odom_msg_->header = msg->header;
   odom_msg_->status.dvl = msg->status.dvl;
 
@@ -119,6 +116,9 @@ void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePt
   odom_msg_->twist.linear.x = msg->twist.linear.x;
   odom_msg_->twist.linear.y = msg->twist.linear.y;
   odom_msg_->twist.linear.z_altitude = msg->twist.linear.z_altitude;
+
+  all_updated |= 1;
+  RCLCPP_DEBUG(this->get_logger(), "Updated DVL odometry");
 }
 
 void Localization::gnss_callback(driver_msgs::msg::Gnss::UniquePtr msg)

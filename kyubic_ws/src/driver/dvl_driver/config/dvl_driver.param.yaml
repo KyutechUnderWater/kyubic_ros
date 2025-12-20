@@ -1,6 +1,7 @@
 /**:
   ros__parameters:
     ip_address: 192.168.9.10
-    listener_port: 1036
     sender_port: 1033
-    timeout: 2000000000 # [ns]
+    listener_port: 1034  # PD0: 1034, PD5: 1036
+    timeout_ms: 2000 # [ms]
+    turning: false

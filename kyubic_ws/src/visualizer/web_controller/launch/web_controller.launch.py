@@ -13,7 +13,7 @@ def generate_launch_description():
     )
     targets_topic_arg = DeclareLaunchArgument(
         "targets_topic",
-        default_value="/controller/p_pid_controller/targets",
+        default_value="/rt_pose_plotter/targets",
         description="Topic name for the target Z position",
     )
     front_cam_topic_arg = DeclareLaunchArgument(

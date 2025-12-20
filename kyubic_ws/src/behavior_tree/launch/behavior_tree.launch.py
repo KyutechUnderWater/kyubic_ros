@@ -1,4 +1,6 @@
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node, LifecycleNode
 from launch.actions import IncludeLaunchDescription
 from launch.substitutions import PathJoinSubstitution
@@ -6,6 +8,12 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
+    log_level_arg = DeclareLaunchArgument(
+        "log_level",
+        default_value=["info"],
+        description="Logging level",
+    )
+
     # 設定ファイルのパス
     behavior_tree_config = PathJoinSubstitution(
         [FindPackageShare("behavior_tree"), "config", "behavior_tree.param.yaml"]
@@ -20,17 +28,13 @@ def generate_launch_description():
     )
 
     # launchファイルのパス
-    joy_common_dir = PathJoinSubstitution([FindPackageShare("joy_common"), "launch"])
-
-    planner_launcher_dir = PathJoinSubstitution(
-        [FindPackageShare("planner_launcher"), "launch"]
-    )
+    planner_launcher_dir = PathJoinSubstitution([FindPackageShare("planner_launcher"), "launch"])
 
     # ノードの定義
     plannler_launch = IncludeLaunchDescription(
         PathJoinSubstitution([planner_launcher_dir, "planner_launcher.launch.py"]),
         launch_arguments={
-            "log_level": "warn",
+            "log_level": LaunchConfiguration("log_level"),
         }.items(),
     )
 
@@ -69,11 +73,17 @@ def generate_launch_description():
         remappings=[
             ("power_state", "/logic_distro_rp2040_driver/power_state"),
         ],
+        arguments=[
+            "--ros-args",
+            "--log-level",
+            "info",
+        ],
         output="screen",
     )
 
     return LaunchDescription(
         [
+            log_level_arg,
             plannler_launch,
             manual_node,
             emergency_node,

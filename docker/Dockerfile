@@ -43,7 +43,7 @@ RUN apt update && apt install -y locales && \
 ##################
 RUN apt update && apt install -y sudo gosu iproute2 iputils-ping curl gnupg2 lsb-release ninja-build \
 	screen tmux vim git wget locate python3-pip python3-venv python3-flake8-docstrings \
-	doxygen pre-commit tree ncdu v4l-utils libxcb-cursor0 byobu && \
+	doxygen pre-commit tree ncdu v4l-utils libxcb-cursor0 byobu bc && \
 	updatedb
 
 ####################################################
@@ -123,6 +123,25 @@ RUN apt update && \
 	cmake --build build --parallel 20 && \
 	cmake --install build && \
 	echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib' >>/home/ros/.bashrc
+
+
+######################################
+## Install Neovim
+######################################
+COPY ./nvim_setup.sh /home/ros/Apps/nvim/nvim_setup.sh
+RUN chmod +x /home/ros/Apps/nvim/nvim_setup.sh && \
+	/home/ros/Apps/nvim/nvim_setup.sh && \
+	chown -R ros:ros /home/ros && \
+	gosu ros bash -i -c 'nvim --headless +Lazy +qa' && \
+	gosu ros bash -i -c 'nvim --headless -c "autocmd User MasonToolsUpdateCompleted quitall" -c "MasonToolsInstall"'
+
+
+######################################
+## Set Environment
+######################################
+RUN echo 'export HISTTIMEFORMAT="%F %T  "'  >> /home/ros/.bashrc && \
+	echo 'export RCUTILS_COLORIZED_OUTPUT=1'  >> /home/ros/.bashrc && \
+	echo 'source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash'  >> /home/ros/.bashrc
 
 
 COPY ./entrypoint.sh /usr/bin

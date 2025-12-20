@@ -1,7 +1,8 @@
 import os
 from ament_index_python.packages import get_package_share_directory
-from launch.actions import DeclareLaunchArgument
-from launch_ros.actions import ComposableNodeContainer, Node
+from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.event_handlers import OnProcessStart, OnExecutionComplete
+from launch_ros.actions import Node, LoadComposableNodes
 from launch_ros.descriptions import ComposableNode
 from launch.substitutions import LaunchConfiguration
 from launch import LaunchDescription
@@ -14,13 +15,15 @@ def generate_launch_description():
     config = os.path.join(
         get_package_share_directory("joy2wrench"), "config", "joy2wrench.param.yaml"
     )
+
     log_level_arg = DeclareLaunchArgument(
         "log_level",
         default_value=["info"],
         description="Logging level",
     )
 
-    action_component_container = ComposableNodeContainer(
+    # コンポーネントコンテナ自体の定義
+    container_node = Node(
         name="joy2wrench_component_container",
         namespace="joy2wrench",
         package="rclcpp_components",
@@ -30,9 +33,12 @@ def generate_launch_description():
             "--log-level",
             LaunchConfiguration("log_level"),
         ],
-        arguments=[
-            "--use_multi_threaded_executor",
-        ],
+        parameters=[{"use_multi_threaded_executor": True}],
+    )
+
+    # コンポーネントのロード定義
+    load_composable_nodes = LoadComposableNodes(
+        target_container="joy2wrench/joy2wrench_component_container",
         composable_node_descriptions=[
             ComposableNode(
                 name="joy",
@@ -40,9 +46,7 @@ def generate_launch_description():
                 package="joy",
                 plugin="joy::Joy",
                 parameters=[joy_common_config],
-                extra_arguments=[
-                    {"use_intra_process_comms": True}
-                ],  # enable intra-process communication
+                extra_arguments=[{"use_intra_process_comms": True}],
             ),
             ComposableNode(
                 name="joy_common_component",
@@ -50,9 +54,7 @@ def generate_launch_description():
                 package="joy_common",
                 plugin="joy_common::JoyCommon",
                 parameters=[joy_common_config],
-                extra_arguments=[
-                    {"use_intra_process_comms": True}
-                ],  # enable intra-process communication
+                extra_arguments=[{"use_intra_process_comms": True}],
             ),
             ComposableNode(
                 name="joy2wrench_component",
@@ -61,13 +63,12 @@ def generate_launch_description():
                 plugin="joy2wrench::Joy2WrenchStamped",
                 remappings=[("robot_force", "/driver/robot_force")],
                 parameters=[config],
-                extra_arguments=[
-                    {"use_intra_process_comms": True}
-                ],  # enable intra-process communication
+                extra_arguments=[{"use_intra_process_comms": True}],
             ),
         ],
     )
 
+    # ライフサイクルマネージャの定義
     lifecycle_manager = Node(
         package="nav2_lifecycle_manager",
         executable="lifecycle_manager",
@@ -83,5 +84,20 @@ def generate_launch_description():
     )
 
     return LaunchDescription(
-        [log_level_arg, action_component_container, lifecycle_manager]
+        [
+            log_level_arg,
+            container_node,
+            RegisterEventHandler(
+                event_handler=OnProcessStart(
+                    target_action=container_node,
+                    on_start=[load_composable_nodes],
+                )
+            ),
+            RegisterEventHandler(
+                event_handler=OnExecutionComplete(
+                    target_action=load_composable_nodes,
+                    on_completion=[lifecycle_manager],
+                )
+            ),
+        ]
     )

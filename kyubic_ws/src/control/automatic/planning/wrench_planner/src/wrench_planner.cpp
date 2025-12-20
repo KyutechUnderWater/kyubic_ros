@@ -52,10 +52,8 @@ void WrenchPlanner::_update_wrench()
   double force_y = p_pid_ctrl_->pid_y_update(current_twst.y, current_pose.y, target_pose.y);
   double force_z = p_pid_ctrl_->pid_z_update(current_twst.z, current_pose.z, target_pose.z);
 
-  // double torque_x =
-  //   p_pid_ctrl_->pid_roll_update(current_twst.roll, current_pose.roll, target_pose.roll);
-  // rollの制御を無効化
-  double torque_x = 0.0;
+  double torque_x =
+    p_pid_ctrl_->pid_roll_update(current_twst.roll, current_pose.roll, target_pose.roll);
 
   double target_yaw = target_pose.yaw;
   if (target_pose.yaw - current_pose.yaw < -180) target_yaw += 360;

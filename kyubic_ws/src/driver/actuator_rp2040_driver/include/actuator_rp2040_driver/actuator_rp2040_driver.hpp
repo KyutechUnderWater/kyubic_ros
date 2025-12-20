@@ -59,7 +59,7 @@ private:
 
   // Heartbeat settings
   bool heartbeat{false};
-  double timeout_sec;
+  uint64_t timeout_ms;
   std::shared_ptr<timer::Timeout> timeout_;
 
   // Protolink members

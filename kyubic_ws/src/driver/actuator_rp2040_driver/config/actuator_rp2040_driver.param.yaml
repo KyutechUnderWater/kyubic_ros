@@ -4,4 +4,4 @@
     baudrate: 115200
     max_thrust: 80.0
     max_thrust_per: 30.0
-    timeout: 2000000000.0
+    timeout_ms: 2000  # [ms]

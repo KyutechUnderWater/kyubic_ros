@@ -104,6 +104,7 @@ class PlotUnitWidget(QWidget):
         self.plot_widget2 = pg.ViewBox()
         self.plot_widget2.setMouseEnabled(y=False)
         self.plot_widget2.enableAutoRange(axis="x", enable=True)
+        self.plot_widget2.invertY(invert_y)
         self.plot_widget.scene().addItem(self.plot_widget2)
         self.plot_widget.showAxis("right")
         self.plot_widget.setLabel("right", y2_label, units=unit2)
@@ -118,9 +119,7 @@ class PlotUnitWidget(QWidget):
         self.target_curve = self.plot_widget.plot(
             pen=pg.mkPen("r", width=2, style=pg.QtCore.Qt.DashLine), name="Target"
         )
-        self.value1_curve = self.plot_widget.plot(
-            pen=pg.mkPen("b", width=2), name="Position"
-        )
+        self.value1_curve = self.plot_widget.plot(pen=pg.mkPen("b", width=2), name="Position")
         self.value2_curve = pg.PlotCurveItem(
             pen=pg.mkPen(color=(0, 255, 0, 90), width=2), name="Velocity"
         )
@@ -261,25 +260,19 @@ class MultiGraphViewer(QMainWindow):
         self.checkbox_target = QCheckBox("Show Target")
         self.checkbox_target.setFixedWidth(100)
         self.checkbox_target.setChecked(True)  # 初期状態は表示
-        self.checkbox_target.stateChanged.connect(
-            lambda state: self.setPlotVisible(0, state)
-        )
+        self.checkbox_target.stateChanged.connect(lambda state: self.setPlotVisible(0, state))
         self.foot_layout.addWidget(self.checkbox_target)
 
         self.checkbox_curve1 = QCheckBox("Show Position")
         self.checkbox_curve1.setFixedWidth(110)
         self.checkbox_curve1.setChecked(True)  # 初期状態は表示
-        self.checkbox_curve1.stateChanged.connect(
-            lambda state: self.setPlotVisible(1, state)
-        )
+        self.checkbox_curve1.stateChanged.connect(lambda state: self.setPlotVisible(1, state))
         self.foot_layout.addWidget(self.checkbox_curve1)
 
         self.checkbox_curve2 = pg.QtWidgets.QCheckBox("Show Velocity")
         self.checkbox_curve2.setFixedWidth(110)
         self.checkbox_curve2.setChecked(True)  # 初期状態は表示
-        self.checkbox_curve2.stateChanged.connect(
-            lambda state: self.setPlotVisible(2, state)
-        )
+        self.checkbox_curve2.stateChanged.connect(lambda state: self.setPlotVisible(2, state))
         self.foot_layout.addWidget(self.checkbox_curve2)
 
         # リアルタイム表示に戻すボタン
@@ -374,9 +367,7 @@ class MultiDimSubscriber(Node):
         self.latest_targets: Targets = Targets()
 
         # サブスクライバの定義
-        self.odom_subscription = self.create_subscription(
-            Odometry, "odom", self.odom_callback, 10
-        )
+        self.odom_subscription = self.create_subscription(Odometry, "odom", self.odom_callback, 10)
 
         self.create_subscription(
             Targets,

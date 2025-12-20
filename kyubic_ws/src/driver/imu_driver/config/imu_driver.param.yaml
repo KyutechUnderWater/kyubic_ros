@@ -2,4 +2,4 @@
   ros__parameters:
     serial_port: /dev/g366
     serial_speed: 460800
-    timeout: 2000000000 # [ns]
+    timeout_ms: 2000 # [ms]

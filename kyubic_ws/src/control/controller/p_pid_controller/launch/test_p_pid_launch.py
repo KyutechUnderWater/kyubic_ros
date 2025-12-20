@@ -17,7 +17,7 @@ def generate_launch_description():
 
     log_level_arg = DeclareLaunchArgument(
         "log_level",
-        default_value=["debug"],
+        default_value=["info"],
         description="Logging level",
     )
 
@@ -33,8 +33,9 @@ def generate_launch_description():
                 package="p_pid_controller",
                 plugin="controller::TestPPID",
                 remappings=[
-                    ("/controller/p_pid_controller/odom", "/localization/odom"),
-                    ("/controller/p_pid_controller/robot_force", "/driver/robot_force"),
+                    ("targets", "/rt_pose_plotter/targets"),
+                    ("odom", "/localization/odom"),
+                    ("robot_force", "/driver/robot_force"),
                 ],
                 parameters=[{"pid_gain_yaml": config_path}],
                 extra_arguments=[

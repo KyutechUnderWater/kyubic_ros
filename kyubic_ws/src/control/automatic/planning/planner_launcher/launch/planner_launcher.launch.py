@@ -15,6 +15,7 @@ def generate_launch_description():
             "pdla_planner.param.yaml",
         ]
     )
+
     path_planner_path = FindPackageShare("path_planner")
 
     cfg_qr_planner = PathJoinSubstitution(
@@ -82,7 +83,7 @@ def generate_launch_description():
                 ],  # enable intra-process communication
             ),
             ComposableNode(
-                name="wrench_planner_component",
+                name="velocity_wrench_planner_component",
                 namespace="planner/wrench_planner",
                 package="wrench_planner",
                 plugin="planner::ZeroOrderHold",

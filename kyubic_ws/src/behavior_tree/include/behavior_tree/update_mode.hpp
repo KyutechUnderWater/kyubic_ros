@@ -12,10 +12,12 @@
 
 #include <behaviortree_cpp/action_node.h>
 
+#include <cstdint>
 #include <joy_common/joy_common.hpp>
 #include <joy_common_msgs/msg/joy.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <timer/timeout.hpp>
 
 namespace behavior_tree
 {
@@ -33,11 +35,12 @@ public:
    * @param name The name of the node in the behavior tree.
    * @param config The configuration of the node.
    * @param ros_node Shared pointer to the ROS 2 node used for subscription.
+   * @param timeout_ms joy topic timeout [ms]
    */
   UpdateMode(
     const std::string & name, const BT::NodeConfig & config,
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub,
-    rclcpp::Node::SharedPtr ros_node);
+    rclcpp::Node::SharedPtr ros_node, uint64_t timeout_ms);
 
   /**
    * @brief Defines the input and output ports for this node.
@@ -69,7 +72,12 @@ private:
   rclcpp::Subscription<joy_common_msgs::msg::Joy>::SharedPtr joy_sub_;
   joy_common_msgs::msg::Joy::SharedPtr joy_msg_;
   joy_common::ButtonMap button_map_;
+
+  joy_common::ButtonMap::iterator manual_it, auto_it;
+
   std::mutex mutex_;
+  std::shared_ptr<timer::Timeout> timeout_;
+  uint64_t timeout_ms_;
 };
 
 }  // namespace behavior_tree

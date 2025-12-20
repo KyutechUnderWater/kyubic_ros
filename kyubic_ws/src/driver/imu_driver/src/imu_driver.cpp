@@ -18,8 +18,8 @@ IMUDriver::IMUDriver() : Node("imu_driver")
 {
   portname = this->declare_parameter("serial_port", "/dev/ttyACM0");
   baudrate = this->declare_parameter("serial_speed", 115200);
-  timeout = this->declare_parameter("timeout", 0);
-  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout);
+  timeout_ms = this->declare_parameter("timeout_ms", 0);
+  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
   g366_ = std::make_shared<g366::G366>(portname.c_str(), baudrate);
   RCLCPP_INFO(this->get_logger(), "Connected %s > %d", portname.c_str(), baudrate);
@@ -83,7 +83,7 @@ void IMUDriver::_update()
     RCLCPP_INFO(this->get_logger(), "Update imu data");
   } else {
     // Error if timeout, otherwise warning and wait
-    if (timeout_->check(this->get_clock()->now())) {
+    if (timeout_->is_timeout(this->get_clock()->now())) {
       msg->status.id = common_msgs::msg::Status::ERROR;
 
       RCLCPP_ERROR(

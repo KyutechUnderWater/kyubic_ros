@@ -9,7 +9,6 @@
 
 #include "sensors_esp32_driver/button_battery_state.hpp"
 
-#include <functional>
 #include <protolink/udp_protocol.hpp>
 
 #include "sensors_esp32_driver/common/utils.hpp"
