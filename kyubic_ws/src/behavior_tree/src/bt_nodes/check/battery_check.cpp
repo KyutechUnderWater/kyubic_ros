@@ -44,7 +44,7 @@ BT::NodeStatus BatteryCheck::onRunning()
   if (logic_check && act_check) {
     return BT::NodeStatus::SUCCESS;
   }
-  return BT::NodeStatus::SUCCESS;
+  return BT::NodeStatus::FAILURE;
 }
 
 void BatteryCheck::onHalted() {}
