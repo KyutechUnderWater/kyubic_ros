@@ -30,7 +30,7 @@ while true; do
 
     # データが空の場合はエラー表示
     if [ -z "$LOG_V" ] || [ -z "$ACT_V" ]; then
-        echo "#[fg=colour240]BAT:Wait #[default]" >"$FILE_BAT"
+        echo -n "#[fg=colour240]BAT:NoTopic #[default]" >"$FILE_BAT"
     else
         # --- INF判定と表示用変数の作成 ---
 

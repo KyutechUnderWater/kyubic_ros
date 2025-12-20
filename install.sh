@@ -169,7 +169,7 @@ docker compose $compose_env_var start
 
 ## Run setup
 echo '⚡Initialize and Build'
-docker compose $compose_env_var exec kyubic-ros bash -c "/usr/bin/once_entrypoint.sh $passwd" >>${path}/.install.log 2>&1
+docker compose $compose_env_var exec kyubic-ros bash -c "/usr/bin/once_entrypoint.sh $passwd $cmd_tools4client" >>${path}/.install.log 2>&1
 
 ## Stop Container
 docker compose $compose_env_var stop

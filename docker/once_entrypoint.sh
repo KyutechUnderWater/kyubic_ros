@@ -22,9 +22,14 @@ source /home/ros/kyubic_ros/.venv/bin/activate
 EOT'
 
 # Add aliases to .bash_aliases
-gosu ros bash -c 'cat << EOT >> ~/.bash_aliases
+if [ "$2" = "true" ]; then
+	BYOBU_STARTUP="client_byobu.sh"
+else
+	BYOBU_STARTUP="kyubic_byobu.sh"
+fi
+gosu ros env BYOBU_STARTUP="$BYOBU_STARTUP" bash -c 'cat << EOT >> ~/.bash_aliases
 alias build="colcon build --symlink-install --cmake-args -GNinja"
-alias kyubic_byobu="$HOME/kyubic_ros/docker/script/kyubic_byobu.sh"
+alias byobu=$HOME/kyubic_ros/docker/script/$BYOBU_STARTUP
 EOT'
 
 # Set config for git
