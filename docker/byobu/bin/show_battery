@@ -1,0 +1,23 @@
+#!/bin/bash
+
+FILE="/dev/shm/battery_status"
+TIMEOUT=10 # [s]
+
+# ファイルが存在しない場合は Wait を表示
+if [ ! -f "$FILE" ]; then
+    echo "BAT:FileNotFound " | tr -d '\n'
+else
+    # 現在時刻とファイルの最終更新時刻（Epoch秒）を取得
+    NOW=$(date +%s)
+    FILE_TIME=$(stat -c %Y "$FILE")
+
+    # 経過時間を計算
+    DIFF=$((NOW - FILE_TIME))
+
+    # タイムアウト判定
+    if [ "$DIFF" -gt "$TIMEOUT" ]; then
+        echo "BAT:Timeout " | tr -d '\n'
+    else
+        cat "$FILE"
+    fi
+fi
