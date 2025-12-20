@@ -43,7 +43,7 @@ RUN apt update && apt install -y locales && \
 ##################
 RUN apt update && apt install -y sudo gosu iproute2 iputils-ping curl gnupg2 lsb-release ninja-build \
 	screen tmux vim git wget locate python3-pip python3-venv python3-flake8-docstrings \
-	doxygen pre-commit tree ncdu v4l-utils libxcb-cursor0 byobu && \
+	doxygen pre-commit tree ncdu v4l-utils libxcb-cursor0 byobu bc && \
 	updatedb
 
 ####################################################
