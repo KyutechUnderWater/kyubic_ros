@@ -7,11 +7,26 @@
         node_name="manualNode"
         transition="deactivate"
         timeout_sec="1" />
+      <Talker name="AutomatickTalker"
+        message="Automatick Mode Start"
+        topic_name="/talker" />
       <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
+      <Talker name="AutomatickTalker"
+        message="Waypoint Action Start"
+        topic_name="/talker" />
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
         csv_file_path="assets/kobe/gate_path.csv" />
+      <Talker name="AutomatickTalker"
+        message="Waypoint Action Successful"
+        topic_name="/talker" />
+      <Talker name="AutomatickTalker"
+        message="QR Action Start"
+        topic_name="/talker" />
       <QrAction action_name="/planner/qr_planner/qr_plan" />
 
+      <Talker name="AutomatickTalker"
+        message="Waypoint Action2 Start"
+        topic_name="/talker" />
       <Switch2 name="Outbound_Selector"
         variable="{selected_course}"
         case_1="A"
@@ -24,8 +39,14 @@
           csv_file_path="assets/kobe/left.csv" />
         <AlwaysFailure name="Invalid_Course_Selection" />
       </Switch2>
+      <Talker name="AutomatickTalker"
+        message="Pinger Action Start"
+        topic_name="/talker" />
       <FindPingerAction action_name="find_pinger" />
 
+      <Talker name="AutomatickTalker"
+        message="Return Waypoint Action Start"
+        topic_name="/talker" />
       <Switch2 name="Inbound_Selector"
         variable="{selected_course}"
         case_1="A"
@@ -65,6 +86,9 @@
 
   <BehaviorTree ID="Emergency">
     <Sequence name="EmergencySequence">
+      <Talker name="EmergencyTalker"
+        message="Emergency Mode Start"
+        topic_name="/talker" />
       <LifecycleManager name="ActivateEmergencyNode"
         node_name="emergencyNode"
         transition="activate"
@@ -106,6 +130,9 @@
 
   <BehaviorTree ID="Manual">
     <Sequence name="ManualSequence">
+      <Talker name="ManualTalker"
+        message="Manual Mode Start"
+        topic_name="/talker" />
       <LifecycleManager name="ActivateManualNode"
         node_name="manualNode"
         transition="activate"
