@@ -48,7 +48,6 @@ private:
   int64_t timeout_ms;
   bool turning;
 
-  const std::string CRCF = "\r\n";
   bool command_mode = false;
   bool break_cmd = false;
   std::shared_ptr<timer::Timeout> timeout_;
@@ -78,6 +77,34 @@ private:
    * @brief Timer callback to process DVL data and publish messages
    */
   void update();
+
+  /**
+   * @brief Convert raw velocity data to ROS message format
+   * @tparam T Array type containing velocity data (int16_t[4])
+   * @param raw_vel Raw velocity array [vx, vy, vz, error] in mm/s
+   * @param msg Destination DVL message to update
+   */
+  template <typename T>
+  void _convertVelocity(const T & raw_vel, driver_msgs::msg::DVL & msg);
+
+  /**
+   * @brief Extract data from PD0 ensemble and populate ROS message
+   * @details Parses system config, leak status, velocity, range, and beam status.
+   * Also handles debug logging if 'turning' flag is active.
+   * @param data Shared pointer to the parsed PD0 data structure
+   * @param msg Reference to the DVL message to be populated
+   */
+  void _extractPd0Data(
+    const std::shared_ptr<path_finder::pd0::Pd0Ensemble> & data, driver_msgs::msg::DVL & msg);
+
+  /**
+   * @brief Extract data from PD5 ensemble and populate ROS message
+   * @details Parses system config, leak status (from BIT), velocity, range, and beam status.
+   * @param data Shared pointer to the parsed PD5 data structure
+   * @param msg Reference to the DVL message to be populated
+   */
+  void _extractPd5Data(
+    const std::shared_ptr<path_finder::pd5::Pd5Ensemble> & data, driver_msgs::msg::DVL & msg);
 
   /**
    * @brief Helper to calculate average altitude from beam ranges

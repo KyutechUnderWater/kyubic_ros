@@ -14,7 +14,7 @@ try:
     import rclpy
     from rclpy.node import Node
     from rcl_interfaces.msg import SetParametersResult
-    from std_msgs.msg import Header
+    from std_msgs.msg import Header, String
     from common_msgs.msg import Status
     from driver_msgs.msg import (
         DVL,
@@ -289,11 +289,14 @@ class RobotState:
         self.led_right: int = 1100  # (1100:OFF ~ 1900:MAX)
         self.led_left: int = 1100
 
-        self.topic_alive_ctrl = False  # System Control
-        self.topic_alive_tilt = False  # Tilt Serve
-        self.topic_alive_led = False  # LED Control
+        self.topic_alive_ctrl: bool = False  # System Control
+        self.topic_alive_tilt: bool = False  # Tilt Serve
+        self.topic_alive_led: bool = False  # LED Control
 
-        self.warning_count = 0
+        self.voice_events: list[dict[str]] = []  # {'id': int, 'text': str, 'time': str}
+        self.event_counter: int = 0
+
+        self.warning_count: int = 0
 
     def check_global_voltage_warning(self) -> bool:
         """電圧異常が継続しているかチェック"""
@@ -353,6 +356,7 @@ class MonitorNode(Node):
         self.create_subscription(IMU, "imu", self.cb_imu, 10)
         self.create_subscription(PowerState, "power_state", self.cb_power, 10)
         self.create_subscription(SystemStatus, "system_status", self.cb_sys_status, 10)
+        self.create_subscription(String, "talker", self.cb_talker, 10)
 
         self.pub_sys_switch = self.create_publisher(SystemSwitch, "system_switch", 10)
         self.pub_imu_reset = self.create_publisher(BoolStamped, "imu_reset", 10)
@@ -426,6 +430,21 @@ class MonitorNode(Node):
         d.actuator_power = msg.actuator_power
         d.logic_relay = msg.logic_relay
         d.usb_power = msg.usb_power
+
+    def cb_talker(self, msg):
+        text = msg.data
+        if not text:
+            return
+
+        timestamp = time.strftime("%H:%M:%S")
+
+        self.state.event_counter += 1
+        new_event = {"id": self.state.event_counter, "text": text, "time": timestamp}
+        self.state.voice_events.append(new_event)
+
+        # 最新20件だけ保持
+        if len(self.state.voice_events) > 20:
+            self.state.voice_events.pop(0)
 
     def publish_switch_command(self):
         s = self.state.switches
@@ -999,6 +1018,20 @@ def render_led_column(state: RobotState) -> dict:
                 ).props('color="purple-5" icon="publish" no-caps').style(
                     f"text-shadow: 0 0 5px rgba(0,0,0,0.5);"
                 )
+
+        # ==========================================
+        # Voice Log
+        # ==========================================
+        card_voice = CyberCard()
+        refs["card_voice"] = card_voice
+        with card_voice:
+            label_header("System Voice", "record_voice_over")
+
+            # max_lines で行数を制限
+            log_view = ui.log(max_lines=50).classes(
+                "w-full h-32 font-mono text-xs leading-relaxed text-cyan-300 bg-slate-900/50 p-2 rounded border border-slate-700"
+            )
+            refs["voice_log"] = log_view
     return refs
 
 
@@ -1031,9 +1064,71 @@ def index():
     # 複数の辞書に分かれた参照をマージしてアクセスしやすくする
     ui_refs = {**refs_col1, **refs_col2, **refs_col3, **refs_col4}
 
+    for event in app_state.voice_events:
+        timestamp = event["time"]
+        text = event["text"]
+        ui_refs["voice_log"].push(f"[{timestamp}] {text}")
+    last_processed_id = app_state.event_counter
+
     def update_ui():
+        nonlocal last_processed_id
+
         state = app_state
         cfg = state.config
+
+        # Process Voice Queue (音声合成)
+        # 自分の last_processed_id より新しいIDを持つイベントを抽出
+        new_events = [e for e in state.voice_events if e["id"] > last_processed_id]
+
+        if new_events:
+            for event in new_events:
+                text = event["text"]
+                timestamp = event["time"]
+
+                # 音声再生 (JavaScript)
+                escaped_text = text.replace('"', '\\"').replace("'", "\\'")
+                js_code = f"""
+                    (function() {{
+                        const synth = window.speechSynthesis;
+                        const text = "{escaped_text}";
+                        const uttr = new SpeechSynthesisUtterance(text);
+                        
+                        function speak() {{
+                            const voices = synth.getVoices();
+                            let selectedVoice = voices.find(v => v.name.includes('English (Caribbean)+female2'));
+                            if (!selectedVoice) {{
+                                selectedVoice = voices.find(v => v.name.includes('espeak') && v.name.includes('female'));
+                            }}
+                            if (!selectedVoice) {{
+                                selectedVoice = voices.find(v => v.lang === 'ja-JP' || v.lang === 'ja');
+                            }}
+
+                            if (selectedVoice) {{
+                                uttr.voice = selectedVoice;
+                                uttr.lang = selectedVoice.lang;
+                            }} else {{
+                                uttr.lang = 'ja-JP';
+                            }}
+                            
+                            uttr.rate = 1.0; 
+                            uttr.pitch = 1.0;
+
+                            synth.cancel();
+                            synth.speak(uttr);
+                        }}
+
+                        if (synth.getVoices().length === 0) {{
+                            synth.onvoiceschanged = speak;
+                        }} else {{
+                            speak();
+                        }}
+                    }})();
+                """
+                ui.run_javascript(js_code)
+
+                # ログ表示
+                ui_refs["voice_log"].push(f"[{timestamp}] {text}")
+                last_processed_id = event["id"]
 
         # --- A. Gauge Animations ---
         # Note: bind_fromを使っているためテキストは自動更新されるが、プログレスバーの値は明示的に更新が必要
@@ -1044,9 +1139,9 @@ def index():
 
         # --- B. Arrow Animation ---
         angle = math.degrees(math.atan2(state.dvl.vel_y, state.dvl.vel_x))
-        scale = min(max(state.dvl.speed_norm / 0.5, 0.2), 1.2)
+        scale = min(max(state.dvl.speed_norm / 0.2, 0.2), 1.4)
         ui_refs["arrow_el"].style(
-            f"transform: rotate({angle + 90}deg) scale({
+            f"transform: rotate({angle}deg) scale({
                 scale
             }); transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);"
         )
@@ -1066,7 +1161,6 @@ def index():
         stat_timeout = state.sys_stat.is_timeout(cfg.timeout_sys_status)
         ui_refs["card_stat"].update_status(state.sys_stat.status_id, stat_timeout)
         ui_refs["card_ctrl"].update_status(0, state.topic_alive_ctrl == 2)
-        ui_refs["card_tilt"].update_status(0, state.topic_alive_tilt == 2)
 
         ui_refs["card_dvl"].update_status(
             state.dvl.status_id, state.dvl.is_timeout(cfg.timeout_dvl)
@@ -1079,6 +1173,7 @@ def index():
         )
 
         ui_refs["card_led"].update_status(0, state.topic_alive_led == 2)
+        ui_refs["card_tilt"].update_status(0, state.topic_alive_tilt == 2)
 
         # --- E. Global Alert ---
         if state.check_global_voltage_warning():

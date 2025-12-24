@@ -1,0 +1,4 @@
+/**:
+  ros__parameters:
+    config_file: "config/pathfinder/pool_config.txt"
+    # config_file: "config/pathfinder/sea_config.txt"

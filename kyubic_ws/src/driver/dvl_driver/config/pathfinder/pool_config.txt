@@ -1,0 +1,20 @@
+; DVL Setup Configuration
+===
+
+
+EA+04500
+ES0
+BX00020        ; Max Depth 2m
+CK
+
+
+; CR1
+; EX10111      ; 座標系の設定
+; #BM8
+; #BB10        ; Blanking Distance 10cm
+; #BI002       ; 2mまではLow Gain固定（ゲイン切替抑制）
+; TP00:00.20   ; Pingレート調整（0.2秒〜0.5秒で調整）
+; #PD0
+
+
+CS

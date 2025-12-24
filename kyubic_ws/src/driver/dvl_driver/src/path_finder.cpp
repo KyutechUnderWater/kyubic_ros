@@ -200,8 +200,12 @@ void Sender::flush_buffer()
     loop_count++;
   }
 }
-bool Sender::send_cmd(const std::string & cmd, const uint & wait_time)
+
+bool Sender::send_cmd(const std::string & _cmd, const uint & wait_time, bool newline)
 {
+  std::string cmd(_cmd);
+  if (newline) cmd += CRCF;
+
   if (send(sockfd, cmd.c_str(), cmd.size(), 0) != (ssize_t)cmd.size()) {
     return false;
   }
