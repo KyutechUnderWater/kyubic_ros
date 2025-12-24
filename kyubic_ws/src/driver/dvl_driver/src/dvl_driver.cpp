@@ -9,13 +9,17 @@
 
 #include "dvl_driver/dvl_driver.hpp"
 
-#include <cstdint>
-#include <rclcpp/logging.hpp>
-
 using namespace std::chrono_literals;
 
 namespace dvl_driver
 {
+
+namespace
+{
+constexpr int16_t INVALID_VELOCITY = -32768;
+constexpr double SCALE_VELOCITY = 0.001;  // mm/s -> m/s
+constexpr double SCALE_RANGE_CM = 0.01;   // cm -> m
+}  // namespace
 
 DVLDriver::DVLDriver() : Node("dvl_driver")
 {
@@ -107,118 +111,37 @@ void DVLDriver::update()
   if (DVLDriver::_update()) {
     // PD0 Data Handling
     if (listener_->has_pd0_data()) {
-      auto data = listener_->get_pd0_data();
-
-      msg->system_config = static_cast<uint8_t>(data->fixed_leader.system_config & 0xFF);
-      msg->leak_a = (data->variable_leader.leak_status & 0x01) != 0;
-      msg->leak_b = (data->variable_leader.leak_status & 0x04) != 0;
-
-      // Extract Velocity
-      int16_t vx = data->bottom_track.velocity[0];
-      int16_t vy = data->bottom_track.velocity[1];
-      int16_t vz = data->bottom_track.velocity[2];
-
-      // mm/s -> m/s
-      msg->velocity.x = vx * 0.001;
-      msg->velocity.y = vy * 0.001;
-      msg->velocity.z = vz * 0.001;
-      msg->velocity_error = data->bottom_track.velocity[3];
-
-      // Check validity: At least X, Y, Z must be valid for a 3-beam solution
-      if (vx != -32768 && vy != -32768 && vz != -32768) {
-        msg->velocity_valid = true;
-      }
-
-      // Extract Altitude and Beam Status
-      float ranges[4];
-      for (int i = 0; i < 4; ++i) {
-        ranges[i] = data->bottom_track.range[i] * 0.01f;  // cm -> m
-
-        // Status determination based on raw values
-        // Thresholds: Echo Amplitude > 20 (approx), Correlation > 64 (standard default)
-        msg->btm_status_echo_amplitude[i] = (data->bottom_track.eval_amp[i] > 20);
-        msg->btm_status_correlation[i] = (data->bottom_track.correlation[i] > 64);
-      }
-      msg->altitude = _calculate_average_altitude(ranges);
-
-      if (turning == true) {
-        RCLCPP_INFO(
-          this->get_logger(),
-          "RSSI: %3u, %3u, %3u, %3u  Corr: %3u, %3u, %3u, %3u  Range: %3u, %3u, %3u, %3u  Vel: "
-          "%6d, "
-          "%6d, %6d, %6d Error: %6d",
-          data->bottom_track.rssi_amp[0], data->bottom_track.rssi_amp[1],
-          data->bottom_track.rssi_amp[2], data->bottom_track.rssi_amp[3],
-          data->bottom_track.correlation[0], data->bottom_track.correlation[1],
-          data->bottom_track.correlation[2], data->bottom_track.correlation[3],
-          data->bottom_track.range[0], data->bottom_track.range[1], data->bottom_track.range[2],
-          data->bottom_track.range[3], data->bottom_track.velocity[0],
-          data->bottom_track.velocity[1], data->bottom_track.velocity[2],
-          data->bottom_track.velocity[3], msg->velocity_error);
-      }
-
+      _extractPd0Data(listener_->get_pd0_data(), *msg);
       data_received = true;
     }
     // PD5 Data Handling
     else if (listener_->has_pd5_data()) {
-      auto data = listener_->get_pd5_data();
-
-      msg->system_config = data->system_config;
-      msg->leak_a = (data->bit_results & 0x01) != 0;
-      msg->leak_b = (data->bit_results & 0x04) != 0;
-
-      // Extract Velocity
-      int16_t vx = data->btm_velocity[0];
-      int16_t vy = data->btm_velocity[1];
-      int16_t vz = data->btm_velocity[2];
-
-      // mm/s -> m/s
-      msg->velocity.x = vx * 0.001;
-      msg->velocity.y = vy * 0.001;
-      msg->velocity.z = vz * 0.001;
-      msg->velocity_error = data->btm_velocity[3];
-
-      // Check validity: At least X, Y, Z must be valid for a 3-beam solution
-      if (vx != -32768 && vy != -32768 && vz != -32768) {
-        msg->velocity_valid = true;
-      }
-
-      float ranges[4];
-      for (int i = 0; i < 4; ++i) {
-        ranges[i] = data->btm_range[i] * 0.01f;  // PD5 ranges are typically cm (for 600kHz).
-
-        // If bit is 0, beam is Good. If 1, beam is Bad.
-        msg->btm_status_correlation[i] = (data->bottom_status >> i) & 0x01;
-        msg->btm_status_echo_amplitude[i] = (data->bottom_status >> (i * 2 + 1)) & 0x01;
-      }
-      msg->altitude = _calculate_average_altitude(ranges);
-
+      _extractPd5Data(listener_->get_pd5_data(), *msg);
       data_received = true;
     }
   }
 
-  // Publish message if data was valid
   if (data_received) {
     timeout_->reset(this->get_clock()->now());
 
     msg->header.stamp = this->get_clock()->now();
     msg->header.frame_id = "pathfinder";
 
-    // Error if: XYZ Velocity is invalid OR Leak Detected
+    // Determine Status
+    std::string qual_str = "4-Beam";
+
+    // Error conditions: Invalid XYZ velocity OR Leak Detected
     if (!msg->velocity_valid || msg->leak_a || msg->leak_b) {
       msg->status.id = common_msgs::msg::Status::ERROR;
-    } else if (msg->velocity_error == -32768) {
+      qual_str = "++ERROR++";
+    }
+    // Warning condition: Valid XYZ but Invalid Error Velocity (3-Beam solution)
+    else if (msg->velocity_error == INVALID_VELOCITY) {
       msg->status.id = common_msgs::msg::Status::WARNING;
+      qual_str = "3-Beam";
     } else {
       msg->status.id = common_msgs::msg::Status::NORMAL;
     }
-
-    // Log info (show 3-Beam status if applicable)
-    std::string qual_str = "4-Beam";
-    if (!msg->velocity_valid)
-      qual_str = "++ERROR++";
-    else if (msg->velocity_error == -32768)
-      qual_str = "3-Beam";  // Valid XYZ, but Invalid Error Vel
 
     RCLCPP_INFO(
       this->get_logger(), "[%s] Vel: [%5.2f, %5.2f, %5.2f]  Alt: %5.2f  Leak_A: %d  Leak_B: %d",
@@ -228,7 +151,6 @@ void DVLDriver::update()
     pub_->publish(std::move(msg));
 
   } else {
-    // Timeout Handling
     if (timeout_->is_timeout(this->get_clock()->now())) {
       msg->header.stamp = this->get_clock()->now();
       msg->status.id = common_msgs::msg::Status::ERROR;
@@ -239,6 +161,85 @@ void DVLDriver::update()
     } else {
       RCLCPP_WARN(this->get_logger(), "Failed DVL data acquisition.");
     }
+  }
+}
+
+void DVLDriver::_extractPd0Data(
+  const std::shared_ptr<path_finder::pd0::Pd0Ensemble> & data, driver_msgs::msg::DVL & msg)
+{
+  // System Config & Leak Status
+  msg.system_config = static_cast<uint8_t>(data->fixed_leader.system_config & 0xFF);
+  msg.leak_a = (data->variable_leader.leak_status & 0x01) != 0;
+  msg.leak_b = (data->variable_leader.leak_status & 0x04) != 0;
+
+  // Velocity
+  _convertVelocity(data->bottom_track.velocity, msg);
+
+  // Range & Status
+  float ranges[4];
+  for (int i = 0; i < 4; ++i) {
+    ranges[i] = data->bottom_track.range[i] * SCALE_RANGE_CM;
+
+    // Threshold based status
+    msg.btm_status_echo_amplitude[i] = (data->bottom_track.eval_amp[i] > 20);
+    msg.btm_status_correlation[i] = (data->bottom_track.correlation[i] > 64);
+  }
+  msg.altitude = _calculate_average_altitude(ranges);
+
+  // Debug Logging for PD0
+  if (turning) {
+    const auto & btm = data->bottom_track;
+    RCLCPP_INFO(
+      this->get_logger(),
+      "RSSI: %3u, %3u, %3u, %3u  Corr: %3u, %3u, %3u, %3u  Range: %3u, %3u, %3u, %3u  Vel: %6d, "
+      "%6d, %6d, %6d Error: %6d",
+      btm.rssi_amp[0], btm.rssi_amp[1], btm.rssi_amp[2], btm.rssi_amp[3], btm.correlation[0],
+      btm.correlation[1], btm.correlation[2], btm.correlation[3], btm.range[0], btm.range[1],
+      btm.range[2], btm.range[3], btm.velocity[0], btm.velocity[1], btm.velocity[2],
+      btm.velocity[3], msg.velocity_error);
+  }
+}
+
+void DVLDriver::_extractPd5Data(
+  const std::shared_ptr<path_finder::pd5::Pd5Ensemble> & data, driver_msgs::msg::DVL & msg)
+{
+  // System Config & Leak Status
+  msg.system_config = data->system_config;
+  msg.leak_a = (data->bit_results & 0x01) != 0;
+  msg.leak_b = (data->bit_results & 0x04) != 0;
+
+  // Velocity
+  _convertVelocity(data->btm_velocity, msg);
+
+  // Range & Status
+  float ranges[4];
+  for (int i = 0; i < 4; ++i) {
+    ranges[i] = data->btm_range[i] * SCALE_RANGE_CM;
+
+    // Bitwise status extraction
+    msg.btm_status_correlation[i] = (data->bottom_status >> i) & 0x01;
+    msg.btm_status_echo_amplitude[i] = (data->bottom_status >> (i * 2 + 1)) & 0x01;
+  }
+  msg.altitude = _calculate_average_altitude(ranges);
+}
+
+template <typename T>
+void DVLDriver::_convertVelocity(const T & raw_vel, driver_msgs::msg::DVL & msg)
+{
+  int16_t vx = raw_vel[0];
+  int16_t vy = raw_vel[1];
+  int16_t vz = raw_vel[2];
+
+  msg.velocity.x = vx * SCALE_VELOCITY;
+  msg.velocity.y = vy * SCALE_VELOCITY;
+  msg.velocity.z = vz * SCALE_VELOCITY;
+  msg.velocity_error = raw_vel[3];
+
+  // Validity Check (3-Beam solution check)
+  if (vx != INVALID_VELOCITY && vy != INVALID_VELOCITY && vz != INVALID_VELOCITY) {
+    msg.velocity_valid = true;
+  } else {
+    msg.velocity_valid = false;
   }
 }
 
@@ -275,7 +276,7 @@ void DVLDriver::sendCommandCallback(
   sender_->flush_buffer();
   if (!request->command.empty()) {
     // Send command with wait time
-    if (sender_->send_cmd(request->command + CRCF, 1)) {
+    if (sender_->send_cmd(request->command, 1)) {
       unsigned char buffer[4096] = {'\0'};
       size_t len = sender_->read(buffer, sizeof(buffer));
 
@@ -284,7 +285,7 @@ void DVLDriver::sendCommandCallback(
 
         // Simple response cleaning
         // Remove echoed command if present
-        size_t pos = data.find(request->command + CRCF);
+        size_t pos = data.find(request->command);
         if (pos != std::string::npos) {
           data = data.substr(pos + request->command.size() + 2);
         }
