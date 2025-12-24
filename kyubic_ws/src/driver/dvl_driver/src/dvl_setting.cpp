@@ -1,7 +1,11 @@
 /**
  * @file dvl_setting.cpp
- * @brief DVL Configuration Client Implementation
- */
+ * @brief DVL Configuration Client Node
+ * @author R.ohishi
+ * @date 2025/12/22
+ *
+ * @details DVLコマンドスクリプトから一括で設定を行う
+ ***************************************************/
 
 #include "dvl_driver/dvl_setting.hpp"
 

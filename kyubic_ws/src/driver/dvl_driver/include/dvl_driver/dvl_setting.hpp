@@ -1,8 +1,11 @@
 /**
  * @file dvl_setting.hpp
  * @brief DVL Configuration Client Node
- * @date 2025/07/05
- */
+ * @author R.ohishi
+ * @date 2025/12/22
+ *
+ * @details DVLコマンドスクリプトから一括で設定を行う
+ ***************************************************/
 
 #ifndef DVL_SETTING_HPP_
 #define DVL_SETTING_HPP_
