@@ -1,8 +1,10 @@
 /**
  * @file talker.cpp
- * @brief Implementation of Talker node
- * @author R.ohnishi
+ * @brief Publish string message to ros2 topic
+ * @author R.ohishi
  * @date 2025/12/22
+ *
+ * @details BehaviorTreeのポートから文字列を取得し、std_msgs::msg::StringとしてPublishする
  **************************************************************/
 
 #include "behavior_tree/talker.hpp"
