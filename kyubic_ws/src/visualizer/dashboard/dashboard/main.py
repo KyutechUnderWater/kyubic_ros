@@ -294,7 +294,7 @@ class RobotState:
         self.topic_alive_led: bool = False  # LED Control
 
         self.voice_events: list[dict[str]] = []  # {'id': int, 'text': str, 'time': str}
-        self.event_counter: int = 0  # イベントの通し番号
+        self.event_counter: int = 0
 
         self.warning_count: int = 0
 
@@ -431,7 +431,6 @@ class MonitorNode(Node):
         d.logic_relay = msg.logic_relay
         d.usb_power = msg.usb_power
 
-    # 音声受信コールバック
     def cb_talker(self, msg):
         text = msg.data
         if not text:
@@ -439,12 +438,11 @@ class MonitorNode(Node):
 
         timestamp = time.strftime("%H:%M:%S")
 
-        # カウンタを増やして履歴に追加
         self.state.event_counter += 1
         new_event = {"id": self.state.event_counter, "text": text, "time": timestamp}
         self.state.voice_events.append(new_event)
 
-        # 履歴が溜まりすぎないように古いものを削除 (最新20件だけ保持)
+        # 最新20件だけ保持
         if len(self.state.voice_events) > 20:
             self.state.voice_events.pop(0)
 
@@ -1029,8 +1027,7 @@ def render_led_column(state: RobotState) -> dict:
         with card_voice:
             label_header("System Voice", "record_voice_over")
 
-            # ログ表示エリア (ui.log を使用)
-            # max_lines で行数を制限し、古いものを自動削除
+            # max_lines で行数を制限
             log_view = ui.log(max_lines=50).classes(
                 "w-full h-32 font-mono text-xs leading-relaxed text-cyan-300 bg-slate-900/50 p-2 rounded border border-slate-700"
             )
@@ -1074,14 +1071,12 @@ def index():
     last_processed_id = app_state.event_counter
 
     def update_ui():
-        # nonlocal宣言: この関数の外にある last_processed_id を書き換えるために必要
         nonlocal last_processed_id
 
         state = app_state
         cfg = state.config
 
         # Process Voice Queue (音声合成)
-        # --- 変更: Event History Processing (全端末同期) ---
         # 自分の last_processed_id より新しいIDを持つイベントを抽出
         new_events = [e for e in state.voice_events if e["id"] > last_processed_id]
 
@@ -1090,7 +1085,7 @@ def index():
                 text = event["text"]
                 timestamp = event["time"]
 
-                # 1. 音声再生 (JavaScript)
+                # 音声再生 (JavaScript)
                 escaped_text = text.replace('"', '\\"').replace("'", "\\'")
                 js_code = f"""
                     (function() {{
@@ -1131,10 +1126,8 @@ def index():
                 """
                 ui.run_javascript(js_code)
 
-                # 2. ログ表示
+                # ログ表示
                 ui_refs["voice_log"].push(f"[{timestamp}] {text}")
-
-                # IDを更新 (ここまで処理したことを記録)
                 last_processed_id = event["id"]
 
         # --- A. Gauge Animations ---
