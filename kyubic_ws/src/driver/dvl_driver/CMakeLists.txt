@@ -25,6 +25,10 @@ ament_auto_add_executable(${PROJECT_NAME}
   ./src/pd5_parser.cpp
 )
 
+ament_auto_add_executable(dvl_setting
+  ./src/dvl_setting.cpp
+)
+
 install(DIRECTORY
   config
   launch

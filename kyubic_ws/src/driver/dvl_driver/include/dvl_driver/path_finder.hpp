@@ -124,7 +124,8 @@ class Sender
   int sockfd;
   struct sockaddr_in server;
 
-  const std::string ping_cmd = "CS\r\n";
+  const std::string CRCF = "\r\n";
+  const std::string ping_cmd = "CS";
   const std::string break_cmd = "===";
 
 public:
@@ -160,7 +161,7 @@ public:
    * @param wait_time Time to wait after sending (seconds)
    * @return true if sent successfully
    */
-  bool send_cmd(const std::string & cmd, const uint & wait_time = 0);
+  bool send_cmd(const std::string & cmd, const uint & wait_time = 0, bool newline = true);
 
   /**
    * @brief Send a Soft Break ("===") to wake up the DVL.
