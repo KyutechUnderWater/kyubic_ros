@@ -39,12 +39,15 @@ private:
   planner_msgs::msg::WrenchPlan::SharedPtr plan_;
   localization_msgs::msg::Odometry::SharedPtr odom_;
   bool is_update = false;
+  bool is_first = true;
+  bool resume = true;
 
   std::mutex mutex_;
 
   void wrenchPlanCallback(planner_msgs::msg::WrenchPlan::SharedPtr _msg);
   void odomCallback(const localization_msgs::msg::Odometry::SharedPtr _msg);
   bool has_velocity(const planner_msgs::msg::WrenchPlan::SharedPtr _msg);
+  bool copy_master(const localization_msgs::msg::Odometry::SharedPtr _msg);
   bool copy_slave(const localization_msgs::msg::Odometry::SharedPtr _msg);
 
 public:

@@ -41,6 +41,8 @@ ZeroOrderHold::on_configure(const rclcpp_lifecycle::State &)
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 ZeroOrderHold::on_activate(const rclcpp_lifecycle::State & state)
 {
+  is_first = true;
+
   RCLCPP_INFO(get_logger(), "Activate successful");
   return LifecycleNode::on_activate(state);
 }
@@ -82,6 +84,7 @@ void ZeroOrderHold::wrenchPlanCallback(planner_msgs::msg::WrenchPlan::SharedPtr 
 
   std::lock_guard<std::mutex> lock(mutex_);
   timeout_->reset(this->get_clock()->now());
+  is_first = false;
 
   plan_ = _msg;
 
@@ -92,6 +95,14 @@ void ZeroOrderHold::wrenchPlanCallback(planner_msgs::msg::WrenchPlan::SharedPtr 
 
   if (copy_slave(odom_)) {
     is_update = false;
+
+    // when return timeout, reset pid
+    plan_->reset = 0;
+    if (resume) {
+      resume = false;
+      plan_->reset = 0b00011111;
+    }
+
     pub_->publish(*plan_);
     RCLCPP_DEBUG(this->get_logger(), "Published WrenchPlan");
   }
@@ -107,8 +118,9 @@ void ZeroOrderHold::odomCallback(const localization_msgs::msg::Odometry::SharedP
   is_update = true;
   odom_ = _msg;
 
-  if (timeout_->check(this->get_clock()->now())) {
-    if (copy_slave(_msg)) pub_->publish(*plan_);
+  if (timeout_->is_timeout(this->get_clock()->now()) && !is_first) {
+    resume = true;
+    if (copy_master(_msg) && copy_slave(_msg)) pub_->publish(*plan_);
   }
 }
 
@@ -120,6 +132,24 @@ bool ZeroOrderHold::has_velocity(const planner_msgs::msg::WrenchPlan::SharedPtr 
   return (std::abs(slave.x) > epsilon) && (std::abs(slave.y) > epsilon) &&
          (std::abs(slave.z) > epsilon) && (std::abs(slave.roll) > epsilon) &&
          (std::abs(slave.yaw) > epsilon);
+}
+
+bool ZeroOrderHold::copy_master(const localization_msgs::msg::Odometry::SharedPtr _msg)
+{
+  plan_->master.x = _msg->pose.position.x;
+  plan_->master.y = _msg->pose.position.y;
+  plan_->master.roll = _msg->pose.orientation.x;
+  plan_->master.yaw = _msg->pose.orientation.z;
+
+  if (plan_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
+    plan_->master.z = _msg->pose.position.z_depth;
+  } else if (plan_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
+    plan_->master.z = _msg->pose.position.z_altitude;
+  } else {
+    RCLCPP_ERROR(this->get_logger(), "Z mode(%d) is invalid.", plan_->z_mode);
+    return false;
+  }
+  return true;
 }
 
 bool ZeroOrderHold::copy_slave(const localization_msgs::msg::Odometry::SharedPtr _msg)
