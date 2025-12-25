@@ -46,6 +46,9 @@ private:
   double pre_p = 0;
   double pre_i = 0;
   double pre_d = 0;
+
+  bool first_run = true;
+
   std::chrono::high_resolution_clock::time_point pre_time =
     std::chrono::high_resolution_clock::now();
 
@@ -57,10 +60,10 @@ public:
   explicit PositionPID(const PositionPIDParameter param);
 
   /**
-   * @brief Reset integral term
+   * @brief Reset pid
    * @return none
    */
-  void reset_integral();
+  void reset();
 
   /**
    * @brief Get each term value of pid
@@ -115,6 +118,10 @@ private:
   double pre_p = 0;
   double pre_d = 0;
   double pre_u = 0;
+  double dt = 0.0;
+
+  bool first_run = true;
+
   std::chrono::high_resolution_clock::time_point pre_time =
     std::chrono::high_resolution_clock::now();
 
@@ -130,6 +137,12 @@ public:
    * @return array(x, y, z)
    */
   std::array<double, 3> get_each_term();
+
+  /**
+   * @brief Get dt
+   * @return double
+   */
+  double get_dt() const;
 
   /**
    * @brief Update PID cycle

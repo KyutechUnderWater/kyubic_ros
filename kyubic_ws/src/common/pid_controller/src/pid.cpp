@@ -26,6 +26,19 @@ double PositionPID::update(double current, double target, double last_saturated 
   double dt = std::chrono::duration_cast<std::chrono::microseconds>(now - pre_time).count() * 1e-6;
   pre_time = now;
 
+  if (first_run) {
+    first_run = false;
+
+    // The first calculation will be based solely on the P item.
+    p = target - current;
+    i = 0;
+
+    pre_p = p;
+    pre_i = 0;
+    pre_d = 0;
+    return kp * p + offset;
+  }
+
   // Calculate Position form PID
   p = target - current;
   i += p * dt;
@@ -55,7 +68,7 @@ std::array<double, 3> PositionPID::get_each_term()
 
 void PositionPID::set_offset(double offset) { this->offset = offset; }
 
-void PositionPID::reset_integral() { i = 0.0; }
+void PositionPID::reset() { first_run = true; }
 
 VelocityPID::VelocityPID(const VelocityPIDParameter param)
 : kp(param.kp),
@@ -71,8 +84,23 @@ VelocityPID::VelocityPID(const VelocityPIDParameter param)
 double VelocityPID::update(double current, double target)
 {
   auto now = std::chrono::high_resolution_clock::now();
-  double dt = std::chrono::duration_cast<std::chrono::microseconds>(now - pre_time).count() * 1e-6;
+  dt = std::chrono::duration_cast<std::chrono::microseconds>(now - pre_time).count() * 1e-6;
   pre_time = now;
+
+  if (first_run) {
+    first_run = false;
+
+    double error = target - current;
+    pre_error = error;
+    pre_p = 0.0;
+    pre_d = 0.0;
+
+    // Initial output
+    double initial_u = kp * error;
+    pre_u = std::clamp(initial_u, lo, hi);
+
+    return std::clamp(pre_u + offset, lo, hi);
+  }
 
   // Calculate velocity form PID
   double error = target - current;
@@ -97,12 +125,14 @@ double VelocityPID::update(double current, double target)
 
 void VelocityPID::set_offset(double offset) { this->offset = offset; }
 
-void VelocityPID::reset() { pre_u = 0.0; }
+void VelocityPID::reset() { first_run = true; }
 
 std::array<double, 3> VelocityPID::get_each_term()
 {
   double term[3] = {p, i, d};
   return std::to_array(term);
 }
+
+double VelocityPID::get_dt() const { return dt; }
 
 }  // namespace pid_controller
