@@ -41,6 +41,7 @@ private:
 
   rclcpp::Time pre_time;
 
+  std::array<float, 3> offset;
   std::shared_ptr<localization_msgs::msg::Odometry> imu_msg_;
 
   double pos_x = 0.0;
