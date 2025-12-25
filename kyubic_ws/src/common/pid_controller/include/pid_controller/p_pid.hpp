@@ -143,6 +143,18 @@ public:
   * @return master ouput
   */
   double get_master_out();
+
+  /**
+  * @brief Get slave each term
+  * @return slave each term
+  */
+  std::array<double, 3> get_slave_each_term();
+
+  /**
+  * @brief Get dt
+  * @return dt
+  */
+  double get_dt();
 };
 
 }  // namespace pid_controller

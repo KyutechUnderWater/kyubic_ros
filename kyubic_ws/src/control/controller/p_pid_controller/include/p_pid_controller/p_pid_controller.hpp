@@ -58,6 +58,7 @@ public:
   void pid_z_reset();
   void pid_roll_reset();
   void pid_yaw_reset();
+  void pid_all_reset();
 
   std::array<double, 5> update(std::array<std::array<double, 3>, 5> data);
 };
