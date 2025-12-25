@@ -11,7 +11,6 @@
 
 #include <functional>
 #include <numeric>
-#include <rclcpp/logging.hpp>
 
 #include "localization_msgs/msg/status.hpp"
 
@@ -20,8 +19,6 @@ namespace localization
 
 DepthOdometry::DepthOdometry(const rclcpp::NodeOptions & options) : Node("depth_odometry", options)
 {
-  fresh_water = this->declare_parameter("fresh_water", false);
-
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   pub_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
