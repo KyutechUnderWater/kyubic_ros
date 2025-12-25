@@ -33,7 +33,7 @@ double PositionP_PID::get_master_out() { return master_out; }
 
 void PositionP_PID::set_param_offset(double offset) { slave_pid_->set_offset(offset); }
 
-void PositionP_PID::reset() { slave_pid_->reset_integral(); }
+void PositionP_PID::reset() { slave_pid_->reset(); }
 
 VelocityP_PID::VelocityP_PID(const VelocityP_PIDParameter & param_)
 : k(param_.k), lo(param_.lo), hi(param_.hi), vpid_param(param_.vpid_param)
@@ -55,5 +55,10 @@ void VelocityP_PID::set_param_offset(double offset) { slave_pid_->set_offset(off
 
 double VelocityP_PID::get_master_out() { return master_out; }
 
+std::array<double, 3> VelocityP_PID::get_slave_each_term() { return slave_pid_->get_each_term(); }
+
+double VelocityP_PID::get_dt() { return slave_pid_->get_dt(); }
+
 void VelocityP_PID::reset() { slave_pid_->reset(); }
+
 }  // namespace pid_controller
