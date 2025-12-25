@@ -1,6 +1,9 @@
-/localization/depth/depth_odometry_component:
+/localization/depth/dvl_odometry_component:
   ros__parameters:
-    fresh_water: true # True if fresh water, otherwise false
+    offset_x: 0.0
+    offset_y: 0.0
+    offset_z: 0.0
+
 
 /localization/localization_component:
   ros__parameters:

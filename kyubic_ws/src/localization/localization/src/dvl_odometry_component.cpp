@@ -7,6 +7,9 @@
  * @details DVLで取得した速度を累積して，位置を算出
  *********************************************************/
 
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Vector3.h>
+
 #include <localization/dvl_odometry_component.hpp>
 #include <numbers>
 
@@ -17,6 +20,10 @@ namespace localization
 
 DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odometry", options)
 {
+  offset[0] = this->declare_parameter("offset_x", 0.0);
+  offset[1] = this->declare_parameter("offset_y", 0.0);
+  offset[2] = this->declare_parameter("offset_z", 0.0);
+
   imu_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
@@ -49,34 +56,54 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
     double dt = (now - pre_time).nanoseconds() * 1e-9;
     pre_time = now;
 
-    // Convert to warld coordinate system (right-handed coordinate system, and z-axis downward)
-    // DVL coordinate system is right-handed cooordinate system, and z-axis upward.
-    double heading_rad = imu_msg_->pose.orientation.z * std::numbers::pi / 180;
-    double vel_x = msg->velocity.x * cos(heading_rad) - msg->velocity.y * sin(heading_rad);
-    double vel_y = msg->velocity.x * sin(heading_rad) + msg->velocity.y * cos(heading_rad);
+    // Define Offset Vector (Lever Arm) from Center of Rotation to DVL
+    tf2::Vector3 lever_arm(offset[0], offset[1], offset[2]);
+    tf2::Vector3 angular_vel(
+      imu_msg_->twist.angular.x, imu_msg_->twist.angular.y, imu_msg_->twist.angular.z);
+    tf2::Vector3 vel_raw(msg->velocity.x, msg->velocity.y, msg->velocity.z);
+    tf2::Vector3 alt_vec_raw(0.0, 0.0, msg->altitude);
+
+    // Create Rotation Quaternion
+    tf2::Quaternion q_rot;
+    q_rot.setRPY(
+      imu_msg_->pose.orientation.x * std::numbers::pi / 180.0,
+      imu_msg_->pose.orientation.y * std::numbers::pi / 180.0,
+      imu_msg_->pose.orientation.z * std::numbers::pi / 180.0);
+
+    // Transform Body to World Coordinate System (right-handed coordinate system, and z-axis downward)
+    tf2::Vector3 vel_raw_world = tf2::quatRotate(q_rot, vel_raw);
+    tf2::Vector3 angular_vel_world = tf2::quatRotate(q_rot, angular_vel);
+    tf2::Vector3 lever_arm_world = tf2::quatRotate(q_rot, lever_arm);
+    tf2::Vector3 alt_vec_world = tf2::quatRotate(q_rot, alt_vec_raw);
 
     // Integral of velocity
-    pos_x += vel_x * dt;
-    pos_y += vel_y * dt;
+    pos_x += vel_raw_world.x() * dt;
+    pos_y += vel_raw_world.y() * dt;
+
+    // Apply Lever Arm Correction
+    tf2::Vector3 vel_robot_world = vel_raw_world - angular_vel_world.cross(lever_arm_world);
+    double pos_robot_world_x = pos_x - lever_arm_world.x();
+    double pos_robot_world_y = pos_y - lever_arm_world.y();
+    double pos_robot_world_z = alt_vec_world.z() - lever_arm_world.z();
 
     // Publish
     {
       // Copy msg
       odom_msg->header = msg->header;
-      odom_msg->twist.angular = imu_msg_->twist.angular;  // angle velocity
 
       // Add position
-      odom_msg->pose.position.x = pos_x;
-      odom_msg->pose.position.y = pos_y;
-      odom_msg->pose.position.z_altitude = msg->altitude;
+      odom_msg->pose.position.x = pos_robot_world_x;
+      odom_msg->pose.position.y = pos_robot_world_y;
+      odom_msg->pose.position.z_altitude = pos_robot_world_z;
 
       // Add orientation
       odom_msg->pose.orientation = imu_msg_->pose.orientation;
+      odom_msg->twist.angular = imu_msg_->twist.angular;
 
       // Add linear velocity
-      odom_msg->twist.linear.x = vel_x;
-      odom_msg->twist.linear.y = vel_y;
-      odom_msg->twist.linear.z_altitude = msg->velocity.z;
+      odom_msg->twist.linear.x = vel_robot_world.x();
+      odom_msg->twist.linear.y = vel_raw_world.y();
+      odom_msg->twist.linear.z_altitude = vel_robot_world.z();
     }
     RCLCPP_DEBUG(this->get_logger(), "Calculated DVL odometry");
   }
