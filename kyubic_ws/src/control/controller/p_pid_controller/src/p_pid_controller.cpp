@@ -134,10 +134,18 @@ void P_PIDController::set_roll_offset(double roll_deg)
   pid_roll_->set_param_offset(roll_sf * sin(roll_deg * std::numbers::pi / 180));
 }
 
-void P_PIDController::pid_x_reset() { return pid_x_->reset(); }
-void P_PIDController::pid_y_reset() { return pid_y_->reset(); }
-void P_PIDController::pid_z_reset() { return pid_z_->reset(); }
-void P_PIDController::pid_roll_reset() { return pid_roll_->reset(); }
-void P_PIDController::pid_yaw_reset() { return pid_yaw_->reset(); }
+void P_PIDController::pid_x_reset() { pid_x_->reset(); }
+void P_PIDController::pid_y_reset() { pid_y_->reset(); }
+void P_PIDController::pid_z_reset() { pid_z_->reset(); }
+void P_PIDController::pid_roll_reset() { pid_roll_->reset(); }
+void P_PIDController::pid_yaw_reset() { pid_yaw_->reset(); }
+void P_PIDController::pid_all_reset()
+{
+  pid_x_->reset();
+  pid_y_->reset();
+  pid_z_->reset();
+  pid_roll_->reset();
+  pid_yaw_->reset();
+}
 
 }  // namespace controller
