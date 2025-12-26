@@ -28,6 +28,8 @@
 namespace localization
 {
 
+const double RADIAN_SCALE = std::numbers::pi / 180.0;
+
 /**
  * @brief DVL odometry class
  */

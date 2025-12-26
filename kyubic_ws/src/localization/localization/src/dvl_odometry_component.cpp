@@ -11,7 +11,6 @@
 #include <tf2/LinearMath/Vector3.h>
 
 #include <localization/dvl_odometry_component.hpp>
-#include <numbers>
 
 using namespace std::chrono_literals;
 
@@ -58,17 +57,17 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 
     // Define Offset Vector (Lever Arm) from Center of Rotation to DVL
     tf2::Vector3 lever_arm(offset[0], offset[1], offset[2]);
-    tf2::Vector3 angular_vel(
-      imu_msg_->twist.angular.x, imu_msg_->twist.angular.y, imu_msg_->twist.angular.z);
     tf2::Vector3 vel_raw(msg->velocity.x, msg->velocity.y, msg->velocity.z);
     tf2::Vector3 alt_vec_raw(0.0, 0.0, msg->altitude);
+    tf2::Vector3 angular_vel(
+      imu_msg_->twist.angular.x * RADIAN_SCALE, imu_msg_->twist.angular.y * RADIAN_SCALE,
+      imu_msg_->twist.angular.z * RADIAN_SCALE);
 
     // Create Rotation Quaternion
     tf2::Quaternion q_rot;
     q_rot.setRPY(
-      imu_msg_->pose.orientation.x * std::numbers::pi / 180.0,
-      imu_msg_->pose.orientation.y * std::numbers::pi / 180.0,
-      imu_msg_->pose.orientation.z * std::numbers::pi / 180.0);
+      imu_msg_->pose.orientation.x * RADIAN_SCALE, imu_msg_->pose.orientation.y * RADIAN_SCALE,
+      imu_msg_->pose.orientation.z * RADIAN_SCALE);
 
     // Transform Body to World Coordinate System (right-handed coordinate system, and z-axis downward)
     tf2::Vector3 vel_raw_world = tf2::quatRotate(q_rot, vel_raw);
@@ -82,9 +81,9 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 
     // Apply Lever Arm Correction
     tf2::Vector3 vel_robot_world = vel_raw_world - angular_vel_world.cross(lever_arm_world);
-    double pos_robot_world_x = pos_x - lever_arm_world.x();
-    double pos_robot_world_y = pos_y - lever_arm_world.y();
-    double pos_robot_world_z = alt_vec_world.z() - lever_arm_world.z();
+    double pos_robot_world_x = pos_x - lever_arm_world.x() + offset[0];
+    double pos_robot_world_y = pos_y - lever_arm_world.y() + offset[1];
+    double pos_robot_world_z = alt_vec_world.z() - lever_arm_world.z() + offset[2];
 
     // Publish
     {
