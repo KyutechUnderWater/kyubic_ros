@@ -55,7 +55,7 @@ def generate_launch_description():
                 plugin="planner::PDLAPlanner",
                 remappings=[
                     ("odom", "/localization/odom"),
-                    ("goal_current_odom", "/planner/goal_current_odom"),
+                    ("goal_current_odom", "/planner/wrench_plan"),
                 ],
                 parameters=[
                     {"path_planner_path": path_planner_path},
@@ -73,7 +73,7 @@ def generate_launch_description():
                 remappings=[
                     ("odom", "/localization/odom"),
                     ("zed_power", "/sensors_esp32_driver/zed_power"),
-                    ("goal_current_odom", "/planner/goal_current_odom"),
+                    ("goal_current_odom", "/planner/wrench_plan"),
                 ],
                 parameters=[
                     cfg_qr_planner,
@@ -86,11 +86,10 @@ def generate_launch_description():
                 name="velocity_wrench_planner_component",
                 namespace="planner/wrench_planner",
                 package="wrench_planner",
-                plugin="planner::VelocityWrenchPlanner",
+                plugin="planner::ZeroOrderHold",
                 remappings=[
-                    ("wrench_plan", "/planner/wrench_plan"),
                     ("odom", "/localization/odom"),
-                    ("goal_current_odom", "/planner/goal_current_odom"),
+                    ("wrench_plan", "/planner/wrench_plan"),
                 ],
                 parameters=[
                     {"p_pid_controller_path": p_pid_controller_path},
@@ -106,7 +105,6 @@ def generate_launch_description():
                 package="wrench_planner",
                 plugin="planner::WrenchPlanner",
                 remappings=[
-                    ("goal_current_odom", "/planner/goal_current_odom"),
                     ("robot_force", "/driver/robot_force"),
                     ("targets", "/rt_pose_plotter/targets"),
                 ],
