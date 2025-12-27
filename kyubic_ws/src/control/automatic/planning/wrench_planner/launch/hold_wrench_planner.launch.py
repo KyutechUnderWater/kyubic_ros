@@ -27,9 +27,9 @@ def generate_launch_description():
     composable_nodes = [
         ComposableNode(
             package="wrench_planner",
-            plugin="planner::VelocityWrenchPlanner",
+            plugin="planner::ZeroOrderHold",
             namespace="planner",
-            name="wrapper_wrench_planner",
+            name="zero_order_hold",
             remappings=[("odom", "/localization/odom")],
             parameters=[config],
             extra_arguments=[{"use_intra_process_comms": True}],
