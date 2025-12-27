@@ -18,8 +18,7 @@ using namespace std::chrono_literals;
 namespace sensors_esp32_driver
 {
 
-SystemStatus::SystemStatus(const rclcpp::NodeOptions & options)
-: Node("button_battery_state", options)
+SystemStatus::SystemStatus(const rclcpp::NodeOptions & options) : Node("system_status", options)
 {
   sub_port = this->declare_parameter("sub_port", 9000);
   timeout_ms = this->declare_parameter("timeout_ms", 1000);
@@ -35,12 +34,12 @@ SystemStatus::SystemStatus(const rclcpp::NodeOptions & options)
   timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
-  pub_ = create_publisher<driver_msgs::msg::SystemStatus>("system_status", qos);
+  pub_ = create_publisher<driver_msgs::msg::SystemStatus>("system_status", rclcpp::SensorDataQoS());
 
   protolink_subscriber_ = std::make_shared<protolink::udp_protocol::Subscriber<ProtoSystemStatus>>(
     sock_, std::bind(&SystemStatus::protolink_callback, this, std::placeholders::_1));
 
-  timer_ = create_wall_timer(100ms, [this]() {
+  timer_ = create_wall_timer(std::chrono::milliseconds(timeout_ms / 2), [this]() {
     if (timeout_ms)
       check_timeout<driver_msgs::msg::SystemStatus>(this, mutex_, timeout_, pub_, "SystemStatus");
   });
@@ -48,8 +47,10 @@ SystemStatus::SystemStatus(const rclcpp::NodeOptions & options)
 
 void SystemStatus::protolink_callback(const ProtoSystemStatus & _msg)
 {
-  std::lock_guard<std::mutex> lock(mutex_);
-  timeout_->reset(this->get_clock()->now());
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    timeout_->reset(this->get_clock()->now());
+  }
 
   auto msg = std::make_unique<driver_msgs::msg::SystemStatus>(
     protolink__driver_msgs__SystemStatus::convert(_msg));

@@ -35,13 +35,14 @@ ButtonBatteryState::ButtonBatteryState(const rclcpp::NodeOptions & options)
   timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
-  pub_ = create_publisher<driver_msgs::msg::ButtonBatteryState>("button_battery_state", qos);
+  pub_ = create_publisher<driver_msgs::msg::ButtonBatteryState>(
+    "button_battery_state", rclcpp::SensorDataQoS());
 
   protolink_subscriber_ =
     std::make_shared<protolink::udp_protocol::Subscriber<ProtoButtonBatteryState>>(
       sock_, std::bind(&ButtonBatteryState::protolink_callback, this, std::placeholders::_1));
 
-  timer_ = create_wall_timer(100ms, [this]() {
+  timer_ = create_wall_timer(std::chrono::milliseconds(timeout_ms / 4), [this]() {
     if (timeout_ms)
       check_timeout<driver_msgs::msg::ButtonBatteryState>(
         this, mutex_, timeout_, pub_, "ButtonBatteryState");
@@ -50,8 +51,10 @@ ButtonBatteryState::ButtonBatteryState(const rclcpp::NodeOptions & options)
 
 void ButtonBatteryState::protolink_callback(const ProtoButtonBatteryState & _msg)
 {
-  std::lock_guard<std::mutex> lock(mutex_);
-  timeout_->reset(this->get_clock()->now());
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    timeout_->reset(this->get_clock()->now());
+  }
 
   auto msg = std::make_unique<driver_msgs::msg::ButtonBatteryState>(
     protolink__driver_msgs__ButtonBatteryState::convert(_msg));

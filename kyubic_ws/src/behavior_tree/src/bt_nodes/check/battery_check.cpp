@@ -20,7 +20,7 @@ BatteryCheck::BatteryCheck(
   topic_received_(false)
 {
   power_sub_ = ros_node_->create_subscription<driver_msgs::msg::PowerState>(
-    "power_state", 1, [this](driver_msgs::msg::PowerState::SharedPtr msg) {
+    "power_state", rclcpp::SensorDataQoS(), [this](driver_msgs::msg::PowerState::SharedPtr msg) {
       logic_voltage_ = msg->log_voltage;
       act_voltage_ = msg->act_voltage;
       topic_received_ = true;

@@ -23,7 +23,8 @@ IMUTransform::IMUTransform(const rclcpp::NodeOptions & options) : Node("imu_tran
 
   pub_ = create_publisher<localization_msgs::msg::Odometry>("transformed", qos);
   sub_ = create_subscription<driver_msgs::msg::IMU>(
-    "imu", qos, std::bind(&IMUTransform::update_callback, this, std::placeholders::_1));
+    "imu", rclcpp::SensorDataQoS(),
+    std::bind(&IMUTransform::update_callback, this, std::placeholders::_1));
   srv_ = create_service<std_srvs::srv::Trigger>(
     "reset",
     std::bind(&IMUTransform::reset_callback, this, std::placeholders::_1, std::placeholders::_2));

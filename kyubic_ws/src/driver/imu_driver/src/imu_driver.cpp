@@ -27,8 +27,7 @@ IMUDriver::IMUDriver() : Node("imu_driver")
   _setup();
   RCLCPP_INFO(this->get_logger(), "G366 settings successful");
 
-  rclcpp::QoS qos(rclcpp::KeepLast(10));
-  pub_ = create_publisher<driver_msgs::msg::IMU>("imu", qos);
+  pub_ = create_publisher<driver_msgs::msg::IMU>("imu", rclcpp::SensorDataQoS());
   timer_ = create_wall_timer(20ms, std::bind(&IMUDriver::_update, this));
 }
 

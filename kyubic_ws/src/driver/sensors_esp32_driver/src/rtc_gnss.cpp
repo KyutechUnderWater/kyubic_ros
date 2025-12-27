@@ -35,12 +35,12 @@ RtcGnss::RtcGnss(const rclcpp::NodeOptions & options) : Node("rtc_gnss", options
   timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
-  pub_ = create_publisher<driver_msgs::msg::RtcGnss>("rtc_gnss", qos);
+  pub_ = create_publisher<driver_msgs::msg::RtcGnss>("rtc_gnss", rclcpp::SensorDataQoS());
 
   protolink_subscriber_ = std::make_shared<protolink::udp_protocol::Subscriber<ProtoRtcGnss>>(
     sock_, std::bind(&RtcGnss::protolink_callback, this, std::placeholders::_1));
 
-  timer_ = create_wall_timer(100ms, [this]() {
+  timer_ = create_wall_timer(std::chrono::milliseconds(timeout_ms / 2), [this]() {
     if (timeout_ms)
       check_timeout<driver_msgs::msg::RtcGnss>(this, mutex_, timeout_, pub_, "RtcGnss");
   });
@@ -48,8 +48,10 @@ RtcGnss::RtcGnss(const rclcpp::NodeOptions & options) : Node("rtc_gnss", options
 
 void RtcGnss::protolink_callback(const ProtoRtcGnss & _msg)
 {
-  std::lock_guard<std::mutex> lock(mutex_);
-  timeout_->reset(this->get_clock()->now());
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    timeout_->reset(this->get_clock()->now());
+  }
 
   auto msg =
     std::make_unique<driver_msgs::msg::RtcGnss>(protolink__driver_msgs__RtcGnss::convert(_msg));

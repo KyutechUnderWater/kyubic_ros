@@ -26,13 +26,15 @@ CheckSensorsStatus::CheckSensorsStatus(
   };
 
   imu_sub_ = ros_node_->create_subscription<driver_msgs::msg::IMU>(
-    "/driver/imu", 1, create_cb<driver_msgs::msg::IMU>(imu_monitor_, no_op));
+    "/driver/imu", rclcpp::SensorDataQoS(), create_cb<driver_msgs::msg::IMU>(imu_monitor_, no_op));
   depth_sub_ = ros_node_->create_subscription<driver_msgs::msg::Depth>(
-    "/driver/depth", 1, create_cb<driver_msgs::msg::Depth>(depth_monitor_, no_op));
+    "/driver/depth", rclcpp::SensorDataQoS(),
+    create_cb<driver_msgs::msg::Depth>(depth_monitor_, no_op));
   dvl_sub_ = ros_node_->create_subscription<driver_msgs::msg::DVL>(
-    "/driver/dvl", 1, create_cb<driver_msgs::msg::DVL>(dvl_monitor_, no_op));
+    "/driver/dvl", rclcpp::SensorDataQoS(), create_cb<driver_msgs::msg::DVL>(dvl_monitor_, no_op));
   leak_sub_ = ros_node_->create_subscription<driver_msgs::msg::BoolStamped>(
-    "/driver/leak", 1, create_cb<driver_msgs::msg::BoolStamped>(leak_monitor_, leak_process));
+    "/driver/leak", rclcpp::SensorDataQoS(),
+    create_cb<driver_msgs::msg::BoolStamped>(leak_monitor_, leak_process));
 }
 
 BT::PortsList CheckSensorsStatus::providedPorts()

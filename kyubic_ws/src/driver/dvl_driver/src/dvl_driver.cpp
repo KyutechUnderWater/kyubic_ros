@@ -44,8 +44,7 @@ DVLDriver::DVLDriver() : Node("dvl_driver")
   }
 
   // Create publisher
-  rclcpp::QoS qos(rclcpp::KeepLast(10));
-  pub_ = create_publisher<driver_msgs::msg::DVL>("dvl", qos);
+  pub_ = create_publisher<driver_msgs::msg::DVL>("dvl", rclcpp::SensorDataQoS());
 
   // Timer for main loop (5Hz)
   timer_ = create_wall_timer(200ms, std::bind(&DVLDriver::update, this));

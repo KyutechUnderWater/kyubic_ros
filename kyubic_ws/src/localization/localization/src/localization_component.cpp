@@ -61,7 +61,8 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   sub_gnss_ = create_subscription<driver_msgs::msg::Gnss>(
     "gnss", qos, std::bind(&Localization::gnss_callback, this, std::placeholders::_1));
   sub_imu_raw_ = create_subscription<driver_msgs::msg::IMU>(
-    "imu", qos, std::bind(&Localization::imu_raw_callback, this, std::placeholders::_1));
+    "imu", rclcpp::SensorDataQoS(),
+    std::bind(&Localization::imu_raw_callback, this, std::placeholders::_1));
 
   // Create server
   srv_ = create_service<localization_msgs::srv::Reset>(

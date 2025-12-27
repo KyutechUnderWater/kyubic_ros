@@ -26,7 +26,8 @@ DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odomet
     "transformed_imu", qos,
     std::bind(&DVLOdometry::update_imu_callback, this, std::placeholders::_1));
   sub_dvl_ = create_subscription<driver_msgs::msg::DVL>(
-    "dvl", qos, std::bind(&DVLOdometry::update_callback, this, std::placeholders::_1));
+    "dvl", rclcpp::SensorDataQoS(),
+    std::bind(&DVLOdometry::update_callback, this, std::placeholders::_1));
   srv_ = create_service<std_srvs::srv::Trigger>(
     "reset",
     std::bind(&DVLOdometry::reset_callback, this, std::placeholders::_1, std::placeholders::_2));
