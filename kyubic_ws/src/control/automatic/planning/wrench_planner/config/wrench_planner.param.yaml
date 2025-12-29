@@ -1,3 +1,4 @@
 /**:
   ros__parameters:
     pid_gain_yaml: "config/p_pid_controller_gain.yaml"
+    timeout_ms: 1000
