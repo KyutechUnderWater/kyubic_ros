@@ -1,6 +1,6 @@
 /localization/dvl/dvl_odometry_component:
   ros__parameters:
-    offset_x: 0.47
+    offset_x: 0.4375
     offset_y: 0.0
     offset_z: 0.0
 
