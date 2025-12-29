@@ -350,12 +350,13 @@ class MonitorNode(Node):
         self.add_on_set_parameters_callback(self.cb_params)
 
     def _init_subs_pubs(self):
-        self.create_subscription(DVL, "dvl", self.cb_dvl, 10)
-        self.create_subscription(Depth, "depth", self.cb_depth, 10)
-        self.create_subscription(Environment, "environment", self.cb_env, 10)
-        self.create_subscription(IMU, "imu", self.cb_imu, 10)
-        self.create_subscription(PowerState, "power_state", self.cb_power, 10)
-        self.create_subscription(SystemStatus, "system_status", self.cb_sys_status, 10)
+        sensor_qos = rclpy.qos.qos_profile_sensor_data
+        self.create_subscription(DVL, "dvl", self.cb_dvl, sensor_qos)
+        self.create_subscription(Depth, "depth", self.cb_depth, sensor_qos)
+        self.create_subscription(Environment, "environment", self.cb_env, sensor_qos)
+        self.create_subscription(IMU, "imu", self.cb_imu, sensor_qos)
+        self.create_subscription(PowerState, "power_state", self.cb_power, sensor_qos)
+        self.create_subscription(SystemStatus, "system_status", self.cb_sys_status, sensor_qos)
         self.create_subscription(String, "talker", self.cb_talker, 10)
 
         self.pub_sys_switch = self.create_publisher(SystemSwitch, "system_switch", 10)

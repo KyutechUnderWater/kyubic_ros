@@ -33,12 +33,12 @@ Leak::Leak(const rclcpp::NodeOptions & options) : rclcpp::Node("leak", options)
   }
   timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
-  pub_ = this->create_publisher<driver_msgs::msg::BoolStamped>("leak", 10);
+  pub_ = this->create_publisher<driver_msgs::msg::BoolStamped>("leak", rclcpp::SensorDataQoS());
 
   protolink_subscriber_ = std::make_shared<protolink::udp_protocol::Subscriber<ProtoBoolStamped>>(
     sock_, std::bind(&Leak::protolink_callback, this, std::placeholders::_1));
 
-  timer_ = create_wall_timer(100ms, [this]() {
+  timer_ = create_wall_timer(std::chrono::milliseconds(timeout_ms / 2), [this]() {
     if (timeout_ms)
       check_timeout<driver_msgs::msg::BoolStamped>(this, mutex_, timeout_, pub_, "Leak");
   });
@@ -46,8 +46,10 @@ Leak::Leak(const rclcpp::NodeOptions & options) : rclcpp::Node("leak", options)
 
 void Leak::protolink_callback(const ProtoBoolStamped & _msg)
 {
-  std::lock_guard<std::mutex> lock(mutex_);
-  timeout_->reset(this->get_clock()->now());
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    timeout_->reset(this->get_clock()->now());
+  }
 
   auto msg = std::make_unique<driver_msgs::msg::BoolStamped>(
     protolink__driver_msgs__BoolStamped::convert(_msg));

@@ -26,7 +26,7 @@ namespace localization
 {
 
 /** @brief parameter of Exponential Moving Average */
-const float EMA_ALPHA = 0.4;
+const float EMA_ALPHA = 0.2;
 
 /** @brief Number of TAP for simple moving average */
 const int DEPTH_SMA_SUMPLE_NUM = 32;
@@ -53,6 +53,9 @@ private:
   std::array<double, DEPTH_SMA_SUMPLE_NUM> vel_z_list;  /// for simple moving average
   double offset_pos_z = 0.0;
   double pos_z = 0.0;
+
+  bool is_first = true;
+  bool is_second = false;
 
   /**
    * @brief Update z-axis velocity

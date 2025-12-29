@@ -26,7 +26,8 @@ DepthOdometry::DepthOdometry(const rclcpp::NodeOptions & options) : Node("depth_
 
   pub_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
   sub_ = create_subscription<driver_msgs::msg::Depth>(
-    "depth", qos, std::bind(&DepthOdometry::update_callback, this, std::placeholders::_1));
+    "depth", rclcpp::SensorDataQoS(),
+    std::bind(&DepthOdometry::update_callback, this, std::placeholders::_1));
   srv_ = create_service<std_srvs::srv::Trigger>(
     "reset",
     std::bind(&DepthOdometry::reset_callback, this, std::placeholders::_1, std::placeholders::_2));
@@ -49,16 +50,30 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
     double dt = (now - pre_time).nanoseconds() * 1e-9;
     pre_time = now;
 
-    // calculate exponential moving average
-    pos_z = EMA_ALPHA * msg->depth + (1.0 - EMA_ALPHA) * pre_pos_z;
+    double vel_z = 0.0;
 
-    // calculate depth velocity
-    double vel_z = (pos_z - pre_pos_z) / dt;
+    if (is_first) {
+      is_first = false;
+      is_second = true;
+      pos_z = msg->depth;
+    } else {
+      // calculate exponential moving average
+      pos_z = EMA_ALPHA * msg->depth + (1.0 - EMA_ALPHA) * pre_pos_z;
 
-    // calculate moving avelage
-    vel_z_list.at(idx) = vel_z;
-    double vel_z_sum = std::accumulate(vel_z_list.begin(), vel_z_list.end(), 0.0);
-    vel_z = vel_z_sum / static_cast<double>(vel_z_list.size());
+      // calculate depth velocity
+      double _vel_z = (pos_z - pre_pos_z) / dt;
+
+      if (is_second) {
+        is_second = false;
+        for (size_t i = 0; i < vel_z_list.size(); i++) vel_z_list[i] = _vel_z;
+      } else {
+        vel_z_list.at(idx) = _vel_z;
+      }
+
+      // calculate moving avelage
+      double vel_z_sum = std::accumulate(vel_z_list.begin(), vel_z_list.end(), 0.0);
+      vel_z = vel_z_sum / static_cast<double>(vel_z_list.size());
+    }
 
     // prepare for next step
     pre_pos_z = pos_z;

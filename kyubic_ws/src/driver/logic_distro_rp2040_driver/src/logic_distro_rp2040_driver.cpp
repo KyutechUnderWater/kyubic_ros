@@ -46,7 +46,7 @@ LogicDistroRP2040::LogicDistroRP2040(const rclcpp::NodeOptions & options)
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
 
-  pub_ = create_publisher<driver_msgs::msg::PowerState>("power_state", qos);
+  pub_ = create_publisher<driver_msgs::msg::PowerState>("power_state", rclcpp::SensorDataQoS());
 
   sub_ = create_subscription<driver_msgs::msg::SystemSwitch>(
     "system_switch", qos, std::bind(&LogicDistroRP2040::ros_callback, this, std::placeholders::_1));

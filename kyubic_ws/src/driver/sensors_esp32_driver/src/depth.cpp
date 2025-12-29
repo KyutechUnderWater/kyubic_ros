@@ -37,7 +37,7 @@ Depth::Depth(const rclcpp::NodeOptions & options) : Node("depth", options)
   timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
 
   rclcpp::QoS qos(rclcpp::KeepLast(10));
-  pub_ = create_publisher<driver_msgs::msg::Depth>("depth", qos);
+  pub_ = create_publisher<driver_msgs::msg::Depth>("depth", rclcpp::SensorDataQoS());
   sub_ = create_subscription<driver_msgs::msg::BoolStamped>(
     "depth_type", qos, std::bind(&Depth::ros_callback, this, std::placeholders::_1));
 
@@ -46,7 +46,7 @@ Depth::Depth(const rclcpp::NodeOptions & options) : Node("depth", options)
   protolink_subscriber_ = std::make_shared<protolink::udp_protocol::Subscriber<protoDepth>>(
     sock_, std::bind(&Depth::protolink_callback, this, std::placeholders::_1));
 
-  timer_ = create_wall_timer(100ms, [this]() {
+  timer_ = create_wall_timer(std::chrono::milliseconds(timeout_ms / 4), [this]() {
     if (timeout_ms) check_timeout<driver_msgs::msg::Depth>(this, mutex_, timeout_, pub_, "Depth");
   });
 }
@@ -66,8 +66,10 @@ void Depth::ros_callback(const driver_msgs::msg::BoolStamped & _msg)
 
 void Depth::protolink_callback(const protoDepth & _msg)
 {
-  std::lock_guard<std::mutex> lock(mutex_);
-  timeout_->reset(this->get_clock()->now());
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    timeout_->reset(this->get_clock()->now());
+  }
 
   auto msg =
     std::make_unique<driver_msgs::msg::Depth>(protolink__driver_msgs__Depth::convert(_msg));
