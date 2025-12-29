@@ -101,7 +101,7 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 
       // Add linear velocity
       odom_msg->twist.linear.x = vel_robot_world.x();
-      odom_msg->twist.linear.y = vel_raw_world.y();
+      odom_msg->twist.linear.y = vel_robot_world.y();
       odom_msg->twist.linear.z_altitude = vel_robot_world.z();
     }
     RCLCPP_DEBUG(this->get_logger(), "Calculated DVL odometry");
