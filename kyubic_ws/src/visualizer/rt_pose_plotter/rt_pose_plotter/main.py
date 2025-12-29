@@ -3,7 +3,6 @@ import threading
 import collections
 import time
 from functools import partial
-import bisect
 
 # ROS2関連
 import rclpy
@@ -34,7 +33,7 @@ pg.setConfigOption("foreground", "k")
 
 # プロットするデータの最大保持数
 MAX_DATA_POINTS = 3000  # subscriber 5Hz -> buffer 10m
-MAX_VIEW_POINTS = 100  # subscriber 5Hz -> buffer 20s
+INITIAL_WIDTH = 20.0  # [s]
 
 
 class PlotUnitWidget(QWidget):
@@ -99,6 +98,7 @@ class PlotUnitWidget(QWidget):
         self.plot_widget.getViewBox().invertY(invert_y)
         self.plot_widget.showGrid(x=True, y=True, alpha=0.2)
         self.plot_widget.addLegend()
+        self.plot_widget.mouseDoubleClickEvent = self.auto_scale_y
 
         # ２つ目のデータ
         self.plot_widget2 = pg.ViewBox()
@@ -158,6 +158,13 @@ class PlotUnitWidget(QWidget):
         # メインのViewBoxのサイズ変更に合わせて、2つ目のViewBoxとAxisItemの位置を調整
         self.plot_widget2.setGeometry(self.plot_widget.plotItem.vb.sceneBoundingRect())
 
+    def auto_scale_y(self, event):
+        """
+        グラフをダブルクリックしたときにY軸のスケールを自動調整する
+        """
+        self.plot_widget.enableAutoRange(axis="y")
+        self.plot_widget2.enableAutoRange(axis="y")
+
 
 class MultiGraphViewer(QMainWindow):
     """
@@ -178,6 +185,8 @@ class MultiGraphViewer(QMainWindow):
         self.setCentralWidget(central_widget)
         central_widget.setLayout(self.layout)
         self.layout.addLayout(grid_layout)
+
+        self.last_data_time = 0.0
 
         # --- 6つのグラフエリアを作成 ---
         plot_cfgs = [
@@ -311,8 +320,8 @@ class MultiGraphViewer(QMainWindow):
 
     def reset(self):
         self.reset_button_state = True
-        self.plot_units[0].plot_widget.enableAutoRange(axis="x", enable=True)
-        self.plot_units[0].plot_widget2.enableAutoRange(axis="x", enable=True)
+        self.plot_units[0].plot_widget.enableAutoRange(axis="x", enable=False)
+        self.plot_units[0].plot_widget2.enableAutoRange(axis="x", enable=False)
 
     def update_plots(self):
         new_data_points = self.ros_node.get_data_points()
@@ -327,29 +336,38 @@ class MultiGraphViewer(QMainWindow):
                 self.value_data[i].append(values[i])
                 self.target_data[i].append(targets[i])
 
-        # 現在のX軸の表示範囲に対応するデータの最初と最後のindexを探索
+        # 描画データのセット
         time_list = list(self.time_data)
-        x_range, _ = self.plot_units[0].plot_widget.getViewBox().viewRange()
-        start = bisect.bisect(time_list, x_range[0])
-        end = bisect.bisect(time_list, x_range[1])
-
-        # X軸の自動移動．リセット押した場合か一定範囲内が描画されている場合
-        if (
-            self.reset_button_state
-            or (len(time_list) - MAX_VIEW_POINTS - start < MAX_VIEW_POINTS * 0.08)
-            and (len(time_list) - end < 3)
-        ):
-            self.reset_button_state = False
-            start = -100
-            end = None
-
         for i in range(self.n_graph):
             self.plot_units[i].setData(
-                time_list[start:end],
-                list(self.value_data[i])[start:end],
-                list(self.value_data[i + self.n_graph])[start:end],
-                list(self.target_data[i])[start:end],
+                time_list,
+                list(self.value_data[i]),
+                list(self.value_data[i + self.n_graph]),
+                list(self.target_data[i]),
             )
+
+        latest_time = time_list[-1]
+
+        # 現在のビュー情報を取得
+        vb = self.plot_units[0].plot_widget.getViewBox()
+        view_min, view_max = vb.viewRange()[0]
+        current_width = view_max - view_min
+
+        # 追従判定 (前回のデータ時刻と比較)
+        is_at_edge = (self.last_data_time - view_max) < 1.0
+
+        # リセットボタン押下時（および初期起動時）幅を20秒に強制，最新へ移動
+        if self.reset_button_state:
+            self.reset_button_state = False
+            self.plot_units[0].plot_widget.setXRange(
+                latest_time - INITIAL_WIDTH, latest_time, padding=0
+            )
+        elif is_at_edge:
+            self.plot_units[0].plot_widget.setXRange(
+                latest_time - current_width, latest_time, padding=0
+            )
+
+        self.last_data_time = latest_time
 
 
 class MultiDimSubscriber(Node):
