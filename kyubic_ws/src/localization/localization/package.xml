@@ -12,6 +12,7 @@
   <depend>geodetic_converter</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
+  <depend>tf2</depend>
   <depend>driver_msgs</depend>
   <depend>localization_msgs</depend>
   <depend>visualization_msgs</depend>

@@ -38,7 +38,6 @@ def generate_launch_description():
                 package="localization",
                 plugin="localization::DepthOdometry",
                 remappings=[("/localization/depth/depth", "/driver/depth")],
-                parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
@@ -65,6 +64,7 @@ def generate_launch_description():
                         "/localization/imu/transformed",
                     ),
                 ],
+                parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
