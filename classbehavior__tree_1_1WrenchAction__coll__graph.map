@@ -1,5 +1,7 @@
 <map id="behavior_tree::WrenchAction" name="behavior_tree::WrenchAction">
-<area shape="rect" id="node1" title="Behavior Tree node for the Wrench Action." alt="" coords="10,181,221,207"/>
-<area shape="rect" id="node2" href="$classbehavior__tree_1_1RosActionNode.html" title=" " alt="" coords="5,79,225,133"/>
-<area shape="rect" id="node3" title=" " alt="" coords="29,5,201,31"/>
+<area shape="rect" id="node1" title="Behavior Tree node for the Wrench Action." alt="" coords="35,287,246,312"/>
+<area shape="rect" id="node2" href="$classbehavior__tree_1_1RosActionNode.html" title=" " alt="" coords="31,183,251,237"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,95,177,120"/>
+<area shape="rect" id="node4" title=" " alt="" coords="201,95,288,120"/>
+<area shape="rect" id="node5" title=" " alt="" coords="175,5,314,45"/>
 </map>

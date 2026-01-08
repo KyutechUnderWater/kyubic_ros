@@ -1,5 +1,7 @@
 <map id="behavior_tree::FindPingerAction" name="behavior_tree::FindPingerAction">
-<area shape="rect" id="node1" title="FindPinger Action Client implementation Target Action: planner_msgs::action::FindPinger." alt="" coords="17,181,205,221"/>
-<area shape="rect" id="node2" href="$classbehavior__tree_1_1RosActionNode.html" title=" " alt="" coords="5,79,216,133"/>
-<area shape="rect" id="node3" title=" " alt="" coords="25,5,197,31"/>
+<area shape="rect" id="node1" title="FindPinger Action Client implementation Target Action: planner_msgs::action::FindPinger." alt="" coords="47,287,235,327"/>
+<area shape="rect" id="node2" href="$classbehavior__tree_1_1RosActionNode.html" title=" " alt="" coords="35,183,246,237"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,95,177,120"/>
+<area shape="rect" id="node4" title=" " alt="" coords="201,95,288,120"/>
+<area shape="rect" id="node5" title=" " alt="" coords="175,5,314,45"/>
 </map>

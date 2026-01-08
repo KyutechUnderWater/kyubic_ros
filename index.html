@@ -5,14 +5,24 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Common: Main Page</title>
+<title>Common: Common</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+  $(document).ready(function() { init_search(); });
+/* @license-end */
+</script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -25,6 +35,18 @@
    </div>
    <div id="projectbrief">common packages for kyubic</div>
   </td>
+    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect"                onmouseover="return searchBox.OnSearchSelectShow()"                onmouseout="return searchBox.OnSearchSelectHide()">&#160;</span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.svg" alt=""/></a>
+          </span>
+        </div>
+</td>
  </tr>
  </tbody>
 </table>
@@ -36,18 +58,23 @@
 var searchBox = new SearchBox("searchBox", "search/",'.html');
 /* @license-end */
 </script>
-<script type="text/javascript" src="menudata.js"></script>
-<script type="text/javascript" src="menu.js"></script>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function() {
-  initMenu('',true,false,'search.php','Search');
-  $(document).ready(function() { init_search(); });
-});
+$(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 /* @license-end */
 </script>
-<div id="main-nav"></div>
-</div><!-- top -->
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -69,14 +96,170 @@ $(function() {
 </div>
 </div>
 
-<div class="header">
-  <div class="headertitle"><div class="title">Common Documentation</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title">Common </div></div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p> 
+   * <script type="module">
+   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+   mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+   </script>
+  
+   * <div class="hero-header">
+   <div class="hero-content">
+   <h1 class="hero-title">Kyubic ROS</h1>
+   <p class="hero-subtitle">Advanced Underwater Robot Platform on ROS 2 Jazzy</p>
+   <div style="margin-top: 20px;">
+   <img src="https://img.shields.io/badge/ROS_2-Jazzy-white?style=flat-square&logo=ros&logoColor=black&color=white"/>
+   <img src="https://img.shields.io/badge/Docker-Ready-white?style=flat-square&logo=docker&logoColor=2496ED&color=white"/>
+   <img src="https://img.shields.io/badge/CUDA-Enabled-white?style=flat-square&logo=nvidia&logoColor=76B900&color=white"/>
+   </div>
+   </div>
+   </div>
+  
+   * <h2 style="text-align:center; color:#555;">System Architecture</h2>
+   <div class="diagram-container" style="display:flex; justify-content:center;">
+   <div class="mermaid">
+   graph TD
+   subgraph Hardware [Hardware Layer]
+   direction TB
+   DVL[Teledyne DVL]:::hw
+   IMU[IMU G366]:::hw
+   ESP[Sensors ESP32]:::hw
+   RP[Actuator RP2040]:::hw
+   end
+  
+   subgraph Drivers [Driver Layer]
+   DVL_N(DVL Driver):::node
+   IMU_N(IMU Driver):::node
+   SENS_N(Sensor Driver):::node
+   ACT_N(Actuator Driver):::node
+   end
+  
+   subgraph Core [Core System]
+   LOC(Localization):::core
+   BT(Behavior Tree):::core
+   CTRL(Control & Plan):::core
+   end
+  
+   DVL --> DVL_N --> LOC
+   IMU --> IMU_N --> LOC
+   ESP --> SENS_N --> LOC
+   LOC --> BT --> CTRL --> ACT_N --> RP
+  
+   %% スタイル定義
+   classDef hw fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
+   classDef node fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+   classDef core fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20;
+   </div>
+   </div>
+  
+   * <h2 style="border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 20px;">📦 Package Modules</h2>
+  
+   <div class="grid-container">
+   * <div class="card">
+   <h3>🎮 Control & Planning</h3>
+   <ul>
+   <li>
+   <a href="group__behavior__tree.html">Behavior Tree</a>
+   <span class="card-desc">自律動作の意思決定ロジック</span>
+   </li>
+   <li>
+   <a href="group__control.html">Planners</a>
+   <span class="card-desc">PDLA / QR / 経路計画アルゴリズム</span>
+   </li>
+   <li>
+   <a href="group__pid__controller.html">PID Controller</a>
+   <span class="card-desc">位置・姿勢保持の基本制御</span>
+   </li>
+   </ul>
+   </div>
+  
+   * <div class="card">
+   <h3>🔌 Hardware Drivers</h3>
+   <ul>
+   <li>
+   <a href="group__dvl__driver.html">DVL Driver</a>
+   <span class="card-desc">Teledyne Pathfinder/Wayfinder</span>
+   </li>
+   <li>
+   <a href="group__imu__driver.html">IMU Driver</a>
+   <span class="card-desc">慣性センサ G366</span>
+   </li>
+   <li>
+   <a href="group__actuator__driver.html">Actuators</a>
+   <span class="card-desc">スラスタ・サーボ制御 (RP2040)</span>
+   </li>
+   </ul>
+   </div>
+  
+   * <div class="card">
+   <h3>📍 Localization</h3>
+   <ul>
+   <li>
+   <a href="group__localization.html">Localization Core</a>
+   <span class="card-desc">DVL/IMU/深度の統合位置推定</span>
+   </li>
+   <li>
+   <a href="group__geodetic.html">Geodetic Converter</a>
+   <span class="card-desc">緯度経度 ⇔ ローカル座標変換</span>
+   </li>
+   </ul>
+   </div>
+  
+   * <div class="card">
+   <h3>🖥️ Visualization</h3>
+   <ul>
+   <li>
+   <a href="group__web__controller.html">Web Controller</a>
+   <span class="card-desc">ブラウザ経由の操作UI</span>
+   </li>
+   <li>
+   <a href="group__dashboard.html">Dashboard</a>
+   <span class="card-desc">システム状態監視</span>
+   </li>
+   <li>
+   <a href="group__trajectory__viewer.html">Trajectory Viewer</a>
+   <span class="card-desc">3D軌跡表示ツール</span>
+   </li>
+   </ul>
+   </div>
+   </div>
+  
+<div class="install-card">
+    <h2>🚀 Quick Start</h2>
+    <p>Docker環境を使用して即座に開発を開始できます。</p>
+
+    <h4>Installation</h4>
+    <div class="fragment">
+        <pre class="bash">
+git clone git@github.com:KyutechUnderWater/kyubic_ros.git
+cd kyubic_ros && . install.sh --nvidia
+        </pre>
+    </div>
+
+    <h4>Usage</h4>
+    <div class="fragment">
+        <pre class="bash">
+ros2_start_nvidia  # Start Container
+        </pre>
+    </div>
+    
+    <div style="text-align: right; margin-top: 1.5rem;">
+        <a href="../README.md" style="font-weight: bold; font-size: 1.1em;">View Full README →</a>
+    </div>
+</div>
+  
+    </p>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
+  </ul>
+</div>
 </body>
 </html>

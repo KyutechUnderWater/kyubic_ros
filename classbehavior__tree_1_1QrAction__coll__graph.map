@@ -1,5 +1,7 @@
 <map id="behavior_tree::QrAction" name="behavior_tree::QrAction">
-<area shape="rect" id="node1" title="QR Action Client implementation using the CUSTOM RosActionNode template. Target Action: planner_msgs:..." alt="" coords="43,167,219,192"/>
-<area shape="rect" id="node2" href="$classbehavior__tree_1_1RosActionNode.html" title=" " alt="" coords="5,79,257,119"/>
-<area shape="rect" id="node3" title=" " alt="" coords="45,5,217,31"/>
+<area shape="rect" id="node1" title="QR Action Client implementation using the CUSTOM RosActionNode template. Target Action: planner_msgs:..." alt="" coords="53,272,229,297"/>
+<area shape="rect" id="node2" href="$classbehavior__tree_1_1RosActionNode.html" title=" " alt="" coords="15,183,267,223"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,95,177,120"/>
+<area shape="rect" id="node4" title=" " alt="" coords="201,95,288,120"/>
+<area shape="rect" id="node5" title=" " alt="" coords="175,5,314,45"/>
 </map>

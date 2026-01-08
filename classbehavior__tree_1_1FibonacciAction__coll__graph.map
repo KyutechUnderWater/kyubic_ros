@@ -1,5 +1,7 @@
 <map id="behavior_tree::FibonacciAction" name="behavior_tree::FibonacciAction">
-<area shape="rect" id="node1" title="Fibonacci Action Client implementation using the RosActionNode template." alt="" coords="28,181,209,221"/>
-<area shape="rect" id="node2" href="$classbehavior__tree_1_1RosActionNode.html" title=" " alt="" coords="5,79,232,133"/>
-<area shape="rect" id="node3" title=" " alt="" coords="33,5,205,31"/>
+<area shape="rect" id="node1" title="Fibonacci Action Client implementation using the RosActionNode template." alt="" coords="50,287,231,327"/>
+<area shape="rect" id="node2" href="$classbehavior__tree_1_1RosActionNode.html" title=" " alt="" coords="27,183,254,237"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,95,177,120"/>
+<area shape="rect" id="node4" title=" " alt="" coords="201,95,288,120"/>
+<area shape="rect" id="node5" title=" " alt="" coords="175,5,314,45"/>
 </map>

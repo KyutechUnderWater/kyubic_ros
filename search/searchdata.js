@@ -7,7 +7,9 @@ var indexSectionsWithContent =
   4: "_abcdefghijlmnopqrstuvwxz~",
   5: "_abcdefghijklmnopqrstuvwxyz",
   6: "abcfgqrw",
-  7: "p"
+  7: "p",
+  8: "abcdegilmsvw",
+  9: "c"
 };
 
 var indexSectionNames =
@@ -19,7 +21,9 @@ var indexSectionNames =
   4: "functions",
   5: "variables",
   6: "typedefs",
-  7: "related"
+  7: "related",
+  8: "groups",
+  9: "pages"
 };
 
 var indexSectionLabels =
@@ -31,6 +35,8 @@ var indexSectionLabels =
   4: "Functions",
   5: "Variables",
   6: "Typedefs",
-  7: "Friends"
+  7: "Friends",
+  8: "Modules",
+  9: "Pages"
 };
 

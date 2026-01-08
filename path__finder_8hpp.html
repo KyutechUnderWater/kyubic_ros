@@ -9,10 +9,20 @@
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+  $(document).ready(function() { init_search(); });
+/* @license-end */
+</script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -25,6 +35,18 @@
    </div>
    <div id="projectbrief">common packages for kyubic</div>
   </td>
+    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect"                onmouseover="return searchBox.OnSearchSelectShow()"                onmouseout="return searchBox.OnSearchSelectHide()">&#160;</span>
+          <input type="text" id="MSearchField" value="" placeholder="Search" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.svg" alt=""/></a>
+          </span>
+        </div>
+</td>
  </tr>
  </tbody>
 </table>
@@ -36,17 +58,23 @@
 var searchBox = new SearchBox("searchBox", "search/",'.html');
 /* @license-end */
 </script>
-<script type="text/javascript" src="menudata.js"></script>
-<script type="text/javascript" src="menu.js"></script>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(function() {
-  initMenu('',true,false,'search.php','Search');
-  $(document).ready(function() { init_search(); });
-});
+$(document).ready(function(){initNavTree('path__finder_8hpp.html',''); initResizable(); });
 /* @license-end */
 </script>
-<div id="main-nav"></div>
+<div id="doc-content">
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -68,11 +96,6 @@ $(function() {
 </div>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_4db3a2f7aa3a8b9901e70dfeb2571af9.html">driver</a></li><li class="navelem"><a class="el" href="dir_fd57099d6d4f98bd10b0581dfd51ad4e.html">dvl_driver</a></li><li class="navelem"><a class="el" href="dir_01721c6789ca5385dd64e5205f979e3a.html">include</a></li><li class="navelem"><a class="el" href="dir_0cc5789647cba6a644eece8e0ef082e8.html">dvl_driver</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
@@ -90,9 +113,11 @@ $(function() {
 <code>#include &quot;<a class="el" href="pd0__types_8hpp_source.html">dvl_driver/pd0_types.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="pd5__parser_8hpp_source.html">dvl_driver/pd5_parser.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="pd5__types_8hpp_source.html">dvl_driver/pd5_types.hpp</a>&quot;</code><br />
-</div><div class="textblock"><div class="dynheader">
-Include dependency graph for path_finder.hpp:</div>
-<div class="dyncontent">
+</div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Include dependency graph for path_finder.hpp:</div>
+<div id="dynsection-0-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-0-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="path__finder_8hpp__incl.png" border="0" usemap="#asrc_2driver_2dvl__driver_2include_2dvl__driver_2path__finder_8hpp" alt=""/></div>
 <map name="asrc_2driver_2dvl__driver_2include_2dvl__driver_2path__finder_8hpp" id="asrc_2driver_2dvl__driver_2include_2dvl__driver_2path__finder_8hpp">
 <area shape="rect" title="Path Finder DVL Interface Library." alt="" coords="235,5,410,60"/>
@@ -108,9 +133,11 @@ Include dependency graph for path_finder.hpp:</div>
 <area shape="rect" title=" " alt="" coords="378,255,441,280"/>
 </map>
 </div>
-</div><div class="textblock"><div class="dynheader">
-This graph shows which files directly or indirectly include this file:</div>
-<div class="dyncontent">
+</div><div class="textblock"><div id="dynsection-1" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+  <img id="dynsection-1-trigger" src="closed.png" alt="+"/> This graph shows which files directly or indirectly include this file:</div>
+<div id="dynsection-1-summary" class="dynsummary" style="display:block;">
+</div>
+<div id="dynsection-1-content" class="dyncontent" style="display:none;">
 <div class="center"><img src="path__finder_8hpp__dep__incl.png" border="0" usemap="#asrc_2driver_2dvl__driver_2include_2dvl__driver_2path__finder_8hppdep" alt=""/></div>
 <map name="asrc_2driver_2dvl__driver_2include_2dvl__driver_2path__finder_8hppdep" id="asrc_2driver_2dvl__driver_2include_2dvl__driver_2path__finder_8hppdep">
 <area shape="rect" title="Path Finder DVL Interface Library." alt="" coords="93,5,268,60"/>
@@ -146,9 +173,13 @@ Namespaces</h2></td></tr>
 <dl class="section date"><dt>Date</dt><dd>2024/10/30</dd></dl>
 <p>DVL(Path Finder) のデータを取得 Reference: YusukeMizoguchi on 2022/05/07. </p>
 </div></div><!-- contents -->
+</div><!-- doc-content -->
 <!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6
-</small></address>
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_4db3a2f7aa3a8b9901e70dfeb2571af9.html">driver</a></li><li class="navelem"><a class="el" href="dir_fd57099d6d4f98bd10b0581dfd51ad4e.html">dvl_driver</a></li><li class="navelem"><a class="el" href="dir_01721c6789ca5385dd64e5205f979e3a.html">include</a></li><li class="navelem"><a class="el" href="dir_0cc5789647cba6a644eece8e0ef082e8.html">dvl_driver</a></li><li class="navelem"><a class="el" href="path__finder_8hpp.html">path_finder.hpp</a></li>
+    <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
+  </ul>
+</div>
 </body>
 </html>
