@@ -1,0 +1,218 @@
+/**
+ * @mainpage
+ * @htmlonly
+ * * <script type="module">
+ * import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+ * mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+ * </script>
+ *
+ * * <div class="hero-header">
+ * <div class="hero-content">
+ * <h1 class="hero-title">Kyubic ROS</h1>
+ * <p class="hero-subtitle">Advanced Underwater Robot Platform on ROS 2 Jazzy</p>
+ * <div style="margin-top: 20px;">
+ * <img src="https://img.shields.io/badge/ROS_2-Jazzy-white?style=flat-square&logo=ros&logoColor=black&color=white"/>
+ * <img src="https://img.shields.io/badge/Docker-Ready-white?style=flat-square&logo=docker&logoColor=2496ED&color=white"/>
+ * <img src="https://img.shields.io/badge/CUDA-Enabled-white?style=flat-square&logo=nvidia&logoColor=76B900&color=white"/>
+ * </div>
+ * </div>
+ * </div>
+ *
+ * * <h2 style="text-align:center; color:#555;">System Architecture</h2>
+ * <div class="diagram-container" style="display:flex; justify-content:center;">
+ * <div class="mermaid">
+ * graph TD
+ * subgraph Hardware [Hardware Layer]
+ * direction TB
+ * DVL[Teledyne DVL]:::hw
+ * IMU[IMU G366]:::hw
+ * ESP[Sensors ESP32]:::hw
+ * RP[Actuator RP2040]:::hw
+ * end
+ *
+ * subgraph Drivers [Driver Layer]
+ * DVL_N(DVL Driver):::node
+ * IMU_N(IMU Driver):::node
+ * SENS_N(Sensor Driver):::node
+ * ACT_N(Actuator Driver):::node
+ * end
+ *
+ * subgraph Core [Core System]
+ * LOC(Localization):::core
+ * BT(Behavior Tree):::core
+ * CTRL(Control & Plan):::core
+ * end
+ *
+ * DVL --> DVL_N --> LOC
+ * IMU --> IMU_N --> LOC
+ * ESP --> SENS_N --> LOC
+ * LOC --> BT --> CTRL --> ACT_N --> RP
+ *
+ * %% スタイル定義
+ * classDef hw fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
+ * classDef node fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
+ * classDef core fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20;
+ * </div>
+ * </div>
+ *
+ * * <h2 style="border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-bottom: 20px;">📦 Package Modules</h2>
+ *
+ * <div class="grid-container">
+ * * <div class="card">
+ * <h3>🎮 Control & Planning</h3>
+ * <ul>
+ * <li>
+ * <a href="group__behavior__tree.html">Behavior Tree</a>
+ * <span class="card-desc">自律動作の意思決定ロジック</span>
+ * </li>
+ * <li>
+ * <a href="group__control.html">Planners</a>
+ * <span class="card-desc">PDLA / QR / 経路計画アルゴリズム</span>
+ * </li>
+ * <li>
+ * <a href="group__pid__controller.html">PID Controller</a>
+ * <span class="card-desc">位置・姿勢保持の基本制御</span>
+ * </li>
+ * </ul>
+ * </div>
+ *
+ * * <div class="card">
+ * <h3>🔌 Hardware Drivers</h3>
+ * <ul>
+ * <li>
+ * <a href="group__dvl__driver.html">DVL Driver</a>
+ * <span class="card-desc">Teledyne Pathfinder/Wayfinder</span>
+ * </li>
+ * <li>
+ * <a href="group__imu__driver.html">IMU Driver</a>
+ * <span class="card-desc">慣性センサ G366</span>
+ * </li>
+ * <li>
+ * <a href="group__actuator__driver.html">Actuators</a>
+ * <span class="card-desc">スラスタ・サーボ制御 (RP2040)</span>
+ * </li>
+ * </ul>
+ * </div>
+ *
+ * * <div class="card">
+ * <h3>📍 Localization</h3>
+ * <ul>
+ * <li>
+ * <a href="group__localization.html">Localization Core</a>
+ * <span class="card-desc">DVL/IMU/深度の統合位置推定</span>
+ * </li>
+ * <li>
+ * <a href="group__geodetic.html">Geodetic Converter</a>
+ * <span class="card-desc">緯度経度 ⇔ ローカル座標変換</span>
+ * </li>
+ * </ul>
+ * </div>
+ *
+ * * <div class="card">
+ * <h3>🖥️ Visualization</h3>
+ * <ul>
+ * <li>
+ * <a href="group__web__controller.html">Web Controller</a>
+ * <span class="card-desc">ブラウザ経由の操作UI</span>
+ * </li>
+ * <li>
+ * <a href="group__dashboard.html">Dashboard</a>
+ * <span class="card-desc">システム状態監視</span>
+ * </li>
+ * <li>
+ * <a href="group__trajectory__viewer.html">Trajectory Viewer</a>
+ * <span class="card-desc">3D軌跡表示ツール</span>
+ * </li>
+ * </ul>
+ * </div>
+ * </div>
+ *
+<div class="install-card">
+    <h2>🚀 Quick Start</h2>
+    <p>Docker環境を使用して即座に開発を開始できます。</p>
+
+    <h4>Installation</h4>
+    <div class="fragment">
+        <pre class="bash">
+git clone git@github.com:KyutechUnderWater/kyubic_ros.git
+cd kyubic_ros && . install.sh --nvidia
+        </pre>
+    </div>
+
+    <h4>Usage</h4>
+    <div class="fragment">
+        <pre class="bash">
+ros2_start_nvidia  # Start Container
+        </pre>
+    </div>
+    
+    <div style="text-align: right; margin-top: 1.5rem;">
+        <a href="../README.md" style="font-weight: bold; font-size: 1.1em;">View Full README →</a>
+    </div>
+</div>
+ *
+ * @endhtmlonly
+ */
+
+/* ==========================================================
+ * Group Definitions (Namespace Binding)
+ * ========================================================== */
+
+/** @defgroup behavior_tree Behavior Tree
+ * @brief 自律動作ロジック (XML, Action Nodes) @{ @namespace behavior_tree @} */
+
+/** @defgroup control Control & Planning
+ * @brief 制御・経路計画モジュール @{
+ * @namespace pid_controller
+ * @namespace wrench_planner
+ * @namespace path_planner
+ * @namespace qr_planner
+ * @namespace pdla_planner
+ * @namespace return_mission_planner
+ * @} */
+
+/** @defgroup manual Manual Control
+ * @brief 手動操作インターフェース @{
+ * @namespace joy2wrench
+ * @namespace joy_common
+ * @} */
+
+/** @defgroup emergency Emergency
+ * @brief 緊急時対応システム @{ @namespace emergency @} */
+
+/** @defgroup dvl_driver DVL Driver
+ * @brief Teledyne DVLドライバ @{ @namespace dvl_driver @} */
+
+/** @defgroup imu_driver IMU Driver
+ * @brief 慣性計測装置ドライバ @{ @namespace imu_driver @} */
+
+/** @defgroup actuator_driver Actuators
+ * @brief スラスタ・サーボ制御 (RP2040) @{
+ * @namespace actuator_rp2040_driver
+ * @namespace logic_distro_rp2040_driver
+ * @} */
+
+/** @defgroup sensor_driver Sensors
+ * @brief 環境センサドライバ (ESP32/GNSS) @{
+ * @namespace sensors_esp32_driver
+ * @namespace gnss_driver
+ * @} */
+
+/** @defgroup localization Localization
+ * @brief 自己位置推定コア @{ @namespace localization @} */
+
+/** @defgroup geodetic Geodetic
+ * @brief 座標変換ユーティリティ @{ @namespace geodetic_converter @} */
+
+/** @defgroup web_controller Web Controller
+ * @brief Web UIバックエンド @{ @namespace web_controller @} */
+
+/** @defgroup dashboard Dashboard
+ * @brief システム監視 @{ @namespace dashboard @} */
+
+/** @defgroup trajectory_viewer Visualizer
+ * @brief 軌跡表示・プロット @{
+ * @namespace trajectory_viewer
+ * @namespace rt_pose_plotter
+ * @namespace fix_axis_plotjuggler
+ * @} */
