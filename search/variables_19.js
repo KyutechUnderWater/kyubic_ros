@@ -1,11 +1,12 @@
 var searchData=
 [
-  ['z_0',['z',['../classplanner_1_1PoseData.html#a0a325def16ad4c399f719fdae43e0c4d',1,'planner::PoseData::z()'],['../structplanner_1_1Tolerance.html#a9535750f9d53b6d05436496620d497a5',1,'planner::Tolerance::z()']]],
-  ['z_5faccl_1',['z_accl',['../structimu__driver_1_1g366_1_1DATA.html#a99859fee320fe807ee2cf6d49049e003',1,'imu_driver::g366::DATA::z_accl()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#ae611b99766202eb47d8ca5a75822d1a9',1,'imu_driver::g366::RAW_DATA_T::z_accl()']]],
-  ['z_5faxis_5fitem_2',['z_axis_item',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#afa753c54b78b58cbd2463a9a2d6d6d27',1,'trajectory_viewer::main::TrajectoryPlotter']]],
-  ['z_5fgyro_3',['z_gyro',['../structimu__driver_1_1g366_1_1DATA.html#a2bd022e10b7f8c766d8da9769a92c654',1,'imu_driver::g366::DATA::z_gyro()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a1f750e2faddfd03ec77634ae64a2cdc9',1,'imu_driver::g366::RAW_DATA_T::z_gyro()']]],
-  ['z_5finput_4',['z_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#af18c403fcef31410b4966b3dfccefd5c',1,'trajectory_viewer::main::MainWindow']]],
-  ['z_5fmode_5',['z_mode',['../classplanner_1_1PoseData.html#aaaa14a11fd35d750c8e0ceef84443250',1,'planner::PoseData']]],
-  ['z_5fvel_5fbottom_6',['z_vel_bottom',['../structdvl__driver_1_1path__finder_1_1Data.html#aee3b4f3f19c6bede6e4b2f1a16b0b773',1,'dvl_driver::path_finder::Data']]],
-  ['zip_5fsafe_7',['zip_safe',['../namespacesetup.html#a13510753661cb74083a0c664db11dde9',1,'setup']]]
+  ['y_0',['y',['../classplanner_1_1PoseData.html#a455022c8cd52916987f4f454e2ccd673',1,'planner::PoseData::y()'],['../structplanner_1_1Tolerance.html#a295bdce7a48318942d1421d873d75a06',1,'planner::Tolerance::y()'],['../classplanner_1_1PoseData.html#a4ec803bcc374dc50a3076a67d5a3c937',1,'planner::PoseData::y()'],['../structplanner_1_1Tolerance.html#a23d63f4c5a8e881781f9d690e2aac72c',1,'planner::Tolerance::y()'],['../structcommon_1_1PlaneXY.html#a0da123559d195c827db78a705a9d3a36',1,'common::PlaneXY::y()']]],
+  ['y_5faccl_1',['y_accl',['../structimu__driver_1_1g366_1_1DATA.html#adadf20c51916436a9d3e72e9d345d67d',1,'imu_driver::g366::DATA::y_accl()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a202574f051a9c6222cbcde5876ba8f78',1,'imu_driver::g366::RAW_DATA_T::y_accl()']]],
+  ['y_5faxis_5fitem_2',['y_axis_item',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a22cd4836219da387316da8d6b7e429a5',1,'trajectory_viewer::main::TrajectoryPlotter']]],
+  ['y_5fdata_3',['y_data',['../classtrajectory__viewer_1_1odom__viewer_1_1OdomPlotter.html#a0ce77f7603a5baf2e1a1476c72354538',1,'trajectory_viewer::odom_viewer::OdomPlotter']]],
+  ['y_5fgyro_4',['y_gyro',['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a913204bb9c5fb3e173ed1035c1a36cbe',1,'imu_driver::g366::RAW_DATA_T::y_gyro()'],['../structimu__driver_1_1g366_1_1DATA.html#a43c1f003862a11ed613e7c680870377f',1,'imu_driver::g366::DATA::y_gyro()']]],
+  ['y_5finput_5',['y_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#acb8719529d703c0e2e9646d3fb210b3d',1,'trajectory_viewer::main::MainWindow']]],
+  ['yaw_6',['yaw',['../classplanner_1_1PoseData.html#a8389b0ae6b12fa24850f166a69a1180c',1,'planner::PoseData::yaw()'],['../structplanner_1_1Tolerance.html#ae38b61000d22f88eda5f37f202dfc21c',1,'planner::Tolerance::yaw()'],['../classplanner_1_1PoseData.html#a66fba03d70b4430b10dcf0e3ae3e500f',1,'planner::PoseData::yaw()'],['../structplanner_1_1Tolerance.html#aaeb5fd3594d419db6bb0eee0f3a733dd',1,'planner::Tolerance::yaw()'],['../structimu__driver_1_1g366_1_1DATA.html#ab1fd3a19f5e2587500d74de5e4176647',1,'imu_driver::g366::DATA::yaw()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#afc04e21b8480421135eecfd320765740',1,'imu_driver::g366::RAW_DATA_T::yaw()']]],
+  ['yaw_5finput_7',['yaw_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a852c9ae42ee06159cee5ce4339f9eea6',1,'trajectory_viewer::main::MainWindow']]],
+  ['yellow_8',['yellow',['../classweb__controller_1_1main_1_1Colors.html#a9aa39fd92f8c8a2e6658743ee6c1a634',1,'web_controller::main::Colors']]]
 ];

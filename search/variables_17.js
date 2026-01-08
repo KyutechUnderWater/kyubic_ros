@@ -1,10 +1,9 @@
 var searchData=
 [
-  ['x_0',['x',['../structcommon_1_1PlaneXY.html#ac806509852fd6e887fe7765809c7377f',1,'common::PlaneXY::x()'],['../classplanner_1_1PoseData.html#a5ffda866fd802cb2216381766bf308e9',1,'planner::PoseData::x()'],['../structplanner_1_1Tolerance.html#afdc8f76dfa96dff97b8a9aa202e624c6',1,'planner::Tolerance::x()']]],
-  ['x_5faccl_1',['x_accl',['../structimu__driver_1_1g366_1_1DATA.html#a997c4692bbfab105572b5732db429c15',1,'imu_driver::g366::DATA::x_accl()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a4f7318de242e343b43cf717a96a89104',1,'imu_driver::g366::RAW_DATA_T::x_accl()']]],
-  ['x_5faxis_5fitem_2',['x_axis_item',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a9cf3f4b569da01b8ca6937d56d79806f',1,'trajectory_viewer::main::TrajectoryPlotter']]],
-  ['x_5fdata_3',['x_data',['../classtrajectory__viewer_1_1odom__viewer_1_1OdomPlotter.html#ae0b7d4327bcfecf3e311437cd7223512',1,'trajectory_viewer::odom_viewer::OdomPlotter']]],
-  ['x_5fgyro_4',['x_gyro',['../structimu__driver_1_1g366_1_1DATA.html#ab5ad551a1b707c343bf75dc6902cb329',1,'imu_driver::g366::DATA::x_gyro()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#a1ca62226d7aa097436c903f30cbf3810',1,'imu_driver::g366::RAW_DATA_T::x_gyro()']]],
-  ['x_5finput_5',['x_input',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a22aaa08101137c72c782111a0e21b076',1,'trajectory_viewer::main::MainWindow']]],
-  ['x_5fvel_5fbottom_6',['x_vel_bottom',['../structdvl__driver_1_1path__finder_1_1Data.html#a04d802e1907f4b3e59eef2efcfeac96a',1,'dvl_driver::path_finder::Data']]]
+  ['warn_0',['WARN',['../classdashboard_1_1main_1_1UIColors.html#ad5981bed0e2da54b295f47b8dc755aba',1,'dashboard::main::UIColors']]],
+  ['warning_5fcount_1',['warning_count',['../classdashboard_1_1main_1_1RobotState.html#a84b9454fd187d5579d9e3b9ce4322549',1,'dashboard::main::RobotState']]],
+  ['window0_5fselect_5fwcomm_2',['window0_select_wcomm',['../namespaceimu__driver_1_1g366.html#a249575d093e22ed669192828aa209c49',1,'imu_driver::g366']]],
+  ['window1_5fselect_5fwcomm_3',['window1_select_wcomm',['../namespaceimu__driver_1_1g366.html#ac842af01b36abb2d489a2d75a272bfb3',1,'imu_driver::g366']]],
+  ['wp_5fref_5flayer_5favg_4',['wp_ref_layer_avg',['../structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html#a65904244b878f317d58e996b50502c7f',1,'dvl_driver::path_finder::pd0::FixedLeader']]],
+  ['wt_5fvelocity_5',['wt_velocity',['../structdvl__driver_1_1path__finder_1_1pd5_1_1Pd5Ensemble.html#abee9039b2beceefd110b571ba55d2306',1,'dvl_driver::path_finder::pd5::Pd5Ensemble']]]
 ];

@@ -1,24 +1,10 @@
 var searchData=
 [
-  ['package_5fname_0',['package_name',['../namespacesetup.html#ae1914c6379853aac13554579d9b6b4ec',1,'setup']]],
-  ['packages_1',['packages',['../namespacesetup.html#aff2375a361fd5865c77bd9aa093be747',1,'setup']]],
-  ['pathfinder_5fid_2',['pathfinder_id',['../structdvl__driver_1_1path__finder_1_1Data.html#a9b5ceee7cde2606d55e8e5cf0f660ae5',1,'dvl_driver::path_finder::Data']]],
-  ['photo_5fsub_3',['photo_sub',['../classoak__create__mapping_1_1main_1_1HeadlessOakCameraNode.html#a923dfb46d3743fc7d886378bb5525b46',1,'oak_create_mapping.main.HeadlessOakCameraNode.photo_sub()'],['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html#a736b475320416b97787dc8730cf94dea',1,'oak_create_mapping.oak_create_mapping.OakCameraSubscriber.photo_sub()']]],
-  ['pipeline_4',['pipeline',['../classoak__create__mapping_1_1main_1_1HeadlessOakCameraNode.html#a92e8cd9848aaaafdc6978779d6beb92a',1,'oak_create_mapping.main.HeadlessOakCameraNode.pipeline()'],['../classoak__create__mapping_1_1oak__create__mapping_1_1OakCameraSubscriber.html#a514a692628927989f7e4e0a8ca7f7d45',1,'oak_create_mapping.oak_create_mapping.OakCameraSubscriber.pipeline()']]],
-  ['pitch_5',['pitch',['../structdvl__driver_1_1path__finder_1_1Data.html#acd2ef7ed593d99c6bb16785aa9400a6c',1,'dvl_driver::path_finder::Data::pitch()'],['../structimu__driver_1_1g366_1_1DATA.html#a8cb31406dfa239dc3e1906a813813234',1,'imu_driver::g366::DATA::pitch()'],['../structimu__driver_1_1g366_1_1RAW__DATA__T.html#ab9d93b8c42d3c176900d362215ff58c8',1,'imu_driver::g366::RAW_DATA_T::pitch()']]],
-  ['plot_5fitem_6',['plot_item',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#aedaa0eee1148e814d49a0d32c8a146a5',1,'trajectory_viewer::main::TrajectoryPlotter']]],
-  ['plot_5funits_7',['plot_units',['../classrt__pose__plotter_1_1main_1_1MultiGraphViewer.html#a4a74e86f3be21319cc7659fa1928be5e',1,'rt_pose_plotter::main::MultiGraphViewer']]],
-  ['plot_5fwidget_8',['plot_widget',['../classrt__pose__plotter_1_1main_1_1PlotUnitWidget.html#a81f5949658e20c5b1f141dad4d6f100d',1,'rt_pose_plotter::main::PlotUnitWidget']]],
-  ['plot_5fwidget2_9',['plot_widget2',['../classrt__pose__plotter_1_1main_1_1PlotUnitWidget.html#a370290376ec3d9144e077ad74d96de80',1,'rt_pose_plotter::main::PlotUnitWidget']]],
-  ['plotter_10',['plotter',['../classtrajectory__viewer_1_1main_1_1MainWindow.html#a62b85a12451a6a98a3241f811926d12c',1,'trajectory_viewer::main::MainWindow']]],
-  ['ppid_5fparam_11',['ppid_param',['../structpid__controller_1_1PositionP__PIDParameter.html#adb12d40440b5da6cee04c0ba95f8c93f',1,'pid_controller::PositionP_PIDParameter']]],
-  ['precision_12',['precision',['../namespacepath__generator_1_1path__generator.html#a4ec72d8c2969de8ba8b5d43798bff691',1,'path_generator::path_generator']]],
-  ['processes_13',['processes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#a11742ed5aa6d05fe13377caa2f2dd6bd',1,'driver_node_manager::driver_node_manager::NodeManager']]],
-  ['pub_5ftargets_5fperiod_14',['pub_targets_period',['../classweb__controller_1_1main_1_1WebVisualizerNode.html#adfea381e4041397deb0c22b1a54fc456',1,'web_controller::main::WebVisualizerNode']]],
-  ['publish_5fbutton_15',['publish_button',['../classweb__controller_1_1main_1_1WebVisualizerNode.html#a748d71347679e83132e2700deff66e44',1,'web_controller::main::WebVisualizerNode']]],
-  ['publish_5finterval_5fsec_16',['publish_interval_sec',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#a79d509ec204571d19ca1ad28a65c5c4b',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
-  ['publish_5ftimer_17',['publish_timer',['../classweb__controller_1_1main_1_1WebVisualizerNode.html#a72acb19ca265113f99a6a88258ef9dac',1,'web_controller::main::WebVisualizerNode']]],
-  ['publisher_5f_18',['publisher_',['../classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#aa7006adf806a72456703e6a464d88f7c',1,'trajectory_viewer::publish_odom_from_csv::OdometryPublisher']]],
-  ['publisher_5ftimer_19',['publisher_timer',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a32722b273dfc336c1eec6aca04166d2b',1,'trajectory_viewer::main::RosCommunicator']]],
-  ['py_5fmodules_20',['py_modules',['../namespacesetup.html#ad6a0f278ba38b7ed3595fd6896196fb3',1,'setup']]]
+  ['odom_5fdata_0',['odom_data',['../classweb__controller_1_1main_1_1WebVisualizerNode.html#a240fd33e6e06e603cfc7c076cdf75bae',1,'web_controller::main::WebVisualizerNode']]],
+  ['odom_5fsubscriber_1',['odom_subscriber',['../classweb__controller_1_1main_1_1WebVisualizerNode.html#ae10e4718669e12f371cdb08d71f79c44',1,'web_controller::main::WebVisualizerNode']]],
+  ['odom_5fsubscription_2',['odom_subscription',['../classrt__pose__plotter_1_1main_1_1MultiDimSubscriber.html#a060cab6dab4cbb5287c4503ab008828e',1,'rt_pose_plotter::main::MultiDimSubscriber']]],
+  ['offset_3',['offset',['../structpid__controller_1_1PositionPIDParameter.html#a4ca2291eb3539645b47bc41c0110472c',1,'pid_controller::PositionPIDParameter::offset()'],['../structpid__controller_1_1VelocityPIDParameter.html#ab69d6fbb547465d9589adcb7290ccd23',1,'pid_controller::VelocityPIDParameter::offset()']]],
+  ['orange_4',['orange',['../classweb__controller_1_1main_1_1Colors.html#a3786e7e4e5c76f4836fdf54a4cb0a8c4',1,'web_controller::main::Colors']]],
+  ['orient_5fz_5',['orient_z',['../classdashboard_1_1main_1_1ImuData.html#a387c70f232ee899d048b67fbddb21948',1,'dashboard::main::ImuData']]],
+  ['origin_5fpoints_5fdms_6',['ORIGIN_POINTS_DMS',['../namespacecommon.html#a4f4c0433259de8ff3650e272ce693db2',1,'common']]]
 ];

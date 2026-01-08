@@ -97,9 +97,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abd75f01164d1ced7009301ee44a4d4c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#abd75f01164d1ced7009301ee44a4d4c2">reset</a> ()</td></tr>
 <tr class="memdesc:abd75f01164d1ced7009301ee44a4d4c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset previous slave output.  <br /></td></tr>
 <tr class="separator:abd75f01164d1ced7009301ee44a4d4c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc9b75aba3ef199d14a3d55267cc79cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#adc9b75aba3ef199d14a3d55267cc79cc">set_param_offset</a> (double offset)</td></tr>
+<tr class="memdesc:adc9b75aba3ef199d14a3d55267cc79cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set offset parameter.  <br /></td></tr>
+<tr class="separator:adc9b75aba3ef199d14a3d55267cc79cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd63cf4106de461ce8f5a1cc64a7141d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#afd63cf4106de461ce8f5a1cc64a7141d">get_master_out</a> ()</td></tr>
 <tr class="memdesc:afd63cf4106de461ce8f5a1cc64a7141d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get calculated master output.  <br /></td></tr>
 <tr class="separator:afd63cf4106de461ce8f5a1cc64a7141d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5ae9ce8e6d4339eafd99cafd81b821f"><td class="memItemLeft" align="right" valign="top">std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#af5ae9ce8e6d4339eafd99cafd81b821f">get_slave_each_term</a> ()</td></tr>
+<tr class="memdesc:af5ae9ce8e6d4339eafd99cafd81b821f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get slave each term.  <br /></td></tr>
+<tr class="separator:af5ae9ce8e6d4339eafd99cafd81b821f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc92d96f55ba1c5e5cd54cc15cc7d103"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1VelocityP__PID.html#adc92d96f55ba1c5e5cd54cc15cc7d103">get_dt</a> ()</td></tr>
+<tr class="memdesc:adc92d96f55ba1c5e5cd54cc15cc7d103"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get dt.  <br /></td></tr>
+<tr class="separator:adc92d96f55ba1c5e5cd54cc15cc7d103"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Velocity Form P-PID Controller class. </p>
@@ -139,6 +148,26 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="adc92d96f55ba1c5e5cd54cc15cc7d103" name="adc92d96f55ba1c5e5cd54cc15cc7d103"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc92d96f55ba1c5e5cd54cc15cc7d103">&#9670;&#160;</a></span>get_dt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double pid_controller::VelocityP_PID::get_dt </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get dt. </p>
+<dl class="section return"><dt>Returns</dt><dd>dt </dd></dl>
+
+</div>
+</div>
 <a id="afd63cf4106de461ce8f5a1cc64a7141d" name="afd63cf4106de461ce8f5a1cc64a7141d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afd63cf4106de461ce8f5a1cc64a7141d">&#9670;&#160;</a></span>get_master_out()</h2>
 
@@ -159,6 +188,26 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="af5ae9ce8e6d4339eafd99cafd81b821f" name="af5ae9ce8e6d4339eafd99cafd81b821f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5ae9ce8e6d4339eafd99cafd81b821f">&#9670;&#160;</a></span>get_slave_each_term()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt; double, 3 &gt; pid_controller::VelocityP_PID::get_slave_each_term </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get slave each term. </p>
+<dl class="section return"><dt>Returns</dt><dd>slave each term </dd></dl>
+
+</div>
+</div>
 <a id="abd75f01164d1ced7009301ee44a4d4c2" name="abd75f01164d1ced7009301ee44a4d4c2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abd75f01164d1ced7009301ee44a4d4c2">&#9670;&#160;</a></span>reset()</h2>
 
@@ -176,6 +225,32 @@ Public Member Functions</h2></td></tr>
 
 <p>Reset previous slave output. </p>
 <dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
+</div>
+</div>
+<a id="adc9b75aba3ef199d14a3d55267cc79cc" name="adc9b75aba3ef199d14a3d55267cc79cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc9b75aba3ef199d14a3d55267cc79cc">&#9670;&#160;</a></span>set_param_offset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pid_controller::VelocityP_PID::set_param_offset </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>offset</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set offset parameter. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">offset</td><td>offset </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

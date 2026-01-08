@@ -81,34 +81,43 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html" title="Listener class.">Listener</a> class.  
+<p>Handles TCP reception of DVL data and dispatches parsing to PD0 or PD5 parsers.  
  <a href="classdvl__driver_1_1path__finder_1_1Listener.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="path__finder_8hpp_source.html">path_finder.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acfa788e1a3e5d1d236c1f4b1877beb34"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#acfa788e1a3e5d1d236c1f4b1877beb34">Listener</a> (const char *_address, const int _port, const int _timeout=1000)</td></tr>
-<tr class="memdesc:acfa788e1a3e5d1d236c1f4b1877beb34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create socket and Connect Socket.  <br /></td></tr>
-<tr class="separator:acfa788e1a3e5d1d236c1f4b1877beb34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9a8e864d48dd63c533f9091d952c6ac"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#aa9a8e864d48dd63c533f9091d952c6ac">Listener</a> (const char *_address, const int _port, const int _timeout_ms=1000)</td></tr>
+<tr class="memdesc:aa9a8e864d48dd63c533f9091d952c6ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for <a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html" title="Handles TCP reception of DVL data and dispatches parsing to PD0 or PD5 parsers.">Listener</a>.  <br /></td></tr>
+<tr class="separator:aa9a8e864d48dd63c533f9091d952c6ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab741e91687d23ef0fe54d6f44e167c50"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#ab741e91687d23ef0fe54d6f44e167c50">~Listener</a> ()</td></tr>
+<tr class="memdesc:ab741e91687d23ef0fe54d6f44e167c50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. Closes the socket.  <br /></td></tr>
+<tr class="separator:ab741e91687d23ef0fe54d6f44e167c50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a51564039bdfce231aba8e7bdb692a2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#a9a51564039bdfce231aba8e7bdb692a2">listen</a> ()</td></tr>
-<tr class="memdesc:a9a51564039bdfce231aba8e7bdb692a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Listen and parse data from Path Finder.  <br /></td></tr>
+<tr class="memdesc:a9a51564039bdfce231aba8e7bdb692a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Listen for incoming data and attempt to parse it.  <br /></td></tr>
 <tr class="separator:a9a51564039bdfce231aba8e7bdb692a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a873f17a3ad2972f77218cf1455d01342"><td class="memItemLeft" align="right" valign="top">ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#a873f17a3ad2972f77218cf1455d01342">read</a> (unsigned char *buffer, size_t size)</td></tr>
-<tr class="memdesc:a873f17a3ad2972f77218cf1455d01342"><td class="mdescLeft">&#160;</td><td class="mdescRight">read data from Path Finder  <br /></td></tr>
+<tr class="memdesc:a873f17a3ad2972f77218cf1455d01342"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read raw bytes from the socket.  <br /></td></tr>
 <tr class="separator:a873f17a3ad2972f77218cf1455d01342"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51f47bf14ad471ee44da588e2b5d14bd"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structdvl__driver_1_1path__finder_1_1Data.html">Data</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#a51f47bf14ad471ee44da588e2b5d14bd">get_dvl_data</a> ()</td></tr>
-<tr class="memdesc:a51f47bf14ad471ee44da588e2b5d14bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get various Path Finder data listend.  <br /></td></tr>
-<tr class="separator:a51f47bf14ad471ee44da588e2b5d14bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac8f10ef6cf61256ca128a40cb0cff89"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#aac8f10ef6cf61256ca128a40cb0cff89">print_info</a> ()</td></tr>
-<tr class="memdesc:aac8f10ef6cf61256ca128a40cb0cff89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print various Path Finder data listend.  <br /></td></tr>
-<tr class="separator:aac8f10ef6cf61256ca128a40cb0cff89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12a6dfb32b0f35c59b59919ee7557648"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#a12a6dfb32b0f35c59b59919ee7557648">has_pd0_data</a> () const</td></tr>
+<tr class="memdesc:a12a6dfb32b0f35c59b59919ee7557648"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if valid PD0 data is currently available.  <br /></td></tr>
+<tr class="separator:a12a6dfb32b0f35c59b59919ee7557648"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a011827e7297518a3edf7c8261f34bbbd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#a011827e7297518a3edf7c8261f34bbbd">has_pd5_data</a> () const</td></tr>
+<tr class="memdesc:a011827e7297518a3edf7c8261f34bbbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if valid PD5 data is currently available.  <br /></td></tr>
+<tr class="separator:a011827e7297518a3edf7c8261f34bbbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3018518feeb382993475b3aec16861c"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structdvl__driver_1_1path__finder_1_1pd0_1_1Pd0Ensemble.html">pd0::Pd0Ensemble</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#ab3018518feeb382993475b3aec16861c">get_pd0_data</a> ()</td></tr>
+<tr class="memdesc:ab3018518feeb382993475b3aec16861c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the latest parsed PD0 data.  <br /></td></tr>
+<tr class="separator:ab3018518feeb382993475b3aec16861c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9888d4bc9fa66ebd6bc90d0f81f4de8c"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structdvl__driver_1_1path__finder_1_1pd5_1_1Pd5Ensemble.html">pd5::Pd5Ensemble</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html#a9888d4bc9fa66ebd6bc90d0f81f4de8c">get_pd5_data</a> ()</td></tr>
+<tr class="memdesc:a9888d4bc9fa66ebd6bc90d0f81f4de8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the latest parsed PD5 data.  <br /></td></tr>
+<tr class="separator:a9888d4bc9fa66ebd6bc90d0f81f4de8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p><a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html" title="Listener class.">Listener</a> class. </p>
+<div class="textblock"><p>Handles TCP reception of DVL data and dispatches parsing to PD0 or PD5 parsers. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="acfa788e1a3e5d1d236c1f4b1877beb34" name="acfa788e1a3e5d1d236c1f4b1877beb34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acfa788e1a3e5d1d236c1f4b1877beb34">&#9670;&#160;</a></span>Listener()</h2>
+<a id="aa9a8e864d48dd63c533f9091d952c6ac" name="aa9a8e864d48dd63c533f9091d952c6ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9a8e864d48dd63c533f9091d952c6ac">&#9670;&#160;</a></span>Listener()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -132,7 +141,7 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const int&#160;</td>
-          <td class="paramname"><em>_timeout</em> = <code>1000</code>&#160;</td>
+          <td class="paramname"><em>_timeout_ms</em> = <code>1000</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -147,12 +156,12 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Create socket and Connect Socket. </p>
+<p>Constructor for <a class="el" href="classdvl__driver_1_1path__finder_1_1Listener.html" title="Handles TCP reception of DVL data and dispatches parsing to PD0 or PD5 parsers.">Listener</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">address</td><td>Ip address of Path Finder </td></tr>
-    <tr><td class="paramname">port</td><td>Port of Path Finder </td></tr>
-    <tr><td class="paramname">timeout</td><td>socket timeout [msec]</td></tr>
+    <tr><td class="paramname">_address</td><td>Ip address of Path Finder (e.g., "192.168.1.100") </td></tr>
+    <tr><td class="paramname">_port</td><td>TCP port to connect to (e.g., 1034 for data) </td></tr>
+    <tr><td class="paramname">_timeout_ms</td><td>Socket timeout in milliseconds</td></tr>
   </table>
   </dd>
 </dl>
@@ -160,15 +169,14 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a51f47bf14ad471ee44da588e2b5d14bd" name="a51f47bf14ad471ee44da588e2b5d14bd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51f47bf14ad471ee44da588e2b5d14bd">&#9670;&#160;</a></span>get_dvl_data()</h2>
+<a id="ab741e91687d23ef0fe54d6f44e167c50" name="ab741e91687d23ef0fe54d6f44e167c50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab741e91687d23ef0fe54d6f44e167c50">&#9670;&#160;</a></span>~Listener()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="structdvl__driver_1_1path__finder_1_1Data.html">Data</a> &gt; dvl_driver::path_finder::Listener::get_dvl_data </td>
+          <td class="memname">dvl_driver::path_finder::Listener::~Listener </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -176,8 +184,88 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Get various Path Finder data listend. </p>
-<dl class="section return"><dt>Returns</dt><dd>various dvl data of DVLData type </dd></dl>
+<p>Destructor. Closes the socket. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab3018518feeb382993475b3aec16861c" name="ab3018518feeb382993475b3aec16861c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3018518feeb382993475b3aec16861c">&#9670;&#160;</a></span>get_pd0_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="structdvl__driver_1_1path__finder_1_1pd0_1_1Pd0Ensemble.html">pd0::Pd0Ensemble</a> &gt; dvl_driver::path_finder::Listener::get_pd0_data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the latest parsed PD0 data. </p>
+<dl class="section return"><dt>Returns</dt><dd>Shared pointer to a copy of the PD0 data structure. </dd></dl>
+
+</div>
+</div>
+<a id="a9888d4bc9fa66ebd6bc90d0f81f4de8c" name="a9888d4bc9fa66ebd6bc90d0f81f4de8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9888d4bc9fa66ebd6bc90d0f81f4de8c">&#9670;&#160;</a></span>get_pd5_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="structdvl__driver_1_1path__finder_1_1pd5_1_1Pd5Ensemble.html">pd5::Pd5Ensemble</a> &gt; dvl_driver::path_finder::Listener::get_pd5_data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Retrieve the latest parsed PD5 data. </p>
+<dl class="section return"><dt>Returns</dt><dd>Shared pointer to a copy of the PD5 data structure. </dd></dl>
+
+</div>
+</div>
+<a id="a12a6dfb32b0f35c59b59919ee7557648" name="a12a6dfb32b0f35c59b59919ee7557648"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12a6dfb32b0f35c59b59919ee7557648">&#9670;&#160;</a></span>has_pd0_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dvl_driver::path_finder::Listener::has_pd0_data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if valid PD0 data is currently available. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the last successful parse was PD0. </dd></dl>
+
+</div>
+</div>
+<a id="a011827e7297518a3edf7c8261f34bbbd" name="a011827e7297518a3edf7c8261f34bbbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a011827e7297518a3edf7c8261f34bbbd">&#9670;&#160;</a></span>has_pd5_data()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool dvl_driver::path_finder::Listener::has_pd5_data </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if valid PD5 data is currently available. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the last successful parse was PD5 (or PD4). </dd></dl>
 
 </div>
 </div>
@@ -196,27 +284,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Listen and parse data from Path Finder. </p>
-<dl class="section return"><dt>Returns</dt><dd>True if successful, False otherwise </dd></dl>
-
-</div>
-</div>
-<a id="aac8f10ef6cf61256ca128a40cb0cff89" name="aac8f10ef6cf61256ca128a40cb0cff89"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac8f10ef6cf61256ca128a40cb0cff89">&#9670;&#160;</a></span>print_info()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void dvl_driver::path_finder::Listener::print_info </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Print various Path Finder data listend. </p>
+<p>Listen for incoming data and attempt to parse it. </p>
+<p>Reads data from the socket and checks headers to determine if it is PD0 or PD5. </p><dl class="section return"><dt>Returns</dt><dd>true if a valid packet (PD0 or PD5) was received and parsed. </dd></dl>
 
 </div>
 </div>
@@ -246,8 +315,15 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>read data from Path Finder </p>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes of data received </dd></dl>
+<p>Read raw bytes from the socket. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Destination buffer </td></tr>
+    <tr><td class="paramname">size</td><td>Maximum size to read </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes read, or -1 on error </dd></dl>
 
 </div>
 </div>

@@ -1,0 +1,4 @@
+<map id="BatteryCheck" name="BatteryCheck">
+<area shape="rect" id="node1" title="Condition node to check the health status of battery voltage." alt="" coords="36,79,147,104"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,177,31"/>
+</map>

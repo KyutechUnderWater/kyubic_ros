@@ -1,4 +1,7 @@
 <map id="src/control/manual/joy_common/include/joy_common/joy_common.hpp" name="src/control/manual/joy_common/include/joy_common/joy_common.hpp">
-<area shape="rect" id="node1" title="joystick library" alt="" coords="5,5,232,60"/>
-<area shape="rect" id="node2" href="$joy__common_8cpp.html" title="joystick library" alt="" coords="40,108,197,163"/>
+<area shape="rect" id="node1" title="joystick library" alt="" coords="185,5,411,60"/>
+<area shape="rect" id="node2" href="$update__mode_8hpp.html" title="Get mode from joy&#45;controller." alt="" coords="69,115,306,155"/>
+<area shape="rect" id="node5" href="$joy__common_8cpp.html" title="joystick library" alt="" coords="330,108,487,163"/>
+<area shape="rect" id="node3" href="$bt__executor_8cpp.html" title="behavior tree executor" alt="" coords="5,211,164,251"/>
+<area shape="rect" id="node4" href="$update__mode_8cpp.html" title="Get mode from joy&#45;controller." alt="" coords="189,211,394,251"/>
 </map>

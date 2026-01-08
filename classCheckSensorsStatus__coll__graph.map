@@ -1,0 +1,4 @@
+<map id="CheckSensorsStatus" name="CheckSensorsStatus">
+<area shape="rect" id="node1" title="Condition node to check the health status of robot sensors." alt="" coords="5,79,160,104"/>
+<area shape="rect" id="node2" title=" " alt="" coords="11,5,154,31"/>
+</map>

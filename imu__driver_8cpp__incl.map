@@ -1,16 +1,14 @@
 <map id="src/driver/imu_driver/src/imu_driver.cpp" name="src/driver/imu_driver/src/imu_driver.cpp">
-<area shape="rect" id="node1" title="imu driver" alt="" coords="709,5,866,45"/>
-<area shape="rect" id="node2" href="$imu__driver_8hpp.html" title="imu driver" alt="" coords="217,93,411,119"/>
-<area shape="rect" id="node12" title=" " alt="" coords="643,240,721,265"/>
-<area shape="rect" id="node13" title=" " alt="" coords="791,93,856,119"/>
-<area shape="rect" id="node14" title=" " alt="" coords="881,93,1022,119"/>
-<area shape="rect" id="node3" title=" " alt="" coords="483,240,550,265"/>
-<area shape="rect" id="node4" title=" " alt="" coords="473,167,664,192"/>
-<area shape="rect" id="node5" title=" " alt="" coords="33,240,165,265"/>
-<area shape="rect" id="node6" href="$serial_8hpp.html" title="serial library" alt="" coords="192,240,319,265"/>
-<area shape="rect" id="node9" title=" " alt="" coords="49,313,107,339"/>
-<area shape="rect" id="node10" href="$timeout_8hpp.html" title="timeout library" alt="" coords="27,167,167,192"/>
-<area shape="rect" id="node11" href="$g366_8hpp.html" title="G366 library." alt="" coords="293,167,449,192"/>
-<area shape="rect" id="node7" title=" " alt="" coords="263,313,347,339"/>
-<area shape="rect" id="node8" title=" " alt="" coords="171,313,238,339"/>
+<area shape="rect" id="node1" title="imu driver" alt="" coords="340,5,497,45"/>
+<area shape="rect" id="node2" href="$imu__driver_8hpp.html" title="imu driver" alt="" coords="322,93,515,119"/>
+<area shape="rect" id="node3" title=" " alt="" coords="388,240,454,265"/>
+<area shape="rect" id="node4" title=" " alt="" coords="26,167,216,192"/>
+<area shape="rect" id="node5" title=" " alt="" coords="78,240,210,265"/>
+<area shape="rect" id="node6" href="$serial_8hpp.html" title="serial library" alt="" coords="584,240,711,265"/>
+<area shape="rect" id="node9" title=" " alt="" coords="718,313,777,339"/>
+<area shape="rect" id="node10" href="$timeout_8hpp.html" title="timeout library" alt="" coords="240,167,380,192"/>
+<area shape="rect" id="node11" href="$g366_8hpp.html" title="G366 library." alt="" coords="456,167,612,192"/>
+<area shape="rect" id="node7" title=" " alt="" coords="607,313,691,339"/>
+<area shape="rect" id="node8" title=" " alt="" coords="516,313,582,339"/>
+<area shape="rect" id="node12" title=" " alt="" coords="482,240,560,265"/>
 </map>

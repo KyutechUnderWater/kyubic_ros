@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['serial_0',['serial',['../namespaceserial.html',1,'']]],
-  ['setup_1',['setup',['../namespacesetup.html',1,'']]]
+  ['manual_0',['manual',['../namespacemanual.html',1,'']]],
+  ['measure_5fparameter_1',['measure_parameter',['../namespacemeasure__parameter.html',1,'']]]
 ];

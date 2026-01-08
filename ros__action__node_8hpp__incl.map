@@ -1,0 +1,6 @@
+<map id="src/behavior_tree/include/behavior_tree/common/ros_action_node.hpp" name="src/behavior_tree/include/behavior_tree/common/ros_action_node.hpp">
+<area shape="rect" id="node1" title="Abstract class for ROS2 Action client with Behavior Tree." alt="" coords="138,5,339,60"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,108,184,148"/>
+<area shape="rect" id="node3" title=" " alt="" coords="208,115,269,141"/>
+<area shape="rect" id="node4" title=" " alt="" coords="294,108,445,148"/>
+</map>

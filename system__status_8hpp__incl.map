@@ -1,0 +1,10 @@
+<map id="src/driver/sensors_esp32_driver/include/sensors_esp32_driver/system_status.hpp" name="src/driver/sensors_esp32_driver/include/sensors_esp32_driver/system_status.hpp">
+<area shape="rect" id="node1" title="Get system status." alt="" coords="433,5,599,75"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,130,72,155"/>
+<area shape="rect" id="node3" title=" " alt="" coords="96,123,283,163"/>
+<area shape="rect" id="node4" title=" " alt="" coords="307,130,371,155"/>
+<area shape="rect" id="node5" title=" " alt="" coords="395,123,637,163"/>
+<area shape="rect" id="node6" title=" " alt="" coords="661,130,809,155"/>
+<area shape="rect" id="node7" title=" " alt="" coords="834,211,966,236"/>
+<area shape="rect" id="node8" href="$timeout_8hpp.html" title="timeout library" alt="" coords="885,130,1025,155"/>
+</map>

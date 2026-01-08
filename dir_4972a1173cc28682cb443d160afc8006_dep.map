@@ -1,5 +1,6 @@
 <map id="src/sample" name="src/sample">
-<area shape="rect" id="node2" href="dir_ac2ce09d837a97bab667bb432412c410.html" title="bt_switch_sample" alt="" coords="37,63,176,88"/>
-<area shape="rect" id="clust2" href="dir_4972a1173cc28682cb443d160afc8006.html" alt="" coords="27,52,283,99"/>
-<area shape="rect" id="clust1" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" title="src" alt="" coords="16,16,293,109"/>
+<area shape="rect" id="node2" href="dir_a25fefbcb32c0a2c4ad8e993652f1b69.html" title="action" alt="" coords="201,63,263,88"/>
+<area shape="rect" id="node3" href="dir_ac2ce09d837a97bab667bb432412c410.html" title="bt_switch_sample" alt="" coords="37,63,176,88"/>
+<area shape="rect" id="clust2" href="dir_4972a1173cc28682cb443d160afc8006.html" alt="" coords="27,52,369,99"/>
+<area shape="rect" id="clust1" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html" title="src" alt="" coords="16,16,380,109"/>
 </map>

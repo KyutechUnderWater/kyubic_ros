@@ -81,7 +81,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>DVL driver class.  
+<p>ROS 2 Node for interfacing with Teledyne Pathfinder DVL.  
  <a href="classdvl__driver_1_1DVLDriver.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="dvl__driver_8hpp_source.html">dvl_driver.hpp</a>&gt;</code></p>
@@ -90,7 +90,7 @@ Inheritance diagram for dvl_driver::DVLDriver:</div>
 <div class="dyncontent">
 <div class="center"><img src="classdvl__driver_1_1DVLDriver__inherit__graph.png" border="0" usemap="#advl__driver_1_1DVLDriver_inherit__map" alt="Inheritance graph"/></div>
 <map name="advl__driver_1_1DVLDriver_inherit__map" id="advl__driver_1_1DVLDriver_inherit__map">
-<area shape="rect" title="DVL driver class." alt="" coords="5,79,167,104"/>
+<area shape="rect" title="ROS 2 Node for interfacing with Teledyne Pathfinder DVL." alt="" coords="5,79,167,104"/>
 <area shape="rect" title=" " alt="" coords="35,5,137,31"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -99,7 +99,7 @@ Collaboration diagram for dvl_driver::DVLDriver:</div>
 <div class="dyncontent">
 <div class="center"><img src="classdvl__driver_1_1DVLDriver__coll__graph.png" border="0" usemap="#advl__driver_1_1DVLDriver_coll__map" alt="Collaboration graph"/></div>
 <map name="advl__driver_1_1DVLDriver_coll__map" id="advl__driver_1_1DVLDriver_coll__map">
-<area shape="rect" title="DVL driver class." alt="" coords="5,79,167,104"/>
+<area shape="rect" title="ROS 2 Node for interfacing with Teledyne Pathfinder DVL." alt="" coords="5,79,167,104"/>
 <area shape="rect" title=" " alt="" coords="35,5,137,31"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -107,13 +107,14 @@ Collaboration diagram for dvl_driver::DVLDriver:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:afd090ce8373b9a0bd70802722e111609"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1DVLDriver.html#afd090ce8373b9a0bd70802722e111609">DVLDriver</a> ()</td></tr>
-<tr class="memdesc:afd090ce8373b9a0bd70802722e111609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Connect Path Finder and Set Topic.  <br /></td></tr>
+<tr class="memdesc:afd090ce8373b9a0bd70802722e111609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. Establishes connection and initializes publishers/services.  <br /></td></tr>
 <tr class="separator:afd090ce8373b9a0bd70802722e111609"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9e5b3dd4dc8bb73f6a026e8b22100e3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1DVLDriver.html#ad9e5b3dd4dc8bb73f6a026e8b22100e3">~DVLDriver</a> ()</td></tr>
+<tr class="memdesc:ad9e5b3dd4dc8bb73f6a026e8b22100e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. Sends break command to stop DVL output.  <br /></td></tr>
 <tr class="separator:ad9e5b3dd4dc8bb73f6a026e8b22100e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>DVL driver class. </p>
+<div class="textblock"><p>ROS 2 Node for interfacing with Teledyne Pathfinder DVL. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afd090ce8373b9a0bd70802722e111609" name="afd090ce8373b9a0bd70802722e111609"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afd090ce8373b9a0bd70802722e111609">&#9670;&#160;</a></span>DVLDriver()</h2>
@@ -138,7 +139,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Connect Path Finder and Set Topic. </p>
+<p>Constructor. Establishes connection and initializes publishers/services. </p>
 
 </div>
 </div>
@@ -156,6 +157,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Destructor. Sends break command to stop DVL output. </p>
 
 </div>
 </div>

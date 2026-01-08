@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['client_5fvisualizer_0',['client_visualizer',['../namespaceclient__visualizer.html',1,'']]],
-  ['common_1',['common',['../namespacecommon.html',1,'']]],
-  ['controller_2',['controller',['../namespacecontroller.html',1,'']]]
+  ['actuator_5frp2040_5fdriver_0',['actuator_rp2040_driver',['../namespaceactuator__rp2040__driver.html',1,'']]]
 ];

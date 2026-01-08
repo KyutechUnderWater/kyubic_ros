@@ -1,9 +1,18 @@
 var searchData=
 [
-  ['odom_5fdata_0',['odom_data',['../classweb__controller_1_1main_1_1WebVisualizerNode.html#a240fd33e6e06e603cfc7c076cdf75bae',1,'web_controller::main::WebVisualizerNode']]],
-  ['odom_5fsubscriber_1',['odom_subscriber',['../classweb__controller_1_1main_1_1WebVisualizerNode.html#ae10e4718669e12f371cdb08d71f79c44',1,'web_controller::main::WebVisualizerNode']]],
-  ['odom_5fsubscription_2',['odom_subscription',['../classrt__pose__plotter_1_1main_1_1MultiDimSubscriber.html#a060cab6dab4cbb5287c4503ab008828e',1,'rt_pose_plotter::main::MultiDimSubscriber']]],
-  ['offset_3',['offset',['../structpid__controller_1_1PositionPIDParameter.html#a4ca2291eb3539645b47bc41c0110472c',1,'pid_controller::PositionPIDParameter::offset()'],['../structpid__controller_1_1VelocityPIDParameter.html#ab69d6fbb547465d9589adcb7290ccd23',1,'pid_controller::VelocityPIDParameter::offset()']]],
-  ['orange_4',['orange',['../classweb__controller_1_1main_1_1Colors.html#a3786e7e4e5c76f4836fdf54a4cb0a8c4',1,'web_controller::main::Colors']]],
-  ['origin_5fpoints_5fdms_5',['ORIGIN_POINTS_DMS',['../namespacecommon.html#a4f4c0433259de8ff3650e272ce693db2',1,'common']]]
+  ['n_5fgraph_0',['n_graph',['../classrt__pose__plotter_1_1main_1_1MultiGraphViewer.html#a3f50e2a06c32ea08be9f5d76d3d89a48',1,'rt_pose_plotter::main::MultiGraphViewer']]],
+  ['name_1',['name',['../namespacesetup.html#ab3a7a0638d76a01367c5bc3cc699447f',1,'setup']]],
+  ['neon_5fcyan_2',['NEON_CYAN',['../classdashboard_1_1main_1_1UIColors.html#ae66714c7d09f8d5cd0a773a3033bd447',1,'dashboard::main::UIColors']]],
+  ['neon_5fpurple_3',['NEON_PURPLE',['../classdashboard_1_1main_1_1UIColors.html#aac643e47eda636c44c52181c6e8a3396',1,'dashboard::main::UIColors']]],
+  ['new_5fanchor_5fsignal_4',['new_anchor_signal',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a28a3d4345b78426d29966e5269e20b11',1,'trajectory_viewer::main::RosCommunicator']]],
+  ['new_5fposition_5fsignal_5',['new_position_signal',['../classtrajectory__viewer_1_1main_1_1RosCommunicator.html#a31c5cf1effbe007a4fda8e4e6a8ee167',1,'trajectory_viewer::main::RosCommunicator']]],
+  ['no_5fcode_5frep_6',['no_code_rep',['../structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html#a04dc69d17a8c3622fb06ea12ff00222e',1,'dvl_driver::path_finder::pd0::FixedLeader']]],
+  ['node_5finstance_7',['node_instance',['../classdashboard_1_1main_1_1MonitorNode.html#ac461edc4ed27319b2dfac1788e120500',1,'dashboard::main::MonitorNode']]],
+  ['node_5fstatus_8',['node_status',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#abce255ead68a038acae9fe6bd1d04f44',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['nodes_9',['nodes',['../classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html#ae64c07aaa135224e453985d7b1d3c5ca',1,'driver_node_manager::driver_node_manager::NodeManager']]],
+  ['normal_10',['NORMAL',['../classdashboard_1_1main_1_1UIColors.html#a0a4f254f4b27762782f69a86fc4ce955',1,'dashboard::main::UIColors']]],
+  ['num_5fbeams_11',['num_beams',['../structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html#aa921749d0fefd169beace0990cc1b2f0',1,'dvl_driver::path_finder::pd0::FixedLeader']]],
+  ['num_5fbytes_12',['num_bytes',['../structdvl__driver_1_1path__finder_1_1pd5_1_1Pd5Ensemble.html#adef8bef9e57456b4610cdbce708e3dc0',1,'dvl_driver::path_finder::pd5::Pd5Ensemble']]],
+  ['num_5fcells_13',['num_cells',['../structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html#a4114ccb21352e76fe6013de75153c41f',1,'dvl_driver::path_finder::pd0::FixedLeader']]],
+  ['num_5fcsv_5fcolumns_14',['NUM_CSV_COLUMNS',['../namespaceplanner.html#a1c78d05d26006be8159eb26d61852c94',1,'planner']]]
 ];

@@ -81,29 +81,40 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Handles TCP transmission of commands to the DVL.  
+ <a href="classdvl__driver_1_1path__finder_1_1Sender.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="path__finder_8hpp_source.html">path_finder.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2bdcabf8042c9644b72b09311625e359"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html#a2bdcabf8042c9644b72b09311625e359">Sender</a> (const char *_address, const int _port, const int _timeout=1000)</td></tr>
-<tr class="memdesc:a2bdcabf8042c9644b72b09311625e359"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create socket and Connect Socket.  <br /></td></tr>
-<tr class="separator:a2bdcabf8042c9644b72b09311625e359"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accef88104e404ae539cbf6a3bbc0fa06"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html#accef88104e404ae539cbf6a3bbc0fa06">Sender</a> (const char *_address, const int _port, const int _timeout_ms=1000)</td></tr>
+<tr class="memdesc:accef88104e404ae539cbf6a3bbc0fa06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for <a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html" title="Handles TCP transmission of commands to the DVL.">Sender</a>.  <br /></td></tr>
+<tr class="separator:accef88104e404ae539cbf6a3bbc0fa06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bc20b892cd8730cde04a7b63d7ca93d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html#a2bc20b892cd8730cde04a7b63d7ca93d">~Sender</a> ()</td></tr>
+<tr class="memdesc:a2bc20b892cd8730cde04a7b63d7ca93d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. Closes the socket.  <br /></td></tr>
+<tr class="separator:a2bc20b892cd8730cde04a7b63d7ca93d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c686c32349750840f4df15a5a97519e"><td class="memItemLeft" align="right" valign="top">ssize_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html#a7c686c32349750840f4df15a5a97519e">read</a> (unsigned char *buffer, size_t size)</td></tr>
-<tr class="memdesc:a7c686c32349750840f4df15a5a97519e"><td class="mdescLeft">&#160;</td><td class="mdescRight">read data from Path Finder  <br /></td></tr>
+<tr class="memdesc:a7c686c32349750840f4df15a5a97519e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read response from DVL after sending a command.  <br /></td></tr>
 <tr class="separator:a7c686c32349750840f4df15a5a97519e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5c9c1b8eda3237e32e5d5030ca446eb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html#ad5c9c1b8eda3237e32e5d5030ca446eb">send_cmd</a> (const std::string &amp;cmd, const uint &amp;wait_time=0)</td></tr>
-<tr class="memdesc:ad5c9c1b8eda3237e32e5d5030ca446eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send command to Path Finder.  <br /></td></tr>
-<tr class="separator:ad5c9c1b8eda3237e32e5d5030ca446eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7064ee04d282fb8bb53e2ab2b2320291"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html#a7064ee04d282fb8bb53e2ab2b2320291">flush_buffer</a> ()</td></tr>
+<tr class="memdesc:a7064ee04d282fb8bb53e2ab2b2320291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear socket buffer.  <br /></td></tr>
+<tr class="separator:a7064ee04d282fb8bb53e2ab2b2320291"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3758e83d1aa81830a4f9728abb4d316"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html#ad3758e83d1aa81830a4f9728abb4d316">send_cmd</a> (const std::string &amp;cmd, const uint &amp;wait_time=0, bool newline=true)</td></tr>
+<tr class="memdesc:ad3758e83d1aa81830a4f9728abb4d316"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a generic string command to the DVL.  <br /></td></tr>
+<tr class="separator:ad3758e83d1aa81830a4f9728abb4d316"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af78bdd65b3eb30ae340e177c33330e9b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html#af78bdd65b3eb30ae340e177c33330e9b">send_break_cmd</a> ()</td></tr>
-<tr class="memdesc:af78bdd65b3eb30ae340e177c33330e9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send break command to Path Finder.  <br /></td></tr>
+<tr class="memdesc:af78bdd65b3eb30ae340e177c33330e9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send a Soft Break ("===") to wake up the DVL.  <br /></td></tr>
 <tr class="separator:af78bdd65b3eb30ae340e177c33330e9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa66062e42c7f3f678aba4dbd4901e9c8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html#aa66062e42c7f3f678aba4dbd4901e9c8">send_ping_cmd</a> ()</td></tr>
-<tr class="memdesc:aa66062e42c7f3f678aba4dbd4901e9c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send ping command to Path Finder.  <br /></td></tr>
+<tr class="memdesc:aa66062e42c7f3f678aba4dbd4901e9c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send the Start Pinging command ("CS").  <br /></td></tr>
 <tr class="separator:aa66062e42c7f3f678aba4dbd4901e9c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a2bdcabf8042c9644b72b09311625e359" name="a2bdcabf8042c9644b72b09311625e359"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2bdcabf8042c9644b72b09311625e359">&#9670;&#160;</a></span>Sender()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Handles TCP transmission of commands to the DVL. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="accef88104e404ae539cbf6a3bbc0fa06" name="accef88104e404ae539cbf6a3bbc0fa06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accef88104e404ae539cbf6a3bbc0fa06">&#9670;&#160;</a></span>Sender()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -127,7 +138,7 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const int&#160;</td>
-          <td class="paramname"><em>_timeout</em> = <code>1000</code>&#160;</td>
+          <td class="paramname"><em>_timeout_ms</em> = <code>1000</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -142,20 +153,57 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Create socket and Connect Socket. </p>
+<p>Constructor for <a class="el" href="classdvl__driver_1_1path__finder_1_1Sender.html" title="Handles TCP transmission of commands to the DVL.">Sender</a>. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">address</td><td>Ip address of Path Finder </td></tr>
-    <tr><td class="paramname">port</td><td>Port of Path Finder </td></tr>
-    <tr><td class="paramname">timeout</td><td>socket timeout [msec]</td></tr>
+    <tr><td class="paramname">_address</td><td>IP address of the DVL </td></tr>
+    <tr><td class="paramname">_port</td><td>TCP port to connect to (usually 1033 for commands) </td></tr>
+    <tr><td class="paramname">_timeout_ms</td><td>Socket timeout in milliseconds </td></tr>
   </table>
   </dd>
 </dl>
-<p>Socket creation with IPv4 and TCP. Socket connection based on address and port </p>
+
+</div>
+</div>
+<a id="a2bc20b892cd8730cde04a7b63d7ca93d" name="a2bc20b892cd8730cde04a7b63d7ca93d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bc20b892cd8730cde04a7b63d7ca93d">&#9670;&#160;</a></span>~Sender()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dvl_driver::path_finder::Sender::~Sender </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destructor. Closes the socket. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7064ee04d282fb8bb53e2ab2b2320291" name="a7064ee04d282fb8bb53e2ab2b2320291"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7064ee04d282fb8bb53e2ab2b2320291">&#9670;&#160;</a></span>flush_buffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void dvl_driver::path_finder::Sender::flush_buffer </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clear socket buffer. </p>
+
+</div>
+</div>
 <a id="a7c686c32349750840f4df15a5a97519e" name="a7c686c32349750840f4df15a5a97519e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7c686c32349750840f4df15a5a97519e">&#9670;&#160;</a></span>read()</h2>
 
@@ -182,8 +230,15 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>read data from Path Finder </p>
-<dl class="section return"><dt>Returns</dt><dd>Number of bytes of data received </dd></dl>
+<p>Read response from DVL after sending a command. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Destination buffer </td></tr>
+    <tr><td class="paramname">size</td><td>Maximum size to read </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Number of bytes read </dd></dl>
 
 </div>
 </div>
@@ -202,12 +257,13 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Send break command to Path Finder. </p>
+<p>Send a Soft Break ("===") to wake up the DVL. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if sent successfully </dd></dl>
 
 </div>
 </div>
-<a id="ad5c9c1b8eda3237e32e5d5030ca446eb" name="ad5c9c1b8eda3237e32e5d5030ca446eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5c9c1b8eda3237e32e5d5030ca446eb">&#9670;&#160;</a></span>send_cmd()</h2>
+<a id="ad3758e83d1aa81830a4f9728abb4d316" name="ad3758e83d1aa81830a4f9728abb4d316"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3758e83d1aa81830a4f9728abb4d316">&#9670;&#160;</a></span>send_cmd()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -222,7 +278,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const uint &amp;&#160;</td>
-          <td class="paramname"><em>wait_time</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>wait_time</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>newline</em> = <code>true</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -232,7 +294,15 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Send command to Path Finder. </p>
+<p>Send a generic string command to the DVL. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cmd</td><td>Command string (e.g., "CR1\r\n") </td></tr>
+    <tr><td class="paramname">wait_time</td><td>Time to wait after sending (seconds) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if sent successfully </dd></dl>
 
 </div>
 </div>
@@ -251,7 +321,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Send ping command to Path Finder. </p>
+<p>Send the Start Pinging command ("CS"). </p>
+<dl class="section return"><dt>Returns</dt><dd>true if sent successfully </dd></dl>
 
 </div>
 </div>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['webvisualizernode_0',['WebVisualizerNode',['../classweb__controller_1_1main_1_1WebVisualizerNode.html',1,'web_controller::main']]],
-  ['wrenchplanner_1',['WrenchPlanner',['../classplanner_1_1WrenchPlanner.html',1,'planner']]]
+  ['uicolors_0',['UIColors',['../classdashboard_1_1main_1_1UIColors.html',1,'dashboard::main']]],
+  ['updatemode_1',['UpdateMode',['../classbehavior__tree_1_1UpdateMode.html',1,'behavior_tree']]]
 ];

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['command_0',['command',['../namespaceimu__driver_1_1g366.html#a60d3b4296cf3be998973a83903032db7',1,'imu_driver::g366']]]
+  ['buttonmap_0',['ButtonMap',['../namespacejoy__common.html#aa8387c6c03e3b2671549c989562a982d',1,'joy_common']]],
+  ['buttonvalue_1',['ButtonValue',['../namespacejoy__common.html#aeb55469ed956b3c229f1b63e94290ac1',1,'joy_common']]]
 ];

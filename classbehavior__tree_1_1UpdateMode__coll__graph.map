@@ -1,0 +1,4 @@
+<map id="behavior_tree::UpdateMode" name="behavior_tree::UpdateMode">
+<area shape="rect" id="node1" title="Action node to update the robot&#39;s operation mode based on Joystick input." alt="" coords="5,79,208,104"/>
+<area shape="rect" id="node2" title=" " alt="" coords="31,5,183,31"/>
+</map>

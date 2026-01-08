@@ -91,12 +91,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6bb3a4dff74bb6601751727f5265ca99"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionPID.html#a6bb3a4dff74bb6601751727f5265ca99">PositionPID</a> (const <a class="el" href="structpid__controller_1_1PositionPIDParameter.html">PositionPIDParameter</a> param)</td></tr>
 <tr class="memdesc:a6bb3a4dff74bb6601751727f5265ca99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Controller gain setting.  <br /></td></tr>
 <tr class="separator:a6bb3a4dff74bb6601751727f5265ca99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50ed081f198b778c6a721dc84f4cb309"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionPID.html#a50ed081f198b778c6a721dc84f4cb309">reset_integral</a> ()</td></tr>
-<tr class="memdesc:a50ed081f198b778c6a721dc84f4cb309"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset integral term.  <br /></td></tr>
-<tr class="separator:a50ed081f198b778c6a721dc84f4cb309"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af455eb4fe2e08c10d99d7b1ba9fb4fe3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionPID.html#af455eb4fe2e08c10d99d7b1ba9fb4fe3">reset</a> ()</td></tr>
+<tr class="memdesc:af455eb4fe2e08c10d99d7b1ba9fb4fe3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset pid.  <br /></td></tr>
+<tr class="separator:af455eb4fe2e08c10d99d7b1ba9fb4fe3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41573b8a7d85a827b6892db4c3a2a3fe"><td class="memItemLeft" align="right" valign="top">std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionPID.html#a41573b8a7d85a827b6892db4c3a2a3fe">get_each_term</a> ()</td></tr>
 <tr class="memdesc:a41573b8a7d85a827b6892db4c3a2a3fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get each term value of pid.  <br /></td></tr>
 <tr class="separator:a41573b8a7d85a827b6892db4c3a2a3fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adec4106ea4a7d8225cd191e2d1017990"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionPID.html#adec4106ea4a7d8225cd191e2d1017990">set_offset</a> (double offset)</td></tr>
+<tr class="memdesc:adec4106ea4a7d8225cd191e2d1017990"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set offset.  <br /></td></tr>
+<tr class="separator:adec4106ea4a7d8225cd191e2d1017990"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38cc0d09cd6a9951e6a82db900f3dfc7"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classpid__controller_1_1PositionPID.html#a38cc0d09cd6a9951e6a82db900f3dfc7">update</a> (double current, double target, double last_saturated)</td></tr>
 <tr class="memdesc:a38cc0d09cd6a9951e6a82db900f3dfc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update PID cycle.  <br /></td></tr>
 <tr class="separator:a38cc0d09cd6a9951e6a82db900f3dfc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,14 +162,14 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a50ed081f198b778c6a721dc84f4cb309" name="a50ed081f198b778c6a721dc84f4cb309"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50ed081f198b778c6a721dc84f4cb309">&#9670;&#160;</a></span>reset_integral()</h2>
+<a id="af455eb4fe2e08c10d99d7b1ba9fb4fe3" name="af455eb4fe2e08c10d99d7b1ba9fb4fe3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af455eb4fe2e08c10d99d7b1ba9fb4fe3">&#9670;&#160;</a></span>reset()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void pid_controller::PositionPID::reset_integral </td>
+          <td class="memname">void pid_controller::PositionPID::reset </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -174,8 +177,34 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Reset integral term. </p>
+<p>Reset pid. </p>
 <dl class="section return"><dt>Returns</dt><dd>none </dd></dl>
+
+</div>
+</div>
+<a id="adec4106ea4a7d8225cd191e2d1017990" name="adec4106ea4a7d8225cd191e2d1017990"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adec4106ea4a7d8225cd191e2d1017990">&#9670;&#160;</a></span>set_offset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void pid_controller::PositionPID::set_offset </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>offset</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set offset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">offset</td><td>offset parameter </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
