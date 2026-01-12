@@ -36,13 +36,21 @@ WrenchPlanner::WrenchPlanner(const rclcpp::NodeOptions & options) : Node("wrench
 void WrenchPlanner::_update_wrench()
 {
   const uint8_t & z_mode = goal_current_odom_->z_mode;
+  const uint8_t & reset = goal_current_odom_->reset;
   const auto & target_pose = goal_current_odom_->targets;
   const auto & current_pose = goal_current_odom_->master;
   const auto & current_twst = goal_current_odom_->slave;
 
   auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
 
-  if (pre_z_mode != z_mode) {
+  if (reset > 0) {
+    if (reset & 0b00000001) p_pid_ctrl_->pid_x_reset();
+    if (reset & 0b00000010) p_pid_ctrl_->pid_y_reset();
+    if (reset & 0b00000100) p_pid_ctrl_->pid_z_reset();
+    if (reset & 0b00001000) p_pid_ctrl_->pid_roll_reset();
+    if (reset & 0b00010000) p_pid_ctrl_->pid_yaw_reset();
+    RCLCPP_INFO(this->get_logger(), "P_PID reset: %d", reset);
+  } else if (pre_z_mode != z_mode) {
     RCLCPP_INFO(this->get_logger(), "z-axis P_PID reset");
     pre_z_mode = z_mode;
     p_pid_ctrl_->pid_z_reset();

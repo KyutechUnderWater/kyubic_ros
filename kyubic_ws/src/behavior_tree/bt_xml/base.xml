@@ -12,6 +12,10 @@
         topic_name="/talker" />
       <ResetLocalization service_name="/localization/reset"
         timeout_sec="2.0" />
+      <LifecycleManager name="ActivateZOHNode"
+        node_name="planner/wrench_planner/velocity_wrench_planner_component"
+        transition="activate"
+        timeout_sec="1" />
       <Talker name="AutomatickTalker"
         message="Waypoint Action Start"
         topic_name="/talker" />
@@ -42,6 +46,10 @@
           node_name="manualNode"
           transition="configure"
           timeout_sec="1" />
+        <LifecycleManager name="ConfigureZOHNode"
+          node_name="planner/wrench_planner/velocity_wrench_planner_component"
+          transition="configure"
+          timeout_sec="1" />
         <LifecycleManager name="ConfigureEmergencyNode"
           node_name="emergencyNode"
           transition="configure"
@@ -52,6 +60,10 @@
 
   <BehaviorTree ID="Emergency">
     <Sequence name="EmergencySequence">
+      <LifecycleManager name="DeactivateZOHNode"
+        node_name="planner/wrench_planner/velocity_wrench_planner_component"
+        transition="deactivate"
+        timeout_sec="1" />
       <Talker name="EmergencyTalker"
         message="Emergency Mode Start"
         topic_name="/talker" />

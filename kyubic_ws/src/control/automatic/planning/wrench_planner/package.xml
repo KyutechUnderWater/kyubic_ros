@@ -9,8 +9,11 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>timer</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
+  <depend>rclcpp_lifecycle</depend>
+  <depend>rclcpp_lifecycle_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>planner_msgs</depend>
   <depend>p_pid_controller</depend>
