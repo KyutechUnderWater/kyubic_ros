@@ -46,6 +46,19 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}/
 )
 
+##############################################
+# --- Plugin sample ---
+ament_auto_add_library(system_check_plugins SHARED ./src-check/topic_check.cpp)
+
+# Install settings for pluginlib
+install(TARGETS system_check_plugins
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+pluginlib_export_plugin_description_file(system_check plugins.xml)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)

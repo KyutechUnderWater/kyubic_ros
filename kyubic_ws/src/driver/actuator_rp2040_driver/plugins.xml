@@ -1,0 +1,18 @@
+<library path="system_check_plugins">
+    <class type="actuator_rp2040_driver::ThrusterPublisherCheck"
+        base_class_type="system_check::SystemCheckBase">
+        <description>Checks Pass.</description>
+    </class>
+    <class type="actuator_rp2040_driver::WrenchSubscriberCheck"
+        base_class_type="system_check::SystemCheckBase">
+        <description>Checks Fail.</description>
+    </class>
+    <class type="actuator_rp2040_driver::LedSubscriberCheck"
+        base_class_type="system_check::SystemCheckBase">
+        <description>Checks Fail.</description>
+    </class>
+    <class type="actuator_rp2040_driver::HaertbeatSubscriberCheck"
+        base_class_type="system_check::SystemCheckBase">
+        <description>Checks parameters.</description>
+    </class>
+</library>

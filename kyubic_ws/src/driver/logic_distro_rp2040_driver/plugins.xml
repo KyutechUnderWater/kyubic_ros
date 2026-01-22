@@ -1,0 +1,10 @@
+<library path="system_check_plugins">
+    <class type="logic_distro_rp2040_driver::PowerStateTopicStatusCheck"
+        base_class_type="system_check::SystemCheckBase">
+        <description>Check power_state topic status.</description>
+    </class>
+    <class type="logic_distro_rp2040_driver::SystemSwitchSubscriberCheck"
+        base_class_type="system_check::SystemCheckBase">
+        <description>Check system_switch subscliber.</description>
+    </class>
+</library>
