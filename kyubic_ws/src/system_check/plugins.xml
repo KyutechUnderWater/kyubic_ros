@@ -1,0 +1,17 @@
+<library path="sample_check_plugins">
+    <class type="system_check::PassCheck" base_class_type="system_check::SystemCheckBase">
+        <description>Checks Pass.</description>
+    </class>
+    <class type="system_check::FailCheck" base_class_type="system_check::SystemCheckBase">
+        <description>Checks Fail.</description>
+    </class>
+    <class type="system_check::TopicStatusCheck" base_class_type="system_check::SystemCheckBase">
+        <description>Checks topic status.</description>
+    </class>
+    <class type="system_check::ServiceServerCheck" base_class_type="system_check::SystemCheckBase">
+        <description>Checks service server.</description>
+    </class>
+    <class type="system_check::ActionServerCheck" base_class_type="system_check::SystemCheckBase">
+        <description>Checks action server.</description>
+    </class>
+</library>
