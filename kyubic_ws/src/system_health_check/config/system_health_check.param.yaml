@@ -1,0 +1,176 @@
+/**:
+  ros__parameters:
+    details: true
+    checks:
+      - "actuator_rp2040_driver::ThrusterPublisherCheck"
+      - "actuator_rp2040_driver::RobotForceSubscriberCheck"
+      - "actuator_rp2040_driver::LedSubscriberCheck"
+      - "actuator_rp2040_driver::HeartbeatSubscriberCheck"
+
+      - "dvl_driver::DvlTopicStatusCheck"
+      - "dvl_driver::CommandServiceServerCheck"
+
+      - "imu_driver::ImuTopicStatusCheck"
+
+      - "logic_distro_rp2040_driver::PowerStateTopicStatusCheck"
+      - "logic_distro_rp2040_driver::SystemSwitchSubscriberCheck"
+
+      - "sensors_esp32_driver::ButtonBatteryStateTopicStatusCheck"
+      - "sensors_esp32_driver::BuzzerSwitchTopicStatusCheck"
+      - "sensors_esp32_driver::DepthTopicStatusCheck"
+      - "sensors_esp32_driver::DepthTypeSubscriberCheck"
+      - "sensors_esp32_driver::EnvironmentTopicStatusCheck"
+      - "sensors_esp32_driver::ImuResetSubscriberCheck"
+      - "sensors_esp32_driver::LeakTopicStatusCheck"
+      - "sensors_esp32_driver::RgbSubscriberCheck"
+      - "sensors_esp32_driver::RtcGnssTopicStatusCheck"
+      - "sensors_esp32_driver::RtcTimeTopicStatusCheck"
+      - "sensors_esp32_driver::SystemStatusTopicStatusCheck"
+      - "sensors_esp32_driver::TiltServoSubscriberCheck"
+      - "sensors_esp32_driver::ZedPowerSubscriberCheck"
+
+      - "localization::DepthTopicStatusCheck"
+      - "localization::DepthOdomTopicPubliserCheck"
+      - "localization::DepthResetServiceServerCheck"
+
+      - "localization::DvlOdomTopicPubliserCheck"
+      - "localization::DvlResetServiceServerCheck"
+
+      - "localization::ImuTopicStatusCheck"
+      - "localization::ImuTransformedTopicPubliserCheck"
+      - "localization::ImuResetServiceServerCheck"
+
+      - "localization::OdomTopicPubliserCheck"
+      - "localization::GlobalPoseTopicPubliserCheck"
+      - "localization::GnssTopicStatusCheck"
+      - "localization::ImuTransformedTopicStatusCheck"
+      - "localization::DepthOdomTopicStatusCheck"
+      - "localization::DvlOdomTopicStatusCheck"
+      - "localization::ResetServiceServerCheck"
+
+    # --- Parameters per Library ---
+    actuator_rp2040_driver:
+      thruster_publisher_check:
+        topic_name: /actuator_rp2040_driver/thruster
+        timeout_ms: 1000
+      robot_force_subscriber_check:
+        topic_name: /driver/robot_force
+        timeout_ms: 1000
+      led_subscriber_check:
+        topic_name: /actuator_rp2040_driver/led
+        timeout_ms: 1000
+      heartbeat_subscriber_check:
+        topic_name: /actuator_rp2040_driver/heartbeat
+        timeout_ms: 1000
+
+    dvl_driver:
+      dvl_topic_status_check:
+        topic_name: /driver/dvl
+        timeout_ms: 1000
+      command_service_server_check:
+        service_name: /dvl_driver/command
+        timeout_ms: 1000
+
+    imu_driver:
+      imu_topic_status_check:
+        topic_name: /driver/imu
+        timeout_ms: 1000
+
+    logic_distro_rp2040_driver:
+      power_state_topic_status_check:
+        topic_name: /logic_distro_rp2040_driver/power_state
+        timeout_ms: 2000
+      system_switch_subscriber_check:
+        topic_name: /logic_distro_rp2040_driver/system_switch
+        timeout_ms: 1000
+
+    sensors_esp32_driver:
+      button_battery_state_topic_status_check:
+        topic_name: /sensors_esp32_driver/button_battery_state
+        timeout_ms: 1000
+      buzzer_switch_topic_status_check:
+        topic_name: /sensors_esp32_driver/buzzer_switch
+        timeout_ms: 1000
+      depth_topic_status_check:
+        topic_name: /driver/depth
+        timeout_ms: 2000
+      depth_type_subscriber_check:
+        topic_name: /sensors_esp32_driver/depth_type
+        timeout_ms: 1000
+      environment_topic_status_check:
+        topic_name: /sensors_esp32_driver/environment
+        timeout_ms: 1000
+      imu_reset_subscriber_check:
+        topic_name: /sensors_esp32_driver/imu_reset
+        timeout_ms: 1000
+      leak_topic_status_check:
+        topic_name: /sensors_esp32_driver/leak
+        timeout_ms: 2000
+      rgb_subscriber_check:
+        topic_name: /sensors_esp32_driver/rgb
+        timeout_ms: 1000
+      rtc_gnss_topic_status_check:
+        topic_name: /sensors_esp32_driver/rtc_gnss
+        timeout_ms: 1000
+      rtc_time_topic_status_check:
+        topic_name: /sensors_esp32_driver/rtc_time
+        timeout_ms: 1000
+      system_status_topic_status_check:
+        topic_name: /sensors_esp32_driver/system_status
+        timeout_ms: 1000
+      tilt_servo_subscriber_check:
+        topic_name: /sensors_esp32_driver/tilt_servo
+        timeout_ms: 1000
+      zed_power_subscriber_check:
+        topic_name: /sensors_esp32_driver/zed_power
+        timeout_ms: 1000
+
+    localization:
+      depth_topic_status_check:
+        topic_name: /driver/depth
+        timeout_ms: 1000
+      depth_odom_topic_publiser_check:
+        topic_name: /localization/depth/odom
+        timeout_ms: 1000
+      depth_reset_service_server_check:
+        service_name: /localization/depth/reset
+        timeout_ms: 1000
+
+      dvl_odom_topic_publiser_check:
+        topic_name: /localization/dvl/odom
+        timeout_ms: 1000
+      dvl_reset_service_server_check:
+        service_name: /localization/dvl/reset
+        timeout_ms: 1000
+
+      imu_topic_status_check:
+        topic_name: /driver/imu
+        timeout_ms: 1000
+      imu_transformed_topic_publiser_check:
+        topic_name: /localization/imu/transformed
+        timeout_ms: 1000
+      imu_reset_service_server_check:
+        service_name: /localization/imu/reset
+        timeout_ms: 1000
+
+      odom_topic_publiser_check:
+        topic_name: /localization/odom
+        timeout_ms: 1000
+      global_pose_topic_publiser_check:
+        topic_name: /localization/global_pose
+        timeout_ms: 1000
+      gnss_topic_status_check:
+        topic_name: /localization/gnss
+        timeout_ms: 1000
+      imu_transformed_topic_status_check:
+        topic_name: /localization/imu/transformed
+        timeout_ms: 1000
+      depth_odom_topic_status_check:
+        topic_name: /localization/depth/odom
+        timeout_ms: 1000
+      dvl_odom_topic_status_check:
+        topic_name: /localization/dvl/odom
+        timeout_ms: 1000
+      reset_service_server_check:
+        service_name: /localization/reset
+        timeout_ms: 1000

@@ -1,0 +1,23 @@
+/**:
+  ros__parameters:
+    details: true
+    checks:
+      - "system_health_check::PassCheck"
+      - "system_health_check::FailCheck"
+      - "system_health_check::TopicStatusCheck"
+      - "system_health_check::TopicPubliserCheck"
+      - "system_health_check::TopicSubscriberCheck"
+      - "system_health_check::ServiceServerCheck"
+      - "system_health_check::ServiceClientCheck"
+      - "system_health_check::ActionServerCheck"
+      - "system_health_check::ActionClientCheck"
+      - "system_health_check::LifecycleStatusCheck"
+
+    battery:
+      topic_name: "/battery"
+      timeout_ms: 1000
+
+      system_switch_subscriber_check:
+        topic_name: /logic_distro_rp2040_driver/system_switch
+        timeout_ms: 1000
+        expected: 1

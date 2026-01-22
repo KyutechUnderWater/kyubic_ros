@@ -1,0 +1,10 @@
+<library path="system_health_check_plugins">
+    <class type="joy_common::JoyCommonTopicStatusCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check topic status.</description>
+    </class>
+    <class type="joy_common::JoyTopicSubscriberCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check topic status.</description>
+    </class>
+</library>

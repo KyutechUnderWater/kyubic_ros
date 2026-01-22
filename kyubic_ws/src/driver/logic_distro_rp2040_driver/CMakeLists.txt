@@ -47,17 +47,17 @@ install(DIRECTORY
 )
 
 ##############################################
-# --- Plugin sample ---
-ament_auto_add_library(system_check_plugins SHARED ./src-check/topic_check.cpp)
+# --- Diagnostics Plugin ---
+ament_auto_add_library(system_health_check_plugins SHARED ./src-check/check.cpp)
 
 # Install settings for pluginlib
-install(TARGETS system_check_plugins
+install(TARGETS system_health_check_plugins
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
 
-pluginlib_export_plugin_description_file(system_check plugins.xml)
+pluginlib_export_plugin_description_file(system_health_check plugins.xml)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

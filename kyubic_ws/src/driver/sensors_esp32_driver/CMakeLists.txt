@@ -93,6 +93,32 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}/
 )
 
+##############################################
+# --- Diagnostics Plugin ---
+ament_auto_add_library(system_health_check_plugins SHARED
+  ./src-check/button_battery_check.cpp
+  ./src-check/buzzer_switch_check.cpp
+  ./src-check/depth_check.cpp
+  ./src-check/environment_check.cpp
+  ./src-check/imu_reset_check.cpp
+  ./src-check/leak_check.cpp
+  ./src-check/rgb_check.cpp
+  ./src-check/rtc_gnss_check.cpp
+  ./src-check/rtc_time_check.cpp
+  ./src-check/system_status_check.cpp
+  ./src-check/tilt_servo_check.cpp
+  ./src-check/zed_power_check.cpp
+)
+
+# Install settings for pluginlib
+install(TARGETS system_health_check_plugins
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+pluginlib_export_plugin_description_file(system_health_check plugins.xml)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)

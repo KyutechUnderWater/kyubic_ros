@@ -1,10 +1,10 @@
-<library path="sample_check_plugins">
-    <class type="logic_distro_rp2040_driver::PowerStateTopicStatusCheck"
-        base_class_type="system_check::SystemCheckBase">
-        <description>Check power_state topic status.</description>
+<library path="system_health_check_plugins">
+    <class type="dvl_driver::DvlTopicStatusCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check dvl topic status of dvl driver.</description>
     </class>
-    <class type="logic_distro_rp2040_driver::SystemSwitchSubscriberCheck"
-        base_class_type="system_check::SystemCheckBase">
-        <description>Check system_switch subscliber.</description>
+    <class type="dvl_driver::CommandServiceServerCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check command service server of dvl driver.</description>
     </class>
 </library>

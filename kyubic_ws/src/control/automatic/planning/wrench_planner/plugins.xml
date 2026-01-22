@@ -1,0 +1,26 @@
+<library path="system_health_check_plugins">
+    <class type="planner::WrenchPlanTopicPubliserCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check topic status.</description>
+    </class>
+    <class type="planner::VelocityPlanTopicSubscriberCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check topic status.</description>
+    </class>
+    <class type="planner::OdomTopicSubscriberCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check topic status.</description>
+    </class>
+    <class type="planner::RobotFoceTopicPubliserCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check topic status.</description>
+    </class>
+    <class type="planner::TargetsTopicPubliserCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check topic status.</description>
+    </class>
+    <class type="planner::WrenchPlanTopicSubscriberCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Check topic status.</description>
+    </class>
+</library>

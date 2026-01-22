@@ -1,0 +1,42 @@
+<library path="sample_check_plugins">
+    <class type="system_health_check::PassCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks Pass.</description>
+    </class>
+    <class type="system_health_check::FailCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks Fail.</description>
+    </class>
+    <class type="system_health_check::TopicPubliserCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks topic publisher.</description>
+    </class>
+    <class type="system_health_check::TopicSubscriberCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks topic subscriber.</description>
+    </class>
+    <class type="system_health_check::TopicStatusCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks topic status.</description>
+    </class>
+    <class type="system_health_check::ServiceServerCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks service server.</description>
+    </class>
+    <class type="system_health_check::ServiceClientCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks service client.</description>
+    </class>
+    <class type="system_health_check::ActionServerCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks action server.</description>
+    </class>
+    <class type="system_health_check::ActionClientCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks action client.</description>
+    </class>
+    <class type="system_health_check::LifecycleStatusCheck"
+        base_class_type="system_health_check::SystemCheckBase">
+        <description>Checks lifecycle status.</description>
+    </class>
+</library>
