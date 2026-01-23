@@ -19,7 +19,8 @@ var annotated_dup =
     [ "common", "namespacecommon.html", [
       [ "Geodetic", "structcommon_1_1Geodetic.html", "structcommon_1_1Geodetic" ],
       [ "GeodeticConverter", "classcommon_1_1GeodeticConverter.html", "classcommon_1_1GeodeticConverter" ],
-      [ "PlaneXY", "structcommon_1_1PlaneXY.html", "structcommon_1_1PlaneXY" ]
+      [ "PlaneXY", "structcommon_1_1PlaneXY.html", "structcommon_1_1PlaneXY" ],
+      [ "UdpSocket", "classcommon_1_1UdpSocket.html", "classcommon_1_1UdpSocket" ]
     ] ],
     [ "controller", "namespacecontroller.html", [
       [ "MeasureParam", "classcontroller_1_1MeasureParam.html", "classcontroller_1_1MeasureParam" ],

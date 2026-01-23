@@ -128,6 +128,7 @@ var hierarchy =
     [ "dashboard.main.SystemConfig", "classdashboard_1_1main_1_1SystemConfig.html", null ],
     [ "timer::Timeout", "classtimer_1_1Timeout.html", null ],
     [ "planner::Tolerance", "structplanner_1_1Tolerance.html", null ],
+    [ "common::UdpSocket", "classcommon_1_1UdpSocket.html", null ],
     [ "dashboard.main.UIColors", "classdashboard_1_1main_1_1UIColors.html", null ],
     [ "dvl_driver::path_finder::pd0::VariableLeader", "structdvl__driver_1_1path__finder_1_1pd0_1_1VariableLeader.html", null ],
     [ "pid_controller::VelocityP_PID", "classpid__controller_1_1VelocityP__PID.html", null ],
