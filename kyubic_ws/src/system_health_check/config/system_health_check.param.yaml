@@ -68,7 +68,7 @@
         topic_name: /driver/dvl
         timeout_ms: 1000
       command_service_server_check:
-        service_name: /dvl_driver/command
+        service_name: /driver/dvl_driver/command
         timeout_ms: 1000
 
     imu_driver:
