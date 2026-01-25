@@ -37,17 +37,15 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   bool dvl_enable = this->declare_parameter("dvl", false);
   enabled_sensor |= depth_enable << 2 | imu_enable << 1 | (imu_enable ? dvl_enable : 0);
 
-  odom_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
   gnss_msg_ = std::make_shared<driver_msgs::msg::Gnss>();
   imu_raw_msg_ = std::make_shared<driver_msgs::msg::IMU>();
-  global_pose_msg_ = std::make_shared<localization_msgs::msg::GlobalPose>();
-  global_pose_msg_->coordinate_system_id = coord_system_id;
+  odom_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
+  odom_msg_->pose.global_pos.coordinate_system_id = coord_system_id;
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   // Create publisher
   pub_odom_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
-  pub_global_ = create_publisher<localization_msgs::msg::GlobalPose>("global_pose", qos);
   marker_pub_ =
     this->create_publisher<visualization_msgs::msg::MarkerArray>("/fixed_locations", 10);
 
@@ -147,16 +145,17 @@ void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::Sha
 
   common::Geodetic current_geodetic = geo_converter_->xy2geo({plane_x, plane_y, 0.0, 0.0});
 
-  global_pose_msg_->current_pose.plane_x = plane_x;
-  global_pose_msg_->current_pose.plane_y = plane_y;
-  global_pose_msg_->current_pose.latitude = current_geodetic.latitude;
-  global_pose_msg_->current_pose.longitude = current_geodetic.longitude;
-  global_pose_msg_->ref_pose.latitude = reference_geodetic.latitude;
-  global_pose_msg_->ref_pose.longitude = reference_geodetic.longitude;
-  global_pose_msg_->ref_pose.plane_x = reference_plane.x;
-  global_pose_msg_->ref_pose.plane_y = reference_plane.y;
-  global_pose_msg_->ref_pose.meridian_convergence = reference_plane.meridian_convergence;
-  global_pose_msg_->azimuth = azimuth;
+  auto global_pos_msg = odom_->pose.global_pos;
+  global_pos_msg.current_pose.plane_x = plane_x;
+  global_pos_msg.current_pose.plane_y = plane_y;
+  global_pos_msg.current_pose.latitude = current_geodetic.latitude;
+  global_pos_msg.current_pose.longitude = current_geodetic.longitude;
+  global_pos_msg.ref_pose.latitude = reference_geodetic.latitude;
+  global_pos_msg.ref_pose.longitude = reference_geodetic.longitude;
+  global_pos_msg.ref_pose.plane_x = reference_plane.x;
+  global_pos_msg.ref_pose.plane_y = reference_plane.y;
+  global_pos_msg.ref_pose.meridian_convergence = reference_plane.meridian_convergence;
+  global_pos_msg.azimuth = azimuth;
 
   std::array<common::PlaneXY, 6> xy_geo;
   for (int i = 0; i < 4; i++) {
@@ -236,17 +235,11 @@ void Localization::publisher()
   RCLCPP_INFO(this->get_logger(), "Updated localization");
 
   auto odom_msg_buf_ = std::make_shared<localization_msgs::msg::Odometry>(*odom_msg_);
-  global_pose_msg_->header = odom_msg_buf_->header;
-  global_pose_msg_->status = odom_msg_buf_->status;
-  global_pose_msg_->depth = odom_msg_buf_->pose.position.z_depth;
-  global_pose_msg_->altitude = odom_msg_buf_->pose.position.z_altitude;
   _calc_global_pose(odom_msg_buf_);
 
   // Copy object (shared_ptr -> unique_ptr)
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>(*odom_msg_buf_);
-  auto global_pose_msg = std::make_unique<localization_msgs::msg::GlobalPose>(*global_pose_msg_);
   pub_odom_->publish(std::move(odom_msg));
-  pub_global_->publish(std::move(global_pose_msg));
 
   // Reset flag
   all_updated = 0b11111000;
