@@ -10,6 +10,7 @@
 #ifndef _LOCALIZATIN_COMPONENT_HPP
 #define _LOCALIZATIN_COMPONENT_HPP
 
+#include <atomic>
 #include <driver_msgs/msg/gnss.hpp>
 #include <driver_msgs/msg/imu.hpp>
 #include <geodetic_converter/geodetic_converter.hpp>
@@ -44,6 +45,7 @@ class Localization : public rclcpp::Node
 private:
   uint8_t coord_system_id;
   rclcpp::CallbackGroup::SharedPtr client_cb_group_;
+  rclcpp::CallbackGroup::SharedPtr gnss_cb_group_;
   rclcpp::Publisher<localization_msgs::msg::Odometry>::SharedPtr pub_odom_;
   rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_depth_;
@@ -67,7 +69,9 @@ private:
   common::PlaneXY reference_plane;
   double azimuth;
 
-  bool gnss_updated = false;
+  std::atomic<bool> gnss_updated{false};
+
+  bool gnss_enable = false;
   uint8_t enabled_sensor = 0b11111000;
   uint8_t all_updated = 0b11111000;
 
@@ -105,7 +109,7 @@ private:
    * @brief calculate geodetic uding gnss and dvl odometry
    * @details Acquisitionn the dvl odometry.
    */
-  void _calc_global_pose(const localization_msgs::msg::Odometry::SharedPtr odom_);
+  void _calc_global_pos(const localization_msgs::msg::Odometry::SharedPtr odom_);
 
   /**
    * @brief If all data is updated, Publish odometry.
