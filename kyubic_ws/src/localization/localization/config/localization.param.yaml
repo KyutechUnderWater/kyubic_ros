@@ -8,6 +8,6 @@
 /localization/localization_component:
   ros__parameters:
     coord_system_id: 3
-    depth: true # If true, depth enable
+    depth: false # If true, depth enable
     imu: true # If true, imu enable
     dvl: true # If true, dvl enable. Required imu is true.
