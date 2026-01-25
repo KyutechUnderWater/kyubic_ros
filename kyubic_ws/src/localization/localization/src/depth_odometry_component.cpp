@@ -49,6 +49,9 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
     double dt = (now - pre_time).nanoseconds() * 1e-9;
     pre_time = now;
 
+    // NOTE: Temporary resolution of reception cycle irregularties
+    if (dt < 0.04 || 0.06 < dt) dt = 0.05;
+
     // calculate exponential moving average
     pos_z = EMA_ALPHA * msg->depth + (1.0 - EMA_ALPHA) * pre_pos_z;
 
