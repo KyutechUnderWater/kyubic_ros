@@ -1,27 +1,60 @@
-#pragma once
+/**
+ * @file service_server_check_base.hpp
+ * @brief Template class for checking Service Server/Client existence
+ * @author R.Ohnishi
+ * @date 2026/01/21
+ *
+ * @details Service Server/Clientの存在をチェックする
+ ********************************************************************/
+
+#ifndef _SERVICE_SERVER_CHECK_BASE_HPP
+#define _SERVICE_SERVER_CHECK_BASE_HPP
+
 #include <map>
 #include <rclcpp/rclcpp.hpp>
 #include <string>
-#include <system_health_check/base_class/system_health_check_base.hpp>
+#include <system_health_check/base_class/system_check_base.hpp>
 #include <thread>
-#include <vector>
 
 // RCL headers for Client check
 #include <rcl/allocator.h>
 #include <rcl/graph.h>
 #include <rcl/types.h>
 
-namespace system_health_check
+namespace system_health_check::base
 {
 
 /**
  * @brief Abstract base class for checking Service Server/Client existence.
  * Handles node iteration, name parsing, and self-exclusion logic.
  */
-class ServiceGraphCheckBase : public system_health_check::SystemCheckBase
+class ServiceGraphCheckBase : public SystemCheckBase
 {
-public:
-  virtual bool check(rclcpp::Node::SharedPtr node) override
+protected:
+  std::string service_name_;
+  uint32_t timeout_ms_ = 1000;
+  size_t expected_count_ = 1;
+
+  void set_config(
+    const std::string service_name, const uint32_t timeout_ms, size_t expected_count = 1)
+  {
+    service_name_ = service_name;
+    timeout_ms_ = timeout_ms;
+    expected_count_ = expected_count;
+  };
+
+  virtual void prepare_check(rclcpp::Node::SharedPtr node) override = 0;
+
+  virtual bool check_entity_in_node(
+    rclcpp::Node::SharedPtr node, const std::string & node_name, const std::string & node_ns) = 0;
+
+  // Type name for log ("Server" or "Client")
+  virtual std::string get_target_type() const = 0;
+
+private:
+  std::string status_msg_;
+
+  bool check_impl(rclcpp::Node::SharedPtr node) override
   {
     if (service_name_.empty()) {
       status_msg_ = "Service name not set. Please invoke `set_config()` function.";
@@ -85,31 +118,10 @@ public:
     }
   }
 
-  std::string report([[maybe_unused]] rclcpp::Node::SharedPtr node) override
+  std::string report_impl([[maybe_unused]] rclcpp::Node::SharedPtr node) override
   {
     return "Service " + get_target_type() + ": " + service_name_ + " | " + status_msg_;
   }
-
-  void set_config(
-    const std::string service_name, const uint32_t timeout_ms, size_t expected_count = 1)
-  {
-    service_name_ = service_name;
-    timeout_ms_ = timeout_ms;
-    expected_count_ = expected_count;
-  };
-
-protected:
-  // 派生クラスで実装: そのノードにターゲットが含まれているか確認する
-  virtual bool check_entity_in_node(
-    rclcpp::Node::SharedPtr node, const std::string & node_name, const std::string & node_ns) = 0;
-
-  // ログ表示用のタイプ名 ("Server" or "Client")
-  virtual std::string get_target_type() const = 0;
-
-  std::string service_name_;
-  uint32_t timeout_ms_ = 1000;
-  size_t expected_count_ = 1;
-  std::string status_msg_;
 };
 
 /**
@@ -117,7 +129,12 @@ protected:
  */
 class ServiceServerCheckBase : public ServiceGraphCheckBase
 {
-protected:
+private:
+  std::string get_unique_id() const override
+  {
+    return "ServiceServerCheckBase::" + service_name_ + "::" + std::to_string(expected_count_);
+  }
+
   std::string get_target_type() const override { return "Server"; }
 
   bool check_entity_in_node(
@@ -139,7 +156,12 @@ protected:
  */
 class ServiceClientCheckBase : public ServiceGraphCheckBase
 {
-protected:
+private:
+  std::string get_unique_id() const override
+  {
+    return "ServiceClientCheckBase::" + service_name_ + "::" + std::to_string(expected_count_);
+  }
+
   std::string get_target_type() const override { return "Client"; }
 
   bool check_entity_in_node(
@@ -171,4 +193,6 @@ protected:
   }
 };
 
-}  // namespace system_health_check
+}  // namespace system_health_check::base
+
+#endif

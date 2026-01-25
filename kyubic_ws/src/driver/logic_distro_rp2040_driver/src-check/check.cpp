@@ -3,24 +3,24 @@
 #include <system_health_check/base_class/topic_pub_sub_check_base.hpp>
 #include <system_health_check/base_class/topic_status_check_base.hpp>
 
-namespace logic_distro_rp2040_driver
+namespace driver::logic_distro_rp2040_driver
 {
 
 using Msg = driver_msgs::msg::PowerState;
 
-class PowerStateTopicStatusCheck : public system_health_check::TopicStatusCheckBase<Msg>
+class PowerStateTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<Msg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
-      "logic_distro_rp2040_driver.power_state_topic_status_check.topic_name", "/power_state");
+      "driver.logic_distro_rp2040_driver.power_state_topic_status_check.topic_name",
+      "/power_state");
     uint32_t timeout_ms = node->declare_parameter(
-      "logic_distro_rp2040_driver.power_state_topic_status_check.timeout_ms", 1000);
+      "driver.logic_distro_rp2040_driver.power_state_topic_status_check.timeout_ms", 1000);
 
+    set_status_id("power_state_status");
     set_config(topic_name, timeout_ms);
-
-    return TopicStatusCheckBase<Msg>::check(node);
   }
 
   bool validate(const Msg & msg) override
@@ -30,26 +30,27 @@ public:
   }
 };
 
-class SystemSwitchSubscriberCheck : public system_health_check::TopicSubscriberCheckBase
+class SystemSwitchSubscriberCheck : public system_health_check::base::TopicSubscriberCheckBase
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
-      "logic_distro_rp2040_driver.system_switch_subscriber_check.topic_name", "/system_switch");
+      "driver.logic_distro_rp2040_driver.system_switch_subscriber_check.topic_name",
+      "/system_switch");
     uint32_t timeout_ms = node->declare_parameter(
-      "logic_distro_rp2040_driver.system_switch_subscriber_check.timeout_ms", 1000);
+      "driver.logic_distro_rp2040_driver.system_switch_subscriber_check.timeout_ms", 1000);
 
     set_config(topic_name, timeout_ms, 1);
-
-    return TopicSubscriberCheckBase::check(node);
   }
 };
 
-}  // namespace logic_distro_rp2040_driver
+}  // namespace driver::logic_distro_rp2040_driver
 
 #include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS(
-  logic_distro_rp2040_driver::PowerStateTopicStatusCheck, system_health_check::SystemCheckBase)
+  driver::logic_distro_rp2040_driver::PowerStateTopicStatusCheck,
+  system_health_check::base::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  logic_distro_rp2040_driver::SystemSwitchSubscriberCheck, system_health_check::SystemCheckBase)
+  driver::logic_distro_rp2040_driver::SystemSwitchSubscriberCheck,
+  system_health_check::base::SystemCheckBase)

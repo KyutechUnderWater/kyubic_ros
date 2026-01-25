@@ -13,7 +13,7 @@
 #include <pluginlib/class_loader.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include "system_health_check/base_class/system_health_check_base.hpp"
+#include "system_health_check/base_class/system_check_base.hpp"
 
 namespace system_health_check
 {
@@ -24,7 +24,7 @@ public:
   explicit SystemCheck(const rclcpp::NodeOptions & options);
 
 private:
-  std::shared_ptr<pluginlib::ClassLoader<system_health_check::SystemCheckBase>> loader_;
+  std::shared_ptr<pluginlib::ClassLoader<base::SystemCheckBase>> loader_;
   rclcpp::TimerBase::SharedPtr init_timer_;
 
   void run_checks();

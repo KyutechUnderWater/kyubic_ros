@@ -1,18 +1,18 @@
 <library path="system_health_check_plugins">
-    <class type="actuator_rp2040_driver::ThrusterPublisherCheck"
-        base_class_type="system_health_check::SystemCheckBase">
+    <class type="driver::actuator_rp2040_driver::ThrusterPublisherCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
         <description>Checks thruster topic publisher of actuator driver.</description>
     </class>
-    <class type="actuator_rp2040_driver::RobotForceSubscriberCheck"
-        base_class_type="system_health_check::SystemCheckBase">
+    <class type="driver::actuator_rp2040_driver::RobotForceSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
         <description>Checks robot_force topic subscriber of actuator driver.</description>
     </class>
-    <class type="actuator_rp2040_driver::LedSubscriberCheck"
-        base_class_type="system_health_check::SystemCheckBase">
+    <class type="driver::actuator_rp2040_driver::LedSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
         <description>Checks led topic subscriber of actuator driver.</description>
     </class>
-    <class type="actuator_rp2040_driver::HeartbeatSubscriberCheck"
-        base_class_type="system_health_check::SystemCheckBase">
+    <class type="driver::actuator_rp2040_driver::HeartbeatSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
         <description>Checks heartbeat topic subscriber of actuator driver.</description>
     </class>
 </library>

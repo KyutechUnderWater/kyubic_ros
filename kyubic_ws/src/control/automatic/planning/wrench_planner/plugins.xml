@@ -1,26 +1,26 @@
 <library path="system_health_check_plugins">
-    <class type="planner::WrenchPlanTopicPubliserCheck"
-        base_class_type="system_health_check::SystemCheckBase">
-        <description>Check topic status.</description>
+    <class type="planner::wrench_planner::WrenchPlanTopicPublisherCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check wrench_plan topic publisher of planner.</description>
     </class>
-    <class type="planner::VelocityPlanTopicSubscriberCheck"
-        base_class_type="system_health_check::SystemCheckBase">
-        <description>Check topic status.</description>
+    <class type="planner::wrench_planner::VelocityPlanTopicSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check velocity_plan topic subscriber of planner.</description>
     </class>
-    <class type="planner::OdomTopicSubscriberCheck"
-        base_class_type="system_health_check::SystemCheckBase">
-        <description>Check topic status.</description>
+    <class type="planner::wrench_planner::OdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check odom topic status of planner.</description>
     </class>
-    <class type="planner::RobotFoceTopicPubliserCheck"
-        base_class_type="system_health_check::SystemCheckBase">
-        <description>Check topic status.</description>
+    <class type="planner::wrench_planner::RobotFoceTopicPublisherCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check robot_force topic publisher of planner.</description>
     </class>
-    <class type="planner::TargetsTopicPubliserCheck"
-        base_class_type="system_health_check::SystemCheckBase">
-        <description>Check topic status.</description>
+    <class type="planner::wrench_planner::TargetsTopicPublisherCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check targets topic publisher of planner.</description>
     </class>
-    <class type="planner::WrenchPlanTopicSubscriberCheck"
-        base_class_type="system_health_check::SystemCheckBase">
-        <description>Check topic status.</description>
+    <class type="planner::wrench_planner::WrenchPlanTopicSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check wrench_plan topic subscriber of planner.</description>
     </class>
 </library>

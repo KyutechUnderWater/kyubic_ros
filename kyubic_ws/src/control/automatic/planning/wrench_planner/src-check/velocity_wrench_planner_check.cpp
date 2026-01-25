@@ -1,63 +1,77 @@
+#include <localization_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <system_health_check/base_class/topic_pub_sub_check_base.hpp>
 #include <system_health_check/base_class/topic_status_check_base.hpp>
 
-namespace planner
+namespace planner::wrench_planner
 {
 
-class WrenchPlanTopicPubliserCheck : public system_health_check::TopicPublisherCheckBase
+using Msg = localization_msgs::msg::Odometry;
+
+class WrenchPlanTopicPublisherCheck : public system_health_check::base::TopicPublisherCheckBase
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
-      "planner.wrench_plan_topic_publiser_check.topic_name", "/goal_current_odom");
-    uint32_t timeout_ms =
-      node->declare_parameter("planner.wrench_plan_topic_publiser_check.timeout_ms", 1000);
+      "planner.wrench_planner.wrench_plan_topic_publisher_check.topic_name", "/goal_current_odom");
+    uint32_t timeout_ms = node->declare_parameter(
+      "planner.wrench_planner.wrench_plan_topic_publisher_check.timeout_ms", 1000);
 
     set_config(topic_name, timeout_ms);
-
-    return TopicPublisherCheckBase::check(node);
   }
 };
 
-class VelocityPlanTopicSubscriberCheck : public system_health_check::TopicSubscriberCheckBase
+class VelocityPlanTopicSubscriberCheck : public system_health_check::base::TopicSubscriberCheckBase
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
-      "planner.velocity_plan_topic_subscriber_check.topic_name", "/wrench_plan");
-    uint32_t timeout_ms =
-      node->declare_parameter("planner.velocity_plan_topic_subscriber_check.timeout_ms", 1000);
+      "planner.wrench_planner.velocity_plan_topic_subscriber_check.topic_name", "/wrench_plan");
+    uint32_t timeout_ms = node->declare_parameter(
+      "planner.wrench_planner.velocity_plan_topic_subscriber_check.timeout_ms", 1000);
 
     set_config(topic_name, timeout_ms);
-
-    return TopicSubscriberCheckBase::check(node);
+    ;
   }
 };
 
-class OdomTopicSubscriberCheck : public system_health_check::TopicSubscriberCheckBase
+class OdomTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<Msg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name =
-      node->declare_parameter("planner.odom_topic_subscriber_check.topic_name", "/odom");
+      node->declare_parameter("planner.wrench_planner.odom_topic_status_check.topic_name", "/odom");
     uint32_t timeout_ms =
-      node->declare_parameter("planner.odom_topic_subscriber_check.timeout_ms", 1000);
+      node->declare_parameter("planner.wrench_planner.odom_topic_status_check.timeout_ms", 1000);
 
+    set_status_id("odom_status");
     set_config(topic_name, timeout_ms);
+    ;
+  }
 
-    return TopicSubscriberCheckBase::check(node);
+  bool validate(const Msg & msg) override
+  {
+    if (
+      msg.status.depth.id == common_msgs::msg::Status::NORMAL &&
+      msg.status.dvl.id == common_msgs::msg::Status::NORMAL &&
+      msg.status.imu.id == common_msgs::msg::Status::NORMAL)
+      return true;
+    return false;
   }
 };
 
-}  // namespace planner
+}  // namespace planner::wrench_planner
 
 // PLUGINLIB_EXPORT_CLASS(class name, base class name)
 #include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(planner::WrenchPlanTopicPubliserCheck, system_health_check::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  planner::VelocityPlanTopicSubscriberCheck, system_health_check::SystemCheckBase)
-PLUGINLIB_EXPORT_CLASS(planner::OdomTopicSubscriberCheck, system_health_check::SystemCheckBase)
+  planner::wrench_planner::WrenchPlanTopicPublisherCheck,
+  system_health_check::base::SystemCheckBase)
+PLUGINLIB_EXPORT_CLASS(
+  planner::wrench_planner::VelocityPlanTopicSubscriberCheck,
+  system_health_check::base::SystemCheckBase)
+PLUGINLIB_EXPORT_CLASS(
+  planner::wrench_planner::OdomTopicStatusCheck, system_health_check::base::SystemCheckBase)

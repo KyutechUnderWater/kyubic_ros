@@ -30,8 +30,8 @@ SystemCheck::SystemCheck(const rclcpp::NodeOptions & options) : Node("checker_no
   this->declare_parameter("details", false);
 
   try {
-    loader_ = std::make_shared<pluginlib::ClassLoader<system_health_check::SystemCheckBase>>(
-      "system_health_check", "system_health_check::SystemCheckBase");
+    loader_ = std::make_shared<pluginlib::ClassLoader<base::SystemCheckBase>>(
+      "system_health_check", "system_health_check::base::SystemCheckBase");
   } catch (pluginlib::PluginlibException & ex) {
     RCLCPP_ERROR(this->get_logger(), "Failed to create ClassLoader: %s", ex.what());
   }

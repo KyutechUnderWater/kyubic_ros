@@ -1,4 +1,5 @@
 #include <driver_msgs/msg/gnss.hpp>
+#include <localization_msgs/msg/global_pose.hpp>
 #include <localization_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <system_health_check/base_class/service_server_check_base.hpp>
@@ -10,52 +11,71 @@ namespace localization
 
 using GnssMsg = driver_msgs::msg::Gnss;
 using OdometryMsg = localization_msgs::msg::Odometry;
+using GlobalPoseMsg = localization_msgs::msg::GlobalPose;
 
-class OdomTopicPubliserCheck : public system_health_check::TopicPublisherCheckBase
+class OdomTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<OdometryMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name =
-      node->declare_parameter("localization.odom_topic_publiser_check.topic_name", "/odom");
+      node->declare_parameter("localization.odom_topic_status_check.topic_name", "/odom");
     uint32_t timeout_ms =
-      node->declare_parameter("localization.odom_topic_publiser_check.timeout_ms", 1000);
+      node->declare_parameter("localization.odom_topic_status_check.timeout_ms", 1000);
 
-    set_config(topic_name, timeout_ms, 1, system_health_check::ComparisonMode::EQUAL);
+    set_status_id("odom_status");
+    set_config(topic_name, timeout_ms);
+  }
 
-    return TopicPublisherCheckBase::check(node);
+  bool validate(const OdometryMsg & msg) override
+  {
+    if (
+      msg.status.depth.id == common_msgs::msg::Status::NORMAL &&
+      msg.status.dvl.id == common_msgs::msg::Status::NORMAL &&
+      msg.status.imu.id == common_msgs::msg::Status::NORMAL)
+      return true;
+    return false;
   }
 };
 
-class GlobalPoseTopicPubliserCheck : public system_health_check::TopicPublisherCheckBase
+class GlobalPoseTopicStatusCheck
+: public system_health_check::base::TopicStatusCheckBase<GlobalPoseMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
-      "localization.global_pose_topic_publiser_check.topic_name", "/global_pose");
+      "localization.global_pose_topic_status_check.topic_name", "/global_pose");
     uint32_t timeout_ms =
-      node->declare_parameter("localization.global_pose_topic_publiser_check.timeout_ms", 1000);
+      node->declare_parameter("localization.global_pose_topic_status_check.timeout_ms", 1000);
 
-    set_config(topic_name, timeout_ms, 1, system_health_check::ComparisonMode::EQUAL);
+    set_status_id("global_pose_status");
+    set_config(topic_name, timeout_ms);
+  }
 
-    return TopicPublisherCheckBase::check(node);
+  bool validate(const GlobalPoseMsg & msg) override
+  {
+    if (
+      msg.status.depth.id == common_msgs::msg::Status::NORMAL &&
+      msg.status.dvl.id == common_msgs::msg::Status::NORMAL &&
+      msg.status.imu.id == common_msgs::msg::Status::NORMAL)
+      return true;
+    return false;
   }
 };
 
-class GnssTopicStatusCheck : public system_health_check::TopicStatusCheckBase<GnssMsg>
+class GnssTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<GnssMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name =
       node->declare_parameter("localization.gnss_topic_status_check.topic_name", "/gnss");
     uint32_t timeout_ms =
       node->declare_parameter("localization.gnss_topic_status_check.timeout_ms", 1000);
 
+    set_status_id("gnss_status");
     set_config(topic_name, timeout_ms);
-
-    return TopicStatusCheckBase<GnssMsg>::check(node);
   }
 
   bool validate(const GnssMsg & msg) override
@@ -65,58 +85,75 @@ public:
   }
 };
 
-class ImuTransformedTopicStatusCheck : public system_health_check::TopicStatusCheckBase<OdometryMsg>
+class ImuTransformedTopicStatusCheck
+: public system_health_check::base::TopicStatusCheckBase<OdometryMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
       "localization.imu_transformed_topic_status_check.topic_name", "/imu_transformed");
     uint32_t timeout_ms =
       node->declare_parameter("localization.imu_transformed_topic_status_check.timeout_ms", 1000);
 
+    set_status_id("imu_transformed_status");
     set_config(topic_name, timeout_ms);
+  }
 
-    return TopicStatusCheckBase<OdometryMsg>::check(node);
+  bool validate(const OdometryMsg & msg) override
+  {
+    if (msg.status.imu.id == common_msgs::msg::Status::NORMAL) return true;
+    return false;
   }
 };
 
-class DepthOdomTopicStatusCheck : public system_health_check::TopicStatusCheckBase<OdometryMsg>
+class DepthOdomTopicStatusCheck
+: public system_health_check::base::TopicStatusCheckBase<OdometryMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
       "localization.depth_odom_topic_status_check.topic_name", "/depth_odometry");
     uint32_t timeout_ms =
       node->declare_parameter("localization.depth_odom_topic_status_check.timeout_ms", 1000);
 
+    set_status_id("depth_odom_status");
     set_config(topic_name, timeout_ms);
+  }
 
-    return TopicStatusCheckBase<OdometryMsg>::check(node);
+  bool validate(const OdometryMsg & msg) override
+  {
+    if (msg.status.depth.id == common_msgs::msg::Status::NORMAL) return true;
+    return false;
   }
 };
 
-class DvlOdomTopicStatusCheck : public system_health_check::TopicStatusCheckBase<OdometryMsg>
+class DvlOdomTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<OdometryMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
       "localization.dvl_odom_topic_status_check.topic_name", "/dvl_odometry");
     uint32_t timeout_ms =
       node->declare_parameter("localization.dvl_odom_topic_status_check.timeout_ms", 1000);
 
+    set_status_id("dvl_odom_status");
     set_config(topic_name, timeout_ms);
+  }
 
-    return TopicStatusCheckBase<OdometryMsg>::check(node);
+  bool validate(const OdometryMsg & msg) override
+  {
+    if (msg.status.dvl.id == common_msgs::msg::Status::NORMAL) return true;
+    return false;
   }
 };
 
-class ResetServiceServerCheck : public system_health_check::ServiceServerCheckBase
+class ResetServiceServerCheck : public system_health_check::base::ServiceServerCheckBase
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name =
       node->declare_parameter("localization.reset_service_server_check.service_name", "/reset");
@@ -124,8 +161,6 @@ public:
       node->declare_parameter("localization.reset_service_server_check.timeout_ms", 1000);
 
     set_config(topic_name, timeout_ms, 1);
-
-    return ServiceServerCheckBase::check(node);
   }
 };
 
@@ -133,13 +168,17 @@ public:
 
 // PLUGINLIB_EXPORT_CLASS(class name, base class name)
 #include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(localization::OdomTopicPubliserCheck, system_health_check::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  localization::GlobalPoseTopicPubliserCheck, system_health_check::SystemCheckBase)
-PLUGINLIB_EXPORT_CLASS(localization::GnssTopicStatusCheck, system_health_check::SystemCheckBase)
+  localization::OdomTopicStatusCheck, system_health_check::base::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  localization::ImuTransformedTopicStatusCheck, system_health_check::SystemCheckBase)
+  localization::GlobalPoseTopicStatusCheck, system_health_check::base::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  localization::DepthOdomTopicStatusCheck, system_health_check::SystemCheckBase)
-PLUGINLIB_EXPORT_CLASS(localization::DvlOdomTopicStatusCheck, system_health_check::SystemCheckBase)
-PLUGINLIB_EXPORT_CLASS(localization::ResetServiceServerCheck, system_health_check::SystemCheckBase)
+  localization::GnssTopicStatusCheck, system_health_check::base::SystemCheckBase)
+PLUGINLIB_EXPORT_CLASS(
+  localization::ImuTransformedTopicStatusCheck, system_health_check::base::SystemCheckBase)
+PLUGINLIB_EXPORT_CLASS(
+  localization::DepthOdomTopicStatusCheck, system_health_check::base::SystemCheckBase)
+PLUGINLIB_EXPORT_CLASS(
+  localization::DvlOdomTopicStatusCheck, system_health_check::base::SystemCheckBase)
+PLUGINLIB_EXPORT_CLASS(
+  localization::ResetServiceServerCheck, system_health_check::base::SystemCheckBase)

@@ -1,6 +1,17 @@
-#pragma once
+/**
+ * @file action_server_check_base.hpp
+ * @brief Template class for checking Action Server/Client existence
+ * @author R.Ohnishi
+ * @date 2026/01/21
+ *
+ * @details Action Server/Clientの存在をチェックする
+ ********************************************************************/
+
+#ifndef _ACTION_SERVER_CHECK_BASE_HPP
+#define _ACTION_SERVER_CHECK_BASE_HPP
+
 #include <rclcpp/rclcpp.hpp>
-#include <system_health_check/base_class/system_health_check_base.hpp>
+#include <system_health_check/base_class/system_check_base.hpp>
 
 // RCL Action Graph headers
 #include <rcl/allocator.h>
@@ -9,19 +20,41 @@
 
 #include <string>
 #include <thread>
-#include <vector>
 
-namespace system_health_check
+namespace system_health_check::base
 {
 
 /**
  * @brief Abstract base class for checking Action Server/Client existence.
  * Handles node iteration, name parsing, and self-exclusion.
  */
-class ActionGraphCheckBase : public system_health_check::SystemCheckBase
+class ActionGraphCheckBase : public SystemCheckBase
 {
-public:
-  virtual bool check(rclcpp::Node::SharedPtr node) override
+protected:
+  std::string action_name_;
+  uint32_t timeout_ms_ = 1000;
+  size_t expected_count_ = 1;
+
+  void set_config(
+    const std::string action_name, const uint32_t timeout_ms, size_t expected_count = 1)
+  {
+    action_name_ = action_name;
+    timeout_ms_ = timeout_ms;
+    expected_count_ = expected_count;
+  };
+
+  virtual void prepare_check(rclcpp::Node::SharedPtr node) override = 0;
+
+  virtual bool check_entity_in_node(
+    rcl_node_t * rcl_node, rcl_allocator_t * allocator, const std::string & node_name,
+    const std::string & node_ns) = 0;
+
+  virtual std::string get_target_type() const = 0;
+
+private:
+  std::string status_msg_;
+
+  bool check_impl(rclcpp::Node::SharedPtr node) override
   {
     if (action_name_.empty()) {
       status_msg_ = "Action name not set. Please invoke `set_config()` function.";
@@ -88,31 +121,10 @@ public:
     }
   }
 
-  std::string report([[maybe_unused]] rclcpp::Node::SharedPtr node) override
+  std::string report_impl([[maybe_unused]] rclcpp::Node::SharedPtr node) override
   {
     return "Action " + get_target_type() + ": " + action_name_ + " | " + status_msg_;
   }
-
-  void set_config(
-    const std::string action_name, const uint32_t timeout_ms, size_t expected_count = 1)
-  {
-    action_name_ = action_name;
-    timeout_ms_ = timeout_ms;
-    expected_count_ = expected_count;
-  };
-
-protected:
-  // 派生クラスで実装: 具体的にAPIを叩く部分
-  virtual bool check_entity_in_node(
-    rcl_node_t * rcl_node, rcl_allocator_t * allocator, const std::string & node_name,
-    const std::string & node_ns) = 0;
-
-  virtual std::string get_target_type() const = 0;
-
-  std::string action_name_;
-  uint32_t timeout_ms_ = 1000;
-  size_t expected_count_ = 1;
-  std::string status_msg_;
 };
 
 /**
@@ -120,7 +132,12 @@ protected:
  */
 class ActionServerCheckBase : public ActionGraphCheckBase
 {
-protected:
+private:
+  std::string get_unique_id() const override
+  {
+    return "ActionServerCheckBase::" + action_name_ + "::" + std::to_string(expected_count_);
+  }
+
   std::string get_target_type() const override { return "Server"; }
 
   bool check_entity_in_node(
@@ -155,7 +172,12 @@ protected:
  */
 class ActionClientCheckBase : public ActionGraphCheckBase
 {
-protected:
+private:
+  std::string get_unique_id() const override
+  {
+    return "ActionClientCheckBase::" + action_name_ + "::" + std::to_string(expected_count_);
+  }
+
   std::string get_target_type() const override { return "Client"; }
 
   bool check_entity_in_node(
@@ -185,4 +207,6 @@ protected:
   }
 };
 
-}  // namespace system_health_check
+}  // namespace system_health_check::base
+
+#endif

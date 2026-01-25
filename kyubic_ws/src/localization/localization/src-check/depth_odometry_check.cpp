@@ -1,74 +1,79 @@
 #include <driver_msgs/msg/depth.hpp>
+#include <localization_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <system_health_check/base_class/service_server_check_base.hpp>
 #include <system_health_check/base_class/topic_pub_sub_check_base.hpp>
 #include <system_health_check/base_class/topic_status_check_base.hpp>
 
-namespace localization
+namespace localization::depth
 {
 
-using Msg = driver_msgs::msg::Depth;
+using DepthMsg = driver_msgs::msg::Depth;
+using OdomMsg = localization_msgs::msg::Odometry;
 
-class DepthTopicStatusCheck : public system_health_check::TopicStatusCheckBase<Msg>
+class DepthTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<DepthMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name =
-      node->declare_parameter("localization.depth_topic_status_check.topic_name", "/depth");
+      node->declare_parameter("localization.depth.depth_topic_status_check.topic_name", "/depth");
     uint32_t timeout_ms =
-      node->declare_parameter("localization.depth_topic_status_check.timeout_ms", 1000);
+      node->declare_parameter("localization.depth.depth_topic_status_check.timeout_ms", 1000);
 
+    set_status_id("depth_status");
     set_config(topic_name, timeout_ms);
-
-    return TopicStatusCheckBase<Msg>::check(node);
   }
 
-  bool validate(const Msg & msg) override
+  bool validate(const DepthMsg & msg) override
   {
     if (msg.status.id == common_msgs::msg::Status::NORMAL) return true;
     return false;
   }
 };
 
-class DepthOdomTopicPubliserCheck : public system_health_check::TopicPublisherCheckBase
+class DepthOdomTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<OdomMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
-      "localization.depth_odom_topic_publiser_check.topic_name", "/depth_odometry");
+      "localization.depth.depth_odom_topic_status_check.topic_name", "/depth/odom");
     uint32_t timeout_ms =
-      node->declare_parameter("localization.depth_odom_topic_publiser_check.timeout_ms", 1000);
+      node->declare_parameter("localization.depth.depth_odom_topic_status_check.timeout_ms", 1000);
 
-    set_config(topic_name, timeout_ms, 1, system_health_check::ComparisonMode::EQUAL);
+    set_status_id("depth_odom_status");
+    set_config(topic_name, timeout_ms);
+  }
 
-    return TopicPublisherCheckBase::check(node);
+  bool validate(const OdomMsg & msg) override
+  {
+    if (msg.status.depth.id == common_msgs::msg::Status::NORMAL) return true;
+    return false;
   }
 };
 
-class DepthResetServiceServerCheck : public system_health_check::ServiceServerCheckBase
+class DepthResetServiceServerCheck : public system_health_check::base::ServiceServerCheckBase
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
-      "localization.depth_reset_service_server_check.service_name", "/reset");
-    uint32_t timeout_ms =
-      node->declare_parameter("localization.depth_reset_service_server_check.timeout_ms", 1000);
+      "localization.depth.depth_reset_service_server_check.service_name", "/reset");
+    uint32_t timeout_ms = node->declare_parameter(
+      "localization.depth.depth_reset_service_server_check.timeout_ms", 1000);
 
     set_config(topic_name, timeout_ms, 1);
-
-    return ServiceServerCheckBase::check(node);
   }
 };
 
-}  // namespace localization
+}  // namespace localization::depth
 
 // PLUGINLIB_EXPORT_CLASS(class name, base class name)
 #include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(localization::DepthTopicStatusCheck, system_health_check::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  localization::DepthOdomTopicPubliserCheck, system_health_check::SystemCheckBase)
+  localization::depth::DepthTopicStatusCheck, system_health_check::base::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  localization::DepthResetServiceServerCheck, system_health_check::SystemCheckBase)
+  localization::depth::DepthOdomTopicStatusCheck, system_health_check::base::SystemCheckBase)
+PLUGINLIB_EXPORT_CLASS(
+  localization::depth::DepthResetServiceServerCheck, system_health_check::base::SystemCheckBase)

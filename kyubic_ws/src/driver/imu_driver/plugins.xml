@@ -1,6 +1,6 @@
 <library path="system_health_check_plugins">
-    <class type="imu_driver::ImuTopicStatusCheck"
-        base_class_type="system_health_check::SystemCheckBase">
+    <class type="driver::imu_driver::ImuTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
         <description>Check imu topic status of imu driver.</description>
     </class>
 </library>

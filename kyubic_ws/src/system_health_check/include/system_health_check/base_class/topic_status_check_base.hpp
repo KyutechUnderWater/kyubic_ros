@@ -1,10 +1,21 @@
-#pragma once
+/**
+ * @file topic_status_check_base.hpp
+ * @brief Template class for checking topic status
+ * @author R.Ohnishi
+ * @date 2026/01/21
+ *
+ * @details Topicの状態をチェックする
+ **********************************************/
+
+#ifndef _TOPIC_STATUS_CHECK_BASE_HPP
+#define _TOPIC_STATUS_CHECK_BASE_HPP
+
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/wait_for_message.hpp>
 #include <string>
-#include <system_health_check/base_class/system_health_check_base.hpp>
+#include <system_health_check/base_class/system_check_base.hpp>
 
-namespace system_health_check
+namespace system_health_check::base
 {
 
 /**
@@ -12,10 +23,45 @@ namespace system_health_check
   * @tparam MessageT The message type to check (e.g., std_msgs::msg::Bool).
   */
 template <typename MessageT>
-class TopicStatusCheckBase : public system_health_check::SystemCheckBase
+class TopicStatusCheckBase : public SystemCheckBase
 {
-public:
-  virtual bool check(rclcpp::Node::SharedPtr node) override
+protected:
+  /**
+   * @brief Set the status id for cache check
+   * @param id status id (e.g., "depth_status")
+   */
+  void set_status_id(const std::string id) { status_id_ = id; }
+
+  void set_config(const std::string topic_name, const uint32_t timeout_ms)
+  {
+    topic_name_ = topic_name;
+    timeout_ms_ = timeout_ms;
+  };
+
+  virtual void prepare_check(rclcpp::Node::SharedPtr node) override = 0;
+
+  /**
+   * @brief Virtual function to verify message content.
+   * Defaults to "OK if received".
+   * Override in a derived class to inspect content (e.g., msg->data == true).
+   */
+  virtual bool validate([[maybe_unused]] const MessageT & msg) { return true; }
+
+private:
+  std::string topic_name_;
+  uint32_t timeout_ms_ = 0;
+  std::string status_msg_;
+
+  std::string status_id_ = "";
+  std::string get_unique_id() const override
+  {
+    if (status_id_.empty()) {
+      return "";
+    }
+    return "TopicStatusCheckBase::" + topic_name_ + "::" + status_id_;
+  }
+
+  bool check_impl(rclcpp::Node::SharedPtr node) override
   {
     if (topic_name_.empty() || timeout_ms_ == 0) {
       status_msg_ = "Not set topic_name or timeout. Please invoke `set_config()` function.";
@@ -44,28 +90,12 @@ public:
     }
   }
 
-  std::string report([[maybe_unused]] rclcpp::Node::SharedPtr node) override
+  std::string report_impl([[maybe_unused]] rclcpp::Node::SharedPtr node) override
   {
     return "Topic: " + topic_name_ + " | " + status_msg_;
   }
-
-  void set_config(const std::string topic_name, const uint32_t timeout_ms)
-  {
-    topic_name_ = topic_name;
-    timeout_ms_ = timeout_ms;
-  };
-
-  /**
-    * @brief Virtual function to verify message content.
-    * Defaults to "OK if received".
-    * Override in a derived class to inspect content (e.g., msg->data == true).
-    */
-  virtual bool validate([[maybe_unused]] const MessageT & msg) { return true; }
-
-private:
-  std::string topic_name_;
-  uint32_t timeout_ms_ = 0;
-  std::string status_msg_;
 };
 
-}  // namespace system_health_check
+}  // namespace system_health_check::base
+
+#endif

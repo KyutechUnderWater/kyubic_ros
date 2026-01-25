@@ -1,26 +1,63 @@
-#pragma once
-#include <rclcpp/rclcpp.hpp>
-#include <system_health_check/base_class/system_health_check_base.hpp>
+/**
+ * @file lifecycle_stats_check_base.hpp
+ * @brief Template class for checking the state of a Lifecycle Node
+ * @author R.Ohnishi
+ * @date 2026/01/21
+ *
+ * @details Lifecycle Nodeの状態をチェックする
+ ********************************************************************/
 
-// Lifecycle Nodeの状態取得用サービスとメッセージ定義
+#ifndef _LIFECYCLE_STATUS_CHECK_BASE_HPP
+#define _LIFECYCLE_STATUS_CHECK_BASE_HPP
+
 #include <rmw/qos_profiles.h>
 
 #include <chrono>
 #include <lifecycle_msgs/msg/state.hpp>
 #include <lifecycle_msgs/srv/get_state.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include <string>
+#include <system_health_check/base_class/system_check_base.hpp>
 
-namespace system_health_check
+namespace system_health_check::base
 {
 
 /**
  * @brief Base class for checking the state of a Lifecycle Node.
  * Connects to the `{node_name}/get_state` service to verify the current state.
  */
-class LifecycleStatusCheckBase : public system_health_check::SystemCheckBase
+class LifecycleStatusCheckBase : public SystemCheckBase
 {
-public:
-  virtual bool check(rclcpp::Node::SharedPtr node) override
+protected:
+  /**
+   * @brief Configuration for the check.
+   * @param target_node_name Name of the lifecycle node (e.g., "/camera_driver")
+   * @param expected_state_id ID of the expected state (e.g., lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE)
+   * @param timeout_ms Timeout in milliseconds
+   */
+  void set_config(
+    const std::string target_node_name, const std::string expected_state, const uint32_t timeout_ms)
+  {
+    target_node_name_ = target_node_name;
+    expected_state_id_ = parse_state_string(expected_state);
+    timeout_ms_ = timeout_ms;
+  };
+
+  virtual void prepare_check(rclcpp::Node::SharedPtr node) override = 0;
+
+private:
+  std::string target_node_name_;
+  uint8_t expected_state_id_ = 0;
+  uint32_t timeout_ms_ = 0;
+  std::string status_msg_;
+
+  std::string get_unique_id() const override
+  {
+    return "LifecycleStatusCheckBase::" + target_node_name_ +
+           "::" + std::to_string(expected_state_id_);
+  }
+
+  bool check_impl(rclcpp::Node::SharedPtr node) override
   {
     if (target_node_name_.empty() || timeout_ms_ == 0) {
       status_msg_ = "Not set target_node_name or timeout. Please invoke `set_config()` function.";
@@ -77,39 +114,15 @@ public:
     }
   }
 
-  std::string report([[maybe_unused]] rclcpp::Node::SharedPtr node) override
+  std::string report_impl([[maybe_unused]] rclcpp::Node::SharedPtr node) override
   {
     return "Node: " + target_node_name_ + " | " + status_msg_;
   }
 
   /**
-   * @brief Configuration for the check.
-   * @param target_node_name Name of the lifecycle node (e.g., "/camera_driver")
-   * @param expected_state_id ID of the expected state (e.g., lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE)
-   * @param timeout_ms Timeout in milliseconds
+   * @brief Validates the current state based on the expected state ID.
    */
-  void set_config(
-    const std::string target_node_name, const std::string expected_state, const uint32_t timeout_ms)
-  {
-    target_node_name_ = target_node_name;
-    expected_state_id_ = parse_state_string(expected_state);
-    timeout_ms_ = timeout_ms;
-  };
-
-  /**
-   * @brief Validate logic. Can be overridden if complex check is needed.
-   */
-  virtual bool validate_state(uint8_t current_id)
-  {
-    // 単純なID一致確認
-    return current_id == expected_state_id_;
-  }
-
-private:
-  std::string target_node_name_;
-  uint8_t expected_state_id_ = 0;
-  uint32_t timeout_ms_ = 0;
-  std::string status_msg_;
+  bool validate_state(uint8_t current_id) { return current_id == expected_state_id_; }
 
   // string to id
   int parse_state_string(const std::string & state_str)
@@ -123,4 +136,6 @@ private:
   }
 };
 
-}  // namespace system_health_check
+}  // namespace system_health_check::base
+
+#endif

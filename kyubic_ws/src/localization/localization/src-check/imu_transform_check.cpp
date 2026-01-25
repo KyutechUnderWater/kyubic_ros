@@ -1,74 +1,80 @@
 #include <driver_msgs/msg/imu.hpp>
+#include <localization_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <system_health_check/base_class/service_server_check_base.hpp>
 #include <system_health_check/base_class/topic_pub_sub_check_base.hpp>
 #include <system_health_check/base_class/topic_status_check_base.hpp>
 
-namespace localization
+namespace localization::imu
 {
 
-using Msg = driver_msgs::msg::IMU;
+using ImuMsg = driver_msgs::msg::IMU;
+using OdomMsg = localization_msgs::msg::Odometry;
 
-class ImuTopicStatusCheck : public system_health_check::TopicStatusCheckBase<Msg>
+class ImuTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<ImuMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name =
-      node->declare_parameter("localization.imu_topic_status_check.topic_name", "/imu");
+      node->declare_parameter("localization.imu.imu_topic_status_check.topic_name", "/imu");
     uint32_t timeout_ms =
-      node->declare_parameter("localization.imu_topic_status_check.timeout_ms", 1000);
+      node->declare_parameter("localization.imu.imu_topic_status_check.timeout_ms", 1000);
 
+    set_status_id("imu_status");
     set_config(topic_name, timeout_ms);
-
-    return TopicStatusCheckBase<Msg>::check(node);
   }
 
-  bool validate(const Msg & msg) override
+  bool validate(const ImuMsg & msg) override
   {
     if (msg.status.id == common_msgs::msg::Status::NORMAL) return true;
     return false;
   }
 };
 
-class ImuTransformedTopicPubliserCheck : public system_health_check::TopicPublisherCheckBase
+class ImuTransformedTopicStatusCheck
+: public system_health_check::base::TopicStatusCheckBase<OdomMsg>
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
-      "localization.imu_transformed_topic_publiser_check.topic_name", "/imu_transformed");
-    uint32_t timeout_ms =
-      node->declare_parameter("localization.imu_transformed_topic_publiser_check.timeout_ms", 1000);
+      "localization.imu.imu_transformed_topic_status_check.topic_name", "/imu/odom");
+    uint32_t timeout_ms = node->declare_parameter(
+      "localization.imu.imu_transformed_topic_status_check.timeout_ms", 1000);
 
-    set_config(topic_name, timeout_ms, 1, system_health_check::ComparisonMode::EQUAL);
+    set_status_id("imu_transformed_status");
+    set_config(topic_name, timeout_ms);
+  }
 
-    return TopicPublisherCheckBase::check(node);
+  bool validate(const OdomMsg & msg) override
+  {
+    if (msg.status.imu.id == common_msgs::msg::Status::NORMAL) return true;
+    return false;
   }
 };
 
-class ImuResetServiceServerCheck : public system_health_check::ServiceServerCheckBase
+class ImuResetServiceServerCheck : public system_health_check::base::ServiceServerCheckBase
 {
-public:
-  bool check(rclcpp::Node::SharedPtr node) override
+private:
+  void prepare_check(rclcpp::Node::SharedPtr node) override
   {
-    std::string topic_name =
-      node->declare_parameter("localization.imu_reset_service_server_check.service_name", "/reset");
+    std::string topic_name = node->declare_parameter(
+      "localization.imu.imu_reset_service_server_check.service_name", "/reset");
     uint32_t timeout_ms =
-      node->declare_parameter("localization.imu_reset_service_server_check.timeout_ms", 1000);
+      node->declare_parameter("localization.imu.imu_reset_service_server_check.timeout_ms", 1000);
 
     set_config(topic_name, timeout_ms, 1);
-
-    return ServiceServerCheckBase::check(node);
   }
 };
 
-}  // namespace localization
+}  // namespace localization::imu
 
 // PLUGINLIB_EXPORT_CLASS(class name, base class name)
 #include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(localization::ImuTopicStatusCheck, system_health_check::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  localization::ImuTransformedTopicPubliserCheck, system_health_check::SystemCheckBase)
+  localization::imu::ImuTopicStatusCheck, system_health_check::base::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  localization::ImuResetServiceServerCheck, system_health_check::SystemCheckBase)
+  localization::imu::ImuTransformedTopicStatusCheck, system_health_check::base::SystemCheckBase)
+PLUGINLIB_EXPORT_CLASS(
+  localization::imu::ImuResetServiceServerCheck, system_health_check::base::SystemCheckBase)

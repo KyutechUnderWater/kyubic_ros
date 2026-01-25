@@ -1,6 +1,14 @@
 <library path="system_health_check_plugins">
-    <class type="planner::PDLAPlannerActionServerCheck"
-        base_class_type="system_health_check::SystemCheckBase">
-        <description>Check topic status.</description>
+    <class type="planner::pdla_planner::OdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check odom topic status of planner.</description>
+    </class>
+    <class type="planner::pdla_planner::WrenchPlanTopicPublisherCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check goal_current_odom topic publisher of planner.</description>
+    </class>
+    <class type="planner::pdla_planner::PDLAPlannerActionServerCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check pdla_planner action server of planner.</description>
     </class>
 </library>
