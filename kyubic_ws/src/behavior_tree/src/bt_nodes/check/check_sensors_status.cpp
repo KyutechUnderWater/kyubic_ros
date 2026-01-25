@@ -26,13 +26,13 @@ CheckSensorsStatus::CheckSensorsStatus(
   };
 
   imu_sub_ = ros_node_->create_subscription<driver_msgs::msg::IMU>(
-    "/driver/imu", 1, create_cb<driver_msgs::msg::IMU>(imu_monitor_, no_op));
+    "imu", 1, create_cb<driver_msgs::msg::IMU>(imu_monitor_, no_op));
   depth_sub_ = ros_node_->create_subscription<driver_msgs::msg::Depth>(
-    "/driver/depth", 1, create_cb<driver_msgs::msg::Depth>(depth_monitor_, no_op));
+    "depth", 1, create_cb<driver_msgs::msg::Depth>(depth_monitor_, no_op));
   dvl_sub_ = ros_node_->create_subscription<driver_msgs::msg::DVL>(
-    "/driver/dvl", 1, create_cb<driver_msgs::msg::DVL>(dvl_monitor_, no_op));
+    "dvl", 1, create_cb<driver_msgs::msg::DVL>(dvl_monitor_, no_op));
   leak_sub_ = ros_node_->create_subscription<driver_msgs::msg::BoolStamped>(
-    "/driver/leak", 1, create_cb<driver_msgs::msg::BoolStamped>(leak_monitor_, leak_process));
+    "leak", 1, create_cb<driver_msgs::msg::BoolStamped>(leak_monitor_, leak_process));
 }
 
 BT::PortsList CheckSensorsStatus::providedPorts()

@@ -71,7 +71,11 @@ def generate_launch_description():
         name="btExecutorNode",
         parameters=[behavior_tree_config],
         remappings=[
-            ("power_state", "/logic_distro_rp2040_driver/power_state"),
+            ("imu", "/driver/imu_driver/imu"),
+            ("dvl", "/driver/dvl_driver/dvl"),
+            ("depth", "/driver/sensors_esp32_driver/depth"),
+            ("leak", "/driver/sensors_esp32_driver/leak"),
+            ("power_state", "/driver/logic_distro_rp2040_driver/power_state"),
         ],
         arguments=[
             "--ros-args",

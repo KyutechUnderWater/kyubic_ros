@@ -52,7 +52,7 @@ DVLDriver::DVLDriver() : Node("dvl_driver")
 
   // Service for raw commands
   srv_ = create_service<driver_msgs::srv::Command>(
-    "~/command",
+    "command",
     std::bind(&DVLDriver::sendCommandCallback, this, std::placeholders::_1, std::placeholders::_2));
 }
 
