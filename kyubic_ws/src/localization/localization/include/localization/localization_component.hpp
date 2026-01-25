@@ -13,16 +13,11 @@
 #include <driver_msgs/msg/gnss.hpp>
 #include <driver_msgs/msg/imu.hpp>
 #include <geodetic_converter/geodetic_converter.hpp>
-#include <localization_msgs/msg/global_pose.hpp>
 #include <localization_msgs/msg/odometry.hpp>
 #include <localization_msgs/srv/reset.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
-
-#include "driver_msgs/msg/gnss.hpp"
-#include "localization_msgs/msg/global_pose.hpp"
-#include "localization_msgs/srv/reset.hpp"
 
 /**
  * @namespace localization
@@ -50,7 +45,6 @@ private:
   uint8_t coord_system_id;
   rclcpp::CallbackGroup::SharedPtr client_cb_group_;
   rclcpp::Publisher<localization_msgs::msg::Odometry>::SharedPtr pub_odom_;
-  rclcpp::Publisher<localization_msgs::msg::GlobalPose>::SharedPtr pub_global_;
   rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_depth_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_imu_;
@@ -68,7 +62,6 @@ private:
   std::shared_ptr<localization_msgs::msg::Odometry> odom_msg_;
   std::shared_ptr<driver_msgs::msg::Gnss> gnss_msg_;
   std::shared_ptr<driver_msgs::msg::IMU> imu_raw_msg_;
-  std::shared_ptr<localization_msgs::msg::GlobalPose> global_pose_msg_;
   common::Geodetic origin_geodetic;
   common::Geodetic reference_geodetic;
   common::PlaneXY reference_plane;
