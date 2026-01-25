@@ -1,6 +1,7 @@
 /**:
   ros__parameters:
-    device_name: "Logicool Dual Action"
+    device_name: "Logitech Gamepad F310"
+    # device_name: "Logicool Dual Action"
     # device_name: "Sony PLAYSTATION(R)3 Controller"  # PS3 有線接続
     # device_name: "PLAYSTATION(R)3 Controller"  # PS3 無線接続
 
