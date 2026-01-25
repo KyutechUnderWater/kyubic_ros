@@ -72,7 +72,7 @@ def generate_launch_description():
                 plugin="planner::QRPlanner",
                 remappings=[
                     ("odom", "/localization/odom"),
-                    ("zed_power", "/sensors_esp32_driver/zed_power"),
+                    ("zed_power", "/driver/sensors_esp32_driver/zed_power"),
                     ("goal_current_odom", "/planner/goal_current_odom"),
                 ],
                 parameters=[
@@ -107,7 +107,7 @@ def generate_launch_description():
                 plugin="planner::WrenchPlanner",
                 remappings=[
                     ("goal_current_odom", "/planner/goal_current_odom"),
-                    ("robot_force", "/driver/robot_force"),
+                    ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
                     ("targets", "/rt_pose_plotter/targets"),
                 ],
                 parameters=[

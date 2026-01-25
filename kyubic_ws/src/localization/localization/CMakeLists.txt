@@ -56,17 +56,17 @@ ament_auto_add_library(localization_component SHARED
 
 # register components
 rclcpp_components_register_node(depth_odometry_component
-  PLUGIN "localization::DepthOdometry"
+  PLUGIN "localization::depth::DepthOdometry"
   EXECUTABLE depth_odometry_component_node
 )
 
 rclcpp_components_register_node(imu_transform_component
-  PLUGIN "localization::IMUTransform"
+  PLUGIN "localization::imu::IMUTransform"
   EXECUTABLE imu_transform_component_node
 )
 
 rclcpp_components_register_node(dvl_odometry_component
-  PLUGIN "localization::DVLOdometry"
+  PLUGIN "localization::dvl::DVLOdometry"
   EXECUTABLE dvl_odometry_component_node
 )
 

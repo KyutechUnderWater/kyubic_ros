@@ -11,7 +11,7 @@
 
 using namespace std::chrono_literals;
 
-namespace logic_distro_rp2040_driver
+namespace driver::logic_distro_rp2040_driver
 {
 
 LogicDistroRP2040::LogicDistroRP2040(const rclcpp::NodeOptions & options)
@@ -22,7 +22,7 @@ LogicDistroRP2040::LogicDistroRP2040(const rclcpp::NodeOptions & options)
   mcu_ip_addr = this->declare_parameter("mcu_ip_addr", "192.168.9.5");
   mcu_port = this->declare_parameter("mcu_port", 9000);
   this_port = this->declare_parameter("this_port", 9000);
-  timeout_ms = this->declare_parameter("timeout", 1000);
+  timeout_ms = this->declare_parameter("timeout_ms", 1000);
 
   try {
     port_ = protolink::serial_protocol::create_port(io_context_, portname, baudrate);
@@ -60,7 +60,7 @@ LogicDistroRP2040::LogicDistroRP2040(const rclcpp::NodeOptions & options)
   protolink_subscriber_ = std::make_shared<protolink::serial_protocol::Subscriber<ProtoPowerState>>(
     port_, std::bind(&LogicDistroRP2040::protolink_callback, this, std::placeholders::_1));
 
-  timer_ = create_wall_timer(100ms, std::bind(&LogicDistroRP2040::_check_timeout, this));
+  timer_ = create_wall_timer(1000ms, std::bind(&LogicDistroRP2040::_check_timeout, this));
 }
 
 void LogicDistroRP2040::ros_callback(const driver_msgs::msg::SystemSwitch & _msg)
@@ -106,15 +106,16 @@ void LogicDistroRP2040::_check_timeout()
     RCLCPP_ERROR_THROTTLE(
       this->get_logger(), *this->get_clock(), timeout_->get_timeout() * 1e-6,
       "PowerState driver timeout: %lu [ns]", timeout_->get_elapsed_time());
-  } else {
+  } else if (timeout_->get_elapsed_time() > timeout_->get_timeout() * 0.5) {
     RCLCPP_WARN_THROTTLE(
       this->get_logger(), *this->get_clock(), timeout_->get_timeout() * 1e-6,
-      "Failed to get PowerState data");
+      "Failed to get PowerState data, %lu, %f", timeout_->get_elapsed_time(),
+      (timeout_->get_timeout() * 0.5));
     return;
   }
 }
 
-}  // namespace logic_distro_rp2040_driver
+}  // namespace driver::logic_distro_rp2040_driver
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(logic_distro_rp2040_driver::LogicDistroRP2040)
+RCLCPP_COMPONENTS_REGISTER_NODE(driver::logic_distro_rp2040_driver::LogicDistroRP2040)

@@ -50,19 +50,19 @@ void TestPPID::update()
   auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
 
   if (
-    odom_status.depth == localization_msgs::msg::Status::ERROR ||
-    odom_status.imu == localization_msgs::msg::Status::ERROR ||
-    odom_status.dvl == localization_msgs::msg::Status::ERROR) {
+    odom_status.depth.id == common_msgs::msg::Status::ERROR ||
+    odom_status.imu.id == common_msgs::msg::Status::ERROR ||
+    odom_status.dvl.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
 
     double force_z = 0.0;
     if (
-      odom_status.depth != localization_msgs::msg::Status::ERROR &&
+      odom_status.depth.id != common_msgs::msg::Status::ERROR &&
       z_mode == p_pid_controller_msgs::msg::Targets::Z_MODE_DEPTH) {
       force_z = p_pid_ctrl_->pid_z_update(
         current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.z);
     } else if (
-      odom_status.dvl != localization_msgs::msg::Status::ERROR &&
+      odom_status.dvl.id != common_msgs::msg::Status::ERROR &&
       z_mode == p_pid_controller_msgs::msg::Targets::Z_MODE_ALTITUDE) {
       force_z = -p_pid_ctrl_->pid_z_update(
         current_twst.linear.z_altitude, current_pose.position.z_altitude, target_pose.z);

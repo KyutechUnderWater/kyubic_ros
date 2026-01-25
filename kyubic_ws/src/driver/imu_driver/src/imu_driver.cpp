@@ -11,7 +11,7 @@
 
 using namespace std::chrono_literals;
 
-namespace imu_driver
+namespace driver::imu_driver
 {
 
 IMUDriver::IMUDriver() : Node("imu_driver")
@@ -98,7 +98,7 @@ void IMUDriver::_update()
   pub_->publish(std::move(msg));
 }
 
-}  // namespace imu_driver
+}  // namespace driver::imu_driver
 
 int main(int argc, char * argv[])
 {
@@ -106,7 +106,7 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   try {
-    auto node = std::make_shared<imu_driver::IMUDriver>();
+    auto node = std::make_shared<driver::imu_driver::IMUDriver>();
     rclcpp::spin(node);
   } catch (std::exception & e) {
     std::cout << e.what() << std::endl;

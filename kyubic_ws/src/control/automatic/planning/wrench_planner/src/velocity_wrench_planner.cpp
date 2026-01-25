@@ -9,7 +9,7 @@
 
 #include "wrench_planner/velocity_wrench_planner.hpp"
 
-namespace planner
+namespace planner::wrench_planner
 {
 
 VelocityWrenchPlanner::VelocityWrenchPlanner(const rclcpp::NodeOptions & options)
@@ -59,7 +59,7 @@ void VelocityWrenchPlanner::odomCallback(const localization_msgs::msg::Odometry:
   odom_ = _msg;
 }
 
-}  // namespace planner
+}  // namespace planner::wrench_planner
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(planner::VelocityWrenchPlanner)
+RCLCPP_COMPONENTS_REGISTER_NODE(planner::wrench_planner::VelocityWrenchPlanner)

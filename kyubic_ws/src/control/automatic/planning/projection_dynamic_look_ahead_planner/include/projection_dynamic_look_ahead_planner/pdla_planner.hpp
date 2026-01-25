@@ -12,7 +12,7 @@
 #include <rclcpp_action/server_goal_handle.hpp>
 #include <timer/timeout.hpp>
 
-namespace planner
+namespace planner::pdla_planner
 {
 
 struct Tolerance
@@ -72,6 +72,6 @@ private:
   size_t step_idx = 0;
 };
 
-}  // namespace planner
+}  // namespace planner::pdla_planner
 
 #endif  // !_PDLA_PLANNER_HPP

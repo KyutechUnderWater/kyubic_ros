@@ -23,7 +23,7 @@ def generate_launch_description():
             log_level_arg,
             Node(
                 package="imu_driver",
-                namespace="driver",
+                namespace="driver/imu_driver",
                 executable="imu_driver",
                 parameters=[config],
                 output="screen",

@@ -29,12 +29,12 @@ ament_auto_add_library(velocity_wrench_planner_component SHARED
 
 # register components
 rclcpp_components_register_node(wrench_planner_component
-  PLUGIN "planner::WrenchPlanner"
+  PLUGIN "planner::wrench_planner::WrenchPlanner"
   EXECUTABLE wrench_planner_component_node
 )
 
 rclcpp_components_register_node(velocity_wrench_planner_component
-  PLUGIN "planner::VelocityWrenchPlanner"
+  PLUGIN "planner::wrench_planner::VelocityWrenchPlanner"
   EXECUTABLE velocity_wrench_planner_component_node
 )
 

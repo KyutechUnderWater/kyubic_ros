@@ -82,7 +82,7 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
 void Localization::depth_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
   odom_msg_->header = msg->header;
-  odom_msg_->status.depth = msg->status.depth;
+  odom_msg_->status.depth.id = msg->status.depth.id;
   odom_msg_->pose.position.z_depth = msg->pose.position.z_depth;
   odom_msg_->twist.linear.z_depth = msg->twist.linear.z_depth;
 
@@ -93,7 +93,7 @@ void Localization::depth_callback(const localization_msgs::msg::Odometry::Unique
 void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
   odom_msg_->header = msg->header;
-  odom_msg_->status.imu = msg->status.imu;
+  odom_msg_->status.imu.id = msg->status.imu.id;
   odom_msg_->pose.orientation = msg->pose.orientation;
   odom_msg_->twist.angular = msg->twist.angular;
 
@@ -104,7 +104,7 @@ void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePt
 void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
   odom_msg_->header = msg->header;
-  odom_msg_->status.dvl = msg->status.dvl;
+  odom_msg_->status.dvl.id = msg->status.dvl.id;
 
   odom_msg_->pose.position.x = msg->pose.position.x;
   odom_msg_->pose.position.y = msg->pose.position.y;

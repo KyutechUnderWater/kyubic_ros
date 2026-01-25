@@ -19,7 +19,7 @@
 using namespace std::chrono_literals;
 namespace fs = std::filesystem;
 
-namespace dvl_driver
+namespace driver::dvl_driver
 {
 
 // ヘルパー: 文字列内のすべての空白を削除 (スペース対策)
@@ -186,12 +186,12 @@ std::string DVLSetting::trim(const std::string & str)
   return str.substr(str_begin, str_end - str_begin + 1);
 }
 
-}  // namespace dvl_driver
+}  // namespace driver::dvl_driver
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<dvl_driver::DVLSetting>();
+  auto node = std::make_shared<driver::dvl_driver::DVLSetting>();
   bool success = node->configure();
   rclcpp::shutdown();
   return success ? 0 : 1;

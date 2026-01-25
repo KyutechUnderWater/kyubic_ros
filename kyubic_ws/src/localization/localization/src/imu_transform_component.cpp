@@ -14,7 +14,7 @@
 #include <functional>
 #include <numbers>
 
-namespace localization
+namespace localization::imu
 {
 
 IMUTransform::IMUTransform(const rclcpp::NodeOptions & options) : Node("imu_transform", options)
@@ -38,7 +38,7 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
   if (msg->status.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The imu data is invalid");
     odom_msg->header = msg->header;
-    odom_msg->status.imu = localization_msgs::msg::Status::ERROR;
+    odom_msg->status.imu.id = common_msgs::msg::Status::ERROR;
   } else {
     // z-axis transform
     double gyro_x = msg->gyro.y;
@@ -83,7 +83,7 @@ void IMUTransform::reset_callback(
 
 void IMUTransform::reset() { offset_angle = {roll, pitch, yaw}; }
 
-}  // namespace localization
+}  // namespace localization::imu
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(localization::IMUTransform)
+RCLCPP_COMPONENTS_REGISTER_NODE(localization::imu::IMUTransform)

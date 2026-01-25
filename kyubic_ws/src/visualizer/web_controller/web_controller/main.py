@@ -275,7 +275,7 @@ class WebVisualizerNode(Node):
         pos = msg.pose.position
         orient = msg.pose.orientation
 
-        if msg.status.dvl != 2:
+        if msg.status.dvl.id != 2:
             self.update_robot(pos, orient)
             self.update_trajectory(pos)
 

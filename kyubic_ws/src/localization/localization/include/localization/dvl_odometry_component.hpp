@@ -22,10 +22,10 @@
 #include "std_srvs/srv/trigger.hpp"
 
 /**
- * @namespace localization
+ * @namespace localization::dvl
  * @brief localization
  */
-namespace localization
+namespace localization::dvl
 {
 
 /**
@@ -82,6 +82,6 @@ public:
    */
   void reset();
 };
-}  // namespace localization
+}  // namespace localization::dvl
 
 #endif

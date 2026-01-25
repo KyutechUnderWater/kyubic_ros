@@ -16,7 +16,7 @@
 
 using namespace std::chrono_literals;
 
-namespace planner
+namespace planner::pdla_planner
 {
 
 PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_planner", options)
@@ -180,19 +180,19 @@ void PDLAPlanner::_runPlannerLogic(
   }
 
   if (
-    odom_copy->status.depth == localization_msgs::msg::Status::ERROR ||
-    odom_copy->status.imu == localization_msgs::msg::Status::ERROR ||
-    odom_copy->status.dvl == localization_msgs::msg::Status::ERROR) {
+    odom_copy->status.depth.id == common_msgs::msg::Status::ERROR ||
+    odom_copy->status.imu.id == common_msgs::msg::Status::ERROR ||
+    odom_copy->status.dvl.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
 
     // double force_z = 0.0;
     // if (
-    //   odom_copy->status.depth != localization_msgs::msg::Status::ERROR &&
+    //   odom_copy->status.depth.id != common_msgs::msg::Status::ERROR &&
     //   z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
     //   force_z = p_pid_ctrl_->pid_z_update(
     //     current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.position.z_depth);
     // } else if (
-    //   odom_copy->odom.status.dvl != localization_msgs::msg::Status::ERROR &&
+    //   odom_copy->odom.status.dvl.id != common_msgs::msg::Status::ERROR &&
     //   z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
     //   force_z = -p_pid_ctrl_->pid_z_update(
     //     current_twst.linear.z_altitude, current_pose.position.z_altitude,
@@ -374,7 +374,7 @@ void PDLAPlanner::timerCallback()
   }
 }
 
-}  // namespace planner
+}  // namespace planner::pdla_planner
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(planner::PDLAPlanner)
+RCLCPP_COMPONENTS_REGISTER_NODE(planner::pdla_planner::PDLAPlanner)

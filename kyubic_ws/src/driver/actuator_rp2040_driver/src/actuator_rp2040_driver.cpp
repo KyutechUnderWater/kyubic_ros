@@ -13,7 +13,7 @@
 
 using namespace std::chrono_literals;
 
-namespace actuator_rp2040_driver
+namespace driver::actuator_rp2040_driver
 {
 
 ActuatorRP2040::ActuatorRP2040(const rclcpp::NodeOptions & options)
@@ -182,7 +182,7 @@ void ActuatorRP2040::heartbeat_callback(std_msgs::msg::Bool::SharedPtr _msg)
   if (heartbeat) timeout_->reset(this->get_clock()->now());
 }
 
-}  // namespace actuator_rp2040_driver
+}  // namespace driver::actuator_rp2040_driver
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(actuator_rp2040_driver::ActuatorRP2040)
+RCLCPP_COMPONENTS_REGISTER_NODE(driver::actuator_rp2040_driver::ActuatorRP2040)

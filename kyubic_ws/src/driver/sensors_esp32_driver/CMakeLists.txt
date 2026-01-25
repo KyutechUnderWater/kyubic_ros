@@ -61,7 +61,7 @@ macro(register_components ClassName FileStem)
   set(node_name "${FileStem}_component_node")
 
   rclcpp_components_register_node(${PROJECT_NAME}_component
-    PLUGIN "${PROJECT_NAME}::${ClassName}"
+    PLUGIN "driver::${PROJECT_NAME}::${ClassName}"
     EXECUTABLE ${node_name}
   )
 endmacro()

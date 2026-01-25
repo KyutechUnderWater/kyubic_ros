@@ -160,8 +160,8 @@ void MeasureParam::pid_update()
   auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
 
   if (
-    odom_status.depth == localization_msgs::msg::Status::ERROR ||
-    odom_status.imu == localization_msgs::msg::Status::ERROR) {
+    odom_status.depth.id == common_msgs::msg::Status::ERROR ||
+    odom_status.imu.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
 
     double force_z = 0.0;

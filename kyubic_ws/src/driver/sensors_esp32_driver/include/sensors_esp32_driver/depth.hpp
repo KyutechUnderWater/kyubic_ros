@@ -22,7 +22,7 @@
  * @namespace depth_driver
  * @brief For depth driver
  */
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 /**
@@ -62,6 +62,6 @@ private:
   void ros_callback(const driver_msgs::msg::BoolStamped & _msg);
 };
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #endif

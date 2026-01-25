@@ -20,10 +20,10 @@
 #include "imu_driver/g366.hpp"
 
 /**
- * @namespace imu_driver
+ * @namespace driver::imu_driver
  * @brief For imu driver
  */
-namespace imu_driver
+namespace driver::imu_driver
 {
 
 /**
@@ -59,6 +59,6 @@ private:
   void _update();
 };
 
-}  // namespace imu_driver
+}  // namespace driver::imu_driver
 
 #endif

@@ -19,10 +19,10 @@
 #include <std_srvs/srv/trigger.hpp>
 
 /**
- * @namespace localization
+ * @namespace localization::depth
  * @brief localization
  */
-namespace localization
+namespace localization::depth
 {
 
 /** @brief parameter of Exponential Moving Average */
@@ -84,6 +84,6 @@ public:
   void reset();
 };
 
-}  // namespace localization
+}  // namespace localization::depth
 
 #endif  // !_DEPTH_ODOMETRY_HPP

@@ -16,7 +16,7 @@
 
 using namespace std::chrono_literals;
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 RtcGnss::RtcGnss(const rclcpp::NodeOptions & options) : Node("rtc_gnss", options)
@@ -62,7 +62,7 @@ void RtcGnss::protolink_callback(const ProtoRtcGnss & _msg)
     _msg.longitude(), _msg.altitude(), _msg.satellites());
 }
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(sensors_esp32_driver::RtcGnss)
+RCLCPP_COMPONENTS_REGISTER_NODE(driver::sensors_esp32_driver::RtcGnss)

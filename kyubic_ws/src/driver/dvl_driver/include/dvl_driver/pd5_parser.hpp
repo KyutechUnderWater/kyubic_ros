@@ -14,7 +14,7 @@
 
 #include "dvl_driver/pd5_types.hpp"
 
-namespace dvl_driver::path_finder::pd5
+namespace driver::dvl_driver::path_finder::pd5
 {
 
 /**
@@ -37,6 +37,6 @@ public:
   bool parse(const unsigned char * buffer, size_t length, Pd5Ensemble & out_data);
 };
 
-}  // namespace dvl_driver::path_finder::pd5
+}  // namespace driver::dvl_driver::path_finder::pd5
 
 #endif  // _PD5_PARSER_HPP

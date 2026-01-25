@@ -46,7 +46,7 @@ def generate_launch_description():
         namespace="",
         remappings=[
             ("joy_common", "/joy_common/joy_common"),
-            ("robot_force", "/driver/robot_force"),
+            ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
         ],
         parameters=[joy2wrench_config],
         output="screen",
@@ -58,7 +58,7 @@ def generate_launch_description():
         name="emergencyNode",
         namespace="",
         remappings=[
-            ("robot_force", "/driver/robot_force"),
+            ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
         ],
         parameters=[emergency_surfacing_config],
         output="screen",

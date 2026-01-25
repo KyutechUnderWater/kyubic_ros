@@ -44,7 +44,7 @@ ament_target_dependencies(qr_planner_component
 
 # ノード登録
 rclcpp_components_register_node(qr_planner_component
-  PLUGIN "planner::QRPlanner"
+  PLUGIN "planner::qr_planner::QRPlanner"
   EXECUTABLE qr_planner_node
 )
 
@@ -70,6 +70,7 @@ add_library(system_health_check_plugins SHARED ./src-check/check.cpp)
 ament_target_dependencies(system_health_check_plugins
   rclcpp
   system_health_check
+  localization_msgs
 )
 
 # Install settings for pluginlib

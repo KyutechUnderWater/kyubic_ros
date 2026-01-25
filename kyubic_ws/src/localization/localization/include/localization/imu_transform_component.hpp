@@ -14,10 +14,10 @@
 #include <std_srvs/srv/trigger.hpp>
 
 /**
- * @namespace localization
+ * @namespace localization::imu
  * @brief localization
  */
-namespace localization
+namespace localization::imu
 {
 
 /**
@@ -64,4 +64,4 @@ public:
   void reset();
 };
 
-}  // namespace localization
+}  // namespace localization::imu

@@ -12,7 +12,7 @@
 
 #include <cstdint>
 
-namespace dvl_driver::utils
+namespace driver::dvl_driver::utils
 {
 
 /**
@@ -47,6 +47,6 @@ inline uint32_t get_u32(const unsigned char * ptr)
  */
 inline int32_t get_s32(const unsigned char * ptr) { return static_cast<int32_t>(get_u32(ptr)); }
 
-}  // namespace dvl_driver::utils
+}  // namespace driver::dvl_driver::utils
 
 #endif  // _ENDIAN_UTILS_HPP

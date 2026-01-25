@@ -18,10 +18,10 @@
 #include "timer/timeout.hpp"
 
 /**
- * @namespace dvl_driver
+ * @namespace driver::dvl_driver
  * @brief Namespace for DVL driver components
  */
-namespace dvl_driver
+namespace driver::dvl_driver
 {
 
 /**
@@ -123,6 +123,6 @@ private:
     driver_msgs::srv::Command::Response::SharedPtr response);
 };
 
-}  // namespace dvl_driver
+}  // namespace driver::dvl_driver
 
 #endif  // _DVL_DRIVER_HPP

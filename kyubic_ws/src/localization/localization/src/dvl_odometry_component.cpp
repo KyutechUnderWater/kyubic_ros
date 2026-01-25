@@ -12,7 +12,7 @@
 
 using namespace std::chrono_literals;
 
-namespace localization
+namespace localization::dvl
 {
 
 DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odometry", options)
@@ -42,7 +42,7 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
   if (!msg->velocity_valid) {
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
     odom_msg->header = msg->header;
-    odom_msg->status.dvl = localization_msgs::msg::Status::ERROR;
+    odom_msg->status.dvl.id = common_msgs::msg::Status::ERROR;
   } else {
     // Calculate update period (delta t)
     auto now = this->get_clock()->now();
@@ -105,7 +105,7 @@ void DVLOdometry::reset()
   pos_x = pos_y = 0.0;
 }
 
-}  // namespace localization
+}  // namespace localization::dvl
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(localization::DVLOdometry)
+RCLCPP_COMPONENTS_REGISTER_NODE(localization::dvl::DVLOdometry)

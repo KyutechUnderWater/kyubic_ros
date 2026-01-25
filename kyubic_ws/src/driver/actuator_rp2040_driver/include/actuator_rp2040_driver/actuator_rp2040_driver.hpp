@@ -18,7 +18,7 @@
 #include <std_msgs/msg/bool.hpp>
 #include <timer/timeout.hpp>
 
-namespace actuator_rp2040_driver
+namespace driver::actuator_rp2040_driver
 {
 
 /**
@@ -88,6 +88,6 @@ private:
   float _restrict_thrust(std::array<float, NUM_THRUSTERS> & thrusts);
 };
 
-}  // namespace actuator_rp2040_driver
+}  // namespace driver::actuator_rp2040_driver
 
 #endif  // _ACTUATOR_RP2040_DRIVER_HPP

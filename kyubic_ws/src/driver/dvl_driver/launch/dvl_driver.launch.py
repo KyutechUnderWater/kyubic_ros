@@ -23,7 +23,7 @@ def generate_launch_description():
             log_level_arg,
             Node(
                 package="dvl_driver",
-                namespace="driver",
+                namespace="driver/dvl_driver",
                 executable="dvl_driver",
                 parameters=[config],
                 output="screen",

@@ -23,13 +23,13 @@ def generate_launch_description():
             log_level_arg,
             Node(
                 package="qr_planner",
-                namespace="planner",
+                namespace="planner/qr_planner",
                 executable="qr_planner_node",
                 name="qr_planner",
                 remappings=[
                     ("odom", "/localization/odom"),
-                    ("zed_power", "/sensors_esp32_driver/zed_power"),
-                    ("goal_current_odom", "/planner/goal_current_odom"),
+                    ("zed_power", "/driver/sensors_esp32_driver/zed_power"),
+                    ("goal_current_odom", "/planner/wrench_planner/goal_current_odom"),
                 ],
                 parameters=[config],
                 output="screen",

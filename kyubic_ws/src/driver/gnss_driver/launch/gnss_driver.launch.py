@@ -22,7 +22,7 @@ def generate_launch_description():
         package="gnss_driver",
         executable="gnss_driver",
         name="gnss_publisher_node",  # これはノード名
-        namespace="driver",  # これが名前空間
+        namespace="driver/gnss_driver",  # これが名前空間
         output="screen",
         arguments=["--ros-args", "--log-level", log_level_config],
     )

@@ -28,7 +28,7 @@ target_link_libraries(${PROJECT_NAME}_component
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}_component
-  PLUGIN "logic_distro_rp2040_driver::LogicDistroRP2040"
+  PLUGIN "driver::logic_distro_rp2040_driver::LogicDistroRP2040"
   EXECUTABLE ${PROJECT_NAME}_component_node
 )
 

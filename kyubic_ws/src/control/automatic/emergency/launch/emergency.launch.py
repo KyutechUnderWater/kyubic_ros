@@ -22,7 +22,7 @@ def generate_launch_description():
         output="screen",
         parameters=[config],
         remappings=[
-            ("robot_force", "/driver/robot_force"),
+            ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
         ],
     )
 

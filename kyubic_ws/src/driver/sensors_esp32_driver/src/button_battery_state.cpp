@@ -15,7 +15,7 @@
 
 using namespace std::chrono_literals;
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 ButtonBatteryState::ButtonBatteryState(const rclcpp::NodeOptions & options)
@@ -63,7 +63,7 @@ void ButtonBatteryState::protolink_callback(const ProtoButtonBatteryState & _msg
     this->get_logger(), "Publish ---> Leak: %d, RTC: %d", _msg.battery_leak(), _msg.battery_rtc());
 }
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(sensors_esp32_driver::ButtonBatteryState)
+RCLCPP_COMPONENTS_REGISTER_NODE(driver::sensors_esp32_driver::ButtonBatteryState)

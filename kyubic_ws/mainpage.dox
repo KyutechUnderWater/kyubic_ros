@@ -181,20 +181,20 @@ ros2_start_nvidia  # Start Container
  * @brief 緊急時対応システム @{ @namespace emergency @} */
 
 /** @defgroup dvl_driver DVL Driver
- * @brief Teledyne DVLドライバ @{ @namespace dvl_driver @} */
+ * @brief Teledyne DVLドライバ @{ @namespace driver::dvl_driver @} */
 
 /** @defgroup imu_driver IMU Driver
- * @brief 慣性計測装置ドライバ @{ @namespace imu_driver @} */
+ * @brief 慣性計測装置ドライバ @{ @namespace driver::imu_driver @} */
 
 /** @defgroup actuator_driver Actuators
  * @brief スラスタ・サーボ制御 (RP2040) @{
  * @namespace actuator_rp2040_driver
- * @namespace logic_distro_rp2040_driver
+ * @namespace driver::logic_distro_rp2040_driver
  * @} */
 
 /** @defgroup sensor_driver Sensors
  * @brief 環境センサドライバ (ESP32/GNSS) @{
- * @namespace sensors_esp32_driver
+ * @namespace driver::sensors_esp32_driver
  * @namespace gnss_driver
  * @} */
 

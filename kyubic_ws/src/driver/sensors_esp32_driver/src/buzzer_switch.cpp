@@ -9,7 +9,7 @@
 
 #include "sensors_esp32_driver/buzzer_switch.hpp"
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 BuzzerSwitch::BuzzerSwitch(const rclcpp::NodeOptions & options) : Node("buzzer_switch", options)
@@ -40,7 +40,7 @@ BuzzerSwitch::BuzzerSwitch(const rclcpp::NodeOptions & options) : Node("buzzer_s
     });
 }
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(sensors_esp32_driver::BuzzerSwitch)
+RCLCPP_COMPONENTS_REGISTER_NODE(driver::sensors_esp32_driver::BuzzerSwitch)

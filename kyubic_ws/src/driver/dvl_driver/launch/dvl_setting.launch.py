@@ -16,8 +16,8 @@ def generate_launch_description():
     return LaunchDescription(
         [
             Node(
-                namespace="driver/dvl_driver",
                 package="dvl_driver",
+                namespace="driver/dvl_driver",
                 executable="dvl_setting",
                 name="dvl_setting",
                 output="screen",

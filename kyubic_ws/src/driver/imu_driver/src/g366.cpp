@@ -17,7 +17,7 @@
 
 using namespace std::chrono_literals;
 
-namespace imu_driver::g366
+namespace driver::imu_driver::g366
 {
 
 G366::G366(const char * portname, const int baudrate) : portname_(portname), baudrate_(baudrate)
@@ -369,4 +369,4 @@ std::shared_ptr<DATA> G366::get_data() { return std::make_shared<DATA>(data); }
 //   serial_->write(&reset_comm, sizeof(reset_comm));
 // }
 
-}  // namespace imu_driver::g366
+}  // namespace driver::imu_driver::g366

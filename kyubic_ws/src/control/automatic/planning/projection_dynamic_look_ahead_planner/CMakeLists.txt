@@ -38,7 +38,7 @@ ament_target_dependencies(pdla_planner_component
 
 # register components
 rclcpp_components_register_node(pdla_planner_component
-  PLUGIN "planner::PDLAPlanner"
+  PLUGIN "planner::pdla_planner::PDLAPlanner"
   EXECUTABLE pdla_planner_component_node
 )
 

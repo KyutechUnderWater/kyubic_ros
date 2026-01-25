@@ -15,7 +15,7 @@
 
 using namespace std::chrono_literals;
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 Leak::Leak(const rclcpp::NodeOptions & options) : rclcpp::Node("leak", options)
@@ -57,7 +57,7 @@ void Leak::protolink_callback(const ProtoBoolStamped & _msg)
   RCLCPP_DEBUG(this->get_logger(), "Protolink Publish  --->  data: %d\n", _msg.data());
 }
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(sensors_esp32_driver::Leak)
+RCLCPP_COMPONENTS_REGISTER_NODE(driver::sensors_esp32_driver::Leak)

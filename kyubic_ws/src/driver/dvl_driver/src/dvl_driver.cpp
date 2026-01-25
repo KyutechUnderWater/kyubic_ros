@@ -11,7 +11,7 @@
 
 using namespace std::chrono_literals;
 
-namespace dvl_driver
+namespace driver::dvl_driver
 {
 
 namespace
@@ -306,7 +306,7 @@ void DVLDriver::sendCommandCallback(
   if (!break_cmd) command_mode = false;
 }
 
-}  // namespace dvl_driver
+}  // namespace driver::dvl_driver
 
 /**
  * @brief Main entry point
@@ -317,7 +317,7 @@ int main(int argc, char * argv[])
   rclcpp::init(argc, argv);
 
   try {
-    auto node = std::make_shared<dvl_driver::DVLDriver>();
+    auto node = std::make_shared<driver::dvl_driver::DVLDriver>();
     rclcpp::spin(node);
   } catch (const std::exception & e) {
     std::cerr << "Exception in DVL Driver: " << e.what() << std::endl;

@@ -9,7 +9,7 @@
 
 #include "wrench_planner/wrench_planner.hpp"
 
-namespace planner
+namespace planner::wrench_planner
 {
 
 WrenchPlanner::WrenchPlanner(const rclcpp::NodeOptions & options) : Node("wrench_planner", options)
@@ -96,7 +96,7 @@ void WrenchPlanner::goalCurrentOdomCallback(const planner_msgs::msg::WrenchPlan:
   _update_wrench();
 }
 
-}  // namespace planner
+}  // namespace planner::wrench_planner
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(planner::WrenchPlanner)
+RCLCPP_COMPONENTS_REGISTER_NODE(planner::wrench_planner::WrenchPlanner)

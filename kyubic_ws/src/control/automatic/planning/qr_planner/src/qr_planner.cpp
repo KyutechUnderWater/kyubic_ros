@@ -18,7 +18,7 @@
 #include <cstring>
 #include <sstream>
 
-namespace planner
+namespace planner::qr_planner
 {
 
 QRPlanner::QRPlanner(const rclcpp::NodeOptions & options) : Node("qr_planner", options)
@@ -463,7 +463,7 @@ bool QRPlanner::_checkReached(const PoseData & target, const Tolerance & toleran
   return false;
 }
 
-}  // namespace planner
+}  // namespace planner::qr_planner
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(planner::QRPlanner)
+RCLCPP_COMPONENTS_REGISTER_NODE(planner::qr_planner::QRPlanner)

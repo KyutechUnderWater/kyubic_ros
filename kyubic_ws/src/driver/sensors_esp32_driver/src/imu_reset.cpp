@@ -11,7 +11,7 @@
 
 #include <protolink/udp_protocol.hpp>
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 ImuReset::ImuReset(const rclcpp::NodeOptions & options) : rclcpp::Node("imu_reset", options)
@@ -39,7 +39,7 @@ ImuReset::ImuReset(const rclcpp::NodeOptions & options) : rclcpp::Node("imu_rese
     });
 }
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(sensors_esp32_driver::ImuReset)
+RCLCPP_COMPONENTS_REGISTER_NODE(driver::sensors_esp32_driver::ImuReset)

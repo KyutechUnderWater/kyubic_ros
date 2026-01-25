@@ -24,7 +24,7 @@ ament_auto_add_library(${PROJECT_NAME}_component SHARED ./src/actuator_rp2040_dr
 target_link_libraries(${PROJECT_NAME}_component driver_msgs__Actuator_proto)
 
 rclcpp_components_register_node(${PROJECT_NAME}_component
-  PLUGIN "actuator_rp2040_driver::ActuatorRP2040"
+  PLUGIN "driver::actuator_rp2040_driver::ActuatorRP2040"
   EXECUTABLE ${PROJECT_NAME}_component_node
 )
 

@@ -68,9 +68,9 @@ class GlobalPosePlotter(Node):
         """
         # ステータスをチェックし、いずれかが 2 (ERROR) の場合はデータを追加しない
         if (
-            msg.status.depth == self.STATUS_ERROR
-            or msg.status.imu == self.STATUS_ERROR
-            or msg.status.dvl == self.STATUS_ERROR
+            msg.status.depth.id == self.STATUS_ERROR
+            or msg.status.imu.id == self.STATUS_ERROR
+            or msg.status.dvl.id == self.STATUS_ERROR
         ):
             self.get_logger().warn("エラー状態のデータを受信したため、プロットをスキップします。")
             return
