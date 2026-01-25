@@ -145,7 +145,7 @@ void Localization::_calc_global_pose(const localization_msgs::msg::Odometry::Sha
 
   common::Geodetic current_geodetic = geo_converter_->xy2geo({plane_x, plane_y, 0.0, 0.0});
 
-  auto global_pos_msg = odom_->pose.global_pos;
+  auto & global_pos_msg = odom_->pose.global_pos;
   global_pos_msg.current_pose.plane_x = plane_x;
   global_pos_msg.current_pose.plane_y = plane_y;
   global_pos_msg.current_pose.latitude = current_geodetic.latitude;
