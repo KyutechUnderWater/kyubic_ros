@@ -85,7 +85,7 @@ void JoyCommon::_joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
     joy_msg->buttons.down = msg->buttons[14];
     joy_msg->buttons.left = msg->buttons[15];
     joy_msg->buttons.right = msg->buttons[16];
-  } else if (device_name == "Logicool Dual Action" || device_name == "Logitech Gamepad F310") {
+  } else if (device_name == "Logicool Dual Action") {
     joy_msg->stick.lx = msg->axes[0];
     joy_msg->stick.ly = msg->axes[1];
     joy_msg->stick.rx = msg->axes[2];
