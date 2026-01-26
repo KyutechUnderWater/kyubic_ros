@@ -120,9 +120,9 @@ void ZeroOrderHold::odomCallback(const localization_msgs::msg::Odometry::SharedP
 
   if (is_timeout) {
     if (
-      _msg->status.depth == localization_msgs::msg::Status::ERROR ||
-      _msg->status.imu == localization_msgs::msg::Status::ERROR ||
-      _msg->status.dvl == localization_msgs::msg::Status::ERROR) {
+      _msg->status.depth.id == common_msgs::msg::Status::ERROR ||
+      _msg->status.imu.id == common_msgs::msg::Status::ERROR ||
+      _msg->status.dvl.id == common_msgs::msg::Status::ERROR) {
       RCLCPP_ERROR(this->get_logger(), "Odometry is invalid.");
       return;
     }

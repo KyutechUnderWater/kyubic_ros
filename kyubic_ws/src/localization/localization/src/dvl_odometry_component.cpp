@@ -44,7 +44,7 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
-  if (!msg->velocity_valid || imu_msg_->status.imu == localization_msgs::msg::Status::ERROR) {
+  if (!msg->velocity_valid || imu_msg_->status.imu.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
     odom_msg->header = msg->header;
     odom_msg->status.dvl.id = common_msgs::msg::Status::ERROR;

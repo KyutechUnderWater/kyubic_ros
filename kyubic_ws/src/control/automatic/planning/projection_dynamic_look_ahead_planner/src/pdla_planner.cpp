@@ -191,20 +191,20 @@ void PDLAPlanner::_runPlannerLogic(
     msg->z_mode = target_pose_.at(step_idx).z_mode;
 
     if (
-      odom_copy->status.depth != localization_msgs::msg::Status::ERROR &&
+      odom_copy->status.depth.id != common_msgs::msg::Status::ERROR &&
       target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
       msg->targets.z = target_pose_.at(step_idx).z;
       msg->master.z = odom_copy->pose.position.z_depth;
       msg->slave.z = odom_copy->twist.linear.z_depth;
     } else if (
-      odom_copy->status.dvl != localization_msgs::msg::Status::ERROR &&
+      odom_copy->status.dvl.id != common_msgs::msg::Status::ERROR &&
       target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
       msg->targets.z = target_pose_.at(step_idx).z;
       msg->master.z = odom_copy->pose.position.z_altitude;
       msg->slave.z = odom_copy->twist.linear.z_altitude;
     }
 
-    if (odom_copy->status.imu != localization_msgs::msg::Status::ERROR) {
+    if (odom_copy->status.imu.id != common_msgs::msg::Status::ERROR) {
       msg->targets.roll = target_pose_.at(step_idx).roll;
       msg->targets.yaw = target_pose_.at(step_idx).yaw;
 
@@ -215,7 +215,7 @@ void PDLAPlanner::_runPlannerLogic(
       msg->slave.yaw = odom_copy->twist.angular.z;
     }
 
-    if (odom_copy->status.dvl != localization_msgs::msg::Status::ERROR) {
+    if (odom_copy->status.dvl.id != common_msgs::msg::Status::ERROR) {
       msg->targets.x = target_pose_.at(step_idx).x;
       msg->targets.y = target_pose_.at(step_idx).y;
 
