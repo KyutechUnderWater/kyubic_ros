@@ -7,8 +7,10 @@
  * @details DVLで取得した速度を累積して，位置を算出
  *********************************************************/
 
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Vector3.h>
+
 #include <localization/dvl_odometry_component.hpp>
-#include <numbers>
 
 using namespace std::chrono_literals;
 
@@ -17,6 +19,10 @@ namespace localization
 
 DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odometry", options)
 {
+  offset[0] = this->declare_parameter("offset_x", 0.0);
+  offset[1] = this->declare_parameter("offset_y", 0.0);
+  offset[2] = this->declare_parameter("offset_z", 0.0);
+
   imu_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
@@ -38,45 +44,47 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
-  // return if velocity error, otherwise calculate odometry
-  if (!msg->velocity_valid) {
+  if (!msg->velocity_valid || imu_msg_->status.imu == localization_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
     odom_msg->header = msg->header;
     odom_msg->status.dvl = localization_msgs::msg::Status::ERROR;
   } else {
-    // Calculate update period (delta t)
     auto now = this->get_clock()->now();
     double dt = (now - pre_time).nanoseconds() * 1e-9;
     pre_time = now;
 
-    // Convert to warld coordinate system (right-handed coordinate system, and z-axis downward)
-    // DVL coordinate system is right-handed cooordinate system, and z-axis upward.
-    double heading_rad = imu_msg_->pose.orientation.z * std::numbers::pi / 180;
-    double vel_x = msg->velocity.x * cos(heading_rad) - msg->velocity.y * sin(heading_rad);
-    double vel_y = msg->velocity.x * sin(heading_rad) + msg->velocity.y * cos(heading_rad);
+    tf2::Vector3 lever_arm(offset[0], offset[1], offset[2]);
+    tf2::Vector3 vel_raw(msg->velocity.x, msg->velocity.y, msg->velocity.z);
 
-    // Integral of velocity
-    pos_x += vel_x * dt;
-    pos_y += vel_y * dt;
+    tf2::Vector3 angular_vel(
+      imu_msg_->twist.angular.x * RADIAN_SCALE, imu_msg_->twist.angular.y * RADIAN_SCALE,
+      imu_msg_->twist.angular.z * RADIAN_SCALE);
 
-    // Publish
+    tf2::Quaternion q_rot;
+    q_rot.setRPY(
+      imu_msg_->pose.orientation.x * RADIAN_SCALE, imu_msg_->pose.orientation.y * RADIAN_SCALE,
+      imu_msg_->pose.orientation.z * RADIAN_SCALE);
+
+    tf2::Vector3 vel_robot_body = vel_raw - angular_vel.cross(lever_arm);
+
+    tf2::Vector3 vel_robot_world = tf2::quatRotate(q_rot, vel_robot_body);
+
+    pos_x += vel_robot_world.x() * dt;
+    pos_y += vel_robot_world.y() * dt;
+
     {
-      // Copy msg
       odom_msg->header = msg->header;
-      odom_msg->twist.angular = imu_msg_->twist.angular;  // angle velocity
 
-      // Add position
       odom_msg->pose.position.x = pos_x;
       odom_msg->pose.position.y = pos_y;
       odom_msg->pose.position.z_altitude = msg->altitude;
 
-      // Add orientation
       odom_msg->pose.orientation = imu_msg_->pose.orientation;
+      odom_msg->twist.angular = imu_msg_->twist.angular;
 
-      // Add linear velocity
-      odom_msg->twist.linear.x = vel_x;
-      odom_msg->twist.linear.y = vel_y;
-      odom_msg->twist.linear.z_altitude = msg->velocity.z;
+      odom_msg->twist.linear.x = vel_robot_world.x();
+      odom_msg->twist.linear.y = vel_robot_world.y();
+      odom_msg->twist.linear.z_altitude = vel_robot_world.z();
     }
     RCLCPP_DEBUG(this->get_logger(), "Calculated DVL odometry");
   }
