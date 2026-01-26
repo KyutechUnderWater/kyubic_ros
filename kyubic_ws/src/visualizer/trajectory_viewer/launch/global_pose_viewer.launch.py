@@ -13,10 +13,10 @@ def generate_launch_description():
         "global_pose_anchor.param.yaml",
     )
 
-    global_pose_topic_arg = DeclareLaunchArgument(
-        "global_pose_topic_name",
-        default_value="/localization/global_pose",
-        description="Topic name for global_pose messages",
+    odom_topic_arg = DeclareLaunchArgument(
+        "odom_topic_name",
+        default_value="/localization/odom",
+        description="Topic name for odom messages",
     )
 
     log_level_arg = DeclareLaunchArgument(
@@ -33,7 +33,7 @@ def generate_launch_description():
         output="screen",
         emulate_tty=True,
         remappings=[
-            ("global_pose", LaunchConfiguration("global_pose_topic_name")),
+            ("odom", LaunchConfiguration("odom_topic_name")),
         ],
         parameters=[config],
         arguments=["--ros-args", "--log-level", LaunchConfiguration("log_level")],
@@ -41,4 +41,4 @@ def generate_launch_description():
 
     # --- LaunchDescriptionの生成 ---
     # 宣言した引数とノードをLaunchDescriptionに渡して返す
-    return LaunchDescription([global_pose_topic_arg, log_level_arg, viewer_node])
+    return LaunchDescription([odom_topic_arg, log_level_arg, viewer_node])
