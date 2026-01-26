@@ -11,7 +11,6 @@
 
 #include <functional>
 #include <numeric>
-#include <rclcpp/logging.hpp>
 
 #include "localization_msgs/msg/status.hpp"
 
@@ -20,8 +19,6 @@ namespace localization::depth
 
 DepthOdometry::DepthOdometry(const rclcpp::NodeOptions & options) : Node("depth_odometry", options)
 {
-  fresh_water = this->declare_parameter("fresh_water", false);
-
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   pub_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
@@ -48,6 +45,9 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
     auto now = this->get_clock()->now();
     double dt = (now - pre_time).nanoseconds() * 1e-9;
     pre_time = now;
+
+    // NOTE: Temporary resolution of reception cycle irregularties
+    if (dt < 0.04 || 0.06 < dt) dt = 0.05;
 
     // calculate exponential moving average
     pos_z = EMA_ALPHA * msg->depth + (1.0 - EMA_ALPHA) * pre_pos_z;

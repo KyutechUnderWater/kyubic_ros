@@ -65,6 +65,7 @@ def generate_launch_description():
                         "/localization/imu/transformed",
                     ),
                 ],
+                parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication

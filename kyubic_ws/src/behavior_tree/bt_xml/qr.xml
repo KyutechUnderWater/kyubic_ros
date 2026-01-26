@@ -12,26 +12,12 @@
               topic_name="/talker"/>
       <ResetLocalization service_name="/localization/reset"
                          timeout_sec="2.0"/>
-      <LifecycleManager name="ActivateZOHNode"
-                        node_name="planner/wrench_planner/zoh_wrench_planner_component"
-                        transition="activate"
-                        timeout_sec="1"/>
       <Talker name="AutomatickTalker"
-              message="Waypoint Action Start"
+              message="QR Action Start"
               topic_name="/talker"/>
-      <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-                      csv_file_path="assets/sample/handy_test.csv"/>
+      <QrAction action_name="/planner/qr_planner/qr_plan"/>
       <Talker name="AutomatickTalker"
-              message="Waypoint Action Successful"
-              topic_name="/talker"/>
-      <Sleep msec="10000"/>
-      <Talker name="AutomatickTalker"
-              message="Waypoint2 Action Start"
-              topic_name="/talker"/>
-      <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-                      csv_file_path="assets/sample/arrow1_depth_generated.csv"/>
-      <Talker name="AutomatickTalker"
-              message="Waypoint2 Action Successful"
+              message="QR Action Successful"
               topic_name="/talker"/>
       <AlwaysRunning name="AutoRunning"/>
     </Sequence>
@@ -44,10 +30,6 @@
                           node_name="manualNode"
                           transition="configure"
                           timeout_sec="1"/>
-        <LifecycleManager name="ConfigureZOHNode"
-                          node_name="planner/wrench_planner/zoh_wrench_planner_component"
-                          transition="configure"
-                          timeout_sec="1"/>
         <LifecycleManager name="ConfigureEmergencyNode"
                           node_name="emergencyNode"
                           transition="configure"
@@ -58,13 +40,6 @@
 
   <BehaviorTree ID="Emergency">
     <Sequence name="EmergencySequence">
-      <Fallback>
-        <LifecycleManager name="DeactivateZOHNode"
-                          node_name="planner/wrench_planner/zoh_wrench_planner_component"
-                          transition="deactivate"
-                          timeout_sec="1"/>
-        <AlwaysSuccess/>
-      </Fallback>
       <Talker name="EmergencyTalker"
               message="Emergency Mode Start"
               topic_name="/talker"/>
@@ -97,7 +72,8 @@
                        case_2="auto"
                        variable="{mode}">
                 <SubTree ID="Manual"/>
-                <SubTree ID="Auto"/>
+                <SubTree ID="Auto"
+                         selected_course="{selected_course}"/>
                 <AlwaysFailure/>
               </Switch2>
             </ReactiveSequence>
@@ -137,6 +113,11 @@
       <input_port name="transition"/>
       <input_port name="timeout_sec"/>
     </Action>
+    <Action ID="QrAction"
+            editable="true">
+      <input_port name="action_name"
+                  default="qr_action"/>
+    </Action>
     <Action ID="ResetLocalization"
             editable="true">
       <input_port name="service_name"
@@ -155,12 +136,6 @@
       <input_port name="manual_button"/>
       <input_port name="auto_button"/>
       <output_port name="mode"/>
-    </Action>
-    <Action ID="WaypointAction"
-            editable="true">
-      <input_port name="action_name"
-                  default="planner/pdla_planner/pdla_plan"/>
-      <input_port name="csv_file_path"/>
     </Action>
   </TreeNodesModel>
 

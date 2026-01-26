@@ -1,6 +1,9 @@
-/localization/depth/depth_odometry_component:
+/localization/dvl/dvl_odometry_component:
   ros__parameters:
-    fresh_water: true # True if fresh water, otherwise false
+    offset_x: 0.4375
+    offset_y: 0.0
+    offset_z: 0.0
+
 
 /localization/localization_component:
   ros__parameters:
@@ -8,3 +11,4 @@
     depth: true # If true, depth enable
     imu: true # If true, imu enable
     dvl: true # If true, dvl enable. Required imu is true.
+    gnss: false # If true, calculate global possition

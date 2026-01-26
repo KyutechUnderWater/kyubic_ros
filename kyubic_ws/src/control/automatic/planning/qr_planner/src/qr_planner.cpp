@@ -440,6 +440,7 @@ void QRPlanner::_runPlannerLogic(const std::shared_ptr<GoalHandleQR> & goal_hand
   msg->master.roll = odom_copy->pose.orientation.x;
   msg->master.yaw = odom_copy->pose.orientation.z;
 
+  msg->has_slave = true;
   msg->slave.x = odom_copy->twist.linear.x;
   msg->slave.y = odom_copy->twist.linear.y;
   msg->slave.roll = odom_copy->twist.angular.x;

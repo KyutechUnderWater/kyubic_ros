@@ -27,9 +27,9 @@ def generate_launch_description():
     composable_nodes = [
         ComposableNode(
             package="wrench_planner",
-            plugin="planner::wrench_planner::VelocityWrenchPlanner",
+            plugin="planner::wrench_planner::ZeroOrderHold",
             namespace="planner/wrench_planner",
-            name="wrapper_wrench_planner",
+            name="zoh_wrench_planner",
             remappings=[("odom", "/localization/odom")],
             parameters=[config],
             extra_arguments=[{"use_intra_process_comms": True}],
@@ -40,6 +40,7 @@ def generate_launch_description():
             namespace="planner/wrench_planner",
             name="wrench_planner",
             remappings=[
+                ("odom", "/localization/odom"),
                 ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
                 ("targets", "/rt_pose_plotter/targets"),
             ],
