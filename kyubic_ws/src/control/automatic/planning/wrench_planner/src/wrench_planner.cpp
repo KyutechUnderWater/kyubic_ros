@@ -31,20 +31,51 @@ WrenchPlanner::WrenchPlanner(const rclcpp::NodeOptions & options) : Node("wrench
   sub_ = create_subscription<planner_msgs::msg::WrenchPlan>(
     "goal_current_odom", qos,
     std::bind(&WrenchPlanner::goalCurrentOdomCallback, this, std::placeholders::_1));
+  sub_odom_ = create_subscription<localization_msgs::msg::Odometry>(
+    "odom", qos, std::bind(&WrenchPlanner::odomCallback, this, std::placeholders::_1));
 }
 
 void WrenchPlanner::_update_wrench()
 {
+  if (!goal_current_odom_->has_slave) {
+    if (!odom_updated_) {
+      RCLCPP_DEBUG(
+        this->get_logger(),
+        "Waiting for Odometry data... cannot calculate pid and publish robot_force yet.");
+      return;
+    }
+
+    odom_updated_ = false;
+    goal_current_odom_->slave.x = current_odom_->twist.linear.x;
+    goal_current_odom_->slave.y = current_odom_->twist.linear.y;
+    goal_current_odom_->slave.roll = current_odom_->twist.angular.x;
+    goal_current_odom_->slave.yaw = current_odom_->twist.angular.z;
+
+    if (goal_current_odom_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
+      goal_current_odom_->slave.z = current_odom_->twist.linear.z_depth;
+    } else if (goal_current_odom_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
+      goal_current_odom_->slave.z = current_odom_->twist.linear.z_altitude;
+    }
+  }
+
   const uint8_t & z_mode = goal_current_odom_->z_mode;
+  const uint8_t & reset = goal_current_odom_->reset;
   const auto & target_pose = goal_current_odom_->targets;
   const auto & current_pose = goal_current_odom_->master;
   const auto & current_twst = goal_current_odom_->slave;
 
   auto msg = std::make_unique<geometry_msgs::msg::WrenchStamped>();
 
-  if (pre_z_mode != z_mode) {
+  if (reset > 0) {
+    if (reset & 0b00000001) p_pid_ctrl_->pid_x_reset();
+    if (reset & 0b00000010) p_pid_ctrl_->pid_y_reset();
+    if (reset & 0b00000100) p_pid_ctrl_->pid_z_reset();
+    if (reset & 0b00001000) p_pid_ctrl_->pid_roll_reset();
+    if (reset & 0b00010000) p_pid_ctrl_->pid_yaw_reset();
+    RCLCPP_INFO(this->get_logger(), "P_PID reset: %d", reset);
+  } else if (pre_z_mode_ != z_mode) {
     RCLCPP_INFO(this->get_logger(), "z-axis P_PID reset");
-    pre_z_mode = z_mode;
+    pre_z_mode_ = z_mode;
     p_pid_ctrl_->pid_z_reset();
   }
 
@@ -94,6 +125,12 @@ void WrenchPlanner::goalCurrentOdomCallback(const planner_msgs::msg::WrenchPlan:
 {
   goal_current_odom_ = msg;
   _update_wrench();
+}
+
+void WrenchPlanner::odomCallback(const localization_msgs::msg::Odometry::SharedPtr msg)
+{
+  current_odom_ = msg;
+  odom_updated_ = true;
 }
 
 }  // namespace planner
