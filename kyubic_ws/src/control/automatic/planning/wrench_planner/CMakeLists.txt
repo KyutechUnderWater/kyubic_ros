@@ -56,7 +56,7 @@ install(DIRECTORY
 ##############################################
 # --- Diagnostics Plugin ---
 ament_auto_add_library(system_health_check_plugins SHARED
-  ./src-check/velocity_wrench_planner_check.cpp
+  ./src-check/zoh_wrench_planner_check.cpp
   ./src-check/wrench_planner_check.cpp
 )
 

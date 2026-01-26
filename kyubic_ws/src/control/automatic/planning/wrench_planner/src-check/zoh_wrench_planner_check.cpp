@@ -22,44 +22,19 @@ private:
   }
 };
 
-class VelocityPlanTopicSubscriberCheck : public system_health_check::base::TopicSubscriberCheckBase
+class ZohWrenchPlanTopicSubscriberCheck : public system_health_check::base::TopicSubscriberCheckBase
 {
 private:
   void prepare_check(rclcpp::Node::SharedPtr node) override
   {
     std::string topic_name = node->declare_parameter(
-      "planner.wrench_planner.velocity_plan_topic_subscriber_check.topic_name", "/wrench_plan");
+      "planner.wrench_planner.zoh_wrench_plan_topic_subscriber_check.topic_name",
+      "/zoh_wrench_plan");
     uint32_t timeout_ms = node->declare_parameter(
-      "planner.wrench_planner.velocity_plan_topic_subscriber_check.timeout_ms", 1000);
+      "planner.wrench_planner.zoh_wrench_plan_topic_subscriber_check.timeout_ms", 1000);
 
     set_config(topic_name, timeout_ms);
     ;
-  }
-};
-
-class OdomTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<Msg>
-{
-private:
-  void prepare_check(rclcpp::Node::SharedPtr node) override
-  {
-    std::string topic_name =
-      node->declare_parameter("planner.wrench_planner.odom_topic_status_check.topic_name", "/odom");
-    uint32_t timeout_ms =
-      node->declare_parameter("planner.wrench_planner.odom_topic_status_check.timeout_ms", 1000);
-
-    set_status_id("odom_status");
-    set_config(topic_name, timeout_ms);
-    ;
-  }
-
-  bool validate(const Msg & msg) override
-  {
-    if (
-      msg.status.depth.id == common_msgs::msg::Status::NORMAL &&
-      msg.status.dvl.id == common_msgs::msg::Status::NORMAL &&
-      msg.status.imu.id == common_msgs::msg::Status::NORMAL)
-      return true;
-    return false;
   }
 };
 
@@ -71,7 +46,5 @@ PLUGINLIB_EXPORT_CLASS(
   planner::wrench_planner::WrenchPlanTopicPublisherCheck,
   system_health_check::base::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
-  planner::wrench_planner::VelocityPlanTopicSubscriberCheck,
+  planner::wrench_planner::ZohWrenchPlanTopicSubscriberCheck,
   system_health_check::base::SystemCheckBase)
-PLUGINLIB_EXPORT_CLASS(
-  planner::wrench_planner::OdomTopicStatusCheck, system_health_check::base::SystemCheckBase)

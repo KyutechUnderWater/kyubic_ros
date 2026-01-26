@@ -57,11 +57,11 @@
       - "planner::qr_planner::OdomTopicStatusCheck"
       - "planner::qr_planner::QRPlannerActionServerCheck"
       - "planner::wrench_planner::WrenchPlanTopicPublisherCheck"
-      - "planner::wrench_planner::VelocityPlanTopicSubscriberCheck"
-      - "planner::wrench_planner::OdomTopicStatusCheck"
+      - "planner::wrench_planner::ZohWrenchPlanTopicSubscriberCheck"
       - "planner::wrench_planner::RobotFoceTopicPublisherCheck"
       - "planner::wrench_planner::TargetsTopicPublisherCheck"
       - "planner::wrench_planner::WrenchPlanTopicSubscriberCheck"
+      - "planner::wrench_planner::OdomTopicStatusCheck"
 
       - "joy2wrench::Joy2WrenchLifecycleStatusCheck"
       - "joy2wrench::RobotForceTopicStatusCheck"
@@ -232,11 +232,8 @@
         wrench_plan_topic_publisher_check:
           topic_name: /planner/wrench_planner/goal_current_odom
           timeout_ms: 1000
-        velocity_plan_topic_subscriber_check:
-          topic_name: /planner/wrench_planner/wrench_plan
-          timeout_ms: 1000
-        odom_topic_status_check:
-          topic_name: /localization/odom
+        zoh_wrench_plan_topic_subscriber_check:
+          topic_name: /planner/wrench_planner/zoh_wrench_plan
           timeout_ms: 1000
         robot_force_topic_publisher_check:
           topic_name: /driver/actuator_rp2040_driver/robot_force
@@ -246,6 +243,9 @@
           timeout_ms: 1000
         wrench_plan_topic_subscriber_check:
           topic_name: /planner/wrench_planner/goal_current_odom
+          timeout_ms: 1000
+        odom_topic_status_check:
+          topic_name: /localization/odom
           timeout_ms: 1000
 
     joy2wrench:

@@ -3,13 +3,9 @@
         base_class_type="system_health_check::base::SystemCheckBase">
         <description>Check wrench_plan topic publisher of planner.</description>
     </class>
-    <class type="planner::wrench_planner::VelocityPlanTopicSubscriberCheck"
+    <class type="planner::wrench_planner::ZohWrenchPlanTopicSubscriberCheck"
         base_class_type="system_health_check::base::SystemCheckBase">
-        <description>Check velocity_plan topic subscriber of planner.</description>
-    </class>
-    <class type="planner::wrench_planner::OdomTopicStatusCheck"
-        base_class_type="system_health_check::base::SystemCheckBase">
-        <description>Check odom topic status of planner.</description>
+        <description>Check zoh_wrench_plan topic subscriber of planner.</description>
     </class>
     <class type="planner::wrench_planner::RobotFoceTopicPublisherCheck"
         base_class_type="system_health_check::base::SystemCheckBase">
@@ -22,5 +18,9 @@
     <class type="planner::wrench_planner::WrenchPlanTopicSubscriberCheck"
         base_class_type="system_health_check::base::SystemCheckBase">
         <description>Check wrench_plan topic subscriber of planner.</description>
+    </class>
+    <class type="planner::wrench_planner::OdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check odom topic status of planner.</description>
     </class>
 </library>
