@@ -11,7 +11,7 @@
 
 #include <lifecycle_msgs/msg/state.hpp>
 
-namespace planner
+namespace planner::wrench_planner
 {
 
 ZeroOrderHold::ZeroOrderHold(const rclcpp::NodeOptions & options)
@@ -196,7 +196,7 @@ bool ZeroOrderHold::copy_slave(const localization_msgs::msg::Odometry::SharedPtr
   return true;
 }
 
-}  // namespace planner
+}  // namespace planner::wrench_planner
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(planner::ZeroOrderHold)
+RCLCPP_COMPONENTS_REGISTER_NODE(planner::wrench_planner::ZeroOrderHold)

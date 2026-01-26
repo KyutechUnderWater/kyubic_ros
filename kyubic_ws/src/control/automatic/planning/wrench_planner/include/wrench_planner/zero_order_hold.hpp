@@ -21,7 +21,7 @@
 #include <rclcpp_lifecycle/lifecycle_publisher.hpp>
 #include <timer/timeout.hpp>
 
-namespace planner
+namespace planner::wrench_planner
 {
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
@@ -71,6 +71,6 @@ public:
     const rclcpp_lifecycle::State & state) override;
 };
 
-}  // namespace planner
+}  // namespace planner::wrench_planner
 
 #endif  // _ZERO_ORDER_HOLD_HPP
