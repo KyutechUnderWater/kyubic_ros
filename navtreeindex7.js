@@ -1,5 +1,6 @@
 var NAVTREEINDEX7 =
 {
+"group__control.html":[0,1],
 "group__dashboard.html":[0,11],
 "group__dvl__driver.html":[0,4],
 "group__emergency.html":[0,3],
@@ -168,7 +169,8 @@ var NAVTREEINDEX7 =
 "namespacelocalization.html#a1b58486af0e6fd4a2d985a122601191c":[1,0,22,4],
 "namespacelocalization.html#a310f6a400b67bac345d5ab1d8cff52cb":[1,0,22,5],
 "namespacelocalization.html#a7144ffe7b650980db62417ae9c840704":[1,0,22,7],
-"namespacelocalization.html#aa1a9eefe89401aa072d56a48603b45bd":[1,0,22,8],
+"namespacelocalization.html#aa1a9eefe89401aa072d56a48603b45bd":[1,0,22,9],
+"namespacelocalization.html#ad407772c9070a560cc2fdc1c75e8d6a4":[1,0,22,8],
 "namespacelocalization.html#afb72184cf64e23af3745ecf74ef5fd10":[1,0,22,6],
 "namespacelocalization__components.html":[1,0,23],
 "namespacelocalization__components.html#a759b427adf9f0eb690c10113fb8cd432":[1,0,23,0],
@@ -247,7 +249,5 @@ var NAVTREEINDEX7 =
 "namespacetimer.html":[1,0,45],
 "namespacetools.html":[1,0,46],
 "namespacetools_1_1plotjuggler.html":[1,0,46,0],
-"namespacetrajectory__viewer.html#adaa6c12d324040ea2240840c72cf0db8":[1,0,47,5],
-"namespacetrajectory__viewer_1_1example__pyqtgraph.html":[1,0,47,0],
-"namespacetrajectory__viewer_1_1global__pose__viewer.html":[1,0,47,1]
+"namespacetrajectory__viewer.html#adaa6c12d324040ea2240840c72cf0db8":[1,0,47,5]
 };

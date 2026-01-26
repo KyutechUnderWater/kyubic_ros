@@ -8,5 +8,6 @@ var namespacelocalization =
     [ "ANCHOR_POINTS_DMS", "namespacelocalization.html#a310f6a400b67bac345d5ab1d8cff52cb", null ],
     [ "DEPTH_SMA_SUMPLE_NUM", "namespacelocalization.html#afb72184cf64e23af3745ecf74ef5fd10", null ],
     [ "EMA_ALPHA", "namespacelocalization.html#a7144ffe7b650980db62417ae9c840704", null ],
+    [ "RADIAN_SCALE", "namespacelocalization.html#ad407772c9070a560cc2fdc1c75e8d6a4", null ],
     [ "sea2fresh_scale", "namespacelocalization.html#aa1a9eefe89401aa072d56a48603b45bd", null ]
 ];

@@ -66,10 +66,10 @@ var NAVTREEINDEX =
 "classsensors__esp32__driver_1_1Leak.html",
 "classtrdi__toolz_1_1main_1_1DVLCommandClient.html#a31214df13f04669aa105a3c905fb873d",
 "dir_b2e158c1f6dfd21bfa7c4796997f16f1.html",
-"group__dashboard.html",
-"namespacetrajectory__viewer_1_1global__pose__viewer.html#a3f76d55782026b3bfe02c75a215d3ba5",
-"structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html#abeb4cd9611a9469d177700816c98cdfa",
-"structpid__controller_1_1PositionPIDParameter.html#add6a47e9b6cd14c19402e421ab8fe9b7"
+"group__control.html",
+"namespacetrajectory__viewer_1_1example__pyqtgraph.html",
+"structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html#abe990108aab442b2edb298b3171b4923",
+"structpid__controller_1_1PositionPIDParameter.html#a9ba6b3e60e7aa9193f54a743246364e7"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
