@@ -65,7 +65,7 @@ BT::NodeStatus ResetLocalization::onRunning()
           this->name().c_str());
         return BT::NodeStatus::SUCCESS;
       } else {
-        RCLCPP_WARN(
+        RCLCPP_ERROR(
           ros_node_->get_logger(), "[%s] Reset failed: %s", this->name().c_str(),
           response->message.c_str());
         return BT::NodeStatus::FAILURE;

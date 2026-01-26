@@ -102,7 +102,7 @@ void ZeroOrderHold::wrenchPlanCallback(planner_msgs::msg::WrenchPlan::SharedPtr 
 
   auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>(*_msg);
   pub_->publish(std::move(msg));
-  RCLCPP_INFO(this->get_logger(), "Published WrenchPlan");
+  RCLCPP_DEBUG(this->get_logger(), "Published WrenchPlan");
 }
 
 void ZeroOrderHold::odomCallback(const localization_msgs::msg::Odometry::SharedPtr _msg)
@@ -141,12 +141,18 @@ void ZeroOrderHold::odomCallback(const localization_msgs::msg::Odometry::SharedP
       }
 
       hold_msg_->reset = 0b00011111;
+    } else {
+      hold_msg_->reset = 0;
     }
 
     if (copy_master(_msg) && copy_slave(_msg)) {
       auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>(*hold_msg_);
       pub_->publish(std::move(msg));
-      RCLCPP_INFO(this->get_logger(), "Published WrenchPlan (ZeroOrderHold)");
+      RCLCPP_INFO_THROTTLE(
+        this->get_logger(), *this->get_clock(), 2000,
+        "Published WrenchPlan (ZeroOrderHold): x(%.3f), y(%.3f), z(%.3f), roll(%.3f), yaw(%.3f)",
+        hold_msg_->targets.x, hold_msg_->targets.y, hold_msg_->targets.z, hold_msg_->targets.roll,
+        hold_msg_->targets.yaw);
     };
   } else {
     first_timeout = true;
