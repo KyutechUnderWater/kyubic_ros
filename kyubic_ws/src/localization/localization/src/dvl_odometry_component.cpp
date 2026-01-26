@@ -44,7 +44,7 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
-  if (!msg->velocity_valid) {
+  if (!msg->velocity_valid || imu_msg_->status.imu == localization_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
     odom_msg->header = msg->header;
     odom_msg->status.dvl = localization_msgs::msg::Status::ERROR;
@@ -72,17 +72,12 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
     pos_x += vel_robot_world.x() * dt;
     pos_y += vel_robot_world.y() * dt;
 
-    RCLCPP_INFO(this->get_logger(), 
-      "Current POS | X: %.4f [m] | Y: %.4f [m]", 
-      pos_x, pos_y
-    );
-    
     {
       odom_msg->header = msg->header;
 
       odom_msg->pose.position.x = pos_x;
       odom_msg->pose.position.y = pos_y;
-      odom_msg->pose.position.z_altitude = msg->altitude; 
+      odom_msg->pose.position.z_altitude = msg->altitude;
 
       odom_msg->pose.orientation = imu_msg_->pose.orientation;
       odom_msg->twist.angular = imu_msg_->twist.angular;
@@ -91,9 +86,11 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
       odom_msg->twist.linear.y = vel_robot_world.y();
       odom_msg->twist.linear.z_altitude = vel_robot_world.z();
     }
+    RCLCPP_DEBUG(this->get_logger(), "Calculated DVL odometry");
   }
   pub_->publish(std::move(odom_msg));
 }
+
 void DVLOdometry::update_imu_callback(localization_msgs::msg::Odometry::UniquePtr msg)
 {
   imu_msg_ = std::move(msg);
