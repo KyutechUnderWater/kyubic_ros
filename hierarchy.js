@@ -24,7 +24,8 @@ var hierarchy =
     ] ],
     [ "rclcpp_lifecycle::LifecycleNode", null, [
       [ "emergency::EmergencySurfacing", "classemergency_1_1EmergencySurfacing.html", null ],
-      [ "joy2wrench::Joy2WrenchStamped", "classjoy2wrench_1_1Joy2WrenchStamped.html", null ]
+      [ "joy2wrench::Joy2WrenchStamped", "classjoy2wrench_1_1Joy2WrenchStamped.html", null ],
+      [ "planner::ZeroOrderHold", "classplanner_1_1ZeroOrderHold.html", null ]
     ] ],
     [ "dvl_driver::path_finder::Listener", "classdvl__driver_1_1path__finder_1_1Listener.html", null ],
     [ "dashboard.main.Node", "classdashboard_1_1main_1_1Node.html", [
@@ -47,7 +48,6 @@ var hierarchy =
       [ "planner::PDLAPlanner", "classplanner_1_1PDLAPlanner.html", null ],
       [ "planner::QRPlanner", "classplanner_1_1QRPlanner.html", null ],
       [ "planner::ReturnPlanner", "classplanner_1_1ReturnPlanner.html", null ],
-      [ "planner::VelocityWrenchPlanner", "classplanner_1_1VelocityWrenchPlanner.html", null ],
       [ "planner::WrenchPlanner", "classplanner_1_1WrenchPlanner.html", null ],
       [ "sensors_esp32_driver::ButtonBatteryState", "classsensors__esp32__driver_1_1ButtonBatteryState.html", null ],
       [ "sensors_esp32_driver::BuzzerSwitch", "classsensors__esp32__driver_1_1BuzzerSwitch.html", null ],

@@ -9,5 +9,8 @@ var searchData=
   ['zed_5fpower_2ecpp_6',['zed_power.cpp',['../zed__power_8cpp.html',1,'']]],
   ['zed_5fpower_2ehpp_7',['zed_power.hpp',['../zed__power_8hpp.html',1,'']]],
   ['zedpower_8',['ZedPower',['../classsensors__esp32__driver_1_1ZedPower.html',1,'sensors_esp32_driver::ZedPower'],['../classsensors__esp32__driver_1_1ZedPower.html#a67f90540efb3d265329a1488f1f8092f',1,'sensors_esp32_driver::ZedPower::ZedPower()']]],
-  ['zip_5fsafe_9',['zip_safe',['../namespacesetup.html#a13510753661cb74083a0c664db11dde9',1,'setup']]]
+  ['zero_5forder_5fhold_2ecpp_9',['zero_order_hold.cpp',['../zero__order__hold_8cpp.html',1,'']]],
+  ['zero_5forder_5fhold_2ehpp_10',['zero_order_hold.hpp',['../zero__order__hold_8hpp.html',1,'']]],
+  ['zeroorderhold_11',['ZeroOrderHold',['../classplanner_1_1ZeroOrderHold.html',1,'planner::ZeroOrderHold'],['../classplanner_1_1ZeroOrderHold.html#a7173e8f00486d557c1eb0ea371755281',1,'planner::ZeroOrderHold::ZeroOrderHold()']]],
+  ['zip_5fsafe_12',['zip_safe',['../namespacesetup.html#a13510753661cb74083a0c664db11dde9',1,'setup']]]
 ];

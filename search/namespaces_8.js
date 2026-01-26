@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['joy2wrench_0',['joy2wrench',['../namespacejoy2wrench.html',1,'']]],
-  ['joy_5fcommon_1',['joy_common',['../namespacejoy__common.html',1,'']]]
+  ['g366_0',['g366',['../namespaceimu__driver_1_1g366.html',1,'imu_driver']]],
+  ['imu_5fdriver_1',['imu_driver',['../namespaceimu__driver.html',1,'']]]
 ];

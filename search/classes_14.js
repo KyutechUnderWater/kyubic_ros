@@ -4,6 +4,5 @@ var searchData=
   ['velocityp_5fpid_1',['VelocityP_PID',['../classpid__controller_1_1VelocityP__PID.html',1,'pid_controller']]],
   ['velocityp_5fpidparameter_2',['VelocityP_PIDParameter',['../structpid__controller_1_1VelocityP__PIDParameter.html',1,'pid_controller']]],
   ['velocitypid_3',['VelocityPID',['../classpid__controller_1_1VelocityPID.html',1,'pid_controller']]],
-  ['velocitypidparameter_4',['VelocityPIDParameter',['../structpid__controller_1_1VelocityPIDParameter.html',1,'pid_controller']]],
-  ['velocitywrenchplanner_5',['VelocityWrenchPlanner',['../classplanner_1_1VelocityWrenchPlanner.html',1,'planner']]]
+  ['velocitypidparameter_4',['VelocityPIDParameter',['../structpid__controller_1_1VelocityPIDParameter.html',1,'pid_controller']]]
 ];

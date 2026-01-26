@@ -134,8 +134,8 @@ var annotated_dup =
       [ "QRPlanner", "classplanner_1_1QRPlanner.html", "classplanner_1_1QRPlanner" ],
       [ "ReturnPlanner", "classplanner_1_1ReturnPlanner.html", "classplanner_1_1ReturnPlanner" ],
       [ "Tolerance", "structplanner_1_1Tolerance.html", "structplanner_1_1Tolerance" ],
-      [ "VelocityWrenchPlanner", "classplanner_1_1VelocityWrenchPlanner.html", "classplanner_1_1VelocityWrenchPlanner" ],
-      [ "WrenchPlanner", "classplanner_1_1WrenchPlanner.html", "classplanner_1_1WrenchPlanner" ]
+      [ "WrenchPlanner", "classplanner_1_1WrenchPlanner.html", "classplanner_1_1WrenchPlanner" ],
+      [ "ZeroOrderHold", "classplanner_1_1ZeroOrderHold.html", "classplanner_1_1ZeroOrderHold" ]
     ] ],
     [ "rt_pose_plotter", "namespacert__pose__plotter.html", [
       [ "main", "namespacert__pose__plotter_1_1main.html", [

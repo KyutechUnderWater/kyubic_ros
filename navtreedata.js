@@ -32,7 +32,8 @@ var NAVTREE =
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
         [ "Variables", "namespacemembers_vars.html", null ],
-        [ "Typedefs", "namespacemembers_type.html", null ]
+        [ "Typedefs", "namespacemembers_type.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ]
       ] ]
     ] ],
     [ "Classes", "annotated.html", [
@@ -63,13 +64,13 @@ var NAVTREEINDEX =
 "classcontroller_1_1P__PIDController.html#ab2c946a8e103e50168f14a57a3d9b330",
 "classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html",
 "classpid__controller_1_1PositionP__PID.html#a42f38071fd65c5c0e20936a373e29dab",
-"classsensors__esp32__driver_1_1Leak.html",
-"classtrdi__toolz_1_1main_1_1DVLCommandClient.html#a31214df13f04669aa105a3c905fb873d",
-"dir_b2e158c1f6dfd21bfa7c4796997f16f1.html",
-"group__control.html",
-"namespacetrajectory__viewer_1_1example__pyqtgraph.html",
-"structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html#abe990108aab442b2edb298b3171b4923",
-"structpid__controller_1_1PositionPIDParameter.html#a9ba6b3e60e7aa9193f54a743246364e7"
+"classsensors__esp32__driver_1_1Depth.html#a1957ef5704bf84665da7490488275692",
+"classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#ac08b88fd5c81ef01eb725c48876019a6",
+"dir_a6b03f532f63083adad2fdc0982ac714.html",
+"global__pose__viewer_8py.html",
+"namespacesetup.html#abead4f26b530856f858f0d44c7cf2588",
+"structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html#a862acb679f2dc917a761d5327c9b40ca",
+"structimu__driver_1_1g366_1_1RAW__DATA__T.html#a913204bb9c5fb3e173ed1035c1a36cbe"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

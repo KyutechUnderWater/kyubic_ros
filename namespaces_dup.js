@@ -30,6 +30,9 @@ var namespaces_dup =
       [ "generate_launch_description", "namespaceglobal__pose__viewer.html#aa867ed28c27f6adf25a99cdb7e55ba16", null ]
     ] ],
     [ "gnss_driver", "namespacegnss__driver.html", "namespacegnss__driver" ],
+    [ "hold_wrench_planner", "namespacehold__wrench__planner.html", [
+      [ "generate_launch_description", "namespacehold__wrench__planner.html#a697d77660d7124415e8d3501d4a64f0a", null ]
+    ] ],
     [ "imu_driver", "namespaceimu__driver.html", "namespaceimu__driver" ],
     [ "joy2wrench", "namespacejoy2wrench.html", "namespacejoy2wrench" ],
     [ "joy_common", "namespacejoy__common.html", "namespacejoy__common" ],
@@ -106,9 +109,6 @@ var namespaces_dup =
     [ "tools", "namespacetools.html", "namespacetools" ],
     [ "trajectory_viewer", "namespacetrajectory__viewer.html", "namespacetrajectory__viewer" ],
     [ "trdi_toolz", "namespacetrdi__toolz.html", "namespacetrdi__toolz" ],
-    [ "velocity_wrench_planner", "namespacevelocity__wrench__planner.html", [
-      [ "generate_launch_description", "namespacevelocity__wrench__planner.html#afa3fa4ec4f20c4fd38471e42ba6e87ff", null ]
-    ] ],
     [ "web_controller", "namespaceweb__controller.html", "namespaceweb__controller" ],
     [ "web_visualizer", "namespaceweb__visualizer.html", [
       [ "generate_launch_description", "namespaceweb__visualizer.html#ab68feac18905d07f66c02c8a428a351e", null ]
