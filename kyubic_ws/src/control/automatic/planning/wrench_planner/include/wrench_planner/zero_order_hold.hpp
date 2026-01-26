@@ -14,6 +14,7 @@
 #include <localization_msgs/msg/odometry.hpp>
 #include <memory>
 #include <mutex>
+#include <p_pid_controller_msgs/msg/base_axes.hpp>
 #include <planner_msgs/msg/wrench_plan.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
@@ -25,9 +26,16 @@ namespace planner
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
+enum class Hold_Z_Mode
+{
+  DEPTH = 0,
+  ALTITUDE = 1,
+};
+
 class ZeroOrderHold : public rclcpp_lifecycle::LifecycleNode
 {
 private:
+  Hold_Z_Mode hold_z_mode;
   uint64_t timeout_ms;
 
   rclcpp_lifecycle::LifecyclePublisher<planner_msgs::msg::WrenchPlan>::SharedPtr pub_;
@@ -36,17 +44,15 @@ private:
 
   std::shared_ptr<timer::Timeout> timeout_;
 
-  planner_msgs::msg::WrenchPlan::SharedPtr plan_;
   localization_msgs::msg::Odometry::SharedPtr odom_;
-  bool is_update = false;
-  bool is_first = true;
-  bool resume = true;
+  planner_msgs::msg::WrenchPlan::SharedPtr hold_msg_;
+  bool first_timeout = true;
+  bool had_timeout_ = true;
 
   std::mutex mutex_;
 
   void wrenchPlanCallback(planner_msgs::msg::WrenchPlan::SharedPtr _msg);
   void odomCallback(const localization_msgs::msg::Odometry::SharedPtr _msg);
-  bool has_velocity(const planner_msgs::msg::WrenchPlan::SharedPtr _msg);
   bool copy_master(const localization_msgs::msg::Odometry::SharedPtr _msg);
   bool copy_slave(const localization_msgs::msg::Odometry::SharedPtr _msg);
 

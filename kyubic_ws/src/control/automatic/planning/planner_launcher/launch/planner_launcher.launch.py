@@ -55,7 +55,7 @@ def generate_launch_description():
                 plugin="planner::PDLAPlanner",
                 remappings=[
                     ("odom", "/localization/odom"),
-                    ("goal_current_odom", "/planner/wrench_plan"),
+                    ("goal_current_odom", "/planner/zoh_wrench_plan"),
                 ],
                 parameters=[
                     {"path_planner_path": path_planner_path},
@@ -73,7 +73,7 @@ def generate_launch_description():
                 remappings=[
                     ("odom", "/localization/odom"),
                     ("zed_power", "/sensors_esp32_driver/zed_power"),
-                    ("goal_current_odom", "/planner/wrench_plan"),
+                    ("goal_current_odom", "/planner/zoh_wrench_plan"),
                 ],
                 parameters=[
                     cfg_qr_planner,
@@ -83,16 +83,15 @@ def generate_launch_description():
                 ],  # enable intra-process communication
             ),
             ComposableNode(
-                name="velocity_wrench_planner_component",
+                name="zoh_wrench_planner_component",
                 namespace="planner/wrench_planner",
                 package="wrench_planner",
                 plugin="planner::ZeroOrderHold",
                 remappings=[
                     ("odom", "/localization/odom"),
-                    ("wrench_plan", "/planner/wrench_plan"),
+                    ("zoh_wrench_plan", "/planner/zoh_wrench_plan"),
                 ],
                 parameters=[
-                    {"p_pid_controller_path": p_pid_controller_path},
                     cfg_wrench_planner,
                 ],
                 extra_arguments=[
@@ -105,6 +104,7 @@ def generate_launch_description():
                 package="wrench_planner",
                 plugin="planner::WrenchPlanner",
                 remappings=[
+                    ("odom", "/localization/odom"),
                     ("robot_force", "/driver/robot_force"),
                     ("targets", "/rt_pose_plotter/targets"),
                 ],

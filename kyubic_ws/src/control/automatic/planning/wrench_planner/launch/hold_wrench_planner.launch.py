@@ -40,6 +40,7 @@ def generate_launch_description():
             namespace="planner",
             name="wrench_planner",
             remappings=[
+                ("odom", "/localization/odom"),
                 ("robot_force", "/driver/robot_force"),
                 ("targets", "/rt_pose_plotter/targets"),
             ],

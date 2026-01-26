@@ -22,15 +22,18 @@ ZeroOrderHold::ZeroOrderHold(const rclcpp::NodeOptions & options)
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 ZeroOrderHold::on_configure(const rclcpp_lifecycle::State &)
 {
+  int _hold_z_mode = this->declare_parameter("hold_z_mode", static_cast<int>(Hold_Z_Mode::DEPTH));
   timeout_ms = this->declare_parameter("timeout_ms", 1000);
+  hold_z_mode = static_cast<Hold_Z_Mode>(_hold_z_mode);
 
   timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
-  plan_ = std::make_shared<planner_msgs::msg::WrenchPlan>();
+  hold_msg_ = std::make_shared<planner_msgs::msg::WrenchPlan>();
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
   pub_ = create_publisher<planner_msgs::msg::WrenchPlan>("goal_current_odom", qos);
   plan_sub_ = create_subscription<planner_msgs::msg::WrenchPlan>(
-    "wrench_plan", qos, std::bind(&ZeroOrderHold::wrenchPlanCallback, this, std::placeholders::_1));
+    "zoh_wrench_plan", qos,
+    std::bind(&ZeroOrderHold::wrenchPlanCallback, this, std::placeholders::_1));
   odom_sub_ = create_subscription<localization_msgs::msg::Odometry>(
     "odom", qos, std::bind(&ZeroOrderHold::odomCallback, this, std::placeholders::_1));
 
@@ -41,7 +44,9 @@ ZeroOrderHold::on_configure(const rclcpp_lifecycle::State &)
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 ZeroOrderHold::on_activate(const rclcpp_lifecycle::State & state)
 {
-  is_first = true;
+  first_timeout = true;
+  had_timeout_ = false;
+  timeout_->reset(this->get_clock()->now());
 
   RCLCPP_INFO(get_logger(), "Activate successful");
   return LifecycleNode::on_activate(state);
@@ -82,30 +87,22 @@ void ZeroOrderHold::wrenchPlanCallback(planner_msgs::msg::WrenchPlan::SharedPtr 
     return;
   }
 
-  std::lock_guard<std::mutex> lock(mutex_);
-  timeout_->reset(this->get_clock()->now());
-  is_first = false;
-
-  plan_ = _msg;
-
-  if (!odom_ || !is_update) {
-    RCLCPP_DEBUG(this->get_logger(), "Waiting for Odometry data... cannot publish WrenchPlan yet.");
-    return;
+  bool had_timeout;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    timeout_->reset(this->get_clock()->now());
+    had_timeout = had_timeout_;
+    had_timeout_ = false;
   }
 
-  if (copy_slave(odom_)) {
-    is_update = false;
-
-    // when return timeout, reset pid
-    plan_->reset = 0;
-    if (resume) {
-      resume = false;
-      plan_->reset = 0b00011111;
-    }
-
-    pub_->publish(*plan_);
-    RCLCPP_DEBUG(this->get_logger(), "Published WrenchPlan");
+  // when return timeout, reset pid
+  if (had_timeout) {
+    _msg->reset = 0b00011111;
   }
+
+  auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>(*_msg);
+  pub_->publish(std::move(msg));
+  RCLCPP_INFO(this->get_logger(), "Published WrenchPlan");
 }
 
 void ZeroOrderHold::odomCallback(const localization_msgs::msg::Odometry::SharedPtr _msg)
@@ -114,39 +111,61 @@ void ZeroOrderHold::odomCallback(const localization_msgs::msg::Odometry::SharedP
     return;
   }
 
-  std::lock_guard<std::mutex> lock(mutex_);
-  is_update = true;
-  odom_ = _msg;
-
-  if (timeout_->is_timeout(this->get_clock()->now()) && !is_first) {
-    resume = true;
-    if (copy_master(_msg) && copy_slave(_msg)) pub_->publish(*plan_);
+  bool is_timeout;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    is_timeout = timeout_->is_timeout(this->get_clock()->now());
+    if (is_timeout) had_timeout_ = true;
   }
-}
 
-bool ZeroOrderHold::has_velocity(const planner_msgs::msg::WrenchPlan::SharedPtr _msg)
-{
-  auto & slave = _msg->slave;
+  if (is_timeout) {
+    if (
+      _msg->status.depth == localization_msgs::msg::Status::ERROR ||
+      _msg->status.imu == localization_msgs::msg::Status::ERROR ||
+      _msg->status.dvl == localization_msgs::msg::Status::ERROR) {
+      RCLCPP_ERROR(this->get_logger(), "Odometry is invalid.");
+      return;
+    }
 
-  const double epsilon = 1e-6;
-  return (std::abs(slave.x) > epsilon) && (std::abs(slave.y) > epsilon) &&
-         (std::abs(slave.z) > epsilon) && (std::abs(slave.roll) > epsilon) &&
-         (std::abs(slave.yaw) > epsilon);
+    if (first_timeout) {
+      first_timeout = false;
+
+      hold_msg_->targets.x = _msg->pose.position.x;
+      hold_msg_->targets.y = _msg->pose.position.y;
+      hold_msg_->targets.roll = _msg->pose.orientation.x;
+      hold_msg_->targets.yaw = _msg->pose.orientation.z;
+      if (hold_z_mode == Hold_Z_Mode::DEPTH) {
+        hold_msg_->targets.z = _msg->pose.position.z_depth;
+      } else if (hold_z_mode == Hold_Z_Mode::ALTITUDE) {
+        hold_msg_->targets.z = _msg->pose.position.z_altitude;
+      }
+
+      hold_msg_->reset = 0b00011111;
+    }
+
+    if (copy_master(_msg) && copy_slave(_msg)) {
+      auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>(*hold_msg_);
+      pub_->publish(std::move(msg));
+      RCLCPP_INFO(this->get_logger(), "Published WrenchPlan (ZeroOrderHold)");
+    };
+  } else {
+    first_timeout = true;
+  }
 }
 
 bool ZeroOrderHold::copy_master(const localization_msgs::msg::Odometry::SharedPtr _msg)
 {
-  plan_->master.x = _msg->pose.position.x;
-  plan_->master.y = _msg->pose.position.y;
-  plan_->master.roll = _msg->pose.orientation.x;
-  plan_->master.yaw = _msg->pose.orientation.z;
+  hold_msg_->master.x = _msg->pose.position.x;
+  hold_msg_->master.y = _msg->pose.position.y;
+  hold_msg_->master.roll = _msg->pose.orientation.x;
+  hold_msg_->master.yaw = _msg->pose.orientation.z;
 
-  if (plan_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-    plan_->master.z = _msg->pose.position.z_depth;
-  } else if (plan_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-    plan_->master.z = _msg->pose.position.z_altitude;
+  if (hold_z_mode == Hold_Z_Mode::DEPTH) {
+    hold_msg_->master.z = _msg->pose.position.z_depth;
+  } else if (hold_z_mode == Hold_Z_Mode::ALTITUDE) {
+    hold_msg_->master.z = _msg->pose.position.z_altitude;
   } else {
-    RCLCPP_ERROR(this->get_logger(), "Z mode(%d) is invalid.", plan_->z_mode);
+    RCLCPP_ERROR(this->get_logger(), "Z mode(%d) is invalid.", static_cast<int>(hold_z_mode));
     return false;
   }
   return true;
@@ -154,17 +173,18 @@ bool ZeroOrderHold::copy_master(const localization_msgs::msg::Odometry::SharedPt
 
 bool ZeroOrderHold::copy_slave(const localization_msgs::msg::Odometry::SharedPtr _msg)
 {
-  plan_->slave.x = _msg->twist.linear.x;
-  plan_->slave.y = _msg->twist.linear.y;
-  plan_->slave.roll = _msg->twist.angular.x;
-  plan_->slave.yaw = _msg->twist.angular.z;
+  hold_msg_->has_slave = true;
+  hold_msg_->slave.x = _msg->twist.linear.x;
+  hold_msg_->slave.y = _msg->twist.linear.y;
+  hold_msg_->slave.roll = _msg->twist.angular.x;
+  hold_msg_->slave.yaw = _msg->twist.angular.z;
 
-  if (plan_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-    plan_->slave.z = _msg->twist.linear.z_depth;
-  } else if (plan_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-    plan_->slave.z = _msg->twist.linear.z_altitude;
+  if (hold_z_mode == Hold_Z_Mode::DEPTH) {
+    hold_msg_->slave.z = _msg->twist.linear.z_depth;
+  } else if (hold_z_mode == Hold_Z_Mode::ALTITUDE) {
+    hold_msg_->slave.z = _msg->twist.linear.z_altitude;
   } else {
-    RCLCPP_ERROR(this->get_logger(), "Z mode(%d) is invalid.", plan_->z_mode);
+    RCLCPP_ERROR(this->get_logger(), "Z mode(%d) is invalid.", static_cast<int>(hold_z_mode));
     return false;
   }
   return true;
