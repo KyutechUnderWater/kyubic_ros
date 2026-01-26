@@ -20,7 +20,7 @@
               message="Waypoint Action Start"
               topic_name="/talker"/>
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-                      csv_file_path="assets/sample/arrow1_depth_generated.csv"/>
+                      csv_file_path="assets/sample/handy_test.csv"/>
       <Talker name="AutomatickTalker"
               message="Waypoint Action Successful"
               topic_name="/talker"/>
@@ -58,10 +58,13 @@
 
   <BehaviorTree ID="Emergency">
     <Sequence name="EmergencySequence">
-      <LifecycleManager name="DeactivateZOHNode"
-                        node_name="planner/wrench_planner/zoh_wrench_planner_component"
-                        transition="deactivate"
-                        timeout_sec="1"/>
+      <Fallback>
+        <LifecycleManager name="DeactivateZOHNode"
+                          node_name="planner/wrench_planner/zoh_wrench_planner_component"
+                          transition="deactivate"
+                          timeout_sec="1"/>
+        <AlwaysSuccess/>
+      </Fallback>
       <Talker name="EmergencyTalker"
               message="Emergency Mode Start"
               topic_name="/talker"/>
