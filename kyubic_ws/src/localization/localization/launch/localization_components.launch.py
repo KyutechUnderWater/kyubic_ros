@@ -47,7 +47,7 @@ def generate_launch_description():
                 namespace="localization/imu",
                 package="localization",
                 plugin="localization::IMUTransform",
-                remappings=[("/localization/imu/imu", "/driver/imu_driver/imu")],
+                remappings=[("/localization/imu/imu", "/driver/imu")],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
@@ -58,7 +58,7 @@ def generate_launch_description():
                 package="localization",
                 plugin="localization::DVLOdometry",
                 remappings=[
-                    ("/localization/dvl/dvl", "/driver/dvl_driver/dvl"),
+                    ("/localization/dvl/dvl", "/driver/dvl"),
                     (
                         "/localization/dvl/transformed_imu",
                         "/localization/imu/transformed",
