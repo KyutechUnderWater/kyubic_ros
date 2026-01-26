@@ -202,7 +202,7 @@
 
     emergency:
       emergency_lifecycle_status_check:
-        lifecycle_name: /emergency/emergency_surfacing
+        lifecycle_name: /emergencyNode
         expected_state: active
         timeout_ms: 1000
 
