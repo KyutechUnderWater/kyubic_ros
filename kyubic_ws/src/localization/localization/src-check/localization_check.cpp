@@ -1,5 +1,4 @@
 #include <driver_msgs/msg/gnss.hpp>
-#include <localization_msgs/msg/global_pose.hpp>
 #include <localization_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <system_health_check/base_class/service_server_check_base.hpp>
@@ -11,7 +10,6 @@ namespace localization
 
 using GnssMsg = driver_msgs::msg::Gnss;
 using OdometryMsg = localization_msgs::msg::Odometry;
-using GlobalPoseMsg = localization_msgs::msg::GlobalPose;
 
 class OdomTopicStatusCheck : public system_health_check::base::TopicStatusCheckBase<OdometryMsg>
 {
@@ -28,32 +26,6 @@ private:
   }
 
   bool validate(const OdometryMsg & msg) override
-  {
-    if (
-      msg.status.depth.id == common_msgs::msg::Status::NORMAL &&
-      msg.status.dvl.id == common_msgs::msg::Status::NORMAL &&
-      msg.status.imu.id == common_msgs::msg::Status::NORMAL)
-      return true;
-    return false;
-  }
-};
-
-class GlobalPoseTopicStatusCheck
-: public system_health_check::base::TopicStatusCheckBase<GlobalPoseMsg>
-{
-private:
-  void prepare_check(rclcpp::Node::SharedPtr node) override
-  {
-    std::string topic_name = node->declare_parameter(
-      "localization.global_pose_topic_status_check.topic_name", "/global_pose");
-    uint32_t timeout_ms =
-      node->declare_parameter("localization.global_pose_topic_status_check.timeout_ms", 1000);
-
-    set_status_id("global_pose_status");
-    set_config(topic_name, timeout_ms);
-  }
-
-  bool validate(const GlobalPoseMsg & msg) override
   {
     if (
       msg.status.depth.id == common_msgs::msg::Status::NORMAL &&
@@ -170,8 +142,6 @@ private:
 #include <pluginlib/class_list_macros.hpp>
 PLUGINLIB_EXPORT_CLASS(
   localization::OdomTopicStatusCheck, system_health_check::base::SystemCheckBase)
-PLUGINLIB_EXPORT_CLASS(
-  localization::GlobalPoseTopicStatusCheck, system_health_check::base::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(
   localization::GnssTopicStatusCheck, system_health_check::base::SystemCheckBase)
 PLUGINLIB_EXPORT_CLASS(

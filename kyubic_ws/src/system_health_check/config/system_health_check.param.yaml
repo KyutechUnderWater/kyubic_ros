@@ -42,7 +42,6 @@
       - "localization::imu::ImuResetServiceServerCheck"
 
       - "localization::OdomTopicStatusCheck"
-      - "localization::GlobalPoseTopicStatusCheck"
       - "localization::GnssTopicStatusCheck"
       - "localization::ImuTransformedTopicStatusCheck"
       - "localization::DepthOdomTopicStatusCheck"
@@ -184,9 +183,6 @@
 
       odom_topic_status_check:
         topic_name: /localization/odom
-        timeout_ms: 1000
-      global_pose_topic_status_check:
-        topic_name: /localization/global_pose
         timeout_ms: 1000
       gnss_topic_status_check:
         topic_name: /driver/gnss_driver/gnss

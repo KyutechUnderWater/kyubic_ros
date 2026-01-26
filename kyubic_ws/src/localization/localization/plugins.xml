@@ -43,10 +43,6 @@
         base_class_type="system_health_check::base::SystemCheckBase">
         <description>Check odom topic status of localization.</description>
     </class>
-    <class type="localization::GlobalPoseTopicStatusCheck"
-        base_class_type="system_health_check::base::SystemCheckBase">
-        <description>Check global_pose topic status of localization.</description>
-    </class>
     <class type="localization::GnssTopicStatusCheck"
         base_class_type="system_health_check::base::SystemCheckBase">
         <description>Check gnss topic status of localization.</description>
