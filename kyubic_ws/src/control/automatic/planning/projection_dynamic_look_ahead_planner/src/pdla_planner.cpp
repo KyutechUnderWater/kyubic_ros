@@ -185,24 +185,51 @@ void PDLAPlanner::_runPlannerLogic(
     odom_copy->status.dvl == localization_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
 
-    // double force_z = 0.0;
-    // if (
-    //   odom_copy->status.depth != localization_msgs::msg::Status::ERROR &&
-    //   z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-    //   force_z = p_pid_ctrl_->pid_z_update(
-    //     current_twst.linear.z_depth, current_pose.position.z_depth, target_pose.position.z_depth);
-    // } else if (
-    //   odom_copy->odom.status.dvl != localization_msgs::msg::Status::ERROR &&
-    //   z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-    //   force_z = -p_pid_ctrl_->pid_z_update(
-    //     current_twst.linear.z_altitude, current_pose.position.z_altitude,
-    //     target_pose.position.z_altitude);
-    // }
-    //
-    // {
-    //   msg->wrench.force.z = force_z;
-    //   RCLCPP_WARN(this->get_logger(), "only z-axis control: %lf[N]", force_z);
-    // }
+    // Control when some sensors become unusable
+    auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>();
+    msg->header.stamp = this->get_clock()->now();
+    msg->z_mode = target_pose_.at(step_idx).z_mode;
+
+    if (
+      odom_copy->status.depth != localization_msgs::msg::Status::ERROR &&
+      target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
+      msg->targets.z = target_pose_.at(step_idx).z;
+      msg->master.z = odom_copy->pose.position.z_depth;
+      msg->slave.z = odom_copy->twist.linear.z_depth;
+    } else if (
+      odom_copy->status.dvl != localization_msgs::msg::Status::ERROR &&
+      target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
+      msg->targets.z = target_pose_.at(step_idx).z;
+      msg->master.z = odom_copy->pose.position.z_altitude;
+      msg->slave.z = odom_copy->twist.linear.z_altitude;
+    }
+
+    if (odom_copy->status.imu != localization_msgs::msg::Status::ERROR) {
+      msg->targets.roll = target_pose_.at(step_idx).roll;
+      msg->targets.yaw = target_pose_.at(step_idx).yaw;
+
+      msg->master.roll = odom_copy->pose.orientation.x;
+      msg->master.yaw = odom_copy->pose.orientation.z;
+
+      msg->slave.roll = odom_copy->twist.angular.x;
+      msg->slave.yaw = odom_copy->twist.angular.z;
+    }
+
+    if (odom_copy->status.dvl != localization_msgs::msg::Status::ERROR) {
+      msg->targets.x = target_pose_.at(step_idx).x;
+      msg->targets.y = target_pose_.at(step_idx).y;
+
+      msg->master.x = odom_copy->pose.position.x;
+      msg->master.y = odom_copy->pose.position.y;
+
+      msg->slave.x = odom_copy->twist.linear.x;
+      msg->slave.y = odom_copy->twist.linear.y;
+    }
+
+    {
+      pub_->publish(std::move(msg));
+      RCLCPP_WARN(this->get_logger(), "Constrained Control (Sensor Error)");
+    }
   } else {
     // ウェイポイント到達判定
     bool reached = false;
