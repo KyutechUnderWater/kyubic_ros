@@ -17,7 +17,7 @@ if [ $? != 0 ]; then
     byobu-tmux split-window -v -t $SESSION:0
     byobu-tmux split-window -h -t $SESSION:0
     byobu-tmux send-keys -t $SESSION:0.1 "ros2 launch kyubic_bringup manual.launch.py"
-    byobu-tmux send-keys -t $SESSION:0.2 "ros2 topic pub /actuator_rp2040_driver/heartbeat std_msgs/msg/Bool 'data: true'"
+    byobu-tmux send-keys -t $SESSION:0.2 "ros2 topic pub /driver/actuator_rp2040_driver/heartbeat std_msgs/msg/Bool 'data: true'"
 
     # --- Window 1: 実行・監視用 ---
     byobu-tmux new-window -t $SESSION -n 'Run1'
