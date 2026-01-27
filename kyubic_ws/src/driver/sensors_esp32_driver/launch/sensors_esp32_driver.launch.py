@@ -39,14 +39,12 @@ def generate_launch_description():
     nodes = []
     for exe in executable_list:
         node_remappings = []
-        if exe == "depth_component_node":
-            node_remappings.append(("depth", "/driver/depth"))
 
         # Nodeの定義
         node = Node(
             package="sensors_esp32_driver",
             executable=exe,
-            namespace="sensors_esp32_driver",
+            namespace="driver/sensors_esp32_driver",
             name=exe,
             parameters=[config],
             remappings=node_remappings,

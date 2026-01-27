@@ -1,0 +1,66 @@
+<library path="system_health_check_plugins">
+    <class type="localization::depth::DepthTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check depth topic status of localization.</description>
+    </class>
+    <class type="localization::depth::DepthOdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check depth_odom topic status of localization.</description>
+    </class>
+    <class type="localization::depth::DepthResetServiceServerCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check depth_reset service server of localization.</description>
+    </class>
+    <class type="localization::dvl::DvlTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check dvl topic status of localization.</description>
+    </class>
+    <class type="localization::dvl::ImuTransformedTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check imu_transformed topic status of localization.</description>
+    </class>
+    <class type="localization::dvl::DvlOdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check dvl_odom topic status of localization.</description>
+    </class>
+    <class type="localization::dvl::DvlResetServiceServerCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check dvl_reset service server of localization.</description>
+    </class>
+    <class type="localization::imu::ImuTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check imu topic status of localization.</description>
+    </class>
+    <class type="localization::imu::ImuTransformedTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check imu_transformed topic status of localization.</description>
+    </class>
+    <class type="localization::imu::ImuResetServiceServerCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check imu_reset service server of localization.</description>
+    </class>
+    <class type="localization::OdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check odom topic status of localization.</description>
+    </class>
+    <class type="localization::GnssTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check gnss topic status of localization.</description>
+    </class>
+    <class type="localization::ImuTransformedTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check imu_transformed topic status of localization.</description>
+    </class>
+    <class type="localization::DepthOdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check depth_odom topic status of localization.</description>
+    </class>
+    <class type="localization::DvlOdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check dvl_odom topic status of localization.</description>
+    </class>
+    <class type="localization::ResetServiceServerCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check reset service server of localization.</description>
+    </class>
+</library>

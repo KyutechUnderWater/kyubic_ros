@@ -20,7 +20,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <timer/timeout.hpp>
 
-namespace logic_distro_rp2040_driver
+namespace driver::logic_distro_rp2040_driver
 {
 
 /**
@@ -61,6 +61,6 @@ private:
   void _check_timeout();
 };
 
-}  // namespace logic_distro_rp2040_driver
+}  // namespace driver::logic_distro_rp2040_driver
 
 #endif

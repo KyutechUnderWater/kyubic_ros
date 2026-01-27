@@ -36,8 +36,9 @@ def generate_launch_description():
                 name="depth_odometry_component",
                 namespace="localization/depth",
                 package="localization",
-                plugin="localization::DepthOdometry",
-                remappings=[("/localization/depth/depth", "/driver/depth")],
+                plugin="localization::depth::DepthOdometry",
+                remappings=[("depth", "/driver/sensors_esp32_driver/depth")],
+                parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
@@ -46,8 +47,8 @@ def generate_launch_description():
                 name="imu_transform_component",
                 namespace="localization/imu",
                 package="localization",
-                plugin="localization::IMUTransform",
-                remappings=[("/localization/imu/imu", "/driver/imu")],
+                plugin="localization::imu::IMUTransform",
+                remappings=[("imu", "/driver/imu_driver/imu")],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
@@ -56,11 +57,11 @@ def generate_launch_description():
                 name="dvl_odometry_component",
                 namespace="localization/dvl",
                 package="localization",
-                plugin="localization::DVLOdometry",
+                plugin="localization::dvl::DVLOdometry",
                 remappings=[
-                    ("/localization/dvl/dvl", "/driver/dvl"),
+                    ("dvl", "/driver/dvl_driver/dvl"),
                     (
-                        "/localization/dvl/transformed_imu",
+                        "transformed_imu",
                         "/localization/imu/transformed",
                     ),
                 ],
@@ -74,7 +75,7 @@ def generate_launch_description():
                 namespace="localization",
                 package="localization",
                 plugin="localization::Localization",
-                remappings=[("/localization/gnss", "/driver/gnss")],
+                remappings=[("gnss", "/driver/gnss_driver/gnss")],
                 parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}

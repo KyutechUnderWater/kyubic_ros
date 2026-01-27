@@ -28,7 +28,7 @@ target_link_libraries(${PROJECT_NAME}_component
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}_component
-  PLUGIN "logic_distro_rp2040_driver::LogicDistroRP2040"
+  PLUGIN "driver::logic_distro_rp2040_driver::LogicDistroRP2040"
   EXECUTABLE ${PROJECT_NAME}_component_node
 )
 
@@ -45,6 +45,19 @@ install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}/
 )
+
+##############################################
+# --- Diagnostics Plugin ---
+ament_auto_add_library(system_health_check_plugins SHARED ./src-check/check.cpp)
+
+# Install settings for pluginlib
+install(TARGETS system_health_check_plugins
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+pluginlib_export_plugin_description_file(system_health_check plugins.xml)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

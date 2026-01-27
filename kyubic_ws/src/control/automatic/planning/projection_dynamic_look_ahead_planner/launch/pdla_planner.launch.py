@@ -25,11 +25,12 @@ def generate_launch_description():
             log_level_arg,
             Node(
                 package="projection_dynamic_look_ahead_planner",
-                namespace="planner",
+                namespace="planner/pdla_planner",
                 executable="pdla_planner_component_node",
                 name="pdla_planner",
                 remappings=[
-                    ("/planner/odom", "/localization/odom"),
+                    ("odom", "/localization/odom"),
+                    ("goal_current_odom", "/planner/wrench_planner/goal_current_odom"),
                 ],
                 parameters=[
                     cfg_pdla_planner,

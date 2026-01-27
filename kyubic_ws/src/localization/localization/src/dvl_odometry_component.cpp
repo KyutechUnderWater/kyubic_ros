@@ -14,7 +14,7 @@
 
 using namespace std::chrono_literals;
 
-namespace localization
+namespace localization::dvl
 {
 
 DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odometry", options)
@@ -44,10 +44,10 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
-  if (!msg->velocity_valid || imu_msg_->status.imu == localization_msgs::msg::Status::ERROR) {
+  if (!msg->velocity_valid || imu_msg_->status.imu.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
     odom_msg->header = msg->header;
-    odom_msg->status.dvl = localization_msgs::msg::Status::ERROR;
+    odom_msg->status.dvl.id = common_msgs::msg::Status::ERROR;
   } else {
     auto now = this->get_clock()->now();
     double dt = (now - pre_time).nanoseconds() * 1e-9;
@@ -113,7 +113,7 @@ void DVLOdometry::reset()
   pos_x = pos_y = 0.0;
 }
 
-}  // namespace localization
+}  // namespace localization::dvl
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(localization::DVLOdometry)
+RCLCPP_COMPONENTS_REGISTER_NODE(localization::dvl::DVLOdometry)

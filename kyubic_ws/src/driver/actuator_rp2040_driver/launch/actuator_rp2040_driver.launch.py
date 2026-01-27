@@ -24,17 +24,16 @@ def generate_launch_description():
 
     driver_component = ComposableNode(
         package="actuator_rp2040_driver",
-        plugin="actuator_rp2040_driver::ActuatorRP2040",
-        namespace="actuator_rp2040_driver",
+        plugin="driver::actuator_rp2040_driver::ActuatorRP2040",
+        namespace="driver/actuator_rp2040_driver",
         name="actuator_rp2040_driver",
-        remappings=[("robot_force", "/driver/robot_force")],
         parameters=[config],
         extra_arguments=[{"use_intra_process_comms": True}],
     )
 
     container = ComposableNodeContainer(
         name="logic_distro_container",
-        namespace="actuator_rp2040_driver",
+        namespace="driver/actuator_rp2040_driver",
         package="rclcpp_components",
         executable="component_container",
         composable_node_descriptions=[driver_component],

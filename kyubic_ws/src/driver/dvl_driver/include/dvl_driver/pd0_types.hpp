@@ -13,7 +13,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace dvl_driver::path_finder::pd0
+namespace driver::dvl_driver::path_finder::pd0
 {
 
 // Header ID
@@ -138,5 +138,5 @@ struct Pd0Ensemble
   std::vector<std::vector<uint8_t>> status;  // [cell][beam] (0=Bad, 1=Good?)
 };
 
-}  // namespace dvl_driver::path_finder::pd0
+}  // namespace driver::dvl_driver::path_finder::pd0
 #endif

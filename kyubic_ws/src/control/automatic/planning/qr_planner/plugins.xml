@@ -1,0 +1,10 @@
+<library path="system_health_check_plugins">
+    <class type="planner::qr_planner::OdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check odom topic status of qr_planner.</description>
+    </class>
+    <class type="planner::qr_planner::QRPlannerActionServerCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check qr_planner action server of qr_planner.</description>
+    </class>
+</library>

@@ -1,0 +1,14 @@
+<library path="system_health_check_plugins">
+    <class type="joy2wrench::Joy2WrenchLifecycleStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check joy2wrench lifecycle status of joy2wrench.</description>
+    </class>
+    <class type="joy2wrench::RobotForceTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check robot_force topic status of joy2wrench.</description>
+    </class>
+    <class type="joy2wrench::JoyCommonTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check joy_common topic status of joy2wrench.</description>
+    </class>
+</library>

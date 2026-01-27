@@ -36,7 +36,7 @@ def generate_launch_description():
                 namespace="joy_common",
                 package="joy_common",
                 plugin="joy_common::JoyCommon",
-                remappings=[("/joy", "/joy_common/joy")],
+                remappings=[("joy", "/joy_common/joy")],
                 parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}

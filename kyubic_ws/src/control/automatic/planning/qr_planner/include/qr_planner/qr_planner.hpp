@@ -18,7 +18,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 
-namespace planner
+namespace planner::qr_planner
 {
 
 using QRAction = planner_msgs::action::QR;
@@ -112,6 +112,6 @@ private:
   bool stop_thread_;
 };
 
-}  // namespace planner
+}  // namespace planner::qr_planner
 
 #endif

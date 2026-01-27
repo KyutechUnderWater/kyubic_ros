@@ -18,6 +18,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(ament_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(common_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
@@ -32,6 +33,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
  "srv/Reset.srv"
  DEPENDENCIES std_msgs
  DEPENDENCIES geometry_msgs
+ DEPENDENCIES common_msgs
 )
 
 ament_export_dependencies(rosidl_default_runtime)

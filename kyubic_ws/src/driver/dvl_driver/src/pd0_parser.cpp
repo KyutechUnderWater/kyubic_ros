@@ -11,9 +11,9 @@
 
 #include "dvl_driver/endian_utils.hpp"
 
-namespace dvl_driver::path_finder::pd0
+namespace driver::dvl_driver::path_finder::pd0
 {
-using namespace dvl_driver::utils;
+using namespace driver::dvl_driver::utils;
 
 Pd0Parser::Pd0Parser() {}
 Pd0Parser::~Pd0Parser() {}
@@ -231,4 +231,4 @@ bool Pd0Parser::parse(const unsigned char * buffer, size_t length, Pd0Ensemble &
   return true;
 }
 
-}  // namespace dvl_driver::path_finder::pd0
+}  // namespace driver::dvl_driver::path_finder::pd0

@@ -33,8 +33,8 @@ def generate_launch_description():
                 package="p_pid_controller",
                 plugin="controller::MeasureParam",
                 remappings=[
-                    ("/controller/p_pid_controller/odom", "/localization/odom"),
-                    ("/controller/p_pid_controller/robot_force", "/driver/robot_force"),
+                    ("odom", "/localization/odom"),
+                    ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
                 ],
                 parameters=[{"pid_gain_yaml": config_path}],
                 extra_arguments=[

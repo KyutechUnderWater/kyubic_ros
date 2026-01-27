@@ -22,10 +22,10 @@
 #include "std_srvs/srv/trigger.hpp"
 
 /**
- * @namespace localization
+ * @namespace localization::dvl
  * @brief localization
  */
-namespace localization
+namespace localization::dvl
 {
 
 const double RADIAN_SCALE = std::numbers::pi / 180.0;
@@ -85,6 +85,6 @@ public:
    */
   void reset();
 };
-}  // namespace localization
+}  // namespace localization::dvl
 
 #endif

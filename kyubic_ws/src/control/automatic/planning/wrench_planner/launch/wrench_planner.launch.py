@@ -27,12 +27,12 @@ def generate_launch_description():
             log_level_arg,
             Node(
                 package="wrench_planner",
-                namespace="planner",
+                namespace="planner/wrench_planner",
                 executable="wrench_planner_component_node",
                 remappings=[
                     ("odom", "/localization/odom"),
-                    ("/planner/robot_force", "/driver/robot_force"),
-                    ("/planner/targets", "/rt_pose_plotter/targets"),
+                    ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
+                    ("targets", "/rt_pose_plotter/targets"),
                 ],
                 parameters=[
                     {"p_pid_controller_path": p_pid_controller_path},

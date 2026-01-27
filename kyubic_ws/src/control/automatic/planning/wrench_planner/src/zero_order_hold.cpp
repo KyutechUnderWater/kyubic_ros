@@ -11,7 +11,7 @@
 
 #include <lifecycle_msgs/msg/state.hpp>
 
-namespace planner
+namespace planner::wrench_planner
 {
 
 ZeroOrderHold::ZeroOrderHold(const rclcpp::NodeOptions & options)
@@ -120,9 +120,9 @@ void ZeroOrderHold::odomCallback(const localization_msgs::msg::Odometry::SharedP
 
   if (is_timeout) {
     if (
-      _msg->status.depth == localization_msgs::msg::Status::ERROR ||
-      _msg->status.imu == localization_msgs::msg::Status::ERROR ||
-      _msg->status.dvl == localization_msgs::msg::Status::ERROR) {
+      _msg->status.depth.id == common_msgs::msg::Status::ERROR ||
+      _msg->status.imu.id == common_msgs::msg::Status::ERROR ||
+      _msg->status.dvl.id == common_msgs::msg::Status::ERROR) {
       RCLCPP_ERROR(this->get_logger(), "Odometry is invalid.");
       return;
     }
@@ -196,7 +196,7 @@ bool ZeroOrderHold::copy_slave(const localization_msgs::msg::Odometry::SharedPtr
   return true;
 }
 
-}  // namespace planner
+}  // namespace planner::wrench_planner
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(planner::ZeroOrderHold)
+RCLCPP_COMPONENTS_REGISTER_NODE(planner::wrench_planner::ZeroOrderHold)

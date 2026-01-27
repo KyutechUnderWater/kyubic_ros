@@ -16,7 +16,7 @@
 
 using namespace std::chrono_literals;
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 Environment::Environment(const rclcpp::NodeOptions & options) : Node("environment", options)
@@ -61,7 +61,7 @@ void Environment::protolink_callback(const ProtoEnvironment & _msg)
     _msg.humidity(), _msg.pressure());
 }
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(sensors_esp32_driver::Environment)
+RCLCPP_COMPONENTS_REGISTER_NODE(driver::sensors_esp32_driver::Environment)

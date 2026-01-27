@@ -1,0 +1,10 @@
+<library path="system_health_check_plugins">
+    <class type="driver::dvl_driver::DvlTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check dvl topic status of dvl driver.</description>
+    </class>
+    <class type="driver::dvl_driver::CommandServiceServerCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check command service server of dvl driver.</description>
+    </class>
+</library>

@@ -1,0 +1,54 @@
+<library path="system_health_check_plugins">
+    <class type="driver::sensors_esp32_driver::ButtonBatteryStateTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check button_battery_state topic status of sensers driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::BuzzerSwitchTopicSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check buzzer_switch topic subscriber of sensers driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::DepthTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check depth topic status of sensers driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::DepthTypeSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check depth_type topic subscriber of sensors driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::EnvironmentTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check environment topic status of sensers driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::ImuResetSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check imu_reset topic subscriber of sensors driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::LeakTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check leak topic status of sensers driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::RgbSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check rgb topic subscriber of sensors driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::RtcGnssTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check rtc_gnss topic status of sensers driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::RtcTimeTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check rtc_time topic status of sensers driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::SystemStatusTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check system_status topic status of sensers driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::TiltServoSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check tilt servo topic subscriber of sensors driver.</description>
+    </class>
+    <class type="driver::sensors_esp32_driver::ZedPowerSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check zed power topic subscriber of sensors driver.</description>
+    </class>
+</library>

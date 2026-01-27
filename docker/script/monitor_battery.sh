@@ -3,7 +3,7 @@
 SESSION_NAME="${1:-ros2_ws}"
 
 # 設定
-TOPIC="/logic_distro_rp2040_driver/power_state"
+TOPIC="/driver/logic_distro_rp2040_driver/power_state"
 FILE_BAT="/dev/shm/battery_status"
 
 HAS_CONNECTED=0

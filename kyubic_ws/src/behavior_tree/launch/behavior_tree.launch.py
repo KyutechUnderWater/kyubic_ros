@@ -46,7 +46,7 @@ def generate_launch_description():
         namespace="",
         remappings=[
             ("joy_common", "/joy_common/joy_common"),
-            ("robot_force", "/driver/robot_force"),
+            ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
         ],
         parameters=[joy2wrench_config],
         output="screen",
@@ -58,7 +58,7 @@ def generate_launch_description():
         name="emergencyNode",
         namespace="",
         remappings=[
-            ("robot_force", "/driver/robot_force"),
+            ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
         ],
         parameters=[emergency_surfacing_config],
         output="screen",
@@ -71,7 +71,11 @@ def generate_launch_description():
         name="btExecutorNode",
         parameters=[behavior_tree_config],
         remappings=[
-            ("power_state", "/logic_distro_rp2040_driver/power_state"),
+            ("imu", "/driver/imu_driver/imu"),
+            ("dvl", "/driver/dvl_driver/dvl"),
+            ("depth", "/driver/sensors_esp32_driver/depth"),
+            ("leak", "/driver/sensors_esp32_driver/leak"),
+            ("power_state", "/driver/logic_distro_rp2040_driver/power_state"),
         ],
         arguments=[
             "--ros-args",

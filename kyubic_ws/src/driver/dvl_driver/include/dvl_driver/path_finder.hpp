@@ -22,10 +22,10 @@
 #include "dvl_driver/pd5_types.hpp"
 
 /**
- * @namespace dvl_driver::path_finder
+ * @namespace driver::dvl_driver::path_finder
  * @brief For path_finder
  */
-namespace dvl_driver::path_finder
+namespace driver::dvl_driver::path_finder
 {
 
 /**
@@ -176,6 +176,6 @@ public:
   bool send_ping_cmd();
 };
 
-}  // namespace dvl_driver::path_finder
+}  // namespace driver::dvl_driver::path_finder
 
 #endif  // _PATH_FINDER_HPP

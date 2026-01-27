@@ -24,8 +24,8 @@ def generate_launch_description():
 
     driver_component = ComposableNode(
         package="logic_distro_rp2040_driver",
-        plugin="logic_distro_rp2040_driver::LogicDistroRP2040",
-        namespace="logic_distro_rp2040_driver",
+        plugin="driver::logic_distro_rp2040_driver::LogicDistroRP2040",
+        namespace="driver/logic_distro_rp2040_driver",
         name="logic_distro_rp2040_driver",
         parameters=[config],
         extra_arguments=[{"use_intra_process_comms": True}],
@@ -33,7 +33,7 @@ def generate_launch_description():
 
     container = ComposableNodeContainer(
         name="logic_distro_container",
-        namespace="logic_distro_rp2040_driver",
+        namespace="driver/logic_distro_rp2040_driver",
         package="rclcpp_components",
         executable="component_container",
         composable_node_descriptions=[driver_component],

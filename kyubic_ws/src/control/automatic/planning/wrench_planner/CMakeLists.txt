@@ -29,12 +29,12 @@ ament_auto_add_library(zero_order_hold_component SHARED
 
 # register components
 rclcpp_components_register_node(wrench_planner_component
-  PLUGIN "planner::WrenchPlanner"
+  PLUGIN "planner::wrench_planner::WrenchPlanner"
   EXECUTABLE wrench_planner_component_node
 )
 
 rclcpp_components_register_node(zero_order_hold_component
-  PLUGIN "planner::ZeroOrderHold"
+  PLUGIN "planner::wrench_planner::ZeroOrderHold"
   EXECUTABLE zero_order_hold_component_node
 )
 
@@ -52,6 +52,22 @@ install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}
 )
+
+##############################################
+# --- Diagnostics Plugin ---
+ament_auto_add_library(system_health_check_plugins SHARED
+  ./src-check/zoh_wrench_planner_check.cpp
+  ./src-check/wrench_planner_check.cpp
+)
+
+# Install settings for pluginlib
+install(TARGETS system_health_check_plugins
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+pluginlib_export_plugin_description_file(system_health_check plugins.xml)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

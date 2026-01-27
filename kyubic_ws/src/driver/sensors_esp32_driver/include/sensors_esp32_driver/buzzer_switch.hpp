@@ -15,7 +15,7 @@
 #include <protolink/client.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 class BuzzerSwitch : public rclcpp::Node
@@ -37,6 +37,6 @@ private:
   rclcpp::Subscription<driver_msgs::msg::BuzzerSwitch>::SharedPtr sub_;
 };
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #endif

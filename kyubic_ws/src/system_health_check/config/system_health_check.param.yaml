@@ -1,0 +1,265 @@
+/**:
+  ros__parameters:
+    details: true
+    checks:
+      - "driver::actuator_rp2040_driver::ThrusterPublisherCheck"
+      - "driver::actuator_rp2040_driver::RobotForceSubscriberCheck"
+      - "driver::actuator_rp2040_driver::LedSubscriberCheck"
+      - "driver::actuator_rp2040_driver::HeartbeatSubscriberCheck"
+
+      - "driver::dvl_driver::DvlTopicStatusCheck"
+      - "driver::dvl_driver::CommandServiceServerCheck"
+
+      - "driver::imu_driver::ImuTopicStatusCheck"
+
+      - "driver::logic_distro_rp2040_driver::PowerStateTopicStatusCheck"
+      - "driver::logic_distro_rp2040_driver::SystemSwitchSubscriberCheck"
+
+      - "driver::sensors_esp32_driver::ButtonBatteryStateTopicStatusCheck"
+      - "driver::sensors_esp32_driver::BuzzerSwitchTopicSubscriberCheck"
+      - "driver::sensors_esp32_driver::DepthTopicStatusCheck"
+      - "driver::sensors_esp32_driver::DepthTypeSubscriberCheck"
+      - "driver::sensors_esp32_driver::EnvironmentTopicStatusCheck"
+      - "driver::sensors_esp32_driver::ImuResetSubscriberCheck"
+      - "driver::sensors_esp32_driver::LeakTopicStatusCheck"
+      - "driver::sensors_esp32_driver::RgbSubscriberCheck"
+      - "driver::sensors_esp32_driver::RtcGnssTopicStatusCheck"
+      - "driver::sensors_esp32_driver::RtcTimeTopicStatusCheck"
+      - "driver::sensors_esp32_driver::SystemStatusTopicStatusCheck"
+      - "driver::sensors_esp32_driver::TiltServoSubscriberCheck"
+      - "driver::sensors_esp32_driver::ZedPowerSubscriberCheck"
+
+      - "localization::depth::DepthTopicStatusCheck"
+      - "localization::depth::DepthOdomTopicStatusCheck"
+      - "localization::depth::DepthResetServiceServerCheck"
+
+      - "localization::dvl::DvlTopicStatusCheck"
+      - "localization::dvl::DvlOdomTopicStatusCheck"
+      - "localization::dvl::DvlResetServiceServerCheck"
+
+      - "localization::imu::ImuTopicStatusCheck"
+      - "localization::imu::ImuTransformedTopicStatusCheck"
+      - "localization::imu::ImuResetServiceServerCheck"
+
+      - "localization::OdomTopicStatusCheck"
+      - "localization::GnssTopicStatusCheck"
+      - "localization::ImuTransformedTopicStatusCheck"
+      - "localization::DepthOdomTopicStatusCheck"
+      - "localization::DvlOdomTopicStatusCheck"
+      - "localization::ResetServiceServerCheck"
+
+      - "emergency::EmergencyLifecycleStatusCheck"
+
+      - "planner::pdla_planner::OdomTopicStatusCheck"
+      - "planner::pdla_planner::WrenchPlanTopicPublisherCheck"
+      - "planner::pdla_planner::PDLAPlannerActionServerCheck"
+      - "planner::qr_planner::OdomTopicStatusCheck"
+      - "planner::qr_planner::QRPlannerActionServerCheck"
+      - "planner::wrench_planner::WrenchPlanTopicPublisherCheck"
+      - "planner::wrench_planner::ZohWrenchPlanTopicSubscriberCheck"
+      - "planner::wrench_planner::RobotFoceTopicPublisherCheck"
+      - "planner::wrench_planner::TargetsTopicPublisherCheck"
+      - "planner::wrench_planner::WrenchPlanTopicSubscriberCheck"
+      - "planner::wrench_planner::OdomTopicStatusCheck"
+
+      - "joy2wrench::Joy2WrenchLifecycleStatusCheck"
+      - "joy2wrench::RobotForceTopicStatusCheck"
+      - "joy2wrench::JoyCommonTopicStatusCheck"
+
+      - "joy_common::JoyCommonTopicStatusCheck"
+      - "joy_common::JoyTopicStatusCheck"
+
+    # --- Parameters per Library ---
+    driver:
+      actuator_rp2040_driver:
+        thruster_publisher_check:
+          topic_name: /driver/actuator_rp2040_driver/thruster
+          timeout_ms: 1000
+        robot_force_subscriber_check:
+          topic_name: /driver/actuator_rp2040_driver/robot_force
+          timeout_ms: 1000
+        led_subscriber_check:
+          topic_name: /driver/actuator_rp2040_driver/led
+          timeout_ms: 1000
+        heartbeat_subscriber_check:
+          topic_name: /driver/actuator_rp2040_driver/heartbeat
+          timeout_ms: 1000
+
+      dvl_driver:
+        dvl_topic_status_check:
+          topic_name: /driver/dvl_driver/dvl
+          timeout_ms: 1000
+        command_service_server_check:
+          service_name: /driver/dvl_driver/command
+          timeout_ms: 1000
+
+      imu_driver:
+        imu_topic_status_check:
+          topic_name: /driver/imu_driver/imu
+          timeout_ms: 1000
+
+      logic_distro_rp2040_driver:
+        power_state_topic_status_check:
+          topic_name: /driver/logic_distro_rp2040_driver/power_state
+          timeout_ms: 2000
+        system_switch_subscriber_check:
+          topic_name: /driver/logic_distro_rp2040_driver/system_switch
+          timeout_ms: 1000
+
+      sensors_esp32_driver:
+        button_battery_state_topic_status_check:
+          topic_name: /driver/sensors_esp32_driver/button_battery_state
+          timeout_ms: 1000
+        buzzer_switch_topic_subscriber_check:
+          topic_name: /driver/sensors_esp32_driver/buzzer_switch
+          timeout_ms: 1000
+        depth_topic_status_check:
+          topic_name: /driver/sensors_esp32_driver/depth
+          timeout_ms: 2000
+        depth_type_subscriber_check:
+          topic_name: /driver/sensors_esp32_driver/depth_type
+          timeout_ms: 1000
+        environment_topic_status_check:
+          topic_name: /driver/sensors_esp32_driver/environment
+          timeout_ms: 1000
+        imu_reset_subscriber_check:
+          topic_name: /driver/sensors_esp32_driver/imu_reset
+          timeout_ms: 1000
+        leak_topic_status_check:
+          topic_name: /driver/sensors_esp32_driver/leak
+          timeout_ms: 2000
+        rgb_subscriber_check:
+          topic_name: /driver/sensors_esp32_driver/rgb
+          timeout_ms: 1000
+        rtc_gnss_topic_status_check:
+          topic_name: /driver/sensors_esp32_driver/rtc_gnss
+          timeout_ms: 1000
+        rtc_time_topic_status_check:
+          topic_name: /driver/sensors_esp32_driver/rtc_time
+          timeout_ms: 1000
+        system_status_topic_status_check:
+          topic_name: /driver/sensors_esp32_driver/system_status
+          timeout_ms: 1000
+        tilt_servo_subscriber_check:
+          topic_name: /driver/sensors_esp32_driver/tilt_servo
+          timeout_ms: 1000
+        zed_power_subscriber_check:
+          topic_name: /driver/sensors_esp32_driver/zed_power
+          timeout_ms: 1000
+
+    localization:
+      depth:
+        depth_topic_status_check:
+          topic_name: /driver/sensors_esp32_driver/depth
+          timeout_ms: 1000
+        depth_odom_topic_status_check:
+          topic_name: /localization/depth/odom
+          timeout_ms: 1000
+        depth_reset_service_server_check:
+          service_name: /localization/depth/reset
+          timeout_ms: 1000
+
+      dvl:
+        dvl_topic_status_check:
+          topic_name: /driver/dvl_driver/dvl
+          timeout_ms: 1000
+        dvl_odom_topic_status_check:
+          topic_name: /localization/dvl/odom
+          timeout_ms: 1000
+        dvl_reset_service_server_check:
+          service_name: /localization/dvl/reset
+          timeout_ms: 1000
+
+      imu:
+        imu_topic_status_check:
+          topic_name: /driver/imu_driver/imu
+          timeout_ms: 1000
+        imu_transformed_topic_status_check:
+          topic_name: /localization/imu/transformed
+          timeout_ms: 1000
+        imu_reset_service_server_check:
+          service_name: /localization/imu/reset
+          timeout_ms: 1000
+
+      odom_topic_status_check:
+        topic_name: /localization/odom
+        timeout_ms: 1000
+      gnss_topic_status_check:
+        topic_name: /driver/gnss_driver/gnss
+        timeout_ms: 1000
+      imu_transformed_topic_status_check:
+        topic_name: /localization/imu/transformed
+        timeout_ms: 1000
+      depth_odom_topic_status_check:
+        topic_name: /localization/depth/odom
+        timeout_ms: 1000
+      dvl_odom_topic_status_check:
+        topic_name: /localization/dvl/odom
+        timeout_ms: 1000
+      reset_service_server_check:
+        service_name: /localization/reset
+        timeout_ms: 1000
+
+    emergency:
+      emergency_lifecycle_status_check:
+        lifecycle_name: /emergencyNode
+        expected_state: active
+        timeout_ms: 1000
+
+    planner:
+      pdla_planner:
+        odom_topic_status_check:
+          topic_name: /localization/odom
+          timeout_ms: 1000
+        wrench_plan_topic_publisher_check:
+          topic_name: /planner/wrench_planner/goal_current_odom
+          timeout_ms: 1000
+        pdla_planner_action_server_check:
+          action_name: /planner/pdla_planner/pdla_plan
+          timeout_ms: 1000
+      qr_planner:
+        odom_topic_status_check:
+          topic_name: /localization/odom
+          timeout_ms: 1000
+        qr_planner_action_server_check:
+          action_name: /planner/qr_planner/qr_plan
+          timeout_ms: 1000
+      wrench_planner:
+        wrench_plan_topic_publisher_check:
+          topic_name: /planner/wrench_planner/goal_current_odom
+          timeout_ms: 1000
+        zoh_wrench_plan_topic_subscriber_check:
+          topic_name: /planner/wrench_planner/zoh_wrench_plan
+          timeout_ms: 1000
+        robot_force_topic_publisher_check:
+          topic_name: /driver/actuator_rp2040_driver/robot_force
+          timeout_ms: 1000
+        targets_topic_publisher_check:
+          topic_name: /rt_pose_plotter/targets
+          timeout_ms: 1000
+        wrench_plan_topic_subscriber_check:
+          topic_name: /planner/wrench_planner/goal_current_odom
+          timeout_ms: 1000
+        odom_topic_status_check:
+          topic_name: /localization/odom
+          timeout_ms: 1000
+
+    joy2wrench:
+      joy2_wrench_lifecycle_status_check:
+        target_node: /joy2wrench/joy2_wrench
+        expected_state: active
+        timeout_ms: 1000
+      joy_common_topic_status_check:
+        topic_name: /joy_common/joy_common
+        timeout_ms: 1000
+      robot_force_topic_status_check:
+        topic_name: /driver/actuator_rp2040_driver/robot_force
+        timeout_ms: 1000
+
+    joy_common:
+      joy_common_topic_status_check:
+        topic_name: /joy_common/joy_common
+        timeout_ms: 1000
+      joy_topic_status_check:
+        topic_name: /joy_common/joy
+        timeout_ms: 1000

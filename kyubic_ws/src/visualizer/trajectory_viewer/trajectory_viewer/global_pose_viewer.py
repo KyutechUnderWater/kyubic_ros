@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 
-from localization_msgs.msg import GlobalPose
+from localization_msgs.msg import Odometry
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import threading
@@ -9,7 +9,7 @@ import threading
 
 class GlobalPosePlotter(Node):
     """
-    /localization/global_poseトピックを購読し，緯度経度をリアルタイムでプロットするノード
+    /localization/odomトピックを購読し，緯度経度をリアルタイムでプロットするノード
     """
 
     def __init__(self):
@@ -27,13 +27,11 @@ class GlobalPosePlotter(Node):
         # スレッドセーフなデータアクセスのためのロック
         self.data_lock = threading.Lock()
 
-        # エラー状態を示す定数 ( GlobalPose.msg の定義に基づき ERROR = 2 )
+        # エラー状態を示す定数 ( Odometry.msg の定義に基づき ERROR = 2 )
         self.STATUS_ERROR = 2
 
-        # /localization/global_pose トピックのサブスクライバを作成
-        self.subscription = self.create_subscription(
-            GlobalPose, "global_pose", self.pose_callback, 10
-        )
+        # /localization/odom トピックのサブスクライバを作成
+        self.subscription = self.create_subscription(Odometry, "odom", self.pose_callback, 10)
         self.get_logger().info(f"'{self.subscription.topic_name}' の購読を開始")
 
         # Matplotlibのグラフと軸を準備
@@ -62,15 +60,15 @@ class GlobalPosePlotter(Node):
         # 軸のフォーマットを小数点以下が多いことを想定して調整
         self.ax.ticklabel_format(style="plain", useOffset=False)
 
-    def pose_callback(self, msg: GlobalPose):
+    def pose_callback(self, msg: Odometry):
         """
         トピックからメッセージを受信するたびに呼び出されるコールバック関数
         """
         # ステータスをチェックし、いずれかが 2 (ERROR) の場合はデータを追加しない
         if (
-            msg.status.depth == self.STATUS_ERROR
-            or msg.status.imu == self.STATUS_ERROR
-            or msg.status.dvl == self.STATUS_ERROR
+            msg.status.depth.id == self.STATUS_ERROR
+            or msg.status.imu.id == self.STATUS_ERROR
+            or msg.status.dvl.id == self.STATUS_ERROR
         ):
             self.get_logger().warn("エラー状態のデータを受信したため、プロットをスキップします。")
             return
@@ -78,8 +76,8 @@ class GlobalPosePlotter(Node):
         # ロックを取得してリストにデータを追加
         with self.data_lock:
             # 経度をX軸、緯度をY軸として追加
-            self.lon_data.append(msg.current_pose.longitude)
-            self.lat_data.append(msg.current_pose.latitude)
+            self.lon_data.append(msg.pose.global_pos.current_pose.longitude)
+            self.lat_data.append(msg.pose.global_pos.current_pose.latitude)
 
     def update_plot(self, frame):
         """

@@ -12,7 +12,7 @@
 
 #include <cstdint>
 
-namespace dvl_driver::path_finder::pd5
+namespace driver::dvl_driver::path_finder::pd5
 {
 
 // Header ID
@@ -73,5 +73,5 @@ struct Pd5Ensemble
   int32_t dmg_ref[4];  // Distance Made Good Reference (mm)
 };
 
-}  // namespace dvl_driver::path_finder::pd5
+}  // namespace driver::dvl_driver::path_finder::pd5
 #endif

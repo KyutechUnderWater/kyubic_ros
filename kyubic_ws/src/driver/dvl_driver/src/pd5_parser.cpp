@@ -11,9 +11,9 @@
 
 #include "dvl_driver/endian_utils.hpp"
 
-namespace dvl_driver::path_finder::pd5
+namespace driver::dvl_driver::path_finder::pd5
 {
-using namespace dvl_driver::utils;
+using namespace driver::dvl_driver::utils;
 
 Pd5Parser::Pd5Parser() {}
 Pd5Parser::~Pd5Parser() {}
@@ -79,4 +79,4 @@ bool Pd5Parser::parse(const unsigned char * buffer, size_t length, Pd5Ensemble &
   return true;
 }
 
-}  // namespace dvl_driver::path_finder::pd5
+}  // namespace driver::dvl_driver::path_finder::pd5

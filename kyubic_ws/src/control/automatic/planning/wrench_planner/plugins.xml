@@ -1,0 +1,26 @@
+<library path="system_health_check_plugins">
+    <class type="planner::wrench_planner::WrenchPlanTopicPublisherCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check wrench_plan topic publisher of planner.</description>
+    </class>
+    <class type="planner::wrench_planner::ZohWrenchPlanTopicSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check zoh_wrench_plan topic subscriber of planner.</description>
+    </class>
+    <class type="planner::wrench_planner::RobotFoceTopicPublisherCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check robot_force topic publisher of planner.</description>
+    </class>
+    <class type="planner::wrench_planner::TargetsTopicPublisherCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check targets topic publisher of planner.</description>
+    </class>
+    <class type="planner::wrench_planner::WrenchPlanTopicSubscriberCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check wrench_plan topic subscriber of planner.</description>
+    </class>
+    <class type="planner::wrench_planner::OdomTopicStatusCheck"
+        base_class_type="system_health_check::base::SystemCheckBase">
+        <description>Check odom topic status of planner.</description>
+    </class>
+</library>

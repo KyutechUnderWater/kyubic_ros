@@ -14,7 +14,7 @@
 
 #include "localization_msgs/msg/status.hpp"
 
-namespace localization
+namespace localization::depth
 {
 
 DepthOdometry::DepthOdometry(const rclcpp::NodeOptions & options) : Node("depth_odometry", options)
@@ -39,7 +39,7 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
   if (msg->status.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The depth data is invalid");
     odom_msg->header = msg->header;
-    odom_msg->status.depth = localization_msgs::msg::Status::ERROR;
+    odom_msg->status.depth.id = common_msgs::msg::Status::ERROR;
   } else {
     // calculate period (delta t)
     auto now = this->get_clock()->now();
@@ -96,7 +96,7 @@ void DepthOdometry::reset()
   pre_time = this->get_clock()->now();
 }
 
-}  // namespace localization
+}  // namespace localization::depth
 
 #include "rclcpp_components/register_node_macro.hpp"
-RCLCPP_COMPONENTS_REGISTER_NODE(localization::DepthOdometry)
+RCLCPP_COMPONENTS_REGISTER_NODE(localization::depth::DepthOdometry)

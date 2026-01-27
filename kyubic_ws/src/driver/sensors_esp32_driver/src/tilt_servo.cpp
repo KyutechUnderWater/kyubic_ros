@@ -11,7 +11,7 @@
 
 #include <protolink/udp_protocol.hpp>
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 TiltServo::TiltServo(const rclcpp::NodeOptions & options) : rclcpp::Node("tilt_servo", options)
@@ -39,7 +39,7 @@ TiltServo::TiltServo(const rclcpp::NodeOptions & options) : rclcpp::Node("tilt_s
     });
 }
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(sensors_esp32_driver::TiltServo)
+RCLCPP_COMPONENTS_REGISTER_NODE(driver::sensors_esp32_driver::TiltServo)

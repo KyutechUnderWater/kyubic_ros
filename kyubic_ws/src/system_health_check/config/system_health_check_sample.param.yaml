@@ -1,0 +1,53 @@
+/**:
+  ros__parameters:
+    details: true
+    checks:
+      - "system_health_check::checks::PassCheck"
+      - "system_health_check::checks::FailCheck"
+      - "system_health_check::checks::TopicPublisherCheck"
+      - "system_health_check::checks::TopicSubscriberCheck"
+      - "system_health_check::checks::TopicStatusCheck"
+      - "system_health_check::checks::ServiceServerCheck"
+      - "system_health_check::checks::ServiceClientCheck"
+      - "system_health_check::checks::ActionServerCheck"
+      - "system_health_check::checks::ActionClientCheck"
+      - "system_health_check::checks::LifecycleStatusCheck"
+
+    # ---------------------------------------------------------
+    # TopicPublisherCheck, TopicSubscriberCheck, TopicStatusCheck
+      # ros2 run demo_nodes_cpp talker
+      # ros2 run demo_nodes_cpp listener
+    # ---------------------------------------------------------
+    demo_nodes_cpp:
+      topic_name: "/chatter"
+      timeout_ms: 1000
+      publisher_count: 1
+      compare_mode: 1       # 0: 以上 (>=), 1: 完全一致 (==)
+
+    # ---------------------------------------------------------
+    # ServiceServerCheck, ServiceClientCheck
+      # ros2 run demo_nodes_cpp add_two_ints_server
+      # ros2 service call /add_two_ints example_interfaces/srv/AddTwoInts "{a: 2, b: 3}"
+    # ---------------------------------------------------------
+    add_two_ints:
+      service_name: "/add_two_ints"
+      timeout_ms: 1000
+
+    # ---------------------------------------------------------
+    # ActionServerCheck, ActionClientCheck
+      # ros2 run action_tutorials_cpp fibonacci_action_server
+      # ros2 action send_goal /fibonacci action_tutorials_interfaces/action/Fibonacci "{order: 5}" --feedback
+    # ---------------------------------------------------------
+    fibonacci:
+      action_name: "/fibonacci"
+      timeout_ms: 1000
+
+    # ---------------------------------------------------------
+    # LifecycleStatusCheck
+      # ros2 run lifecycle lifecycle_talker
+      # ros2 lifecycle set /lc_talker activate
+    # ---------------------------------------------------------
+    lifecycle:
+      lifecycle_name: "/lc_talker"
+      expected_state: "active"
+      timeout_ms: 1000

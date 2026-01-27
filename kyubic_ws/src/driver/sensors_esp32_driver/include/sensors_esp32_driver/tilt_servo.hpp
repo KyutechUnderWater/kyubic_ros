@@ -17,10 +17,10 @@
 #include <rclcpp/rclcpp.hpp>
 
 /**
- * @namespace sensors_esp32_driver
+ * @namespace driver::sensors_esp32_driver
  * @brief driver for sensors_esp32
  */
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 /**
@@ -49,6 +49,6 @@ private:
   rclcpp::Subscription<driver_msgs::msg::Int32Stamped>::SharedPtr sub_;
 };
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #endif  // !_TILT_SERVO_HPP

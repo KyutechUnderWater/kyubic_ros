@@ -21,7 +21,7 @@
 #include "dvl_driver/endian_utils.hpp"
 #include "dvl_driver/pd0_types.hpp"
 
-namespace dvl_driver::path_finder
+namespace driver::dvl_driver::path_finder
 {
 
 // Helper for error reporting
@@ -219,4 +219,4 @@ bool Sender::send_break_cmd() { return send_cmd(break_cmd, 4); }
 
 bool Sender::send_ping_cmd() { return send_cmd(ping_cmd); }
 
-}  // namespace dvl_driver::path_finder
+}  // namespace driver::dvl_driver::path_finder

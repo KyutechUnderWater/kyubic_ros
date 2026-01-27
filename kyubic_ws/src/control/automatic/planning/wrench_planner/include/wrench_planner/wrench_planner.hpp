@@ -17,7 +17,7 @@
 #include <planner_msgs/msg/wrench_plan.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-namespace planner
+namespace planner::wrench_planner
 {
 
 class WrenchPlanner : public rclcpp::Node
@@ -46,6 +46,6 @@ public:
   explicit WrenchPlanner(const rclcpp::NodeOptions & options);
 };
 
-}  // namespace planner
+}  // namespace planner::wrench_planner
 
 #endif

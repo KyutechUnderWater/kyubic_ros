@@ -56,17 +56,17 @@ ament_auto_add_library(localization_component SHARED
 
 # register components
 rclcpp_components_register_node(depth_odometry_component
-  PLUGIN "localization::DepthOdometry"
+  PLUGIN "localization::depth::DepthOdometry"
   EXECUTABLE depth_odometry_component_node
 )
 
 rclcpp_components_register_node(imu_transform_component
-  PLUGIN "localization::IMUTransform"
+  PLUGIN "localization::imu::IMUTransform"
   EXECUTABLE imu_transform_component_node
 )
 
 rclcpp_components_register_node(dvl_odometry_component
-  PLUGIN "localization::DVLOdometry"
+  PLUGIN "localization::dvl::DVLOdometry"
   EXECUTABLE dvl_odometry_component_node
 )
 
@@ -92,6 +92,23 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+##############################################
+# --- Diagnostics Plugin ---
+ament_auto_add_library(system_health_check_plugins SHARED
+  ./src-check/depth_odometry_check.cpp
+  ./src-check/imu_transform_check.cpp
+  ./src-check/dvl_odometry_check.cpp
+  ./src-check/localization_check.cpp
+)
+
+# Install settings for pluginlib
+install(TARGETS system_health_check_plugins
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+pluginlib_export_plugin_description_file(system_health_check plugins.xml)
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)

@@ -18,7 +18,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <timer/timeout.hpp>
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 /**
  * @brief Button Battery State class
@@ -49,6 +49,6 @@ private:
   void protolink_callback(const ProtoButtonBatteryState & _msg);
 };
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #endif

@@ -15,7 +15,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <timer/timeout.hpp>
 
-namespace sensors_esp32_driver
+namespace driver::sensors_esp32_driver
 {
 
 /**
@@ -32,9 +32,17 @@ void check_timeout(
   rclcpp::Node * node, std::mutex & mutex, std::shared_ptr<timer::Timeout> & timeout,
   typename rclcpp::Publisher<MsgT>::SharedPtr & pub, const std::string & sensor_name)
 {
-  std::lock_guard<std::mutex> lock(mutex);
+  bool is_timeout;
+  int64_t timeout_ns;
+  int64_t elapsed_time;
+  {
+    std::lock_guard<std::mutex> lock(mutex);
+    is_timeout = timeout->is_timeout(node->get_clock()->now());
+    timeout_ns = timeout->get_timeout();
+    elapsed_time = timeout->get_elapsed_time();
+  }
 
-  if (timeout->is_timeout(node->get_clock()->now())) {
+  if (is_timeout) {
     auto msg = std::make_unique<MsgT>();
     msg->header.stamp = node->get_clock()->now();
     msg->status.id = common_msgs::msg::Status::ERROR;
@@ -42,17 +50,16 @@ void check_timeout(
     pub->publish(std::move(msg));
 
     RCLCPP_ERROR_THROTTLE(
-      node->get_logger(), *node->get_clock(), timeout->get_timeout() * 1e-6,
-      "%s driver timeout: %lu [ms]", sensor_name.c_str(),
-      (uint64_t)(timeout->get_elapsed_time() * 1e-6));
-  } else {
+      node->get_logger(), *node->get_clock(), timeout_ns * 1e-6, "%s driver timeout: %lu [ms]",
+      sensor_name.c_str(), (uint64_t)(timeout->get_elapsed_time() * 1e-6));
+  } else if (elapsed_time > timeout_ns * 0.5) {
     RCLCPP_WARN_THROTTLE(
-      node->get_logger(), *node->get_clock(), timeout->get_timeout() * 1e-6 / 2,
-      "Failed to get %s data", sensor_name.c_str());
+      node->get_logger(), *node->get_clock(), timeout_ns * 1e-6 / 2, "Failed to get %s data",
+      sensor_name.c_str());
     return;
   }
 }
 
-}  // namespace sensors_esp32_driver
+}  // namespace driver::sensors_esp32_driver
 
 #endif  // !_UTILS_HPP

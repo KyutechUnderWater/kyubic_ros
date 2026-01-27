@@ -24,7 +24,7 @@ def generate_launch_description():
                 ),
                 launch_arguments={
                     "log_level": "warn",
-                    "global_pose_topic_name": "/localization/global_pose",
+                    "odom_topic_name": "/localization/odom",
                 }.items(),
             ),
         ]

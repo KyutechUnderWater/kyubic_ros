@@ -15,10 +15,10 @@
 #include <serial/serial.hpp>
 
 /**
- * @namespace imu_driver
+ * @namespace driver::imu_driver
  * @brief For imu driver
  */
-namespace imu_driver::g366
+namespace driver::imu_driver::g366
 {
 
 /**
@@ -243,6 +243,6 @@ private:
 //   const unsigned char reset_comm = 'r';
 // };
 
-}  // namespace imu_driver::g366
+}  // namespace driver::imu_driver::g366
 
 #endif

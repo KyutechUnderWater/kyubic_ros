@@ -13,6 +13,7 @@
   <depend>timer</depend>
   <depend>rclcpp</depend>
   <depend>driver_msgs</depend>
+  <depend>system_health_check</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

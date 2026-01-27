@@ -16,7 +16,7 @@
 #include <string>
 #include <vector>
 
-namespace dvl_driver
+namespace driver::dvl_driver
 {
 
 class DVLSetting : public rclcpp::Node
@@ -50,6 +50,6 @@ private:
   std::string trim(const std::string & str);
 };
 
-}  // namespace dvl_driver
+}  // namespace driver::dvl_driver
 
 #endif  // DVL_SETTING_HPP_

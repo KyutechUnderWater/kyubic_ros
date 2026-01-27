@@ -44,7 +44,7 @@ ament_target_dependencies(qr_planner_component
 
 # ノード登録
 rclcpp_components_register_node(qr_planner_component
-  PLUGIN "planner::QRPlanner"
+  PLUGIN "planner::qr_planner::QRPlanner"
   EXECUTABLE qr_planner_node
 )
 
@@ -61,5 +61,25 @@ install(DIRECTORY
   config
   DESTINATION share/${PROJECT_NAME}
 )
+
+##############################################
+# --- Diagnostics Plugin ---
+find_package(system_health_check REQUIRED)
+
+add_library(system_health_check_plugins SHARED ./src-check/check.cpp)
+ament_target_dependencies(system_health_check_plugins
+  rclcpp
+  system_health_check
+  localization_msgs
+)
+
+# Install settings for pluginlib
+install(TARGETS system_health_check_plugins
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+pluginlib_export_plugin_description_file(system_health_check plugins.xml)
 
 ament_package()
