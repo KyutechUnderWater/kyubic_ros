@@ -14,8 +14,10 @@ if [ $? != 0 ]; then
     # --- Window 0: bringup ---
     byobu-tmux send-keys -t $SESSION:0 "cd $WORKSPACE" C-m
     byobu-tmux send-keys -t $SESSION:0 "ros2 launch kyubic_bringup kyubic.launch.py" C-m
-    byobu-tmux split-window -v -t $SESSION:0 # 画面を左右に分割 (-h)
+    byobu-tmux split-window -v -t $SESSION:0 -l '60%' # 画面を上下に分割 (-v)
+    byobu-tmux split-window -v -t $SESSION:0.0 -l '50%'
     byobu-tmux send-keys -t $SESSION:0.1 "ros2 launch kyubic_bringup kyubic_post.launch.py"
+    byobu-tmux send-keys -t $SESSION:0.2 "ros2 launch behavior_tree behavior_tree.launch.py"
 
     # --- Window 1: 実行・監視用 ---
     byobu-tmux new-window -t $SESSION -n 'Run1'
