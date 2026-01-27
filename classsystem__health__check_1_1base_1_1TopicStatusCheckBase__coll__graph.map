@@ -1,0 +1,4 @@
+<map id="system_health_check::base::TopicStatusCheckBase&lt; MessageT &gt;" name="system_health_check::base::TopicStatusCheckBase&lt; MessageT &gt;">
+<area shape="rect" id="node1" title="Template class for checking topic reception." alt="" coords="5,93,220,148"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="17,5,208,45"/>
+</map>

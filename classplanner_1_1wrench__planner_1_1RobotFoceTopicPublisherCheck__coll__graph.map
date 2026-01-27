@@ -1,0 +1,8 @@
+<map id="planner::wrench_planner::RobotFoceTopicPublisherCheck" name="planner::wrench_planner::RobotFoceTopicPublisherCheck">
+<area shape="rect" id="node1" title=" " alt="" coords="36,376,267,416"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1TopicPublisherCheckBase.html" title="Checks if there are any PUBLISHERS for the specified topic." alt="" coords="34,287,269,327"/>
+<area shape="rect" id="node3" href="$classsystem__health__check_1_1base_1_1TopicCountCheckBase.html" title="Abstract base class for checking Topic Publisher/Subscriber counts." alt="" coords="45,197,257,237"/>
+<area shape="rect" id="node4" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="5,95,196,135"/>
+<area shape="rect" id="node5" title=" " alt="" coords="220,102,307,127"/>
+<area shape="rect" id="node6" title=" " alt="" coords="194,5,333,45"/>
+</map>

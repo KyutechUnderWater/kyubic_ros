@@ -1,0 +1,13 @@
+<map id="system_health_check::base::ServiceGraphCheckBase" name="system_health_check::base::ServiceGraphCheckBase">
+<area shape="rect" id="node1" title="Abstract base class for checking Service Server/Client existence. Handles node iteration,..." alt="" coords="244,165,472,205"/>
+<area shape="rect" id="node3" href="$classsystem__health__check_1_1base_1_1ServiceClientCheckBase.html" title="Checks for Service CLIENT existence." alt="" coords="522,69,749,109"/>
+<area shape="rect" id="node5" href="$classsystem__health__check_1_1base_1_1ServiceServerCheckBase.html" title="Checks for Service SERVER existence." alt="" coords="520,197,751,237"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="5,165,196,205"/>
+<area shape="rect" id="node4" href="$classsystem__health__check_1_1checks_1_1ServiceClientCheck.html" title=" " alt="" coords="812,5,1021,45"/>
+<area shape="rect" id="node6" href="$classdriver_1_1dvl__driver_1_1CommandServiceServerCheck.html" title=" " alt="" coords="803,69,1030,109"/>
+<area shape="rect" id="node7" href="$classlocalization_1_1ResetServiceServerCheck.html" title=" " alt="" coords="821,133,1012,173"/>
+<area shape="rect" id="node8" href="$classlocalization_1_1depth_1_1DepthResetServiceServerCheck.html" title=" " alt="" coords="799,197,1035,237"/>
+<area shape="rect" id="node9" href="$classlocalization_1_1dvl_1_1DvlResetServiceServerCheck.html" title=" " alt="" coords="811,261,1022,301"/>
+<area shape="rect" id="node10" href="$classlocalization_1_1imu_1_1ImuResetServiceServerCheck.html" title=" " alt="" coords="809,325,1024,365"/>
+<area shape="rect" id="node11" href="$classsystem__health__check_1_1checks_1_1ServiceServerCheck.html" title=" " alt="" coords="810,389,1023,429"/>
+</map>

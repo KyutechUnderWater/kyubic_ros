@@ -1,0 +1,7 @@
+<map id="system_health_check::base::LifecycleStatusCheckBase" name="system_health_check::base::LifecycleStatusCheckBase">
+<area shape="rect" id="node1" title="Base class for checking the state of a Lifecycle Node. Connects to the {node_name}/get_state service ..." alt="" coords="244,69,484,109"/>
+<area shape="rect" id="node3" href="$classemergency_1_1EmergencyLifecycleStatusCheck.html" title=" " alt="" coords="535,5,769,45"/>
+<area shape="rect" id="node4" href="$classjoy2wrench_1_1Joy2WrenchLifecycleStatusCheck.html" title=" " alt="" coords="532,69,772,109"/>
+<area shape="rect" id="node5" href="$classsystem__health__check_1_1checks_1_1LifecycleStatusCheck.html" title=" " alt="" coords="541,133,763,173"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="5,69,196,109"/>
+</map>

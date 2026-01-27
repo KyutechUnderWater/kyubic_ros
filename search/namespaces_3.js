@@ -1,14 +1,20 @@
 var searchData=
 [
-  ['dashboard_0',['dashboard',['../namespacedashboard.html',1,'']]],
-  ['depth_5fdriver_1',['depth_driver',['../namespacedepth__driver.html',1,'']]],
-  ['driver_5flauncher_2',['driver_launcher',['../namespacedriver__launcher.html',1,'']]],
-  ['driver_5fnode_5fmanager_3',['driver_node_manager',['../namespacedriver__node__manager.html',1,'driver_node_manager'],['../namespacedriver__node__manager_1_1driver__node__manager.html',1,'driver_node_manager.driver_node_manager']]],
-  ['dvl_5fdriver_4',['dvl_driver',['../namespacedvl__driver.html',1,'']]],
-  ['dvl_5fsetting_5',['dvl_setting',['../namespacedvl__setting.html',1,'']]],
-  ['main_6',['main',['../namespacedashboard_1_1main.html',1,'dashboard']]],
-  ['path_5ffinder_7',['path_finder',['../namespacedvl__driver_1_1path__finder.html',1,'dvl_driver']]],
-  ['pd0_8',['pd0',['../namespacedvl__driver_1_1path__finder_1_1pd0.html',1,'dvl_driver::path_finder']]],
-  ['pd5_9',['pd5',['../namespacedvl__driver_1_1path__finder_1_1pd5.html',1,'dvl_driver::path_finder']]],
-  ['utils_10',['utils',['../namespacedvl__driver_1_1utils.html',1,'dvl_driver']]]
+  ['actuator_5frp2040_5fdriver_0',['actuator_rp2040_driver',['../namespacedriver_1_1actuator__rp2040__driver.html',1,'driver']]],
+  ['dashboard_1',['dashboard',['../namespacedashboard.html',1,'']]],
+  ['depth_5fdriver_2',['depth_driver',['../namespacedepth__driver.html',1,'']]],
+  ['driver_3',['driver',['../namespacedriver.html',1,'']]],
+  ['driver_5flauncher_4',['driver_launcher',['../namespacedriver__launcher.html',1,'']]],
+  ['driver_5fnode_5fmanager_5',['driver_node_manager',['../namespacedriver__node__manager.html',1,'driver_node_manager'],['../namespacedriver__node__manager_1_1driver__node__manager.html',1,'driver_node_manager.driver_node_manager']]],
+  ['dvl_5fdriver_6',['dvl_driver',['../namespacedriver_1_1dvl__driver.html',1,'driver::dvl_driver'],['../namespacedvl__driver.html',1,'dvl_driver']]],
+  ['dvl_5fsetting_7',['dvl_setting',['../namespacedvl__setting.html',1,'']]],
+  ['g366_8',['g366',['../namespacedriver_1_1imu__driver_1_1g366.html',1,'driver::imu_driver']]],
+  ['imu_5fdriver_9',['imu_driver',['../namespacedriver_1_1imu__driver.html',1,'driver']]],
+  ['logic_5fdistro_5frp2040_5fdriver_10',['logic_distro_rp2040_driver',['../namespacedriver_1_1logic__distro__rp2040__driver.html',1,'driver']]],
+  ['main_11',['main',['../namespacedashboard_1_1main.html',1,'dashboard']]],
+  ['path_5ffinder_12',['path_finder',['../namespacedriver_1_1dvl__driver_1_1path__finder.html',1,'driver::dvl_driver']]],
+  ['pd0_13',['pd0',['../namespacedriver_1_1dvl__driver_1_1path__finder_1_1pd0.html',1,'driver::dvl_driver::path_finder']]],
+  ['pd5_14',['pd5',['../namespacedriver_1_1dvl__driver_1_1path__finder_1_1pd5.html',1,'driver::dvl_driver::path_finder']]],
+  ['sensors_5fesp32_5fdriver_15',['sensors_esp32_driver',['../namespacedriver_1_1sensors__esp32__driver.html',1,'driver']]],
+  ['utils_16',['utils',['../namespacedriver_1_1dvl__driver_1_1utils.html',1,'driver::dvl_driver']]]
 ];

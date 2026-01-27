@@ -1,4 +1,4 @@
 var dvl__setting_8hpp =
 [
-    [ "dvl_driver::DVLSetting", "classdvl__driver_1_1DVLSetting.html", "classdvl__driver_1_1DVLSetting" ]
+    [ "driver::dvl_driver::DVLSetting", "classdriver_1_1dvl__driver_1_1DVLSetting.html", "classdriver_1_1dvl__driver_1_1DVLSetting" ]
 ];

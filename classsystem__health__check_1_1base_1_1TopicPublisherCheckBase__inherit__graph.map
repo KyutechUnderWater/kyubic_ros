@@ -1,0 +1,11 @@
+<map id="system_health_check::base::TopicPublisherCheckBase" name="system_health_check::base::TopicPublisherCheckBase">
+<area shape="rect" id="node1" title="Checks if there are any PUBLISHERS for the specified topic." alt="" coords="504,165,739,205"/>
+<area shape="rect" id="node4" href="$classdriver_1_1actuator__rp2040__driver_1_1ThrusterPublisherCheck.html" title=" " alt="" coords="792,5,1021,45"/>
+<area shape="rect" id="node5" href="$classplanner_1_1pdla__planner_1_1WrenchPlanTopicPublisherCheck.html" title=" " alt="" coords="787,69,1027,109"/>
+<area shape="rect" id="node6" href="$classplanner_1_1wrench__planner_1_1RobotFoceTopicPublisherCheck.html" title=" " alt="" coords="791,133,1022,173"/>
+<area shape="rect" id="node7" href="$classplanner_1_1wrench__planner_1_1TargetsTopicPublisherCheck.html" title=" " alt="" coords="801,197,1012,237"/>
+<area shape="rect" id="node8" href="$classplanner_1_1wrench__planner_1_1WrenchPlanTopicPublisherCheck.html" title=" " alt="" coords="787,261,1027,301"/>
+<area shape="rect" id="node9" href="$classsystem__health__check_1_1checks_1_1TopicPublisherCheck.html" title=" " alt="" coords="799,325,1015,365"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1TopicCountCheckBase.html" title="Abstract base class for checking Topic Publisher/Subscriber counts." alt="" coords="244,165,456,205"/>
+<area shape="rect" id="node3" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="5,165,196,205"/>
+</map>

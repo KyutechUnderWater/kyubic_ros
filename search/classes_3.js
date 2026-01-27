@@ -1,13 +1,20 @@
 var searchData=
 [
-  ['data_0',['DATA',['../structimu__driver_1_1g366_1_1DATA.html',1,'imu_driver::g366']]],
-  ['data_5fmeta_1',['DATA_META',['../structimu__driver_1_1g366_1_1DATA__META.html',1,'imu_driver::g366']]],
-  ['depth_2',['Depth',['../classsensors__esp32__driver_1_1Depth.html',1,'sensors_esp32_driver']]],
+  ['data_0',['DATA',['../structdriver_1_1imu__driver_1_1g366_1_1DATA.html',1,'driver::imu_driver::g366']]],
+  ['data_5fmeta_1',['DATA_META',['../structdriver_1_1imu__driver_1_1g366_1_1DATA__META.html',1,'driver::imu_driver::g366']]],
+  ['depth_2',['Depth',['../classdriver_1_1sensors__esp32__driver_1_1Depth.html',1,'driver::sensors_esp32_driver']]],
   ['depthdata_3',['DepthData',['../classdashboard_1_1main_1_1DepthData.html',1,'dashboard::main']]],
-  ['depthodometry_4',['DepthOdometry',['../classlocalization_1_1DepthOdometry.html',1,'localization']]],
-  ['dvlcommandclient_5',['DVLCommandClient',['../classtrdi__toolz_1_1main_1_1DVLCommandClient.html',1,'trdi_toolz::main']]],
-  ['dvldata_6',['DvlData',['../classdashboard_1_1main_1_1DvlData.html',1,'dashboard::main']]],
-  ['dvldriver_7',['DVLDriver',['../classdvl__driver_1_1DVLDriver.html',1,'dvl_driver']]],
-  ['dvlodometry_8',['DVLOdometry',['../classlocalization_1_1DVLOdometry.html',1,'localization']]],
-  ['dvlsetting_9',['DVLSetting',['../classdvl__driver_1_1DVLSetting.html',1,'dvl_driver']]]
+  ['depthodometry_4',['DepthOdometry',['../classlocalization_1_1depth_1_1DepthOdometry.html',1,'localization::depth']]],
+  ['depthodomtopicstatuscheck_5',['DepthOdomTopicStatusCheck',['../classlocalization_1_1depth_1_1DepthOdomTopicStatusCheck.html',1,'localization::depth::DepthOdomTopicStatusCheck'],['../classlocalization_1_1DepthOdomTopicStatusCheck.html',1,'localization::DepthOdomTopicStatusCheck']]],
+  ['depthresetserviceservercheck_6',['DepthResetServiceServerCheck',['../classlocalization_1_1depth_1_1DepthResetServiceServerCheck.html',1,'localization::depth']]],
+  ['depthtopicstatuscheck_7',['DepthTopicStatusCheck',['../classdriver_1_1sensors__esp32__driver_1_1DepthTopicStatusCheck.html',1,'driver::sensors_esp32_driver::DepthTopicStatusCheck'],['../classlocalization_1_1depth_1_1DepthTopicStatusCheck.html',1,'localization::depth::DepthTopicStatusCheck']]],
+  ['depthtypesubscribercheck_8',['DepthTypeSubscriberCheck',['../classdriver_1_1sensors__esp32__driver_1_1DepthTypeSubscriberCheck.html',1,'driver::sensors_esp32_driver']]],
+  ['dvlcommandclient_9',['DVLCommandClient',['../classtrdi__toolz_1_1main_1_1DVLCommandClient.html',1,'trdi_toolz::main']]],
+  ['dvldata_10',['DvlData',['../classdashboard_1_1main_1_1DvlData.html',1,'dashboard::main']]],
+  ['dvldriver_11',['DVLDriver',['../classdriver_1_1dvl__driver_1_1DVLDriver.html',1,'driver::dvl_driver']]],
+  ['dvlodometry_12',['DVLOdometry',['../classlocalization_1_1dvl_1_1DVLOdometry.html',1,'localization::dvl']]],
+  ['dvlodomtopicstatuscheck_13',['DvlOdomTopicStatusCheck',['../classlocalization_1_1dvl_1_1DvlOdomTopicStatusCheck.html',1,'localization::dvl::DvlOdomTopicStatusCheck'],['../classlocalization_1_1DvlOdomTopicStatusCheck.html',1,'localization::DvlOdomTopicStatusCheck']]],
+  ['dvlresetserviceservercheck_14',['DvlResetServiceServerCheck',['../classlocalization_1_1dvl_1_1DvlResetServiceServerCheck.html',1,'localization::dvl']]],
+  ['dvlsetting_15',['DVLSetting',['../classdriver_1_1dvl__driver_1_1DVLSetting.html',1,'driver::dvl_driver']]],
+  ['dvltopicstatuscheck_16',['DvlTopicStatusCheck',['../classdriver_1_1dvl__driver_1_1DvlTopicStatusCheck.html',1,'driver::dvl_driver::DvlTopicStatusCheck'],['../classlocalization_1_1dvl_1_1DvlTopicStatusCheck.html',1,'localization::dvl::DvlTopicStatusCheck']]]
 ];

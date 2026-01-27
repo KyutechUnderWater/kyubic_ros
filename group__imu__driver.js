@@ -1,4 +1,4 @@
 var group__imu__driver =
 [
-    [ "imu_driver", "namespaceimu__driver.html", null ]
+    [ "driver::imu_driver", "namespacedriver_1_1imu__driver.html", null ]
 ];

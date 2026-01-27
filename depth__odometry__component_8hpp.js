@@ -1,7 +1,7 @@
 var depth__odometry__component_8hpp =
 [
-    [ "localization::DepthOdometry", "classlocalization_1_1DepthOdometry.html", "classlocalization_1_1DepthOdometry" ],
-    [ "DEPTH_SMA_SUMPLE_NUM", "depth__odometry__component_8hpp.html#afb72184cf64e23af3745ecf74ef5fd10", null ],
-    [ "EMA_ALPHA", "depth__odometry__component_8hpp.html#a7144ffe7b650980db62417ae9c840704", null ],
-    [ "sea2fresh_scale", "depth__odometry__component_8hpp.html#aa1a9eefe89401aa072d56a48603b45bd", null ]
+    [ "localization::depth::DepthOdometry", "classlocalization_1_1depth_1_1DepthOdometry.html", "classlocalization_1_1depth_1_1DepthOdometry" ],
+    [ "DEPTH_SMA_SUMPLE_NUM", "depth__odometry__component_8hpp.html#a7888d2308883f8bc7a9a9f6309cfda8a", null ],
+    [ "EMA_ALPHA", "depth__odometry__component_8hpp.html#ac40799cd7960bf22e3bf5f8eea1a1802", null ],
+    [ "sea2fresh_scale", "depth__odometry__component_8hpp.html#ab612ccf40470e1c0e348097ad299a80b", null ]
 ];

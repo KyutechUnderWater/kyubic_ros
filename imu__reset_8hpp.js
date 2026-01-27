@@ -1,4 +1,4 @@
 var imu__reset_8hpp =
 [
-    [ "sensors_esp32_driver::ImuReset", "classsensors__esp32__driver_1_1ImuReset.html", "classsensors__esp32__driver_1_1ImuReset" ]
+    [ "driver::sensors_esp32_driver::ImuReset", "classdriver_1_1sensors__esp32__driver_1_1ImuReset.html", "classdriver_1_1sensors__esp32__driver_1_1ImuReset" ]
 ];

@@ -1,3 +1,90 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classweb__controller_1_1main_1_1Colors.html" title=" " alt="" coords="5,5,204,31"/>
+<area shape="rect" id="node1" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="5,1851,196,1891"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,465,471,519"/>
+<area shape="rect" id="node16" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,986,471,1041"/>
+<area shape="rect" id="node19" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,1086,471,1141"/>
+<area shape="rect" id="node21" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,1206,471,1261"/>
+<area shape="rect" id="node23" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,1306,471,1361"/>
+<area shape="rect" id="node28" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,1490,471,1545"/>
+<area shape="rect" id="node30" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,1626,471,1681"/>
+<area shape="rect" id="node35" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,1725,471,1779"/>
+<area shape="rect" id="node37" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,1803,471,1858"/>
+<area shape="rect" id="node39" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,1882,471,1937"/>
+<area shape="rect" id="node41" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="257,1961,471,2015"/>
+<area shape="rect" id="node43" href="$classsystem__health__check_1_1base_1_1ActionGraphCheckBase.html" title="Abstract base class for checking Action Server/Client existence. Handles node iteration,..." alt="" coords="253,2040,475,2080"/>
+<area shape="rect" id="node50" href="$classsystem__health__check_1_1base_1_1LifecycleStatusCheckBase.html" title="Base class for checking the state of a Lifecycle Node. Connects to the {node_name}/get_state service ..." alt="" coords="244,2145,484,2185"/>
+<area shape="rect" id="node54" href="$classsystem__health__check_1_1base_1_1ServiceGraphCheckBase.html" title="Abstract base class for checking Service Server/Client existence. Handles node iteration,..." alt="" coords="250,2209,478,2249"/>
+<area shape="rect" id="node64" href="$classsystem__health__check_1_1base_1_1TopicCountCheckBase.html" title="Abstract base class for checking Topic Publisher/Subscriber counts." alt="" coords="258,2273,470,2313"/>
+<area shape="rect" id="node86" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title="Template class for checking topic reception." alt="" coords="257,2338,471,2393"/>
+<area shape="rect" id="node87" href="$classsystem__health__check_1_1checks_1_1FailCheck.html" title=" " alt="" coords="283,2417,445,2457"/>
+<area shape="rect" id="node88" href="$classsystem__health__check_1_1checks_1_1PassCheck.html" title=" " alt="" coords="283,2481,445,2521"/>
+<area shape="rect" id="node3" href="$classdriver_1_1dvl__driver_1_1DvlTopicStatusCheck.html" title=" " alt="" coords="570,5,737,45"/>
+<area shape="rect" id="node4" href="$classdriver_1_1imu__driver_1_1ImuTopicStatusCheck.html" title=" " alt="" coords="569,69,738,109"/>
+<area shape="rect" id="node5" href="$classdriver_1_1logic__distro__rp2040__driver_1_1PowerStateTopicStatusCheck.html" title=" " alt="" coords="536,134,771,189"/>
+<area shape="rect" id="node6" href="$classdriver_1_1sensors__esp32__driver_1_1ButtonBatteryStateTopicStatusCheck.html" title=" " alt="" coords="553,213,753,267"/>
+<area shape="rect" id="node7" href="$classdriver_1_1sensors__esp32__driver_1_1DepthTopicStatusCheck.html" title=" " alt="" coords="539,292,767,332"/>
+<area shape="rect" id="node8" href="$classdriver_1_1sensors__esp32__driver_1_1EnvironmentTopicStatusCheck.html" title=" " alt="" coords="537,357,769,411"/>
+<area shape="rect" id="node9" href="$classdriver_1_1sensors__esp32__driver_1_1LeakTopicStatusCheck.html" title=" " alt="" coords="543,436,763,476"/>
+<area shape="rect" id="node10" href="$classdriver_1_1sensors__esp32__driver_1_1RtcGnssTopicStatusCheck.html" title=" " alt="" coords="552,501,755,555"/>
+<area shape="rect" id="node11" href="$classdriver_1_1sensors__esp32__driver_1_1RtcTimeTopicStatusCheck.html" title=" " alt="" coords="552,579,755,634"/>
+<area shape="rect" id="node12" href="$classdriver_1_1sensors__esp32__driver_1_1SystemStatusTopicStatusCheck.html" title=" " alt="" coords="534,658,773,713"/>
+<area shape="rect" id="node13" href="$classplanner_1_1pdla__planner_1_1OdomTopicStatusCheck.html" title=" " alt="" coords="562,737,745,777"/>
+<area shape="rect" id="node14" href="$classplanner_1_1qr__planner_1_1OdomTopicStatusCheck.html" title=" " alt="" coords="562,801,745,841"/>
+<area shape="rect" id="node15" href="$classplanner_1_1wrench__planner_1_1OdomTopicStatusCheck.html" title=" " alt="" coords="562,865,745,905"/>
+<area shape="rect" id="node17" href="$classjoy2wrench_1_1JoyCommonTopicStatusCheck.html" title=" " alt="" coords="545,929,762,969"/>
+<area shape="rect" id="node18" href="$classjoy__common_1_1JoyTopicStatusCheck.html" title=" " alt="" coords="549,993,757,1033"/>
+<area shape="rect" id="node20" href="$classjoy2wrench_1_1RobotForceTopicStatusCheck.html" title=" " alt="" coords="548,1057,759,1097"/>
+<area shape="rect" id="node22" href="$classjoy__common_1_1JoyCommonTopicStatusCheck.html" title=" " alt="" coords="540,1121,767,1161"/>
+<area shape="rect" id="node24" href="$classlocalization_1_1DepthOdomTopicStatusCheck.html" title=" " alt="" coords="545,1185,761,1225"/>
+<area shape="rect" id="node25" href="$classlocalization_1_1DvlOdomTopicStatusCheck.html" title=" " alt="" coords="554,1249,753,1289"/>
+<area shape="rect" id="node26" href="$classlocalization_1_1ImuTransformedTopicStatusCheck.html" title=" " alt="" coords="548,1313,759,1353"/>
+<area shape="rect" id="node27" href="$classlocalization_1_1OdomTopicStatusCheck.html" title=" " alt="" coords="544,1377,763,1417"/>
+<area shape="rect" id="node29" href="$classlocalization_1_1GnssTopicStatusCheck.html" title=" " alt="" coords="548,1441,759,1481"/>
+<area shape="rect" id="node31" href="$classlocalization_1_1depth_1_1DepthOdomTopicStatusCheck.html" title=" " alt="" coords="542,1505,765,1545"/>
+<area shape="rect" id="node32" href="$classlocalization_1_1dvl_1_1DvlOdomTopicStatusCheck.html" title=" " alt="" coords="555,1569,752,1609"/>
+<area shape="rect" id="node33" href="$classlocalization_1_1dvl_1_1ImuTransformedTopicStatusCheck.html" title=" " alt="" coords="532,1633,775,1673"/>
+<area shape="rect" id="node34" href="$classlocalization_1_1imu_1_1ImuTransformedTopicStatusCheck.html" title=" " alt="" coords="532,1697,775,1737"/>
+<area shape="rect" id="node36" href="$classlocalization_1_1depth_1_1DepthTopicStatusCheck.html" title=" " alt="" coords="562,1761,745,1801"/>
+<area shape="rect" id="node38" href="$classlocalization_1_1dvl_1_1DvlTopicStatusCheck.html" title=" " alt="" coords="574,1825,733,1865"/>
+<area shape="rect" id="node40" href="$classlocalization_1_1imu_1_1ImuTopicStatusCheck.html" title=" " alt="" coords="573,1889,734,1929"/>
+<area shape="rect" id="node42" href="$classsystem__health__check_1_1checks_1_1TopicStatusCheck.html" title=" " alt="" coords="555,1953,752,1993"/>
+<area shape="rect" id="node44" href="$classsystem__health__check_1_1base_1_1ActionClientCheckBase.html" title="Checks specifically for Action CLIENTS." alt="" coords="543,2017,763,2057"/>
+<area shape="rect" id="node46" href="$classsystem__health__check_1_1base_1_1ActionServerCheckBase.html" title="Checks specifically for Action SERVERS." alt="" coords="541,2081,765,2121"/>
+<area shape="rect" id="node45" href="$classsystem__health__check_1_1checks_1_1ActionClientCheck.html" title=" " alt="" coords="858,1953,1061,1993"/>
+<area shape="rect" id="node47" href="$classplanner_1_1pdla__planner_1_1PDLAPlannerActionServerCheck.html" title=" " alt="" coords="841,2017,1078,2057"/>
+<area shape="rect" id="node48" href="$classplanner_1_1qr__planner_1_1QRPlannerActionServerCheck.html" title=" " alt="" coords="849,2081,1070,2121"/>
+<area shape="rect" id="node49" href="$classsystem__health__check_1_1checks_1_1ActionServerCheck.html" title=" " alt="" coords="856,2145,1063,2185"/>
+<area shape="rect" id="node51" href="$classemergency_1_1EmergencyLifecycleStatusCheck.html" title=" " alt="" coords="537,2145,770,2185"/>
+<area shape="rect" id="node52" href="$classjoy2wrench_1_1Joy2WrenchLifecycleStatusCheck.html" title=" " alt="" coords="533,2209,773,2249"/>
+<area shape="rect" id="node53" href="$classsystem__health__check_1_1checks_1_1LifecycleStatusCheck.html" title=" " alt="" coords="542,2273,765,2313"/>
+<area shape="rect" id="node55" href="$classsystem__health__check_1_1base_1_1ServiceClientCheckBase.html" title="Checks for Service CLIENT existence." alt="" coords="540,2337,767,2377"/>
+<area shape="rect" id="node57" href="$classsystem__health__check_1_1base_1_1ServiceServerCheckBase.html" title="Checks for Service SERVER existence." alt="" coords="538,2401,769,2441"/>
+<area shape="rect" id="node56" href="$classsystem__health__check_1_1checks_1_1ServiceClientCheck.html" title=" " alt="" coords="855,2209,1064,2249"/>
+<area shape="rect" id="node58" href="$classdriver_1_1dvl__driver_1_1CommandServiceServerCheck.html" title=" " alt="" coords="846,2273,1073,2313"/>
+<area shape="rect" id="node59" href="$classlocalization_1_1ResetServiceServerCheck.html" title=" " alt="" coords="864,2337,1055,2377"/>
+<area shape="rect" id="node60" href="$classlocalization_1_1depth_1_1DepthResetServiceServerCheck.html" title=" " alt="" coords="841,2401,1077,2441"/>
+<area shape="rect" id="node61" href="$classlocalization_1_1dvl_1_1DvlResetServiceServerCheck.html" title=" " alt="" coords="854,2465,1065,2505"/>
+<area shape="rect" id="node62" href="$classlocalization_1_1imu_1_1ImuResetServiceServerCheck.html" title=" " alt="" coords="852,2529,1067,2569"/>
+<area shape="rect" id="node63" href="$classsystem__health__check_1_1checks_1_1ServiceServerCheck.html" title=" " alt="" coords="853,2593,1066,2633"/>
+<area shape="rect" id="node65" href="$classsystem__health__check_1_1base_1_1TopicPublisherCheckBase.html" title="Checks if there are any PUBLISHERS for the specified topic." alt="" coords="536,2785,771,2825"/>
+<area shape="rect" id="node72" href="$classsystem__health__check_1_1base_1_1TopicSubscriberCheckBase.html" title="Checks if there are any SUBSCRIBERS for the specified topic." alt="" coords="532,3437,775,3477"/>
+<area shape="rect" id="node66" href="$classdriver_1_1actuator__rp2040__driver_1_1ThrusterPublisherCheck.html" title=" " alt="" coords="845,2657,1074,2697"/>
+<area shape="rect" id="node67" href="$classplanner_1_1pdla__planner_1_1WrenchPlanTopicPublisherCheck.html" title=" " alt="" coords="839,2721,1079,2761"/>
+<area shape="rect" id="node68" href="$classplanner_1_1wrench__planner_1_1RobotFoceTopicPublisherCheck.html" title=" " alt="" coords="844,2785,1075,2825"/>
+<area shape="rect" id="node69" href="$classplanner_1_1wrench__planner_1_1TargetsTopicPublisherCheck.html" title=" " alt="" coords="854,2849,1065,2889"/>
+<area shape="rect" id="node70" href="$classplanner_1_1wrench__planner_1_1WrenchPlanTopicPublisherCheck.html" title=" " alt="" coords="839,2913,1079,2953"/>
+<area shape="rect" id="node71" href="$classsystem__health__check_1_1checks_1_1TopicPublisherCheck.html" title=" " alt="" coords="851,2977,1067,3017"/>
+<area shape="rect" id="node73" href="$classdriver_1_1actuator__rp2040__driver_1_1HeartbeatSubscriberCheck.html" title=" " alt="" coords="835,3041,1083,3081"/>
+<area shape="rect" id="node74" href="$classdriver_1_1actuator__rp2040__driver_1_1LedSubscriberCheck.html" title=" " alt="" coords="856,3105,1063,3145"/>
+<area shape="rect" id="node75" href="$classdriver_1_1actuator__rp2040__driver_1_1RobotForceSubscriberCheck.html" title=" " alt="" coords="831,3169,1087,3209"/>
+<area shape="rect" id="node76" href="$classdriver_1_1logic__distro__rp2040__driver_1_1SystemSwitchSubscriberCheck.html" title=" " alt="" coords="850,3234,1069,3289"/>
+<area shape="rect" id="node77" href="$classdriver_1_1sensors__esp32__driver_1_1BuzzerSwitchTopicSubscriberCheck.html" title=" " alt="" coords="828,3313,1091,3367"/>
+<area shape="rect" id="node78" href="$classdriver_1_1sensors__esp32__driver_1_1DepthTypeSubscriberCheck.html" title=" " alt="" coords="853,3391,1065,3446"/>
+<area shape="rect" id="node79" href="$classdriver_1_1sensors__esp32__driver_1_1ImuResetSubscriberCheck.html" title=" " alt="" coords="857,3470,1062,3525"/>
+<area shape="rect" id="node80" href="$classdriver_1_1sensors__esp32__driver_1_1RgbSubscriberCheck.html" title=" " alt="" coords="855,3549,1063,3589"/>
+<area shape="rect" id="node81" href="$classdriver_1_1sensors__esp32__driver_1_1TiltServoSubscriberCheck.html" title=" " alt="" coords="859,3614,1060,3669"/>
+<area shape="rect" id="node82" href="$classdriver_1_1sensors__esp32__driver_1_1ZedPowerSubscriberCheck.html" title=" " alt="" coords="855,3693,1063,3747"/>
+<area shape="rect" id="node83" href="$classplanner_1_1wrench__planner_1_1WrenchPlanTopicSubscriberCheck.html" title=" " alt="" coords="835,3772,1083,3812"/>
+<area shape="rect" id="node84" href="$classplanner_1_1wrench__planner_1_1ZohWrenchPlanTopicSubscriberCheck.html" title=" " alt="" coords="823,3836,1096,3876"/>
+<area shape="rect" id="node85" href="$classsystem__health__check_1_1checks_1_1TopicSubscriberCheck.html" title=" " alt="" coords="847,3900,1071,3940"/>
 </map>

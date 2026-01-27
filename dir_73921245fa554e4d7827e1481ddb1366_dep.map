@@ -1,8 +1,11 @@
 <map id="src/control/automatic/emergency" name="src/control/automatic/emergency">
 <area shape="rect" id="node2" href="dir_bfb16488d82e438ab78ac21485c2f29b.html" title="include" alt="" coords="37,136,107,161"/>
-<area shape="rect" id="node3" href="dir_6dbaaac84277667fa09f8b6cb512f53e.html" title="launch" alt="" coords="103,63,169,88"/>
+<area shape="rect" id="node3" href="dir_6dbaaac84277667fa09f8b6cb512f53e.html" title="launch" alt="" coords="211,63,277,88"/>
 <area shape="rect" id="node4" href="dir_d659fa3b8044a608aef1bb218c6ca252.html" title="src" alt="" coords="38,63,79,88"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000132_000042.html" title="1" alt="" coords="70,109,79,124"/>
-<area shape="rect" id="clust2" href="dir_73921245fa554e4d7827e1481ddb1366.html" alt="" coords="27,52,299,172"/>
-<area shape="rect" id="clust1" href="dir_2cb3fe50b298dafb0f5f2ea6d39ca09f.html" title="automatic" alt="" coords="16,16,309,183"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000132_000043.html" title="1" alt="" coords="70,109,79,124"/>
+<area shape="rect" id="node5" href="dir_f2f9b4d529b85f4978a420e651ee139e.html" title="src&#45;check" alt="" coords="103,63,187,88"/>
+<area shape="rect" id="node6" href="dir_f5b38cefbbe038decf1f7adc0394a275.html" title="system_health_check" alt="" coords="428,136,591,161"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000150_000162.html" title="1" alt="" coords="427,117,437,132"/>
+<area shape="rect" id="clust2" href="dir_73921245fa554e4d7827e1481ddb1366.html" alt="" coords="27,52,407,172"/>
+<area shape="rect" id="clust1" href="dir_2cb3fe50b298dafb0f5f2ea6d39ca09f.html" title="automatic" alt="" coords="16,16,417,183"/>
 </map>

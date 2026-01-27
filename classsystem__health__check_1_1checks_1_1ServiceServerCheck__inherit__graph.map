@@ -1,0 +1,6 @@
+<map id="system_health_check::checks::ServiceServerCheck" name="system_health_check::checks::ServiceServerCheck">
+<area shape="rect" id="node1" title=" " alt="" coords="14,269,227,309"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1ServiceServerCheckBase.html" title="Checks for Service SERVER existence." alt="" coords="5,181,236,221"/>
+<area shape="rect" id="node3" href="$classsystem__health__check_1_1base_1_1ServiceGraphCheckBase.html" title="Abstract base class for checking Service Server/Client existence. Handles node iteration,..." alt="" coords="7,93,235,133"/>
+<area shape="rect" id="node4" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="25,5,216,45"/>
+</map>

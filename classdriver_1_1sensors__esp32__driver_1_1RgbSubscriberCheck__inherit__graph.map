@@ -1,0 +1,6 @@
+<map id="driver::sensors_esp32_driver::RgbSubscriberCheck" name="driver::sensors_esp32_driver::RgbSubscriberCheck">
+<area shape="rect" id="node1" title=" " alt="" coords="23,269,231,309"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1TopicSubscriberCheckBase.html" title="Checks if there are any SUBSCRIBERS for the specified topic." alt="" coords="5,181,248,221"/>
+<area shape="rect" id="node3" href="$classsystem__health__check_1_1base_1_1TopicCountCheckBase.html" title="Abstract base class for checking Topic Publisher/Subscriber counts." alt="" coords="21,93,233,133"/>
+<area shape="rect" id="node4" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="31,5,222,45"/>
+</map>

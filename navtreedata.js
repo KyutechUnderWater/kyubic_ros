@@ -52,7 +52,8 @@ var NAVTREE =
       [ "File List", "files.html", "files_dup" ],
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
-        [ "Functions", "globals_func.html", null ]
+        [ "Functions", "globals_func.html", null ],
+        [ "Macros", "globals_defs.html", null ]
       ] ]
     ] ]
   ] ]
@@ -60,17 +61,19 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"actuator__rp2040__driver_8cpp.html",
-"classcontroller_1_1P__PIDController.html#ab2c946a8e103e50168f14a57a3d9b330",
-"classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html",
-"classpid__controller_1_1PositionP__PID.html#a42f38071fd65c5c0e20936a373e29dab",
-"classsensors__esp32__driver_1_1Depth.html#a1957ef5704bf84665da7490488275692",
-"classtrajectory__viewer_1_1publish__odom__from__csv_1_1OdometryPublisher.html#ac08b88fd5c81ef01eb725c48876019a6",
-"dir_a6b03f532f63083adad2fdc0982ac714.html",
-"global__pose__viewer_8py.html",
-"namespacesetup.html#abead4f26b530856f858f0d44c7cf2588",
-"structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html#a862acb679f2dc917a761d5327c9b40ca",
-"structimu__driver_1_1g366_1_1RAW__DATA__T.html#a913204bb9c5fb3e173ed1035c1a36cbe"
+"action__server__check__base_8hpp.html",
+"classcontroller_1_1P__PIDController.html#aa65262a0cd9ca9246f9d52aeb43a9ae3",
+"classdriver_1_1imu__driver_1_1g366_1_1G366.html#a97d077ddde91873326bc964f9115f542",
+"classoak__create__mapping_1_1main_1_1HeadlessOakCameraNode.html#a2fe10473c050ff8150fae1aad7d72c53",
+"classplanner_1_1wrench__planner_1_1RobotFoceTopicPublisherCheck.html",
+"classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html#a81b2a69bfb89888441d4c2e7989407c8",
+"classweb__controller_1_1main_1_1WebVisualizerNode.html#a238575c8ac3c13457a5824bf78645fb5",
+"dir_b81b067251166617f9d0a8c0cfc3a4a9.html",
+"geodetic__converter_8cpp.html",
+"namespacepath__generator_1_1path__generator.html#a64f3a4697289e055714e09ffcfbeb383",
+"structdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1BottomTrack.html#ab1e5afd846d0faa2fd82ea84d742f50f",
+"structdriver_1_1imu__driver_1_1g366_1_1DATA.html#a9290b8eea1a3caae24979a171bc876c7",
+"visualizer_2archive_2trajectory__viewer_2test_2test__flake8_8py.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

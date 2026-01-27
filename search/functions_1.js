@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['actuatorrp2040_0',['ActuatorRP2040',['../classactuator__rp2040__driver_1_1ActuatorRP2040.html#aa534eaaf16ff69d6d6699c7639fcb117',1,'actuator_rp2040_driver::ActuatorRP2040']]],
+  ['actuatorrp2040_0',['ActuatorRP2040',['../classdriver_1_1actuator__rp2040__driver_1_1ActuatorRP2040.html#adf6cc2756a72d651512081cdd07dd9a4',1,'driver::actuator_rp2040_driver::ActuatorRP2040']]],
   ['add_5fanchor_1',['add_anchor',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#a28ddcb1cf59570df72d69ec8cea54622',1,'trajectory_viewer::main::TrajectoryPlotter']]],
   ['add_5fon_5fset_5fparameters_5fcallback_2',['add_on_set_parameters_callback',['../classdashboard_1_1main_1_1Node.html#a45f1d4c9d749c85bfb8eaa156922cac0',1,'dashboard::main::Node']]],
   ['add_5fpoint_3',['add_point',['../classtrajectory__viewer_1_1main_1_1TrajectoryPlotter.html#af7f963b1d48713feabb8be00ff5ab739',1,'trajectory_viewer::main::TrajectoryPlotter']]],

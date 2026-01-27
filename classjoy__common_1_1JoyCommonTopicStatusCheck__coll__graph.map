@@ -1,0 +1,5 @@
+<map id="joy_common::JoyCommonTopicStatusCheck" name="joy_common::JoyCommonTopicStatusCheck">
+<area shape="rect" id="node1" title=" " alt="" coords="5,196,232,236"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html" title=" " alt="" coords="11,93,226,148"/>
+<area shape="rect" id="node3" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="23,5,214,45"/>
+</map>

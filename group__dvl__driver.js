@@ -1,4 +1,4 @@
 var group__dvl__driver =
 [
-    [ "dvl_driver", "namespacedvl__driver.html", null ]
+    [ "driver::dvl_driver", "namespacedriver_1_1dvl__driver.html", null ]
 ];

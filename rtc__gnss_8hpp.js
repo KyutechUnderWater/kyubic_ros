@@ -1,4 +1,4 @@
 var rtc__gnss_8hpp =
 [
-    [ "sensors_esp32_driver::RtcGnss", "classsensors__esp32__driver_1_1RtcGnss.html", "classsensors__esp32__driver_1_1RtcGnss" ]
+    [ "driver::sensors_esp32_driver::RtcGnss", "classdriver_1_1sensors__esp32__driver_1_1RtcGnss.html", "classdriver_1_1sensors__esp32__driver_1_1RtcGnss" ]
 ];

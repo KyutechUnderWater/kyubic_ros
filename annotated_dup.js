@@ -1,8 +1,5 @@
 var annotated_dup =
 [
-    [ "actuator_rp2040_driver", "namespaceactuator__rp2040__driver.html", [
-      [ "ActuatorRP2040", "classactuator__rp2040__driver_1_1ActuatorRP2040.html", "classactuator__rp2040__driver_1_1ActuatorRP2040" ]
-    ] ],
     [ "behavior_tree", "namespacebehavior__tree.html", [
       [ "AlwaysRunning", "classbehavior__tree_1_1AlwaysRunning.html", "classbehavior__tree_1_1AlwaysRunning" ],
       [ "FibonacciAction", "classbehavior__tree_1_1FibonacciAction.html", "classbehavior__tree_1_1FibonacciAction" ],
@@ -46,31 +43,85 @@ var annotated_dup =
         [ "UIColors", "classdashboard_1_1main_1_1UIColors.html", null ]
       ] ]
     ] ],
+    [ "driver", "namespacedriver.html", [
+      [ "actuator_rp2040_driver", "namespacedriver_1_1actuator__rp2040__driver.html", [
+        [ "ActuatorRP2040", "classdriver_1_1actuator__rp2040__driver_1_1ActuatorRP2040.html", "classdriver_1_1actuator__rp2040__driver_1_1ActuatorRP2040" ],
+        [ "HeartbeatSubscriberCheck", "classdriver_1_1actuator__rp2040__driver_1_1HeartbeatSubscriberCheck.html", null ],
+        [ "LedSubscriberCheck", "classdriver_1_1actuator__rp2040__driver_1_1LedSubscriberCheck.html", null ],
+        [ "RobotForceSubscriberCheck", "classdriver_1_1actuator__rp2040__driver_1_1RobotForceSubscriberCheck.html", null ],
+        [ "ThrusterPublisherCheck", "classdriver_1_1actuator__rp2040__driver_1_1ThrusterPublisherCheck.html", null ]
+      ] ],
+      [ "dvl_driver", "namespacedriver_1_1dvl__driver.html", [
+        [ "path_finder", "namespacedriver_1_1dvl__driver_1_1path__finder.html", [
+          [ "pd0", "namespacedriver_1_1dvl__driver_1_1path__finder_1_1pd0.html", [
+            [ "BottomTrack", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1BottomTrack.html", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1BottomTrack" ],
+            [ "FixedLeader", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader" ],
+            [ "Pd0Ensemble", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1Pd0Ensemble.html", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1Pd0Ensemble" ],
+            [ "Pd0Parser", "classdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1Pd0Parser.html", "classdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1Pd0Parser" ],
+            [ "VariableLeader", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1VariableLeader.html", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd0_1_1VariableLeader" ]
+          ] ],
+          [ "pd5", "namespacedriver_1_1dvl__driver_1_1path__finder_1_1pd5.html", [
+            [ "Pd5Ensemble", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd5_1_1Pd5Ensemble.html", "structdriver_1_1dvl__driver_1_1path__finder_1_1pd5_1_1Pd5Ensemble" ],
+            [ "Pd5Parser", "classdriver_1_1dvl__driver_1_1path__finder_1_1pd5_1_1Pd5Parser.html", "classdriver_1_1dvl__driver_1_1path__finder_1_1pd5_1_1Pd5Parser" ]
+          ] ],
+          [ "Listener", "classdriver_1_1dvl__driver_1_1path__finder_1_1Listener.html", "classdriver_1_1dvl__driver_1_1path__finder_1_1Listener" ],
+          [ "Sender", "classdriver_1_1dvl__driver_1_1path__finder_1_1Sender.html", "classdriver_1_1dvl__driver_1_1path__finder_1_1Sender" ]
+        ] ],
+        [ "CommandServiceServerCheck", "classdriver_1_1dvl__driver_1_1CommandServiceServerCheck.html", null ],
+        [ "DVLDriver", "classdriver_1_1dvl__driver_1_1DVLDriver.html", "classdriver_1_1dvl__driver_1_1DVLDriver" ],
+        [ "DVLSetting", "classdriver_1_1dvl__driver_1_1DVLSetting.html", "classdriver_1_1dvl__driver_1_1DVLSetting" ],
+        [ "DvlTopicStatusCheck", "classdriver_1_1dvl__driver_1_1DvlTopicStatusCheck.html", null ]
+      ] ],
+      [ "imu_driver", "namespacedriver_1_1imu__driver.html", [
+        [ "g366", "namespacedriver_1_1imu__driver_1_1g366.html", [
+          [ "DATA", "structdriver_1_1imu__driver_1_1g366_1_1DATA.html", "structdriver_1_1imu__driver_1_1g366_1_1DATA" ],
+          [ "DATA_META", "structdriver_1_1imu__driver_1_1g366_1_1DATA__META.html", "structdriver_1_1imu__driver_1_1g366_1_1DATA__META" ],
+          [ "G366", "classdriver_1_1imu__driver_1_1g366_1_1G366.html", "classdriver_1_1imu__driver_1_1g366_1_1G366" ],
+          [ "RAW_DATA_T", "structdriver_1_1imu__driver_1_1g366_1_1RAW__DATA__T.html", "structdriver_1_1imu__driver_1_1g366_1_1RAW__DATA__T" ]
+        ] ],
+        [ "IMUDriver", "classdriver_1_1imu__driver_1_1IMUDriver.html", "classdriver_1_1imu__driver_1_1IMUDriver" ],
+        [ "ImuTopicStatusCheck", "classdriver_1_1imu__driver_1_1ImuTopicStatusCheck.html", null ]
+      ] ],
+      [ "logic_distro_rp2040_driver", "namespacedriver_1_1logic__distro__rp2040__driver.html", [
+        [ "LogicDistroRP2040", "classdriver_1_1logic__distro__rp2040__driver_1_1LogicDistroRP2040.html", "classdriver_1_1logic__distro__rp2040__driver_1_1LogicDistroRP2040" ],
+        [ "PowerStateTopicStatusCheck", "classdriver_1_1logic__distro__rp2040__driver_1_1PowerStateTopicStatusCheck.html", null ],
+        [ "SystemSwitchSubscriberCheck", "classdriver_1_1logic__distro__rp2040__driver_1_1SystemSwitchSubscriberCheck.html", null ]
+      ] ],
+      [ "sensors_esp32_driver", "namespacedriver_1_1sensors__esp32__driver.html", [
+        [ "ButtonBatteryState", "classdriver_1_1sensors__esp32__driver_1_1ButtonBatteryState.html", "classdriver_1_1sensors__esp32__driver_1_1ButtonBatteryState" ],
+        [ "ButtonBatteryStateTopicStatusCheck", "classdriver_1_1sensors__esp32__driver_1_1ButtonBatteryStateTopicStatusCheck.html", null ],
+        [ "BuzzerSwitch", "classdriver_1_1sensors__esp32__driver_1_1BuzzerSwitch.html", "classdriver_1_1sensors__esp32__driver_1_1BuzzerSwitch" ],
+        [ "BuzzerSwitchTopicSubscriberCheck", "classdriver_1_1sensors__esp32__driver_1_1BuzzerSwitchTopicSubscriberCheck.html", null ],
+        [ "Depth", "classdriver_1_1sensors__esp32__driver_1_1Depth.html", "classdriver_1_1sensors__esp32__driver_1_1Depth" ],
+        [ "DepthTopicStatusCheck", "classdriver_1_1sensors__esp32__driver_1_1DepthTopicStatusCheck.html", null ],
+        [ "DepthTypeSubscriberCheck", "classdriver_1_1sensors__esp32__driver_1_1DepthTypeSubscriberCheck.html", null ],
+        [ "Environment", "classdriver_1_1sensors__esp32__driver_1_1Environment.html", "classdriver_1_1sensors__esp32__driver_1_1Environment" ],
+        [ "EnvironmentTopicStatusCheck", "classdriver_1_1sensors__esp32__driver_1_1EnvironmentTopicStatusCheck.html", null ],
+        [ "ImuReset", "classdriver_1_1sensors__esp32__driver_1_1ImuReset.html", "classdriver_1_1sensors__esp32__driver_1_1ImuReset" ],
+        [ "ImuResetSubscriberCheck", "classdriver_1_1sensors__esp32__driver_1_1ImuResetSubscriberCheck.html", null ],
+        [ "Leak", "classdriver_1_1sensors__esp32__driver_1_1Leak.html", "classdriver_1_1sensors__esp32__driver_1_1Leak" ],
+        [ "LeakTopicStatusCheck", "classdriver_1_1sensors__esp32__driver_1_1LeakTopicStatusCheck.html", null ],
+        [ "RGB", "classdriver_1_1sensors__esp32__driver_1_1RGB.html", "classdriver_1_1sensors__esp32__driver_1_1RGB" ],
+        [ "RgbSubscriberCheck", "classdriver_1_1sensors__esp32__driver_1_1RgbSubscriberCheck.html", null ],
+        [ "RtcGnss", "classdriver_1_1sensors__esp32__driver_1_1RtcGnss.html", "classdriver_1_1sensors__esp32__driver_1_1RtcGnss" ],
+        [ "RtcGnssTopicStatusCheck", "classdriver_1_1sensors__esp32__driver_1_1RtcGnssTopicStatusCheck.html", null ],
+        [ "RtcTime", "classdriver_1_1sensors__esp32__driver_1_1RtcTime.html", "classdriver_1_1sensors__esp32__driver_1_1RtcTime" ],
+        [ "RtcTimeTopicStatusCheck", "classdriver_1_1sensors__esp32__driver_1_1RtcTimeTopicStatusCheck.html", null ],
+        [ "SystemStatus", "classdriver_1_1sensors__esp32__driver_1_1SystemStatus.html", "classdriver_1_1sensors__esp32__driver_1_1SystemStatus" ],
+        [ "SystemStatusTopicStatusCheck", "classdriver_1_1sensors__esp32__driver_1_1SystemStatusTopicStatusCheck.html", null ],
+        [ "TiltServo", "classdriver_1_1sensors__esp32__driver_1_1TiltServo.html", "classdriver_1_1sensors__esp32__driver_1_1TiltServo" ],
+        [ "TiltServoSubscriberCheck", "classdriver_1_1sensors__esp32__driver_1_1TiltServoSubscriberCheck.html", null ],
+        [ "ZedPower", "classdriver_1_1sensors__esp32__driver_1_1ZedPower.html", "classdriver_1_1sensors__esp32__driver_1_1ZedPower" ],
+        [ "ZedPowerSubscriberCheck", "classdriver_1_1sensors__esp32__driver_1_1ZedPowerSubscriberCheck.html", null ]
+      ] ]
+    ] ],
     [ "driver_node_manager", "namespacedriver__node__manager.html", [
       [ "driver_node_manager", "namespacedriver__node__manager_1_1driver__node__manager.html", [
         [ "NodeManager", "classdriver__node__manager_1_1driver__node__manager_1_1NodeManager.html", "classdriver__node__manager_1_1driver__node__manager_1_1NodeManager" ]
       ] ]
     ] ],
-    [ "dvl_driver", "namespacedvl__driver.html", [
-      [ "path_finder", "namespacedvl__driver_1_1path__finder.html", [
-        [ "pd0", "namespacedvl__driver_1_1path__finder_1_1pd0.html", [
-          [ "BottomTrack", "structdvl__driver_1_1path__finder_1_1pd0_1_1BottomTrack.html", "structdvl__driver_1_1path__finder_1_1pd0_1_1BottomTrack" ],
-          [ "FixedLeader", "structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader.html", "structdvl__driver_1_1path__finder_1_1pd0_1_1FixedLeader" ],
-          [ "Pd0Ensemble", "structdvl__driver_1_1path__finder_1_1pd0_1_1Pd0Ensemble.html", "structdvl__driver_1_1path__finder_1_1pd0_1_1Pd0Ensemble" ],
-          [ "Pd0Parser", "classdvl__driver_1_1path__finder_1_1pd0_1_1Pd0Parser.html", "classdvl__driver_1_1path__finder_1_1pd0_1_1Pd0Parser" ],
-          [ "VariableLeader", "structdvl__driver_1_1path__finder_1_1pd0_1_1VariableLeader.html", "structdvl__driver_1_1path__finder_1_1pd0_1_1VariableLeader" ]
-        ] ],
-        [ "pd5", "namespacedvl__driver_1_1path__finder_1_1pd5.html", [
-          [ "Pd5Ensemble", "structdvl__driver_1_1path__finder_1_1pd5_1_1Pd5Ensemble.html", "structdvl__driver_1_1path__finder_1_1pd5_1_1Pd5Ensemble" ],
-          [ "Pd5Parser", "classdvl__driver_1_1path__finder_1_1pd5_1_1Pd5Parser.html", "classdvl__driver_1_1path__finder_1_1pd5_1_1Pd5Parser" ]
-        ] ],
-        [ "Listener", "classdvl__driver_1_1path__finder_1_1Listener.html", "classdvl__driver_1_1path__finder_1_1Listener" ],
-        [ "Sender", "classdvl__driver_1_1path__finder_1_1Sender.html", "classdvl__driver_1_1path__finder_1_1Sender" ]
-      ] ],
-      [ "DVLDriver", "classdvl__driver_1_1DVLDriver.html", "classdvl__driver_1_1DVLDriver" ],
-      [ "DVLSetting", "classdvl__driver_1_1DVLSetting.html", "classdvl__driver_1_1DVLSetting" ]
-    ] ],
     [ "emergency", "namespaceemergency.html", [
+      [ "EmergencyLifecycleStatusCheck", "classemergency_1_1EmergencyLifecycleStatusCheck.html", null ],
       [ "EmergencySurfacing", "classemergency_1_1EmergencySurfacing.html", "classemergency_1_1EmergencySurfacing" ]
     ] ],
     [ "gnss_driver", "namespacegnss__driver.html", [
@@ -78,29 +129,44 @@ var annotated_dup =
         [ "GnssPublisher", "classgnss__driver_1_1gnss__driver_1_1GnssPublisher.html", "classgnss__driver_1_1gnss__driver_1_1GnssPublisher" ]
       ] ]
     ] ],
-    [ "imu_driver", "namespaceimu__driver.html", [
-      [ "g366", "namespaceimu__driver_1_1g366.html", [
-        [ "DATA", "structimu__driver_1_1g366_1_1DATA.html", "structimu__driver_1_1g366_1_1DATA" ],
-        [ "DATA_META", "structimu__driver_1_1g366_1_1DATA__META.html", "structimu__driver_1_1g366_1_1DATA__META" ],
-        [ "G366", "classimu__driver_1_1g366_1_1G366.html", "classimu__driver_1_1g366_1_1G366" ],
-        [ "RAW_DATA_T", "structimu__driver_1_1g366_1_1RAW__DATA__T.html", "structimu__driver_1_1g366_1_1RAW__DATA__T" ]
-      ] ],
-      [ "IMUDriver", "classimu__driver_1_1IMUDriver.html", "classimu__driver_1_1IMUDriver" ]
-    ] ],
     [ "joy2wrench", "namespacejoy2wrench.html", [
-      [ "Joy2WrenchStamped", "classjoy2wrench_1_1Joy2WrenchStamped.html", "classjoy2wrench_1_1Joy2WrenchStamped" ]
+      [ "Joy2WrenchLifecycleStatusCheck", "classjoy2wrench_1_1Joy2WrenchLifecycleStatusCheck.html", null ],
+      [ "Joy2WrenchStamped", "classjoy2wrench_1_1Joy2WrenchStamped.html", "classjoy2wrench_1_1Joy2WrenchStamped" ],
+      [ "JoyCommonTopicStatusCheck", "classjoy2wrench_1_1JoyCommonTopicStatusCheck.html", null ],
+      [ "RobotForceTopicStatusCheck", "classjoy2wrench_1_1RobotForceTopicStatusCheck.html", null ]
     ] ],
     [ "joy_common", "namespacejoy__common.html", [
-      [ "JoyCommon", "classjoy__common_1_1JoyCommon.html", "classjoy__common_1_1JoyCommon" ]
+      [ "JoyCommon", "classjoy__common_1_1JoyCommon.html", "classjoy__common_1_1JoyCommon" ],
+      [ "JoyCommonTopicStatusCheck", "classjoy__common_1_1JoyCommonTopicStatusCheck.html", null ],
+      [ "JoyTopicStatusCheck", "classjoy__common_1_1JoyTopicStatusCheck.html", null ]
     ] ],
     [ "localization", "namespacelocalization.html", [
-      [ "DepthOdometry", "classlocalization_1_1DepthOdometry.html", "classlocalization_1_1DepthOdometry" ],
-      [ "DVLOdometry", "classlocalization_1_1DVLOdometry.html", "classlocalization_1_1DVLOdometry" ],
-      [ "IMUTransform", "classlocalization_1_1IMUTransform.html", "classlocalization_1_1IMUTransform" ],
-      [ "Localization", "classlocalization_1_1Localization.html", "classlocalization_1_1Localization" ]
-    ] ],
-    [ "logic_distro_rp2040_driver", "namespacelogic__distro__rp2040__driver.html", [
-      [ "LogicDistroRP2040", "classlogic__distro__rp2040__driver_1_1LogicDistroRP2040.html", "classlogic__distro__rp2040__driver_1_1LogicDistroRP2040" ]
+      [ "depth", "namespacelocalization_1_1depth.html", [
+        [ "DepthOdometry", "classlocalization_1_1depth_1_1DepthOdometry.html", "classlocalization_1_1depth_1_1DepthOdometry" ],
+        [ "DepthOdomTopicStatusCheck", "classlocalization_1_1depth_1_1DepthOdomTopicStatusCheck.html", null ],
+        [ "DepthResetServiceServerCheck", "classlocalization_1_1depth_1_1DepthResetServiceServerCheck.html", null ],
+        [ "DepthTopicStatusCheck", "classlocalization_1_1depth_1_1DepthTopicStatusCheck.html", null ]
+      ] ],
+      [ "dvl", "namespacelocalization_1_1dvl.html", [
+        [ "DVLOdometry", "classlocalization_1_1dvl_1_1DVLOdometry.html", "classlocalization_1_1dvl_1_1DVLOdometry" ],
+        [ "DvlOdomTopicStatusCheck", "classlocalization_1_1dvl_1_1DvlOdomTopicStatusCheck.html", null ],
+        [ "DvlResetServiceServerCheck", "classlocalization_1_1dvl_1_1DvlResetServiceServerCheck.html", null ],
+        [ "DvlTopicStatusCheck", "classlocalization_1_1dvl_1_1DvlTopicStatusCheck.html", null ],
+        [ "ImuTransformedTopicStatusCheck", "classlocalization_1_1dvl_1_1ImuTransformedTopicStatusCheck.html", null ]
+      ] ],
+      [ "imu", "namespacelocalization_1_1imu.html", [
+        [ "ImuResetServiceServerCheck", "classlocalization_1_1imu_1_1ImuResetServiceServerCheck.html", null ],
+        [ "ImuTopicStatusCheck", "classlocalization_1_1imu_1_1ImuTopicStatusCheck.html", null ],
+        [ "IMUTransform", "classlocalization_1_1imu_1_1IMUTransform.html", "classlocalization_1_1imu_1_1IMUTransform" ],
+        [ "ImuTransformedTopicStatusCheck", "classlocalization_1_1imu_1_1ImuTransformedTopicStatusCheck.html", null ]
+      ] ],
+      [ "DepthOdomTopicStatusCheck", "classlocalization_1_1DepthOdomTopicStatusCheck.html", null ],
+      [ "DvlOdomTopicStatusCheck", "classlocalization_1_1DvlOdomTopicStatusCheck.html", null ],
+      [ "GnssTopicStatusCheck", "classlocalization_1_1GnssTopicStatusCheck.html", null ],
+      [ "ImuTransformedTopicStatusCheck", "classlocalization_1_1ImuTransformedTopicStatusCheck.html", null ],
+      [ "Localization", "classlocalization_1_1Localization.html", "classlocalization_1_1Localization" ],
+      [ "OdomTopicStatusCheck", "classlocalization_1_1OdomTopicStatusCheck.html", null ],
+      [ "ResetServiceServerCheck", "classlocalization_1_1ResetServiceServerCheck.html", null ]
     ] ],
     [ "oak_create_mapping", "namespaceoak__create__mapping.html", [
       [ "main", "namespaceoak__create__mapping_1_1main.html", [
@@ -126,16 +192,34 @@ var annotated_dup =
       [ "VelocityPIDParameter", "structpid__controller_1_1VelocityPIDParameter.html", "structpid__controller_1_1VelocityPIDParameter" ]
     ] ],
     [ "planner", "namespaceplanner.html", [
+      [ "pdla_planner", "namespaceplanner_1_1pdla__planner.html", [
+        [ "OdomTopicStatusCheck", "classplanner_1_1pdla__planner_1_1OdomTopicStatusCheck.html", null ],
+        [ "PDLAPlanner", "classplanner_1_1pdla__planner_1_1PDLAPlanner.html", "classplanner_1_1pdla__planner_1_1PDLAPlanner" ],
+        [ "PDLAPlannerActionServerCheck", "classplanner_1_1pdla__planner_1_1PDLAPlannerActionServerCheck.html", null ],
+        [ "Tolerance", "structplanner_1_1pdla__planner_1_1Tolerance.html", "structplanner_1_1pdla__planner_1_1Tolerance" ],
+        [ "WrenchPlanTopicPublisherCheck", "classplanner_1_1pdla__planner_1_1WrenchPlanTopicPublisherCheck.html", null ]
+      ] ],
+      [ "qr_planner", "namespaceplanner_1_1qr__planner.html", [
+        [ "OdomTopicStatusCheck", "classplanner_1_1qr__planner_1_1OdomTopicStatusCheck.html", null ],
+        [ "PoseData", "structplanner_1_1qr__planner_1_1PoseData.html", "structplanner_1_1qr__planner_1_1PoseData" ],
+        [ "QRPlanner", "classplanner_1_1qr__planner_1_1QRPlanner.html", "classplanner_1_1qr__planner_1_1QRPlanner" ],
+        [ "QRPlannerActionServerCheck", "classplanner_1_1qr__planner_1_1QRPlannerActionServerCheck.html", null ],
+        [ "Tolerance", "structplanner_1_1qr__planner_1_1Tolerance.html", "structplanner_1_1qr__planner_1_1Tolerance" ]
+      ] ],
+      [ "wrench_planner", "namespaceplanner_1_1wrench__planner.html", [
+        [ "OdomTopicStatusCheck", "classplanner_1_1wrench__planner_1_1OdomTopicStatusCheck.html", null ],
+        [ "RobotFoceTopicPublisherCheck", "classplanner_1_1wrench__planner_1_1RobotFoceTopicPublisherCheck.html", null ],
+        [ "TargetsTopicPublisherCheck", "classplanner_1_1wrench__planner_1_1TargetsTopicPublisherCheck.html", null ],
+        [ "WrenchPlanner", "classplanner_1_1wrench__planner_1_1WrenchPlanner.html", "classplanner_1_1wrench__planner_1_1WrenchPlanner" ],
+        [ "WrenchPlanTopicPublisherCheck", "classplanner_1_1wrench__planner_1_1WrenchPlanTopicPublisherCheck.html", null ],
+        [ "WrenchPlanTopicSubscriberCheck", "classplanner_1_1wrench__planner_1_1WrenchPlanTopicSubscriberCheck.html", null ],
+        [ "ZeroOrderHold", "classplanner_1_1wrench__planner_1_1ZeroOrderHold.html", "classplanner_1_1wrench__planner_1_1ZeroOrderHold" ],
+        [ "ZohWrenchPlanTopicSubscriberCheck", "classplanner_1_1wrench__planner_1_1ZohWrenchPlanTopicSubscriberCheck.html", null ]
+      ] ],
       [ "ParamData", "classplanner_1_1ParamData.html", "classplanner_1_1ParamData" ],
       [ "PathCsvLoader", "classplanner_1_1PathCsvLoader.html", "classplanner_1_1PathCsvLoader" ],
       [ "PathData", "classplanner_1_1PathData.html", "classplanner_1_1PathData" ],
-      [ "PDLAPlanner", "classplanner_1_1PDLAPlanner.html", "classplanner_1_1PDLAPlanner" ],
-      [ "PoseData", "classplanner_1_1PoseData.html", "classplanner_1_1PoseData" ],
-      [ "QRPlanner", "classplanner_1_1QRPlanner.html", "classplanner_1_1QRPlanner" ],
-      [ "ReturnPlanner", "classplanner_1_1ReturnPlanner.html", "classplanner_1_1ReturnPlanner" ],
-      [ "Tolerance", "structplanner_1_1Tolerance.html", "structplanner_1_1Tolerance" ],
-      [ "WrenchPlanner", "classplanner_1_1WrenchPlanner.html", "classplanner_1_1WrenchPlanner" ],
-      [ "ZeroOrderHold", "classplanner_1_1ZeroOrderHold.html", "classplanner_1_1ZeroOrderHold" ]
+      [ "PoseData", "classplanner_1_1PoseData.html", "classplanner_1_1PoseData" ]
     ] ],
     [ "rt_pose_plotter", "namespacert__pose__plotter.html", [
       [ "main", "namespacert__pose__plotter_1_1main.html", [
@@ -144,23 +228,39 @@ var annotated_dup =
         [ "PlotUnitWidget", "classrt__pose__plotter_1_1main_1_1PlotUnitWidget.html", "classrt__pose__plotter_1_1main_1_1PlotUnitWidget" ]
       ] ]
     ] ],
-    [ "sensors_esp32_driver", "namespacesensors__esp32__driver.html", [
-      [ "ButtonBatteryState", "classsensors__esp32__driver_1_1ButtonBatteryState.html", "classsensors__esp32__driver_1_1ButtonBatteryState" ],
-      [ "BuzzerSwitch", "classsensors__esp32__driver_1_1BuzzerSwitch.html", "classsensors__esp32__driver_1_1BuzzerSwitch" ],
-      [ "Depth", "classsensors__esp32__driver_1_1Depth.html", "classsensors__esp32__driver_1_1Depth" ],
-      [ "Environment", "classsensors__esp32__driver_1_1Environment.html", "classsensors__esp32__driver_1_1Environment" ],
-      [ "ImuReset", "classsensors__esp32__driver_1_1ImuReset.html", "classsensors__esp32__driver_1_1ImuReset" ],
-      [ "Leak", "classsensors__esp32__driver_1_1Leak.html", "classsensors__esp32__driver_1_1Leak" ],
-      [ "RGB", "classsensors__esp32__driver_1_1RGB.html", "classsensors__esp32__driver_1_1RGB" ],
-      [ "RtcGnss", "classsensors__esp32__driver_1_1RtcGnss.html", "classsensors__esp32__driver_1_1RtcGnss" ],
-      [ "RtcTime", "classsensors__esp32__driver_1_1RtcTime.html", "classsensors__esp32__driver_1_1RtcTime" ],
-      [ "SystemStatus", "classsensors__esp32__driver_1_1SystemStatus.html", "classsensors__esp32__driver_1_1SystemStatus" ],
-      [ "TiltServo", "classsensors__esp32__driver_1_1TiltServo.html", "classsensors__esp32__driver_1_1TiltServo" ],
-      [ "ZedPower", "classsensors__esp32__driver_1_1ZedPower.html", "classsensors__esp32__driver_1_1ZedPower" ]
-    ] ],
     [ "serial", "namespaceserial.html", [
       [ "Serial", "classserial_1_1Serial.html", "classserial_1_1Serial" ],
       [ "SerialException", "classserial_1_1SerialException.html", "classserial_1_1SerialException" ]
+    ] ],
+    [ "system_health_check", "namespacesystem__health__check.html", [
+      [ "base", "namespacesystem__health__check_1_1base.html", [
+        [ "ActionClientCheckBase", "classsystem__health__check_1_1base_1_1ActionClientCheckBase.html", null ],
+        [ "ActionGraphCheckBase", "classsystem__health__check_1_1base_1_1ActionGraphCheckBase.html", "classsystem__health__check_1_1base_1_1ActionGraphCheckBase" ],
+        [ "ActionServerCheckBase", "classsystem__health__check_1_1base_1_1ActionServerCheckBase.html", null ],
+        [ "LifecycleStatusCheckBase", "classsystem__health__check_1_1base_1_1LifecycleStatusCheckBase.html", "classsystem__health__check_1_1base_1_1LifecycleStatusCheckBase" ],
+        [ "ServiceClientCheckBase", "classsystem__health__check_1_1base_1_1ServiceClientCheckBase.html", null ],
+        [ "ServiceGraphCheckBase", "classsystem__health__check_1_1base_1_1ServiceGraphCheckBase.html", "classsystem__health__check_1_1base_1_1ServiceGraphCheckBase" ],
+        [ "ServiceServerCheckBase", "classsystem__health__check_1_1base_1_1ServiceServerCheckBase.html", null ],
+        [ "SystemCheckBase", "classsystem__health__check_1_1base_1_1SystemCheckBase.html", "classsystem__health__check_1_1base_1_1SystemCheckBase" ],
+        [ "TopicCountCheckBase", "classsystem__health__check_1_1base_1_1TopicCountCheckBase.html", "classsystem__health__check_1_1base_1_1TopicCountCheckBase" ],
+        [ "TopicPublisherCheckBase", "classsystem__health__check_1_1base_1_1TopicPublisherCheckBase.html", null ],
+        [ "TopicStatusCheckBase", "classsystem__health__check_1_1base_1_1TopicStatusCheckBase.html", "classsystem__health__check_1_1base_1_1TopicStatusCheckBase" ],
+        [ "TopicSubscriberCheckBase", "classsystem__health__check_1_1base_1_1TopicSubscriberCheckBase.html", null ]
+      ] ],
+      [ "checks", "namespacesystem__health__check_1_1checks.html", [
+        [ "ActionClientCheck", "classsystem__health__check_1_1checks_1_1ActionClientCheck.html", null ],
+        [ "ActionServerCheck", "classsystem__health__check_1_1checks_1_1ActionServerCheck.html", null ],
+        [ "FailCheck", "classsystem__health__check_1_1checks_1_1FailCheck.html", "classsystem__health__check_1_1checks_1_1FailCheck" ],
+        [ "LifecycleStatusCheck", "classsystem__health__check_1_1checks_1_1LifecycleStatusCheck.html", null ],
+        [ "PassCheck", "classsystem__health__check_1_1checks_1_1PassCheck.html", "classsystem__health__check_1_1checks_1_1PassCheck" ],
+        [ "ServiceClientCheck", "classsystem__health__check_1_1checks_1_1ServiceClientCheck.html", null ],
+        [ "ServiceServerCheck", "classsystem__health__check_1_1checks_1_1ServiceServerCheck.html", null ],
+        [ "TopicPublisherCheck", "classsystem__health__check_1_1checks_1_1TopicPublisherCheck.html", null ],
+        [ "TopicStatusCheck", "classsystem__health__check_1_1checks_1_1TopicStatusCheck.html", null ],
+        [ "TopicSubscriberCheck", "classsystem__health__check_1_1checks_1_1TopicSubscriberCheck.html", null ]
+      ] ],
+      [ "SystemCheck", "classsystem__health__check_1_1SystemCheck.html", "classsystem__health__check_1_1SystemCheck" ],
+      [ "SystemCheckBase", "classsystem__health__check_1_1SystemCheckBase.html", "classsystem__health__check_1_1SystemCheckBase" ]
     ] ],
     [ "timer", "namespacetimer.html", [
       [ "Timeout", "classtimer_1_1Timeout.html", "classtimer_1_1Timeout" ]

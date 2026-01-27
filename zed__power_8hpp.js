@@ -1,4 +1,4 @@
 var zed__power_8hpp =
 [
-    [ "sensors_esp32_driver::ZedPower", "classsensors__esp32__driver_1_1ZedPower.html", "classsensors__esp32__driver_1_1ZedPower" ]
+    [ "driver::sensors_esp32_driver::ZedPower", "classdriver_1_1sensors__esp32__driver_1_1ZedPower.html", "classdriver_1_1sensors__esp32__driver_1_1ZedPower" ]
 ];

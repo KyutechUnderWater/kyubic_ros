@@ -1,8 +1,8 @@
 var qr__planner_8hpp =
 [
-    [ "planner::PoseData", "classplanner_1_1PoseData.html", "classplanner_1_1PoseData" ],
-    [ "planner::Tolerance", "structplanner_1_1Tolerance.html", "structplanner_1_1Tolerance" ],
-    [ "planner::QRPlanner", "classplanner_1_1QRPlanner.html", "classplanner_1_1QRPlanner" ],
-    [ "GoalHandleQR", "qr__planner_8hpp.html#a8c129b04a6f901e3e1376a8a4aed3b24", null ],
-    [ "QRAction", "qr__planner_8hpp.html#a351a1c1a63906f24285cbc71e5c04867", null ]
+    [ "planner::qr_planner::PoseData", "structplanner_1_1qr__planner_1_1PoseData.html", "structplanner_1_1qr__planner_1_1PoseData" ],
+    [ "planner::qr_planner::Tolerance", "structplanner_1_1qr__planner_1_1Tolerance.html", "structplanner_1_1qr__planner_1_1Tolerance" ],
+    [ "planner::qr_planner::QRPlanner", "classplanner_1_1qr__planner_1_1QRPlanner.html", "classplanner_1_1qr__planner_1_1QRPlanner" ],
+    [ "GoalHandleQR", "qr__planner_8hpp.html#ad649ab8309e180403d3a7cbf1db89e86", null ],
+    [ "QRAction", "qr__planner_8hpp.html#a386387d543e3f556c21b0f2aee761578", null ]
 ];

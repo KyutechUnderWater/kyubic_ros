@@ -1,0 +1,6 @@
+<map id="localization::depth::DepthResetServiceServerCheck" name="localization::depth::DepthResetServiceServerCheck">
+<area shape="rect" id="node1" title=" " alt="" coords="5,269,241,309"/>
+<area shape="rect" id="node2" href="$classsystem__health__check_1_1base_1_1ServiceServerCheckBase.html" title="Checks for Service SERVER existence." alt="" coords="8,181,239,221"/>
+<area shape="rect" id="node3" href="$classsystem__health__check_1_1base_1_1ServiceGraphCheckBase.html" title="Abstract base class for checking Service Server/Client existence. Handles node iteration,..." alt="" coords="9,93,237,133"/>
+<area shape="rect" id="node4" href="$classsystem__health__check_1_1base_1_1SystemCheckBase.html" title="Abstract base class for all system check plugins." alt="" coords="28,5,219,45"/>
+</map>

@@ -109,40 +109,47 @@ $(document).ready(function(){initNavTree('utils_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;rclcpp/rclcpp.hpp&gt;</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;<a class="code" href="timeout_8hpp.html">timer/timeout.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacesensors__esp32__driver.html">sensors_esp32_driver</a></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacedriver_1_1sensors__esp32__driver.html">driver::sensors_esp32_driver</a></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> MsgT&gt;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="namespacesensors__esp32__driver.html#a30a7f3f0bea505d14a6ed010a82222d1">   31</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacesensors__esp32__driver.html#a30a7f3f0bea505d14a6ed010a82222d1">check_timeout</a>(</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="namespacedriver_1_1sensors__esp32__driver.html#ad72f03c865d519b2362a393b61014bd8">   31</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacedriver_1_1sensors__esp32__driver.html#ad72f03c865d519b2362a393b61014bd8">check_timeout</a>(</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  rclcpp::Node * node, std::mutex &amp; mutex, std::shared_ptr&lt;timer::Timeout&gt; &amp; timeout,</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="keyword">typename</span> rclcpp::Publisher&lt;MsgT&gt;::SharedPtr &amp; pub, <span class="keyword">const</span> std::string &amp; sensor_name)</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>{</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  std::lock_guard&lt;std::mutex&gt; lock(mutex);</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="keywordflow">if</span> (timeout-&gt;is_timeout(node-&gt;get_clock()-&gt;now())) {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keyword">auto</span> msg = std::make_unique&lt;MsgT&gt;();</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    msg-&gt;header.stamp = node-&gt;get_clock()-&gt;now();</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    msg-&gt;status.id = common_msgs::msg::Status::ERROR;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    pub-&gt;publish(std::move(msg));</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    RCLCPP_ERROR_THROTTLE(</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>      node-&gt;get_logger(), *node-&gt;get_clock(), timeout-&gt;get_timeout() * 1e-6,</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>      <span class="stringliteral">&quot;%s driver timeout: %lu [ms]&quot;</span>, sensor_name.c_str(),</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>      (uint64_t)(timeout-&gt;get_elapsed_time() * 1e-6));</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    RCLCPP_WARN_THROTTLE(</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>      node-&gt;get_logger(), *node-&gt;get_clock(), timeout-&gt;get_timeout() * 1e-6 / 2,</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>      <span class="stringliteral">&quot;Failed to get %s data&quot;</span>, sensor_name.c_str());</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordflow">return</span>;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  }</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>}  <span class="comment">// namespace sensors_esp32_driver</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#endif  </span><span class="comment">// !_UTILS_HPP</span></div>
-<div class="ttc" id="anamespacesensors__esp32__driver_html"><div class="ttname"><a href="namespacesensors__esp32__driver.html">sensors_esp32_driver</a></div><div class="ttdoc">driver for sensors_esp32</div></div>
-<div class="ttc" id="anamespacesensors__esp32__driver_html_a30a7f3f0bea505d14a6ed010a82222d1"><div class="ttname"><a href="namespacesensors__esp32__driver.html#a30a7f3f0bea505d14a6ed010a82222d1">sensors_esp32_driver::check_timeout</a></div><div class="ttdeci">void check_timeout(rclcpp::Node *node, std::mutex &amp;mutex, std::shared_ptr&lt; timer::Timeout &gt; &amp;timeout, typename rclcpp::Publisher&lt; MsgT &gt;::SharedPtr &amp;pub, const std::string &amp;sensor_name)</div><div class="ttdoc">Template function for checking timeouts.</div><div class="ttdef"><b>Definition:</b> utils.hpp:31</div></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  <span class="keywordtype">bool</span> is_timeout;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  int64_t timeout_ns;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  int64_t elapsed_time;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  {</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    std::lock_guard&lt;std::mutex&gt; lock(mutex);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    is_timeout = timeout-&gt;is_timeout(node-&gt;get_clock()-&gt;now());</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    timeout_ns = timeout-&gt;get_timeout();</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    elapsed_time = timeout-&gt;get_elapsed_time();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  }</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="keywordflow">if</span> (is_timeout) {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">auto</span> msg = std::make_unique&lt;MsgT&gt;();</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    msg-&gt;header.stamp = node-&gt;get_clock()-&gt;now();</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    msg-&gt;status.id = common_msgs::msg::Status::ERROR;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    pub-&gt;publish(std::move(msg));</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    RCLCPP_ERROR_THROTTLE(</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>      node-&gt;get_logger(), *node-&gt;get_clock(), timeout_ns * 1e-6, <span class="stringliteral">&quot;%s driver timeout: %lu [ms]&quot;</span>,</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>      sensor_name.c_str(), (uint64_t)(timeout-&gt;get_elapsed_time() * 1e-6));</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (elapsed_time &gt; timeout_ns * 0.5) {</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    RCLCPP_WARN_THROTTLE(</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>      node-&gt;get_logger(), *node-&gt;get_clock(), timeout_ns * 1e-6 / 2, <span class="stringliteral">&quot;Failed to get %s data&quot;</span>,</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>      sensor_name.c_str());</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  }</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>}  <span class="comment">// namespace driver::sensors_esp32_driver</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="preprocessor">#endif  </span><span class="comment">// !_UTILS_HPP</span></div>
+<div class="ttc" id="anamespacedriver_1_1sensors__esp32__driver_html"><div class="ttname"><a href="namespacedriver_1_1sensors__esp32__driver.html">driver::sensors_esp32_driver</a></div><div class="ttdoc">driver for sensors_esp32</div></div>
+<div class="ttc" id="anamespacedriver_1_1sensors__esp32__driver_html_ad72f03c865d519b2362a393b61014bd8"><div class="ttname"><a href="namespacedriver_1_1sensors__esp32__driver.html#ad72f03c865d519b2362a393b61014bd8">driver::sensors_esp32_driver::check_timeout</a></div><div class="ttdeci">void check_timeout(rclcpp::Node *node, std::mutex &amp;mutex, std::shared_ptr&lt; timer::Timeout &gt; &amp;timeout, typename rclcpp::Publisher&lt; MsgT &gt;::SharedPtr &amp;pub, const std::string &amp;sensor_name)</div><div class="ttdoc">Template function for checking timeouts.</div><div class="ttdef"><b>Definition:</b> utils.hpp:31</div></div>
 <div class="ttc" id="atimeout_8hpp_html"><div class="ttname"><a href="timeout_8hpp.html">timeout.hpp</a></div><div class="ttdoc">timeout library</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

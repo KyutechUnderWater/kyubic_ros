@@ -107,10 +107,10 @@ $(document).ready(function(){initNavTree('imu__transform__component_8hpp_source.
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;rclcpp/rclcpp.hpp&gt;</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;std_srvs/srv/trigger.hpp&gt;</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacelocalization.html">localization</a></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacelocalization_1_1imu.html">localization::imu</a></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="classlocalization_1_1IMUTransform.html">   26</a></span><span class="keyword">class </span><a class="code hl_class" href="classlocalization_1_1IMUTransform.html">IMUTransform</a> : <span class="keyword">public</span> rclcpp::Node</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="classlocalization_1_1imu_1_1IMUTransform.html">   26</a></span><span class="keyword">class </span><a class="code hl_class" href="classlocalization_1_1imu_1_1IMUTransform.html">IMUTransform</a> : <span class="keyword">public</span> rclcpp::Node</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>{</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  rclcpp::Publisher&lt;localization_msgs::msg::Odometry&gt;::SharedPtr pub_;</div>
@@ -129,15 +129,15 @@ $(document).ready(function(){initNavTree('imu__transform__component_8hpp_source.
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keyword">const</span> std_srvs::srv::Trigger::Response::SharedPtr response);</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="keyword">explicit</span> <a class="code hl_class" href="classlocalization_1_1IMUTransform.html">IMUTransform</a>(<span class="keyword">const</span> rclcpp::NodeOptions &amp; options);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="keyword">explicit</span> <a class="code hl_class" href="classlocalization_1_1imu_1_1IMUTransform.html">IMUTransform</a>(<span class="keyword">const</span> rclcpp::NodeOptions &amp; options);</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classlocalization_1_1IMUTransform.html#afd5df655d64d5d7e9a1d32d5a2329f42">reset</a>();</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classlocalization_1_1imu_1_1IMUTransform.html#a2ea211e62c48e50cdf578d14ef0830d7">reset</a>();</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>};</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>}  <span class="comment">// namespace localization</span></div>
-<div class="ttc" id="aclasslocalization_1_1IMUTransform_html"><div class="ttname"><a href="classlocalization_1_1IMUTransform.html">localization::IMUTransform</a></div><div class="ttdoc">IMU transform class.</div><div class="ttdef"><b>Definition:</b> imu_transform_component.hpp:27</div></div>
-<div class="ttc" id="aclasslocalization_1_1IMUTransform_html_afd5df655d64d5d7e9a1d32d5a2329f42"><div class="ttname"><a href="classlocalization_1_1IMUTransform.html#afd5df655d64d5d7e9a1d32d5a2329f42">localization::IMUTransform::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Set offset_angle.</div><div class="ttdef"><b>Definition:</b> imu_transform_component.cpp:84</div></div>
-<div class="ttc" id="anamespacelocalization_html"><div class="ttname"><a href="namespacelocalization.html">localization</a></div><div class="ttdoc">localization</div></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>}  <span class="comment">// namespace localization::imu</span></div>
+<div class="ttc" id="aclasslocalization_1_1imu_1_1IMUTransform_html"><div class="ttname"><a href="classlocalization_1_1imu_1_1IMUTransform.html">localization::imu::IMUTransform</a></div><div class="ttdoc">IMU transform class.</div><div class="ttdef"><b>Definition:</b> imu_transform_component.hpp:27</div></div>
+<div class="ttc" id="aclasslocalization_1_1imu_1_1IMUTransform_html_a2ea211e62c48e50cdf578d14ef0830d7"><div class="ttname"><a href="classlocalization_1_1imu_1_1IMUTransform.html#a2ea211e62c48e50cdf578d14ef0830d7">localization::imu::IMUTransform::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Set offset_angle.</div><div class="ttdef"><b>Definition:</b> imu_transform_component.cpp:84</div></div>
+<div class="ttc" id="anamespacelocalization_1_1imu_html"><div class="ttname"><a href="namespacelocalization_1_1imu.html">localization::imu</a></div><div class="ttdoc">localization</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

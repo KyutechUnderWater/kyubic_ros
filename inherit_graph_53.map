@@ -1,3 +1,33 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classserial_1_1Serial.html" title="serial communication class" alt="" coords="5,5,108,31"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,913,108,939"/>
+<area shape="rect" id="node2" href="$classWrenchActionServer.html" title="Action Server node that publishes WrenchStamped messages." alt="" coords="179,5,333,31"/>
+<area shape="rect" id="node3" href="$classcontroller_1_1MeasureParam.html" title="MeasureParam class." alt="" coords="161,55,351,80"/>
+<area shape="rect" id="node4" href="$classcontroller_1_1TestPPID.html" title="Test PPID class." alt="" coords="182,104,330,129"/>
+<area shape="rect" id="node5" href="$classdriver_1_1actuator__rp2040__driver_1_1ActuatorRP2040.html" title="actuator class with thruster mixing logic" alt="" coords="167,154,345,194"/>
+<area shape="rect" id="node6" href="$classdriver_1_1dvl__driver_1_1DVLDriver.html" title="ROS 2 Node for interfacing with Teledyne Pathfinder DVL." alt="" coords="189,218,323,258"/>
+<area shape="rect" id="node7" href="$classdriver_1_1dvl__driver_1_1DVLSetting.html" title=" " alt="" coords="189,282,323,322"/>
+<area shape="rect" id="node8" href="$classdriver_1_1imu__driver_1_1IMUDriver.html" title="IMU driver class." alt="" coords="187,346,325,386"/>
+<area shape="rect" id="node9" href="$classdriver_1_1logic__distro__rp2040__driver_1_1LogicDistroRP2040.html" title="PowerState driver class." alt="" coords="156,411,356,465"/>
+<area shape="rect" id="node10" href="$classdriver_1_1sensors__esp32__driver_1_1ButtonBatteryState.html" title="Button Battery State class." alt="" coords="156,490,356,530"/>
+<area shape="rect" id="node11" href="$classdriver_1_1sensors__esp32__driver_1_1BuzzerSwitch.html" title=" " alt="" coords="174,554,338,594"/>
+<area shape="rect" id="node12" href="$classdriver_1_1sensors__esp32__driver_1_1Depth.html" title="Depth class." alt="" coords="174,618,338,658"/>
+<area shape="rect" id="node13" href="$classdriver_1_1sensors__esp32__driver_1_1Environment.html" title="Environment class." alt="" coords="174,682,338,722"/>
+<area shape="rect" id="node14" href="$classdriver_1_1sensors__esp32__driver_1_1ImuReset.html" title="ImuReset class." alt="" coords="174,746,338,786"/>
+<area shape="rect" id="node15" href="$classdriver_1_1sensors__esp32__driver_1_1Leak.html" title="Leak class." alt="" coords="174,810,338,850"/>
+<area shape="rect" id="node16" href="$classdriver_1_1sensors__esp32__driver_1_1RGB.html" title="RBG class." alt="" coords="174,874,338,914"/>
+<area shape="rect" id="node17" href="$classdriver_1_1sensors__esp32__driver_1_1RtcGnss.html" title="RTC GNSS class." alt="" coords="174,938,338,978"/>
+<area shape="rect" id="node18" href="$classdriver_1_1sensors__esp32__driver_1_1RtcTime.html" title="RTC Time class." alt="" coords="174,1002,338,1042"/>
+<area shape="rect" id="node19" href="$classdriver_1_1sensors__esp32__driver_1_1SystemStatus.html" title="System Status class." alt="" coords="173,1066,339,1106"/>
+<area shape="rect" id="node20" href="$classdriver_1_1sensors__esp32__driver_1_1TiltServo.html" title="TiltServo class." alt="" coords="174,1130,338,1170"/>
+<area shape="rect" id="node21" href="$classdriver_1_1sensors__esp32__driver_1_1ZedPower.html" title="ZedPower class." alt="" coords="174,1194,338,1234"/>
+<area shape="rect" id="node22" href="$classjoy__common_1_1JoyCommon.html" title=" " alt="" coords="159,1259,353,1284"/>
+<area shape="rect" id="node23" href="$classlocalization_1_1Localization.html" title="Localization class." alt="" coords="165,1308,347,1333"/>
+<area shape="rect" id="node24" href="$classlocalization_1_1depth_1_1DepthOdometry.html" title="Depth odometry class." alt="" coords="185,1358,327,1398"/>
+<area shape="rect" id="node25" href="$classlocalization_1_1dvl_1_1DVLOdometry.html" title="DVL odometry class." alt="" coords="189,1422,323,1462"/>
+<area shape="rect" id="node26" href="$classlocalization_1_1imu_1_1IMUTransform.html" title="IMU transform class." alt="" coords="187,1486,325,1526"/>
+<area shape="rect" id="node27" href="$classplanner_1_1pdla__planner_1_1PDLAPlanner.html" title=" " alt="" coords="175,1550,337,1590"/>
+<area shape="rect" id="node28" href="$classplanner_1_1qr__planner_1_1QRPlanner.html" title=" " alt="" coords="182,1614,330,1654"/>
+<area shape="rect" id="node29" href="$classplanner_1_1wrench__planner_1_1WrenchPlanner.html" title=" " alt="" coords="165,1678,347,1718"/>
+<area shape="rect" id="node30" href="$classsystem__health__check_1_1SystemCheck.html" title=" " alt="" coords="175,1742,337,1782"/>
+<area shape="rect" id="node31" href="$classtools_1_1plotjuggler_1_1FixAxisPlotjuggler.html" title=" " alt="" coords="183,1806,329,1846"/>
 </map>

@@ -1,12 +1,21 @@
 var searchData=
 [
-  ['sender_0',['Sender',['../classdvl__driver_1_1path__finder_1_1Sender.html',1,'dvl_driver::path_finder']]],
+  ['sender_0',['Sender',['../classdriver_1_1dvl__driver_1_1path__finder_1_1Sender.html',1,'driver::dvl_driver::path_finder']]],
   ['sensordata_1',['SensorData',['../classdashboard_1_1main_1_1SensorData.html',1,'dashboard::main']]],
   ['serial_2',['Serial',['../classserial_1_1Serial.html',1,'serial']]],
   ['serialexception_3',['SerialException',['../classserial_1_1SerialException.html',1,'serial']]],
-  ['setparametersresult_4',['SetParametersResult',['../classdashboard_1_1main_1_1SetParametersResult.html',1,'dashboard::main']]],
-  ['switchstate_5',['SwitchState',['../classdashboard_1_1main_1_1SwitchState.html',1,'dashboard::main']]],
-  ['systemconfig_6',['SystemConfig',['../classdashboard_1_1main_1_1SystemConfig.html',1,'dashboard::main']]],
-  ['systemstatus_7',['SystemStatus',['../classsensors__esp32__driver_1_1SystemStatus.html',1,'sensors_esp32_driver']]],
-  ['systemstatusdata_8',['SystemStatusData',['../classdashboard_1_1main_1_1SystemStatusData.html',1,'dashboard::main']]]
+  ['serviceclientcheck_4',['ServiceClientCheck',['../classsystem__health__check_1_1checks_1_1ServiceClientCheck.html',1,'system_health_check::checks']]],
+  ['serviceclientcheckbase_5',['ServiceClientCheckBase',['../classsystem__health__check_1_1base_1_1ServiceClientCheckBase.html',1,'system_health_check::base']]],
+  ['servicegraphcheckbase_6',['ServiceGraphCheckBase',['../classsystem__health__check_1_1base_1_1ServiceGraphCheckBase.html',1,'system_health_check::base']]],
+  ['serviceservercheck_7',['ServiceServerCheck',['../classsystem__health__check_1_1checks_1_1ServiceServerCheck.html',1,'system_health_check::checks']]],
+  ['serviceservercheckbase_8',['ServiceServerCheckBase',['../classsystem__health__check_1_1base_1_1ServiceServerCheckBase.html',1,'system_health_check::base']]],
+  ['setparametersresult_9',['SetParametersResult',['../classdashboard_1_1main_1_1SetParametersResult.html',1,'dashboard::main']]],
+  ['switchstate_10',['SwitchState',['../classdashboard_1_1main_1_1SwitchState.html',1,'dashboard::main']]],
+  ['systemcheck_11',['SystemCheck',['../classsystem__health__check_1_1SystemCheck.html',1,'system_health_check']]],
+  ['systemcheckbase_12',['SystemCheckBase',['../classsystem__health__check_1_1base_1_1SystemCheckBase.html',1,'system_health_check::base::SystemCheckBase'],['../classsystem__health__check_1_1SystemCheckBase.html',1,'system_health_check::SystemCheckBase']]],
+  ['systemconfig_13',['SystemConfig',['../classdashboard_1_1main_1_1SystemConfig.html',1,'dashboard::main']]],
+  ['systemstatus_14',['SystemStatus',['../classdriver_1_1sensors__esp32__driver_1_1SystemStatus.html',1,'driver::sensors_esp32_driver']]],
+  ['systemstatusdata_15',['SystemStatusData',['../classdashboard_1_1main_1_1SystemStatusData.html',1,'dashboard::main']]],
+  ['systemstatustopicstatuscheck_16',['SystemStatusTopicStatusCheck',['../classdriver_1_1sensors__esp32__driver_1_1SystemStatusTopicStatusCheck.html',1,'driver::sensors_esp32_driver']]],
+  ['systemswitchsubscribercheck_17',['SystemSwitchSubscriberCheck',['../classdriver_1_1logic__distro__rp2040__driver_1_1SystemSwitchSubscriberCheck.html',1,'driver::logic_distro_rp2040_driver']]]
 ];

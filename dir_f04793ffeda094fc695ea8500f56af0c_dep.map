@@ -1,10 +1,13 @@
 <map id="src/driver/sensors_esp32_driver" name="src/driver/sensors_esp32_driver">
 <area shape="rect" id="node2" href="dir_221f17aa3b5857b9fe22a9b8fa67f6fa.html" title="include" alt="" coords="37,136,107,161"/>
-<area shape="rect" id="node5" href="dir_fdedb0aba14d44ce9d99bc100e026e6a.html" title="common" alt="" coords="33,209,111,235"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000055_000012.html" title="8" alt="" coords="76,184,85,198"/>
-<area shape="rect" id="node3" href="dir_c235154b0ad2f48b8ba16fdfe00b8797.html" title="launch" alt="" coords="103,63,169,88"/>
+<area shape="rect" id="node6" href="dir_fdedb0aba14d44ce9d99bc100e026e6a.html" title="common" alt="" coords="33,209,111,235"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000055_000013.html" title="8" alt="" coords="76,184,85,198"/>
+<area shape="rect" id="node3" href="dir_c235154b0ad2f48b8ba16fdfe00b8797.html" title="launch" alt="" coords="211,63,277,88"/>
 <area shape="rect" id="node4" href="dir_c0ccf8f9c3cd243b10ec9190889bee33.html" title="src" alt="" coords="38,63,79,88"/>
-<area shape="rect" id="edge2-headlabel" href="dir_000145_000055.html" title="19" alt="" coords="66,109,83,124"/>
-<area shape="rect" id="clust2" href="dir_f04793ffeda094fc695ea8500f56af0c.html" alt="" coords="27,52,367,172"/>
-<area shape="rect" id="clust1" href="dir_4db3a2f7aa3a8b9901e70dfeb2571af9.html" title="driver" alt="" coords="16,16,377,183"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000144_000055.html" title="19" alt="" coords="66,109,83,124"/>
+<area shape="rect" id="node5" href="dir_93209bcc302cef967b85061f63092b83.html" title="src&#45;check" alt="" coords="103,63,187,88"/>
+<area shape="rect" id="node7" href="dir_f5b38cefbbe038decf1f7adc0394a275.html" title="system_health_check" alt="" coords="496,136,659,161"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000160_000162.html" title="22" alt="" coords="472,118,490,132"/>
+<area shape="rect" id="clust2" href="dir_f04793ffeda094fc695ea8500f56af0c.html" alt="" coords="27,52,475,172"/>
+<area shape="rect" id="clust1" href="dir_4db3a2f7aa3a8b9901e70dfeb2571af9.html" title="driver" alt="" coords="16,16,485,183"/>
 </map>
