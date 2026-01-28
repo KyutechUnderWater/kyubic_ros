@@ -114,79 +114,92 @@ $(document).ready(function(){initNavTree('pdla__planner_8hpp_source.html',''); i
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;rclcpp_action/server_goal_handle.hpp&gt;</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;<a class="code" href="timeout_8hpp.html">timer/timeout.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="namespaceplanner_1_1pdla__planner.html">   15</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceplanner_1_1pdla__planner.html">planner::pdla_planner</a></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html">   18</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structplanner_1_1pdla__planner_1_1Tolerance.html">Tolerance</a></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#aa67d274e94025b2b9cdc85acf20291ce">   20</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#aa67d274e94025b2b9cdc85acf20291ce">x</a>;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab3afcc66565a35a90ed67bf077c16ce3">   21</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab3afcc66565a35a90ed67bf077c16ce3">y</a>;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#a395348ebf71617fafe20e61cbe6a08d0">   22</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#a395348ebf71617fafe20e61cbe6a08d0">z</a>;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#a0af151fea48ab456dbcf495b84d954c5">   23</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#a0af151fea48ab456dbcf495b84d954c5">roll</a>;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab36a00d79803bbc31ace717d3b1c989d">   24</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab36a00d79803bbc31ace717d3b1c989d">yaw</a>;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>};</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="classplanner_1_1pdla__planner_1_1PDLAPlanner.html">   27</a></span><span class="keyword">class </span><a class="code hl_class" href="classplanner_1_1pdla__planner_1_1PDLAPlanner.html">PDLAPlanner</a> : <span class="keyword">public</span> rclcpp::Node</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>{</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="keyword">explicit</span> <a class="code hl_class" href="classplanner_1_1pdla__planner_1_1PDLAPlanner.html">PDLAPlanner</a>(<span class="keyword">const</span> rclcpp::NodeOptions &amp; options);</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  uint64_t timeout_ms;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <span class="keywordtype">double</span> look_ahead_scale;</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  <a class="code hl_struct" href="structplanner_1_1pdla__planner_1_1Tolerance.html">Tolerance</a> reach_tolerance, waypoint_tolerance;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  rclcpp::CallbackGroup::SharedPtr callback_group_;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;planner_msgs/action/pdla.hpp&quot;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="namespaceplanner_1_1pdla__planner.html">   17</a></span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespaceplanner_1_1pdla__planner.html">planner::pdla_planner</a></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>{</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html">   20</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structplanner_1_1pdla__planner_1_1Tolerance.html">Tolerance</a></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#aa67d274e94025b2b9cdc85acf20291ce">   22</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#aa67d274e94025b2b9cdc85acf20291ce">x</a>;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab3afcc66565a35a90ed67bf077c16ce3">   23</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab3afcc66565a35a90ed67bf077c16ce3">y</a>;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#a395348ebf71617fafe20e61cbe6a08d0">   24</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#a395348ebf71617fafe20e61cbe6a08d0">z</a>;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#a0af151fea48ab456dbcf495b84d954c5">   25</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#a0af151fea48ab456dbcf495b84d954c5">roll</a>;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab36a00d79803bbc31ace717d3b1c989d">   26</a></span>  <span class="keywordtype">double</span> <a class="code hl_variable" href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab36a00d79803bbc31ace717d3b1c989d">yaw</a>;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>};</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classplanner_1_1pdla__planner_1_1PDLAPlanner.html">   29</a></span><span class="keyword">class </span><a class="code hl_class" href="classplanner_1_1pdla__planner_1_1PDLAPlanner.html">PDLAPlanner</a> : <span class="keyword">public</span> rclcpp::Node</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>{</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  <span class="keyword">explicit</span> <a class="code hl_class" href="classplanner_1_1pdla__planner_1_1PDLAPlanner.html">PDLAPlanner</a>(<span class="keyword">const</span> rclcpp::NodeOptions &amp; options);</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  uint64_t fine_timer_ms_;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  <span class="keywordtype">double</span> look_ahead_scale;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <a class="code hl_struct" href="structplanner_1_1pdla__planner_1_1Tolerance.html">Tolerance</a> reach_tolerance, waypoint_tolerance;</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  rclcpp::Publisher&lt;planner_msgs::msg::WrenchPlan&gt;::SharedPtr pub_;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  rclcpp::Subscription&lt;localization_msgs::msg::Odometry&gt;::SharedPtr sub_;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  rclcpp_action::Server&lt;planner_msgs::action::PDLA&gt;::SharedPtr action_server_;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  rclcpp::TimerBase::SharedPtr timer_;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  std::shared_ptr&lt;timer::Timeout&gt; timeout;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  <span class="comment">// Action Callbacks</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  rclcpp_action::GoalResponse handle_goal(</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keyword">const</span> rclcpp_action::GoalUUID &amp; uuid,</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    std::shared_ptr&lt;const planner_msgs::action::PDLA::Goal&gt; goal);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  rclcpp_action::CancelResponse handle_cancel(</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keyword">const</span> std::shared_ptr&lt;rclcpp_action::ServerGoalHandle&lt;planner_msgs::action::PDLA&gt;&gt; goal_handle);</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="keywordtype">void</span> handle_accepted(</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  rclcpp::CallbackGroup::SharedPtr callback_group_;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  rclcpp::Publisher&lt;planner_msgs::msg::WrenchPlan&gt;::SharedPtr pub_;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  rclcpp::Subscription&lt;localization_msgs::msg::Odometry&gt;::SharedPtr sub_;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  rclcpp_action::Server&lt;planner_msgs::action::PDLA&gt;::SharedPtr action_server_;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  rclcpp::TimerBase::SharedPtr timer_;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  std::shared_ptr&lt;timer::Timeout&gt; timeout_;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="comment">// Action Callbacks</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  rclcpp_action::GoalResponse handle_goal(</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">const</span> rclcpp_action::GoalUUID &amp; uuid,</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    std::shared_ptr&lt;const planner_msgs::action::PDLA::Goal&gt; goal);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  rclcpp_action::CancelResponse handle_cancel(</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">const</span> std::shared_ptr&lt;rclcpp_action::ServerGoalHandle&lt;planner_msgs::action::PDLA&gt;&gt; goal_handle);</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="keywordtype">void</span> odometryCallback(<span class="keyword">const</span> localization_msgs::msg::Odometry::SharedPtr msg);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="keywordtype">void</span> handle_accepted(</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keyword">const</span> std::shared_ptr&lt;rclcpp_action::ServerGoalHandle&lt;planner_msgs::action::PDLA&gt;&gt; goal_handle);</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keywordtype">void</span> _runPlannerLogic(</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keyword">const</span> std::shared_ptr&lt;rclcpp_action::ServerGoalHandle&lt;planner_msgs::action::PDLA&gt;&gt; &amp;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>      goal_handle);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keywordtype">bool</span> _checkReached(<a class="code hl_class" href="classplanner_1_1PoseData.html">PoseData</a> &amp; target_pose, <a class="code hl_struct" href="structplanner_1_1pdla__planner_1_1Tolerance.html">Tolerance</a> tolerance);</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  <span class="keywordtype">void</span> _print_waypoint(std::string label, <span class="keywordtype">size_t</span> step_idx);</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>  <span class="keywordtype">void</span> timerCallback();</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  std::vector&lt;PoseData&gt; target_pose_;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>  std::mutex odom_mutex_;</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  std::mutex goal_mutex_;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  std::shared_ptr&lt;localization_msgs::msg::Odometry&gt; current_odom_;</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>  std::shared_ptr&lt;rclcpp_action::ServerGoalHandle&lt;planner_msgs::action::PDLA&gt;&gt; active_goal_handle_;</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  <span class="keywordtype">size_t</span> step_idx = 0;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>};</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>}  <span class="comment">// namespace planner::pdla_planner</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  <span class="keywordtype">void</span> odometryCallback(<span class="keyword">const</span> localization_msgs::msg::Odometry::SharedPtr msg);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="keywordtype">void</span> _runPlannerLogic(</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keyword">const</span> std::shared_ptr&lt;rclcpp_action::ServerGoalHandle&lt;planner_msgs::action::PDLA&gt;&gt; &amp;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>      goal_handle);</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="keywordtype">bool</span> _checkReached(</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <a class="code hl_class" href="classplanner_1_1PoseData.html">PoseData</a> &amp; target, localization_msgs::msg::Odometry::SharedPtr &amp; odom_copy, <a class="code hl_struct" href="structplanner_1_1pdla__planner_1_1Tolerance.html">Tolerance</a> tol);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  <span class="keywordtype">void</span> _print_waypoint(std::string label, <span class="keywordtype">size_t</span> step_idx);</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  <span class="keywordtype">void</span> timerCallback();</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>  <span class="keywordtype">bool</span> fine_flag_ = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  std::vector&lt;PoseData&gt; target_pose_;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  <span class="keywordtype">bool</span> last_reached_ = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>  rclcpp::Time fine_reached_time_;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  <span class="keywordtype">bool</span> first_reached_ = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  rclcpp::Time first_reached_time_;</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="preprocessor">#endif  </span><span class="comment">// !_PDLA_PLANNER_HPP</span></div>
-<div class="ttc" id="aclassplanner_1_1PoseData_html"><div class="ttname"><a href="classplanner_1_1PoseData.html">planner::PoseData</a></div><div class="ttdef"><b>Definition:</b> path_csv_loader.hpp:51</div></div>
-<div class="ttc" id="aclassplanner_1_1pdla__planner_1_1PDLAPlanner_html"><div class="ttname"><a href="classplanner_1_1pdla__planner_1_1PDLAPlanner.html">planner::pdla_planner::PDLAPlanner</a></div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:28</div></div>
-<div class="ttc" id="anamespaceplanner_1_1pdla__planner_html"><div class="ttname"><a href="namespaceplanner_1_1pdla__planner.html">planner::pdla_planner</a></div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:16</div></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  std::string file_path_;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  uint8_t step_state_ = planner_msgs::action::PDLA::Feedback::RUNNING;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  std::mutex odom_mutex_;</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  std::mutex goal_mutex_;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  std::shared_ptr&lt;localization_msgs::msg::Odometry&gt; current_odom_;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  std::shared_ptr&lt;rclcpp_action::ServerGoalHandle&lt;planner_msgs::action::PDLA&gt;&gt; active_goal_handle_;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  <span class="keywordtype">size_t</span> step_idx = 0;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>};</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>}  <span class="comment">// namespace planner::pdla_planner</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="preprocessor">#endif  </span><span class="comment">// !_PDLA_PLANNER_HPP</span></div>
+<div class="ttc" id="aclassplanner_1_1PoseData_html"><div class="ttname"><a href="classplanner_1_1PoseData.html">planner::PoseData</a></div><div class="ttdef"><b>Definition:</b> path_csv_loader.hpp:53</div></div>
+<div class="ttc" id="aclassplanner_1_1pdla__planner_1_1PDLAPlanner_html"><div class="ttname"><a href="classplanner_1_1pdla__planner_1_1PDLAPlanner.html">planner::pdla_planner::PDLAPlanner</a></div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:30</div></div>
+<div class="ttc" id="anamespaceplanner_1_1pdla__planner_html"><div class="ttname"><a href="namespaceplanner_1_1pdla__planner.html">planner::pdla_planner</a></div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:18</div></div>
 <div class="ttc" id="apath__csv__loader_8hpp_html"><div class="ttname"><a href="path__csv__loader_8hpp.html">path_csv_loader.hpp</a></div></div>
-<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html">planner::pdla_planner::Tolerance</a></div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:19</div></div>
-<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_a0af151fea48ab456dbcf495b84d954c5"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#a0af151fea48ab456dbcf495b84d954c5">planner::pdla_planner::Tolerance::roll</a></div><div class="ttdeci">double roll</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:23</div></div>
-<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_a395348ebf71617fafe20e61cbe6a08d0"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#a395348ebf71617fafe20e61cbe6a08d0">planner::pdla_planner::Tolerance::z</a></div><div class="ttdeci">double z</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:22</div></div>
-<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_aa67d274e94025b2b9cdc85acf20291ce"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#aa67d274e94025b2b9cdc85acf20291ce">planner::pdla_planner::Tolerance::x</a></div><div class="ttdeci">double x</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:20</div></div>
-<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_ab36a00d79803bbc31ace717d3b1c989d"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab36a00d79803bbc31ace717d3b1c989d">planner::pdla_planner::Tolerance::yaw</a></div><div class="ttdeci">double yaw</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:24</div></div>
-<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_ab3afcc66565a35a90ed67bf077c16ce3"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab3afcc66565a35a90ed67bf077c16ce3">planner::pdla_planner::Tolerance::y</a></div><div class="ttdeci">double y</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:21</div></div>
+<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html">planner::pdla_planner::Tolerance</a></div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:21</div></div>
+<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_a0af151fea48ab456dbcf495b84d954c5"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#a0af151fea48ab456dbcf495b84d954c5">planner::pdla_planner::Tolerance::roll</a></div><div class="ttdeci">double roll</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:25</div></div>
+<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_a395348ebf71617fafe20e61cbe6a08d0"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#a395348ebf71617fafe20e61cbe6a08d0">planner::pdla_planner::Tolerance::z</a></div><div class="ttdeci">double z</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:24</div></div>
+<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_aa67d274e94025b2b9cdc85acf20291ce"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#aa67d274e94025b2b9cdc85acf20291ce">planner::pdla_planner::Tolerance::x</a></div><div class="ttdeci">double x</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:22</div></div>
+<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_ab36a00d79803bbc31ace717d3b1c989d"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab36a00d79803bbc31ace717d3b1c989d">planner::pdla_planner::Tolerance::yaw</a></div><div class="ttdeci">double yaw</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:26</div></div>
+<div class="ttc" id="astructplanner_1_1pdla__planner_1_1Tolerance_html_ab3afcc66565a35a90ed67bf077c16ce3"><div class="ttname"><a href="structplanner_1_1pdla__planner_1_1Tolerance.html#ab3afcc66565a35a90ed67bf077c16ce3">planner::pdla_planner::Tolerance::y</a></div><div class="ttdeci">double y</div><div class="ttdef"><b>Definition:</b> pdla_planner.hpp:23</div></div>
 <div class="ttc" id="atimeout_8hpp_html"><div class="ttname"><a href="timeout_8hpp.html">timeout.hpp</a></div><div class="ttdoc">timeout library</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->

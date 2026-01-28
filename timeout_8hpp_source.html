@@ -125,12 +125,15 @@ $(document).ready(function(){initNavTree('timeout_8hpp_source.html',''); initRes
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  int64_t <a class="code hl_function" href="classtimer_1_1Timeout.html#ab6aa4e2d97e8b5fc92bffb8cf9626c67">get_elapsed_time</a>();</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  int64_t <a class="code hl_function" href="classtimer_1_1Timeout.html#a4c9b92f3f16340ef1cee3d5be2578eee">get_timeout</a>();</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>};</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>}  <span class="comment">// namespace timer</span></div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classtimer_1_1Timeout.html#a4836e45d1824d87ef16bcda48ee48956">set_timeout</a>(int64_t timeout_ns);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>};</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>}  <span class="comment">// namespace timer</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstimer_1_1Timeout_html"><div class="ttname"><a href="classtimer_1_1Timeout.html">timer::Timeout</a></div><div class="ttdoc">timeout class</div><div class="ttdef"><b>Definition:</b> timeout.hpp:25</div></div>
+<div class="ttc" id="aclasstimer_1_1Timeout_html_a4836e45d1824d87ef16bcda48ee48956"><div class="ttname"><a href="classtimer_1_1Timeout.html#a4836e45d1824d87ef16bcda48ee48956">timer::Timeout::set_timeout</a></div><div class="ttdeci">void set_timeout(int64_t timeout_ns)</div><div class="ttdoc">Set timeout.</div><div class="ttdef"><b>Definition:</b> timeout.cpp:34</div></div>
 <div class="ttc" id="aclasstimer_1_1Timeout_html_a4c9b92f3f16340ef1cee3d5be2578eee"><div class="ttname"><a href="classtimer_1_1Timeout.html#a4c9b92f3f16340ef1cee3d5be2578eee">timer::Timeout::get_timeout</a></div><div class="ttdeci">int64_t get_timeout()</div><div class="ttdoc">Get timeout.</div><div class="ttdef"><b>Definition:</b> timeout.cpp:32</div></div>
 <div class="ttc" id="aclasstimer_1_1Timeout_html_a51d14fe3fe275a1fedc2f5b3a0493d43"><div class="ttname"><a href="classtimer_1_1Timeout.html#a51d14fe3fe275a1fedc2f5b3a0493d43">timer::Timeout::is_timeout</a></div><div class="ttdeci">bool is_timeout(rclcpp::Time now)</div><div class="ttdoc">Determine if it has time out.</div><div class="ttdef"><b>Definition:</b> timeout.cpp:22</div></div>
 <div class="ttc" id="aclasstimer_1_1Timeout_html_ab6aa4e2d97e8b5fc92bffb8cf9626c67"><div class="ttname"><a href="classtimer_1_1Timeout.html#ab6aa4e2d97e8b5fc92bffb8cf9626c67">timer::Timeout::get_elapsed_time</a></div><div class="ttdeci">int64_t get_elapsed_time()</div><div class="ttdoc">Get elapsed time.</div><div class="ttdef"><b>Definition:</b> timeout.cpp:31</div></div>
