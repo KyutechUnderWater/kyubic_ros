@@ -63,6 +63,12 @@ public:
    * @return int64_t timeout [ns]
    */
   int64_t get_timeout();
+
+  /**
+   * @brief Set timeout
+   * @param timeout_ns int64_t timeout [ns]
+   */
+  void set_timeout(int64_t timeout_ns);
 };
 
 }  // namespace timer
