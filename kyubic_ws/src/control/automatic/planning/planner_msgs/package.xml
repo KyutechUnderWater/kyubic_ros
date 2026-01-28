@@ -11,7 +11,7 @@
   <buildtool_depend>rosidl_default_generators</buildtool_depend>
 
   <depend>rclcpp</depend>
-  <depend>rclcpp_action</depend>
+  <depend>action_msgs</depend>
   <depend>localization_msgs</depend>
   <depend>p_pid_controller_msgs</depend>
 

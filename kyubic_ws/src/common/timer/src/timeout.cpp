@@ -22,7 +22,7 @@ void Timeout::reset(rclcpp::Time start_time) { this->start_time = start_time; }
 bool Timeout::is_timeout(rclcpp::Time now)
 {
   elapsed_time = now - start_time;
-  if (timeout != 0 && elapsed_time.nanoseconds() > timeout) {
+  if (timeout > 0 && elapsed_time.nanoseconds() > timeout) {
     return true;
   }
   return false;
@@ -30,5 +30,7 @@ bool Timeout::is_timeout(rclcpp::Time now)
 
 int64_t Timeout::get_elapsed_time() { return elapsed_time.nanoseconds(); }
 int64_t Timeout::get_timeout() { return timeout; }
+
+void Timeout::set_timeout(int64_t timeout_ns) { this->timeout = timeout_ns; }
 
 }  // namespace timer
