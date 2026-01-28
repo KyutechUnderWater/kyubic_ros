@@ -99,11 +99,12 @@ void PDLAPlanner::handle_accepted(
       // パスを結合 (shareディレクトリ + XMLに書かれた相対パス)
       file_path_ = package_share_dir + "/" + file_path_;
 
-      RCLCPP_INFO(this->get_logger(), "Resolved relative path to: %s", file_path_.c_str());
+      RCLCPP_INFO(this->get_logger(), "Resolved relative path");
     } catch (const std::exception & e) {
       RCLCPP_ERROR(this->get_logger(), "Failed to resolve package path: %s", e.what());
     }
   }
+  RCLCPP_INFO(this->get_logger(), "CSV path: %s", file_path_.c_str());
 
   PathCsvLoader loader;
   try {

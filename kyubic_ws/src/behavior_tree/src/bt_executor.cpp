@@ -39,7 +39,7 @@ int main(int argc, char ** argv)
 
   // 1. Create the Node
   auto node = std::make_shared<rclcpp::Node>("bt_executor_node");
-  std::string bt_xml_file = node->declare_parameter<std::string>("bt_xml_file", "");
+  std::string bt_xml_path = node->declare_parameter<std::string>("bt_xml_file", "");
 
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub =
     node->create_publisher<std_msgs::msg::String>("logger", 10);
@@ -63,22 +63,25 @@ int main(int argc, char ** argv)
   blackboard->set("mode", "manual");
 
   // 4. Retrieve path to BT XML file
-  std::string pkg_share;
-  try {
-    pkg_share = ament_index_cpp::get_package_share_directory("behavior_tree");
-  } catch (const ament_index_cpp::PackageNotFoundError & e) {
-    RCLCPP_ERROR(node->get_logger(), "Package 'behavior_tree' not found. %s", e.what());
-    rclcpp::shutdown();
-    return 1;
+  std::string xml_path = bt_xml_path;
+  if (xml_path[0] != '/') {
+    std::string pkg_share;
+    try {
+      pkg_share = ament_index_cpp::get_package_share_directory("behavior_tree");
+      xml_path = pkg_share + "/bt_xml/" + bt_xml_path;
+      RCLCPP_INFO(node->get_logger(), "Resolved relative path");
+    } catch (const ament_index_cpp::PackageNotFoundError & e) {
+      RCLCPP_ERROR(node->get_logger(), "Package 'behavior_tree' not found. %s", e.what());
+      rclcpp::shutdown();
+      return 1;
+    }
   }
-
-  std::string xml_file = pkg_share + "/bt_xml/" + bt_xml_file;
-  RCLCPP_INFO(node->get_logger(), "Loading BT XML: %s", xml_file.c_str());
+  RCLCPP_INFO(node->get_logger(), "Loading BT XML: %s", xml_path.c_str());
 
   // 5. Create tree
   BT::Tree tree;
   try {
-    tree = factory.createTreeFromFile(xml_file, blackboard);
+    tree = factory.createTreeFromFile(xml_path, blackboard);
   } catch (const std::exception & e) {
     RCLCPP_ERROR(node->get_logger(), "Failed to create tree: %s", e.what());
     rclcpp::shutdown();
