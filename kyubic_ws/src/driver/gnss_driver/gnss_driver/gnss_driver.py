@@ -60,12 +60,27 @@ class GnssPublisher(Node):
             self.get_logger().info("Connection successful.")
 
             buffer = ""
+            timeout_count = 0  
 
             while rclpy.ok():
-                raw_data = self.socket.recv(1024).decode("utf-8", errors="ignore")
-                if not raw_data:
-                    break
-                buffer += raw_data
+                try:
+                    raw_data = self.socket.recv(1024).decode("utf-8", errors="ignore")
+                    if not raw_data:
+                        self.get_logger().warning("Connection closed by server.")
+                        break
+                    timeout_count = 0# データが来たらリセット
+                    buffer += raw_data
+                except socket.timeout:
+                    timeout_count += 1
+                    if timeout_count > 10:
+                        self.get_logger().error("Disconnected: Timeout limit exceeded (10s).")
+                        break
+                    self.get_logger().debug(f"Socket timeout ({timeout_count}) - waiting...")
+                    continue  # ループの先頭(recv)に戻る
+
+                except Exception as e:
+                    self.get_logger().error(f"Socket error: {e}")
+                    break                
 
                 while "\n" in buffer:
                     line, buffer = buffer.split("\n", 1)
@@ -203,14 +218,14 @@ class GnssPublisher(Node):
 
                             self.gnss_data_publisher_.publish(gnss_data_msg)
 
+                    
                     except pynmea2.ParseError as e:
                         self.get_logger().warning(
                             f'Failed to parse NMEA sentence: "{line}". Reason: {e}'
                         )
 
         except Exception as e:
-            self.get_logger().error(f"Error: {e}")
-            sys.exit(1)
+            self.get_logger().error(f"Fatal error: {e}")
         finally:
             if self.socket:
                 self.socket.close()
