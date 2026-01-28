@@ -12,6 +12,8 @@
 #include <rclcpp_action/server_goal_handle.hpp>
 #include <timer/timeout.hpp>
 
+#include "planner_msgs/action/pdla.hpp"
+
 namespace planner::pdla_planner
 {
 
@@ -30,7 +32,7 @@ public:
   explicit PDLAPlanner(const rclcpp::NodeOptions & options);
 
 private:
-  uint64_t timeout_ms;
+  uint64_t fine_timer_ms_;
   double look_ahead_scale;
   Tolerance reach_tolerance, waypoint_tolerance;
 
@@ -41,7 +43,7 @@ private:
   rclcpp_action::Server<planner_msgs::action::PDLA>::SharedPtr action_server_;
 
   rclcpp::TimerBase::SharedPtr timer_;
-  std::shared_ptr<timer::Timeout> timeout;
+  std::shared_ptr<timer::Timeout> timeout_;
 
   // Action Callbacks
   rclcpp_action::GoalResponse handle_goal(
@@ -57,12 +59,23 @@ private:
   void _runPlannerLogic(
     const std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> &
       goal_handle);
-  bool _checkReached(PoseData & target_pose, Tolerance tolerance);
+  bool _checkReached(
+    PoseData & target, localization_msgs::msg::Odometry::SharedPtr & odom_copy, Tolerance tol);
   void _print_waypoint(std::string label, size_t step_idx);
 
   void timerCallback();
 
+  bool fine_flag_ = false;
   std::vector<PoseData> target_pose_;
+
+  bool last_reached_ = false;
+  rclcpp::Time fine_reached_time_;
+
+  bool first_reached_ = true;
+  rclcpp::Time first_reached_time_;
+
+  std::string file_path_;
+  uint8_t step_state_ = planner_msgs::action::PDLA::Feedback::RUNNING;
 
   std::mutex odom_mutex_;
   std::mutex goal_mutex_;

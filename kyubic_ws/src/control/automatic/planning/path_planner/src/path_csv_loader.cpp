@@ -45,6 +45,18 @@ int PathCsvLoader::stoi_strict(const std::string & s, const std::string & contex
   }
 }
 
+bool PathCsvLoader::stob_strict(const std::string & s, const std::string & context)
+{
+  if (s.empty()) {
+    throw std::runtime_error("Empty value not allowed for " + context);
+  }
+  try {
+    return static_cast<bool>(std::stod(s));
+  } catch (...) {
+    throw std::runtime_error("Cannot convert '" + s + "' to int for " + context);
+  }
+}
+
 bool PathCsvLoader::is_allNonEmpty(std::vector<std::string> vec)
 {
   return std::all_of(vec.begin(), vec.end(), [](const std::string & s) { return !s.empty(); });
@@ -79,8 +91,8 @@ void PathCsvLoader::parse(const std::string & csv_path)
   for (size_t i = 0; i < NUM_CSV_COLUMNS; ++i) {
     if (raw_header[i] != csv_header[i]) {
       throw std::runtime_error(
-        "Invalid CSV header at column " + std::to_string(i + 1) + ". Expected '" + csv_header[i] +
-        "' but got '" + raw_header[i] + "'.");
+        "Invalid CSV header at column " + std::to_string(i + 1) + ". Expected '" +
+        csv_header[i].c_str() + "' but got '" + raw_header[i].c_str() + "'.");
     }
   }
 
@@ -95,7 +107,7 @@ void PathCsvLoader::parse(const std::string & csv_path)
       tokens.push_back(token);
     }
 
-    // 15個のデータががあるか確認
+    // データがあるか確認
     if (tokens.size() != NUM_CSV_COLUMNS) {
       throw std::runtime_error(
         "Invalid data row at source line " + std::to_string(line_num) + ": Column count is " +
@@ -120,6 +132,8 @@ void PathCsvLoader::parse(const std::string & csv_path)
         data_->params_.catmull_min_distance = stod_strict(tokens[1], label);
       } else if (label == "catmull_orient_LERP") {
         data_->params_.catmull_orient_LERP = stoi_strict(tokens[1], label);
+      } else if (label == "timeout_sec") {
+        data_->params_.timeout_sec = stoi_strict(tokens[1], label);
       } else {
         throw std::runtime_error("Unkown parameter " + label);
       }
@@ -135,14 +149,22 @@ void PathCsvLoader::parse(const std::string & csv_path)
         data_->checkpoints_.push_back(PoseData(
           stod_strict(tokens[2], "x"), stod_strict(tokens[3], "y"), stod_strict(tokens[4], "z"),
           stoi_strict(tokens[5], "z_mode"), stod_strict(tokens[6], "roll"),
-          stod_strict(tokens[7], "yaw")));
+          stod_strict(tokens[7], "yaw"), stod_strict(tokens[8], "wait_ms"),
+          stob_strict(tokens[9], "fine")));
       }
       // Catmullデータ
-      if (is_allNonEmpty(std::vector<std::string>(tokens.begin() + 9, tokens.begin() + 14))) {
+      uint8_t offset = 9;
+      if (is_allNonEmpty(
+            std::vector<std::string>(tokens.begin() + offset + 2, tokens.begin() + offset + 9))) {
         data_->catmulls_.push_back(PoseData(
-          stod_strict(tokens[9], "catmull_x"), stod_strict(tokens[10], "catmull_y"),
-          stod_strict(tokens[11], "catmull_z"), stoi_strict(tokens[12], "catmull_z_mode"),
-          stod_strict(tokens[13], "catmull_roll"), stod_strict(tokens[14], "catmull_yaw")));
+          stod_strict(tokens[offset + 2], "catmull_x"),
+          stod_strict(tokens[offset + 3], "catmull_y"),
+          stod_strict(tokens[offset + 4], "catmull_z"),
+          stoi_strict(tokens[offset + 5], "catmull_z_mode"),
+          stod_strict(tokens[offset + 6], "catmull_roll"),
+          stod_strict(tokens[offset + 7], "catmull_yaw"),
+          stod_strict(tokens[offset + 8], "catmull_wait_ms"),
+          stob_strict(tokens[offset + 9], "catmull_fine")));
       }
     } catch (const std::runtime_error & e) {
       throw std::runtime_error(

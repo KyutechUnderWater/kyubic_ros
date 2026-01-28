@@ -30,6 +30,7 @@ public:
   int catmull_density = 0;
   double catmull_min_distance = 0.0;
   bool catmull_orient_LERP = false;
+  int timeout_sec = 0;
 
   void print() const
   {
@@ -39,6 +40,7 @@ public:
     std::cout << "  catmull_density: " << catmull_density << std::endl;
     std::cout << "  catmull_min_distance: " << catmull_density << std::endl;
     std::cout << "  catmull_orient_LERP: " << catmull_orient_LERP << std::endl;
+    std::cout << "  timeout_sec: " << timeout_sec << std::endl;
     std::cout << std::endl;
   }
 };
@@ -56,11 +58,13 @@ public:
   int z_mode;
   double roll;
   double yaw;
+  double wait_ms;
+  bool fine;
 
   PoseData(
     const double x, const double y, const double z, const int z_mode, const double roll,
-    const double yaw)
-  : x(x), y(y), z(z), z_mode(z_mode), roll(roll), yaw(yaw)
+    const double yaw, const double wait_ms, const bool fine = false)
+  : x(x), y(y), z(z), z_mode(z_mode), roll(roll), yaw(yaw), wait_ms(wait_ms), fine(fine)
   {
   }
 
@@ -74,11 +78,14 @@ public:
               << roll;
     std::cout << "  yaw:" << std::right << std::setw(8) << std::fixed << std::setprecision(2)
               << yaw;
+    std::cout << "  wait_ms:" << std::right << std::setw(8) << std::fixed << std::setprecision(0)
+              << wait_ms;
+    std::cout << "  fine:" << std::right << std::setw(6) << (fine ? "true" : "false");
     std::cout << std::endl;
   }
 };
 
-const size_t NUM_CSV_COLUMNS = 15;
+const size_t NUM_CSV_COLUMNS = 19;
 const std::array<std::string, NUM_CSV_COLUMNS> csv_header = {
   "parameter_label",
   "value",
@@ -88,13 +95,18 @@ const std::array<std::string, NUM_CSV_COLUMNS> csv_header = {
   "z_mode",
   "roll",
   "yaw",
+  "wait_ms",
+  "fine",
   "blank",
   "catmull_x",
   "catmull_y",
   "catmull_z",
   "catmull_z_mode",
   "catmull_roll",
-  "catmull_yaw"};
+  "catmull_yaw",
+  "catmull_wait_ms",
+  "catmull_fine",
+};
 
 /**
  * @class CsvData
@@ -129,6 +141,7 @@ private:
   // helper
   double stod_strict(const std::string & s, const std::string & context);
   int stoi_strict(const std::string & s, const std::string & context);
+  bool stob_strict(const std::string & s, const std::string & context);
 
   bool is_allNonEmpty(std::vector<std::string> vec);
 

@@ -21,8 +21,7 @@ namespace planner::pdla_planner
 
 PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_planner", options)
 {
-  timeout_ms = this->declare_parameter("timeout_ms", 10000);
-
+  fine_timer_ms_ = this->declare_parameter("fine_timer_ms", 1000);
   look_ahead_scale = this->declare_parameter("look_ahead_scale", 1.0);
 
   reach_tolerance.x = this->declare_parameter("reach_tolerance.x", 0.0);
@@ -37,7 +36,7 @@ PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_plann
   waypoint_tolerance.roll = this->declare_parameter("waypoint_tolerance.roll", 0.0);
   waypoint_tolerance.yaw = this->declare_parameter("waypoint_tolerance.yaw", 0.0);
 
-  timeout = std::make_shared<timer::Timeout>(this->get_clock()->now(), timeout_ms * 1e6);
+  timeout_ = std::make_shared<timer::Timeout>(this->get_clock()->now(), 0);
   timer_ = create_wall_timer(500ms, std::bind(&PDLAPlanner::timerCallback, this));
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
@@ -90,17 +89,17 @@ void PDLAPlanner::handle_accepted(
   const auto goal = goal_handle->get_goal();
 
   if (this->timer_->is_canceled()) this->timer_->reset();
-  timeout->reset(this->get_clock()->now());
 
-  std::string file_path = goal->csv_file_path;
-  if (!file_path.empty() && file_path[0] != '/') {
+  // Load the CSV file(waypoint)
+  file_path_ = goal->csv_file_path;
+  if (!file_path_.empty() && file_path_[0] != '/') {
     try {
       std::string package_share_dir = ament_index_cpp::get_package_share_directory("path_planner");
 
       // パスを結合 (shareディレクトリ + XMLに書かれた相対パス)
-      file_path = package_share_dir + "/" + file_path;
+      file_path_ = package_share_dir + "/" + file_path_;
 
-      RCLCPP_INFO(this->get_logger(), "Resolved relative path to: %s", file_path.c_str());
+      RCLCPP_INFO(this->get_logger(), "Resolved relative path to: %s", file_path_.c_str());
     } catch (const std::exception & e) {
       RCLCPP_ERROR(this->get_logger(), "Failed to resolve package path: %s", e.what());
     }
@@ -108,7 +107,7 @@ void PDLAPlanner::handle_accepted(
 
   PathCsvLoader loader;
   try {
-    loader.parse(file_path);
+    loader.parse(file_path_);
   } catch (const std::exception & e) {
     RCLCPP_ERROR(this->get_logger(), "Failed to load or parse CSV file: %s", e.what());
     auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
@@ -133,7 +132,14 @@ void PDLAPlanner::handle_accepted(
     return;
   }
 
+  // Set waypoint action timeout
+  timeout_->set_timeout(path->get_params().timeout_sec * 1e9);
+  timeout_->reset(this->get_clock()->now());
+
+  // Reset variables
   this->step_idx = 0;
+  this->last_reached_ = false;
+  this->first_reached_ = true;
   {
     std::lock_guard<std::mutex> odom_lock(odom_mutex_);
     this->current_odom_.reset();
@@ -236,28 +242,33 @@ void PDLAPlanner::_runPlannerLogic(
     PoseData target = target_pose_.at(step_idx);
     Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
 
-    double current_z_val = (target.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH)
-                             ? odom_copy->pose.position.z_depth
-                             : odom_copy->pose.position.z_altitude;
+    if (_checkReached(target, odom_copy, tol)) {
+      auto now = this->get_clock()->now();
 
-    if (
-      abs(target.x - odom_copy->pose.position.x) < tol.x &&
-      abs(target.y - odom_copy->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z &&
-      abs(target.roll - odom_copy->pose.orientation.x) < tol.roll &&
-      abs(target.yaw - odom_copy->pose.orientation.z) < tol.yaw) {
-      reached = true;
+      if (first_reached_) {
+        first_reached_ = false;
+        first_reached_time_ = now;
+      }
+
+      // If wait time is set
+      if ((now - first_reached_time_).nanoseconds() + 1 > target.wait_ms * 1e6)
+        first_reached_ = reached = true;
+      else
+        step_state_ = planner_msgs::action::PDLA::Feedback::WAITING;
     }
 
     if (reached) {
-      timeout->reset(this->get_clock()->now());
+      timeout_->reset(this->get_clock()->now());
 
       if (step_idx == target_pose_.size() - 1) {
         RCLCPP_INFO(this->get_logger(), "Reached end point!");
         auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
         result->success = true;
-        goal_handle->succeed(result);
         std::lock_guard<std::mutex> lock(goal_mutex_);
-        active_goal_handle_.reset();
+        if (active_goal_handle_ == goal_handle && goal_handle->is_active()) {
+          goal_handle->succeed(result);
+          active_goal_handle_.reset();
+        }
         return;
       } else {
         step_idx++;
@@ -348,16 +359,50 @@ void PDLAPlanner::_runPlannerLogic(
   // Feedbackの送信
   {
     auto feedback = std::make_shared<planner_msgs::action::PDLA::Feedback>();
-    feedback->current_odom = *odom_copy;
-    feedback->current_waypoint_index = static_cast<uint32_t>(step_idx);
-    goal_handle->publish_feedback(feedback);
+    feedback->csv_file_path = file_path_;
+    feedback->step_idx =
+      static_cast<uint32_t>(step_state_ == feedback->REACHED ? step_idx - 1 : step_idx);
+    feedback->step_state = step_state_;
+    feedback->odom = *odom_copy;
+
+    std::lock_guard<std::mutex> lock(goal_mutex_);
+    if (active_goal_handle_ == goal_handle && goal_handle->is_active()) {
+      goal_handle->publish_feedback(feedback);
+    }
   }
 }
 
-// bool PDLAPlanner::_checkReached(PoseData & target, Tolerance tolerance)
-// {
-//   return false;
-// }
+bool PDLAPlanner::_checkReached(
+  PoseData & target, localization_msgs::msg::Odometry::SharedPtr & odom, Tolerance tol)
+{
+  double current_z_val = (target.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH)
+                           ? odom->pose.position.z_depth
+                           : odom->pose.position.z_altitude;
+
+  // Check if reached target
+  if (
+    abs(target.x - odom->pose.position.x) < tol.x &&
+    abs(target.y - odom->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z &&
+    abs(target.roll - odom->pose.orientation.x) < tol.roll &&
+    abs(target.yaw - odom->pose.orientation.z) < tol.yaw) {
+    if (!last_reached_) fine_reached_time_ = this->get_clock()->now();
+    last_reached_ = false;
+
+    // If fine mode is on, stop detection when fine timer is over
+    if (target.fine) {
+      if ((this->get_clock()->now() - fine_reached_time_).nanoseconds() < fine_timer_ms_ * 1e6) {
+        step_state_ = planner_msgs::action::PDLA::Feedback::FINE_TUNING;
+        last_reached_ = true;
+        return false;
+      }
+    }
+    step_state_ = planner_msgs::action::PDLA::Feedback::REACHED;
+    return true;
+  }
+  step_state_ = planner_msgs::action::PDLA::Feedback::RUNNING;
+  last_reached_ = false;
+  return false;
+}
 
 void PDLAPlanner::_print_waypoint(std::string label, size_t step_idx)
 {
@@ -368,9 +413,10 @@ void PDLAPlanner::_print_waypoint(std::string label, size_t step_idx)
   PoseData pose = target_pose_.at(step_idx);
   RCLCPP_INFO(
     this->get_logger(),
-    "%s %lu/%lu waypoint. x: %7.3f  y: %7.3f  z: %7.3f  z_mode: %u  roll: %7.1f  yaw: %6.1f",
+    "%s %lu/%lu waypoint. x: %7.3f  y: %7.3f  z: %7.3f  z_mode: %u  roll: %7.1f  yaw: %6.1f  "
+    "wait_ms: %.0f  fine: %d",
     label.c_str(), step_idx + 1, target_pose_.size(), pose.x, pose.y, pose.z, pose.z_mode,
-    pose.roll, pose.yaw);
+    pose.roll, pose.yaw, pose.wait_ms, pose.fine);
 }
 
 void PDLAPlanner::timerCallback()
@@ -392,7 +438,7 @@ void PDLAPlanner::timerCallback()
     return;
   }
 
-  if (timeout_ms > 0 && timeout->is_timeout(this->get_clock()->now())) {
+  if (timeout_->is_timeout(this->get_clock()->now())) {
     auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
     result->success = false;
     active_goal_handle_->abort(result);
