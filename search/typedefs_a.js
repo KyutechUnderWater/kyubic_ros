@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['qraction_0',['QRAction',['../namespaceplanner_1_1qr__planner.html#a386387d543e3f556c21b0f2aee761578',1,'planner::qr_planner']]]
+  ['pdla_0',['PDLA',['../classplanner_1_1pdla__planner_1_1PDLAFeedbackRepub.html#a076f01f03e05a8d826a46ae496ba02d1',1,'planner::pdla_planner::PDLAFeedbackRepub']]]
 ];

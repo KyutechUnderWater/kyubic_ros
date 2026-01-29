@@ -1,5 +1,17 @@
 var NAVTREEINDEX8 =
 {
+"g366_8hpp.html#a64cfd726cece7538ff5360d63f8c3326":[3,0,0,3,4,0,0,0,16],
+"g366_8hpp.html#a78461833e61fe3a7c7b60aeb8a785567":[3,0,0,3,4,0,0,0,17],
+"g366_8hpp.html#a7d0d843a9e002dad910f2af3ccc1440b":[3,0,0,3,4,0,0,0,28],
+"g366_8hpp.html#a7d375891776c059ae436def7cbdeef32":[3,0,0,3,4,0,0,0,23],
+"g366_8hpp.html#a7f3f793f27052a449d10e7d6ec70b1ba":[3,0,0,3,4,0,0,0,22],
+"g366_8hpp.html#a7fa1b4373d385c151a248b3cf1eb66cd":[3,0,0,3,4,0,0,0,10],
+"g366_8hpp.html#a8528257da0531474eb95ea74462292df":[3,0,0,3,4,0,0,0,18],
+"g366_8hpp.html#a856d7d6d145cd338b0de3cef8105aa31":[3,0,0,3,4,0,0,0,12],
+"g366_8hpp.html#a8a15511df6a8f93219ae0709ef647822":[3,0,0,3,4,0,0,0,14],
+"g366_8hpp.html#a8ce876afb601016be79ff74feb994076":[3,0,0,3,4,0,0,0,13],
+"g366_8hpp.html#a8f380d54ed7ef28d0e686a0c4195e6de":[3,0,0,3,4,0,0,0,27],
+"g366_8hpp.html#aa0965507b35504c1b7827bb116649a51":[3,0,0,3,4,0,0,0,19],
 "g366_8hpp.html#aa35627b532d60e81fc1a5cf2b710fdf6":[3,0,0,3,4,0,0,0,9],
 "g366_8hpp.html#aabe4d1f3b112d8dfbed2b918f69aaa02":[3,0,0,3,4,0,0,0,24],
 "g366_8hpp.html#ab98a45b7d45b4b444e84e2f2261b77c1":[3,0,0,3,4,0,0,0,6],
@@ -237,17 +249,5 @@ var NAVTREEINDEX8 =
 "namespacelogic__distro__rp2040__driver.html#a2138fc58778ef19217b3bd83503dfe2d":[1,0,25,0],
 "namespacemanual.html":[1,0,26],
 "namespacemanual.html#a77252f1ba7bdca62887d23acf42027e5":[1,0,26,0],
-"namespacemeasure__parameter.html":[1,0,27],
-"namespacemeasure__parameter.html#aa73d82ff46a1fff879cdcd1f8b165616":[1,0,27,0],
-"namespacemembers.html":[1,1,0],
-"namespacemembers_enum.html":[1,1,4],
-"namespacemembers_func.html":[1,1,1],
-"namespacemembers_type.html":[1,1,3],
-"namespacemembers_vars.html":[1,1,2],
-"namespaceoak__create__mapping.html":[1,0,28],
-"namespaceoak__create__mapping.html#a686bbd38e5dbc4755c3f3e91583fd9c1":[1,0,28,2],
-"namespaceoak__create__mapping_1_1main.html":[1,0,28,0],
-"namespaceoak__create__mapping_1_1main.html#aa8d71818826d1c5cf4407274bf40b834":[1,0,28,0,1],
-"namespaceoak__create__mapping_1_1oak__create__mapping.html":[1,0,28,1],
-"namespaceoak__create__mapping_1_1oak__create__mapping.html#aa41dee0136ef3d242f88e5db0717cc91":[1,0,28,1,1]
+"namespacemeasure__parameter.html":[1,0,27]
 };

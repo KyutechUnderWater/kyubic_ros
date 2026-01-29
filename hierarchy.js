@@ -57,6 +57,7 @@ var hierarchy =
       [ "localization::depth::DepthOdometry", "classlocalization_1_1depth_1_1DepthOdometry.html", null ],
       [ "localization::dvl::DVLOdometry", "classlocalization_1_1dvl_1_1DVLOdometry.html", null ],
       [ "localization::imu::IMUTransform", "classlocalization_1_1imu_1_1IMUTransform.html", null ],
+      [ "planner::pdla_planner::PDLAFeedbackRepub", "classplanner_1_1pdla__planner_1_1PDLAFeedbackRepub.html", null ],
       [ "planner::pdla_planner::PDLAPlanner", "classplanner_1_1pdla__planner_1_1PDLAPlanner.html", null ],
       [ "planner::qr_planner::QRPlanner", "classplanner_1_1qr__planner_1_1QRPlanner.html", null ],
       [ "planner::wrench_planner::WrenchPlanner", "classplanner_1_1wrench__planner_1_1WrenchPlanner.html", null ],
