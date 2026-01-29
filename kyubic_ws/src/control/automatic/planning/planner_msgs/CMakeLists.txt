@@ -16,6 +16,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(action_msgs REQUIRED)
 find_package(localization_msgs REQUIRED)
 find_package(p_pid_controller_msgs REQUIRED)
@@ -23,11 +24,12 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
  "msg/WrenchPlan.msg"
+ "msg/PDLAFeedback.msg"
  "action/PDLA.action"
  "action/QR.action"
  "action/FindPinger.action"
  "action/Return.action" 
- DEPENDENCIES p_pid_controller_msgs localization_msgs action_msgs
+ DEPENDENCIES p_pid_controller_msgs localization_msgs action_msgs std_msgs
 )
 
 ament_export_dependencies(rosidl_default_runtime)

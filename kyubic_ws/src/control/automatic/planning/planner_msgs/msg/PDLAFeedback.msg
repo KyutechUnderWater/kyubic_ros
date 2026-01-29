@@ -1,10 +1,4 @@
-# Goal
-string csv_file_path
----
-# Result
-bool success
----
-# Feedback
+# Feedback for PDLA action
 uint8 RUNNING=0
 uint8 FINE_TUNING=1
 uint8 REACHED=2

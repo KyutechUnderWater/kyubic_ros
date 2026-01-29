@@ -36,15 +36,25 @@ ament_target_dependencies(pdla_planner_component
   rclcpp_action
 )
 
+ament_auto_add_library(pdla_feedback_repub_component SHARED
+  ./src/pdla_feedback_repub.cpp
+)
+
 # register components
 rclcpp_components_register_node(pdla_planner_component
   PLUGIN "planner::pdla_planner::PDLAPlanner"
   EXECUTABLE pdla_planner_component_node
 )
 
+rclcpp_components_register_node(pdla_feedback_repub_component
+  PLUGIN "planner::pdla_planner::PDLAFeedbackRepub"
+  EXECUTABLE pdla_feedback_repub_component_node
+)
+
 # Set install config
 install(TARGETS
   pdla_planner_component
+  pdla_feedback_repub_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
