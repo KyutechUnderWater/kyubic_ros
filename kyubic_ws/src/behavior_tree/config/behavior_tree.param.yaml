@@ -1,3 +1,4 @@
 /**:
   ros__parameters:
-    bt_xml_file: "base.xml"  # parent directory is behavior_tree/bt_xml
+    # bt_xml_file: "base.xml"  # parent directory is behavior_tree/bt_xml
+    bt_xml_file: "/home/ros/kyubic_ros/kyubic_ws/src/driver/rf_underwater_driver/rf_underwater_driver/bt_xml/base.xml"  # parent directory is behavior_tree/bt_xml
