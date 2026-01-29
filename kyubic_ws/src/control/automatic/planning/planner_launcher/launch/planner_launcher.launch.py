@@ -66,6 +66,16 @@ def generate_launch_description():
                 ],  # enable intra-process communication
             ),
             ComposableNode(
+                name="pdla_feedback_repub_component",
+                namespace="planner/pdla_planner",
+                package="projection_dynamic_look_ahead_planner",
+                plugin="planner::pdla_planner::PDLAFeedbackRepub",
+                remappings=[
+                    ("feedback", "/planner/pdla_planner/pdla_plan/_action/feedback"),
+                ],
+                extra_arguments=[{"use_intra_process_comms": True}],
+            ),
+            ComposableNode(
                 name="qr_planner_component",
                 namespace="planner/qr_planner",
                 package="qr_planner",

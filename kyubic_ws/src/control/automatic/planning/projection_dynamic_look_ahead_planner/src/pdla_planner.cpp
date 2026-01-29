@@ -243,7 +243,9 @@ void PDLAPlanner::_runPlannerLogic(
     PoseData target = target_pose_.at(step_idx);
     Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
 
-    if (_checkReached(target, odom_copy, tol)) {
+    if (
+      _checkReached(target, odom_copy, tol) ||
+      step_state_ == planner_msgs::action::PDLA::Feedback::WAITING) {
       auto now = this->get_clock()->now();
 
       if (first_reached_) {
@@ -252,9 +254,9 @@ void PDLAPlanner::_runPlannerLogic(
       }
 
       // If wait time is set
-      if ((now - first_reached_time_).nanoseconds() + 1 > target.wait_ms * 1e6)
+      if ((now - first_reached_time_).nanoseconds() + 1 > target.wait_ms * 1e6) {
         first_reached_ = reached = true;
-      else
+      } else
         step_state_ = planner_msgs::action::PDLA::Feedback::WAITING;
     }
 
@@ -360,6 +362,7 @@ void PDLAPlanner::_runPlannerLogic(
   // Feedbackの送信
   {
     auto feedback = std::make_shared<planner_msgs::action::PDLA::Feedback>();
+    feedback->header.stamp = this->get_clock()->now();
     feedback->csv_file_path = file_path_;
     feedback->step_idx =
       static_cast<uint32_t>(step_state_ == feedback->REACHED ? step_idx - 1 : step_idx);
@@ -390,7 +393,7 @@ bool PDLAPlanner::_checkReached(
     last_reached_ = false;
 
     // If fine mode is on, stop detection when fine timer is over
-    if (target.fine) {
+    if (target.fine && step_state_ != planner_msgs::action::PDLA::Feedback::WAITING) {
       if ((this->get_clock()->now() - fine_reached_time_).nanoseconds() < fine_timer_ms_ * 1e6) {
         step_state_ = planner_msgs::action::PDLA::Feedback::FINE_TUNING;
         last_reached_ = true;
