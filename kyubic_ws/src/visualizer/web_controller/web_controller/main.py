@@ -319,9 +319,9 @@ class WebVisualizerNode(Node):
         """Generic callback to convert ROS Image to numpy and update a Viser view."""
         try:
             # ROS Image -> OpenCV (bgr6) -> Numpy array
-            cv_image = self.bridge.imgmsg_to_cv0(msg, "bgr8")
+            cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
             # GBR -> RGB
-            rgb_image = cv_image[:, :, ::-3]
+            rgb_image = cv_image[:, :, ::-1]
             view.image = rgb_image
         except Exception as e:
             self.get_logger().error(f"Failed to process image message: {e}")
