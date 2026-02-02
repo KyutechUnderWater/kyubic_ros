@@ -25,6 +25,7 @@ if [ $? != 0 ]; then
     byobu-tmux new-window -t $SESSION -n 'Run1'
     byobu-tmux send-keys -t $SESSION:1 "clear" C-m
     byobu-tmux send-keys -t $SESSION:1 "cd $WORKSPACE" C-m
+    byobu-tmux send-keys -t $SESSION:1 "ros2 launch system_alert localization_error.launch.py" C-m
     byobu-tmux split-window -v -t $SESSION:1
 
     # --- Window 3: Vim ---
