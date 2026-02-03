@@ -134,6 +134,14 @@ void PathCsvLoader::parse(const std::string & csv_path)
         data_->params_.catmull_orient_LERP = stoi_strict(tokens[1], label);
       } else if (label == "timeout_sec") {
         data_->params_.timeout_sec = stoi_strict(tokens[1], label);
+      } else if (label == "use_geodetic_coords") {
+        data_->params_.use_geodetic_coords = stob_strict(tokens[1], label);
+      } else if (label == "origin_lat") {
+        data_->params_.origin_lat = stod_strict(tokens[1], label);
+      } else if (label == "origin_lon") {
+        data_->params_.origin_lon = stod_strict(tokens[1], label);
+      } else if (label == "system_id") {
+        data_->params_.system_id = stoi_strict(tokens[1], label);
       } else {
         throw std::runtime_error("Unkown parameter " + label);
       }
@@ -141,25 +149,63 @@ void PathCsvLoader::parse(const std::string & csv_path)
   }
 
   // --- 第2パス: データ行を解析 ---
+  // Coordinate Converter
+  std::unique_ptr<common::GeodeticConverter> converter;
+  common::PlaneXY origin_xy;
+
+  if (data_->params_.use_geodetic_coords) {
+    if (data_->params_.system_id < 1 || data_->params_.system_id > 19) {
+      throw std::runtime_error("Invalid system_id. Must be between 1 and 19.");
+    }
+    converter = std::make_unique<common::GeodeticConverter>(data_->params_.system_id);
+    common::Geodetic origin_geo;
+    origin_geo.latitude = data_->params_.origin_lat;
+    origin_geo.longitude = data_->params_.origin_lon;
+    origin_xy = converter->geo2xy(origin_geo);
+  }
+
   for (size_t i = 0; i < raw_data.size(); ++i) {
     auto & tokens = raw_data[i];
     try {
       // Checkpointデータ
       if (is_allNonEmpty(std::vector<std::string>(tokens.begin() + 2, tokens.begin() + 7))) {
+        double x = stod_strict(tokens[2], "x");
+        double y = stod_strict(tokens[3], "y");
+
+        // Convert geodetic to local xy
+        if (data_->params_.use_geodetic_coords) {
+          common::Geodetic target_geo;
+          target_geo.latitude = x;
+          target_geo.longitude = y;
+          common::PlaneXY target_xy = converter->geo2xy(target_geo);
+          x = target_xy.x - origin_xy.x;
+          y = target_xy.y - origin_xy.y;
+        }
+
         data_->checkpoints_.push_back(PoseData(
-          stod_strict(tokens[2], "x"), stod_strict(tokens[3], "y"), stod_strict(tokens[4], "z"),
-          stoi_strict(tokens[5], "z_mode"), stod_strict(tokens[6], "roll"),
-          stod_strict(tokens[7], "yaw"), stod_strict(tokens[8], "wait_ms"),
-          stob_strict(tokens[9], "fine")));
+          x, y, stod_strict(tokens[4], "z"), stoi_strict(tokens[5], "z_mode"),
+          stod_strict(tokens[6], "roll"), stod_strict(tokens[7], "yaw"),
+          stod_strict(tokens[8], "wait_ms"), stob_strict(tokens[9], "fine")));
       }
       // Catmullデータ
       uint8_t offset = 9;
       if (is_allNonEmpty(
             std::vector<std::string>(tokens.begin() + offset + 2, tokens.begin() + offset + 9))) {
+        double cx = stod_strict(tokens[offset + 2], "catmull_x");
+        double cy = stod_strict(tokens[offset + 3], "catmull_y");
+
+        // Convert geodetic to local xy
+        if (data_->params_.use_geodetic_coords) {
+          common::Geodetic target_geo;
+          target_geo.latitude = cx;
+          target_geo.longitude = cy;
+          common::PlaneXY target_xy = converter->geo2xy(target_geo);
+          cx = target_xy.x - origin_xy.x;
+          cy = target_xy.y - origin_xy.y;
+        }
+
         data_->catmulls_.push_back(PoseData(
-          stod_strict(tokens[offset + 2], "catmull_x"),
-          stod_strict(tokens[offset + 3], "catmull_y"),
-          stod_strict(tokens[offset + 4], "catmull_z"),
+          cx, cy, stod_strict(tokens[offset + 4], "catmull_z"),
           stoi_strict(tokens[offset + 5], "catmull_z_mode"),
           stod_strict(tokens[offset + 6], "catmull_roll"),
           stod_strict(tokens[offset + 7], "catmull_yaw"),
