@@ -1,7 +1,12 @@
 <map id="src/common/geodetic_converter/include/geodetic_converter/geodetic_converter.hpp" name="src/common/geodetic_converter/include/geodetic_converter/geodetic_converter.hpp">
-<area shape="rect" id="node1" title="geodetic to plane converter library" alt="" coords="285,5,532,60"/>
-<area shape="rect" id="node2" href="$geodetic__converter_8cpp.html" title="geodetic to plane converter library" alt="" coords="5,108,180,163"/>
-<area shape="rect" id="node3" href="$common_2geodetic__converter_2src_2main_8cpp.html" title="geodetic to plane converter example" alt="" coords="205,115,383,155"/>
-<area shape="rect" id="node4" href="$localization__component_8hpp.html" title=" " alt="" coords="408,108,639,163"/>
-<area shape="rect" id="node5" href="$localization__component_8cpp.html" title="localization using dvl , imu, and depth" alt="" coords="484,211,715,251"/>
+<area shape="rect" id="node1" title="geodetic to plane converter library" alt="" coords="381,5,628,60"/>
+<area shape="rect" id="node2" href="$geodetic__converter_8cpp.html" title="geodetic to plane converter library" alt="" coords="5,115,180,170"/>
+<area shape="rect" id="node3" href="$common_2geodetic__converter_2src_2main_8cpp.html" title="geodetic to plane converter example" alt="" coords="205,123,383,163"/>
+<area shape="rect" id="node4" href="$path__csv__loader_8hpp.html" title=" " alt="" coords="407,108,602,177"/>
+<area shape="rect" id="node9" href="$localization__component_8hpp.html" title=" " alt="" coords="627,115,857,170"/>
+<area shape="rect" id="node10" href="$localization__component_8cpp.html" title="localization using dvl , imu, and depth" alt="" coords="780,247,1011,287"/>
+<area shape="rect" id="node5" href="$control_2automatic_2planning_2path__planner_2src_2main_8cpp.html" title=" " alt="" coords="81,240,251,295"/>
+<area shape="rect" id="node6" href="$path__csv__loader_8cpp.html" title=" " alt="" coords="275,240,457,295"/>
+<area shape="rect" id="node7" href="$pdla__planner_8hpp.html" title=" " alt="" coords="481,225,755,309"/>
+<area shape="rect" id="node8" href="$pdla__planner_8cpp.html" title="Tracking through the pass with Projection Dynamic Look&#45;Ahead Planner (Action Server Ver...." alt="" coords="507,357,729,427"/>
 </map>
