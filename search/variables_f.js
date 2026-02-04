@@ -6,7 +6,5 @@ var searchData=
   ['offset_3',['offset',['../structpid__controller_1_1PositionPIDParameter.html#a4ca2291eb3539645b47bc41c0110472c',1,'pid_controller::PositionPIDParameter::offset()'],['../structpid__controller_1_1VelocityPIDParameter.html#ab69d6fbb547465d9589adcb7290ccd23',1,'pid_controller::VelocityPIDParameter::offset()']]],
   ['orange_4',['orange',['../classweb__controller_1_1main_1_1Colors.html#a3786e7e4e5c76f4836fdf54a4cb0a8c4',1,'web_controller::main::Colors']]],
   ['orient_5fz_5',['orient_z',['../classdashboard_1_1main_1_1ImuData.html#a387c70f232ee899d048b67fbddb21948',1,'dashboard::main::ImuData']]],
-  ['origin_5flat_6',['origin_lat',['../classplanner_1_1ParamData.html#a749f8db72f68ad10d34f75c4a9fe0684',1,'planner::ParamData']]],
-  ['origin_5flon_7',['origin_lon',['../classplanner_1_1ParamData.html#a656c668b8ad965a69cede4ee0b4641aa',1,'planner::ParamData']]],
-  ['origin_5fpoints_5fdms_8',['ORIGIN_POINTS_DMS',['../namespacecommon.html#a4f4c0433259de8ff3650e272ce693db2',1,'common']]]
+  ['origin_5fpoints_5fdms_6',['ORIGIN_POINTS_DMS',['../namespacecommon.html#a4f4c0433259de8ff3650e272ce693db2',1,'common']]]
 ];

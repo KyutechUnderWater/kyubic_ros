@@ -7,9 +7,5 @@ var classplanner_1_1ParamData =
     [ "catmull_orient_LERP", "classplanner_1_1ParamData.html#a0bd06ae1d602a43bf0f93343bee84979", null ],
     [ "catmull_rom", "classplanner_1_1ParamData.html#a5e8cb805084f5395556610104d0b660b", null ],
     [ "checkpoint_end_row", "classplanner_1_1ParamData.html#a15cd20791b4ef87c55c2384de61a9d43", null ],
-    [ "origin_lat", "classplanner_1_1ParamData.html#a749f8db72f68ad10d34f75c4a9fe0684", null ],
-    [ "origin_lon", "classplanner_1_1ParamData.html#a656c668b8ad965a69cede4ee0b4641aa", null ],
-    [ "system_id", "classplanner_1_1ParamData.html#aeb64c3a5cf2e77fe2b75d6361bd94266", null ],
-    [ "timeout_sec", "classplanner_1_1ParamData.html#a439572d985e0fc1be7f2c66c5ac9deec", null ],
-    [ "use_geodetic_coords", "classplanner_1_1ParamData.html#a06038363812c56fc64546ad26d3fa1e8", null ]
+    [ "timeout_sec", "classplanner_1_1ParamData.html#a439572d985e0fc1be7f2c66c5ac9deec", null ]
 ];
