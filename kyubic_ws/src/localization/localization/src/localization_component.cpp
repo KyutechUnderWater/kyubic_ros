@@ -42,6 +42,10 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   imu_raw_msg_ = std::make_shared<driver_msgs::msg::IMU>();
   odom_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
   odom_msg_->pose.global_pos.coordinate_system_id = coord_system_id;
+  if (!depth_enable) odom_msg_->status.depth.id = common_msgs::msg::Status::UNUSED;
+  if (!imu_enable) odom_msg_->status.imu.id = common_msgs::msg::Status::UNUSED;
+  if (!dvl_enable) odom_msg_->status.dvl.id = common_msgs::msg::Status::UNUSED;
+  if (!gnss_enable) odom_msg_->status.gnss.id = common_msgs::msg::Status::UNUSED;
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
@@ -140,6 +144,13 @@ void Localization::imu_raw_callback(driver_msgs::msg::IMU::UniquePtr msg)
 
 void Localization::_calc_global_pos(const localization_msgs::msg::Odometry::SharedPtr odom_)
 {
+  if (
+    odom_->status.dvl.id >= common_msgs::msg::Status::ERROR ||
+    odom_->status.gnss.id >= common_msgs::msg::Status::ERROR) {
+    odom_->status.gnss.id = common_msgs::msg::Status::ERROR;
+    return;
+  }
+
   double azimuth_rad = (azimuth + reference_plane.meridian_convergence) * std::numbers::pi / 180;
   double plane_x =
     odom_->pose.position.x * cos(azimuth_rad) - odom_->pose.position.y * sin(azimuth_rad);
@@ -273,12 +284,14 @@ void Localization::reset_callback(
 
     // Check timeout
     if (timeout) {
+      odom_msg_->status.gnss.id = common_msgs::msg::Status::ERROR;
       response->success = false;
       response->message = "Timeout: No GNSS data in 3s.";
       RCLCPP_ERROR(this->get_logger(), "%s", response->message.c_str());
       return;
     }
 
+    odom_msg_->status.gnss.id = common_msgs::msg::Status::NORMAL;
     azimuth = imu_raw_msg_->orient.z + reqest->azimuth;
     reference_geodetic.latitude = gnss_msg_->fix.latitude;
     reference_geodetic.longitude = gnss_msg_->fix.longitude;
