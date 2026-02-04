@@ -11,6 +11,7 @@
 
   <depend>ament_index_cpp</depend>
   <depend>rclcpp</depend>
+  <depend>geodetic_converter</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
