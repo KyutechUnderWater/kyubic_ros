@@ -12,6 +12,7 @@
 
 #include <array>
 #include <cstddef>
+#include <geodetic_converter/geodetic_converter.hpp>
 #include <iomanip>
 #include <iostream>
 #include <memory>
@@ -32,6 +33,11 @@ public:
   bool catmull_orient_LERP = false;
   int timeout_sec = 0;
 
+  bool use_geodetic_coords = false;
+  double origin_lat = 0.0;
+  double origin_lon = 0.0;
+  int system_id = 0;
+
   void print() const
   {
     std::cout << "  checkpoint_end_row: " << checkpoint_end_row << std::endl;
@@ -41,6 +47,10 @@ public:
     std::cout << "  catmull_min_distance: " << catmull_density << std::endl;
     std::cout << "  catmull_orient_LERP: " << catmull_orient_LERP << std::endl;
     std::cout << "  timeout_sec: " << timeout_sec << std::endl;
+    std::cout << "  use_geodetic_coords: " << use_geodetic_coords << std::endl;
+    std::cout << "  origin_lat: " << origin_lat << std::endl;
+    std::cout << "  origin_lon: " << origin_lon << std::endl;
+    std::cout << "  system_id: " << system_id << std::endl;
     std::cout << std::endl;
   }
 };
@@ -159,6 +169,19 @@ public:
      * @return 読み込んだCsvDataへのconst参照
      */
   const std::shared_ptr<PathData> get_data() const { return data_; }
+
+  /**
+     * @brief Set default origin for geodetic conversion
+     * @param lat Origin latitude
+     * @param lon Origin longitude
+     * @param sys_id System ID (1-19)
+     */
+  void setDefaultOrigin(double lat, double lon, int sys_id)
+  {
+    data_->params_.origin_lat = lat;
+    data_->params_.origin_lon = lon;
+    data_->params_.system_id = sys_id;
+  }
 };
 
 }  // namespace planner
