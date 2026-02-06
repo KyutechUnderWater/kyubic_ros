@@ -26,22 +26,32 @@ If using a CUDA
 
 Create docker container and Setup continer (user password, enviroment variable, alias, and udev rule)
 
+### Step 1: Clone Repository and Update Submodule
 ```bash
 git clone git@github.com:KyutechUnderWater/kyubic_ros.git
 cd kyubic_ros && git submodule update --init --recursive
+```
+
+### Step 2: Install kyubic_ros
+#### For Robot Computers 🤖
+```bash
 . install.sh
+```
+
+#### For Client 💻
+add `-c` option
+```bash
+. install.sh -c
 ```
 
 (Optional) If you want to use CUDA
 
 ```bash
-git clone git@github.com:KyutechUnderWater/kyubic_ros.git
-cd kyubic_ros && git submodule update --init --recursive
 . install.sh --nvidia
 ```
 
 > [!NOTE]
-> If you want to use ROS 2 Humble or create multiple environments
+> If you want to create multiple environments
 > See [#Tips](https://github.com/KyutechUnderWater/kyubic_ros/main/README.md#tips)
 
 <br>
@@ -77,15 +87,6 @@ exit # or <ctrl + d>
 <br>
 
 ## ⚡ Tips
-
-### Using ROS 2 Humble
-
-```bash
-git clone git@github.com:KyutechUnderWater/kyubic_ros.git -b humble kyubic_ros_humble
-cd $_ && git submodule update --init --recursive
-. install.sh -p humble && \
-ros2_start_humble  # Start container and Run bash
-```
 
 ### Using multiple environment
 
