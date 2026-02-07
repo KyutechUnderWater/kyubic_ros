@@ -43,6 +43,12 @@ private:
   void delay_timer_callback();
 
   /**
+   * @brief Callback function executed after 30 seconds of publication.
+   * Stops the periodic publication.
+   */
+  void stop_timer_callback();
+
+  /**
    * @brief Callback function executed at 5Hz.
    * Publishes the WrenchPlan message.
    */
@@ -58,6 +64,9 @@ private:
 
   //! One-shot timer for the initial delay
   rclcpp::TimerBase::SharedPtr delay_timer_;
+
+  //! One-shot timer for the publication duration (30s)
+  rclcpp::TimerBase::SharedPtr stop_timer_;
 
   //! Periodic timer for publishing data
   rclcpp::TimerBase::SharedPtr publish_timer_;

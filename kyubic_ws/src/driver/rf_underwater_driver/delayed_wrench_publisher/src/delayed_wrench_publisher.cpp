@@ -22,11 +22,17 @@ DelayedWrenchPublisher::DelayedWrenchPublisher()
     "/planner/pdla_planner/pdla_feedback", 10,
     std::bind(&DelayedWrenchPublisher::feedback_callback, this, std::placeholders::_1));
 
-  // Initialize timers (initially canceled)
+  // 1. Initial Delay Timer (10s)
   delay_timer_ =
     this->create_wall_timer(10s, std::bind(&DelayedWrenchPublisher::delay_timer_callback, this));
   delay_timer_->cancel();
 
+  // 2. Stop Timer (30s duration)
+  stop_timer_ =
+    this->create_wall_timer(30s, std::bind(&DelayedWrenchPublisher::stop_timer_callback, this));
+  stop_timer_->cancel();
+
+  // 3. Publication Timer (5Hz)
   publish_timer_ = this->create_wall_timer(
     200ms, std::bind(&DelayedWrenchPublisher::publish_timer_callback, this));
   publish_timer_->cancel();
@@ -66,13 +72,27 @@ void DelayedWrenchPublisher::feedback_callback(const planner_msgs::msg::PDLAFeed
 
 void DelayedWrenchPublisher::delay_timer_callback()
 {
-  RCLCPP_INFO(this->get_logger(), "10s passed. Starting 5Hz publication.");
+  RCLCPP_INFO(this->get_logger(), "10s passed. Starting 5Hz publication for 30s.");
 
-  // Stop the one-shot delay timer
+  // Stop the initial delay timer
   delay_timer_->cancel();
 
-  // Start the periodic publication timer
+  // Start the periodic publication
   publish_timer_->reset();
+
+  // Start the stop timer (counts 30s from now)
+  stop_timer_->reset();
+}
+
+void DelayedWrenchPublisher::stop_timer_callback()
+{
+  RCLCPP_INFO(this->get_logger(), "30s duration passed. Stopping publication.");
+
+  // Stop the publication
+  publish_timer_->cancel();
+
+  // Stop this timer (one-shot)
+  stop_timer_->cancel();
 }
 
 void DelayedWrenchPublisher::publish_timer_callback()
