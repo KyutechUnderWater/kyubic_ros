@@ -55,7 +55,7 @@ def generate_launch_description():
                 plugin="planner::pdla_planner::PDLAPlanner",
                 remappings=[
                     ("odom", "/localization/odom"),
-                    ("goal_current_odom", "/planner/wrench_planner/zoh_wrench_plan"),
+                    ("goal_current_odom", "/planner/wrench_planner/wrench_plan"),
                 ],
                 parameters=[
                     {"path_planner_path": path_planner_path},
@@ -83,10 +83,22 @@ def generate_launch_description():
                 remappings=[
                     ("odom", "/localization/odom"),
                     ("zed_power", "/driver/sensors_esp32_driver/zed_power"),
-                    ("goal_current_odom", "/planner/wrench_planner/zoh_wrench_plan"),
+                    ("goal_current_odom", "/planner/wrench_planner/wrench_plan"),
                 ],
                 parameters=[
                     cfg_qr_planner,
+                ],
+                extra_arguments=[
+                    {"use_intra_process_comms": True}
+                ],  # enable intra-process communication
+            ),
+            ComposableNode(
+                name="wrench_plan_selector_planner_component",
+                namespace="planner/wrench_planner",
+                package="wrench_planner",
+                plugin="planner::wrench_planner::WrenchPlanSelector",
+                remappings=[
+                    ("selected_wrench_plan", "/planner/wrench_planner/zoh_wrench_plan"),
                 ],
                 extra_arguments=[
                     {"use_intra_process_comms": True}

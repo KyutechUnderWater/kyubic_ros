@@ -337,6 +337,7 @@ void PDLAPlanner::_runPlannerLogic(
       msg->targets.roll = target_pose_.at(step_idx).roll;
       msg->targets.yaw = target_pose_.at(step_idx).yaw;
 
+      msg->has_master = true;
       msg->master.x = odom_copy->pose.position.x;
       msg->master.y = odom_copy->pose.position.y;
       msg->master.roll = odom_copy->pose.orientation.x;
