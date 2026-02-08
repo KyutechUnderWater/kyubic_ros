@@ -69,10 +69,12 @@ void WrenchPlanSelector::topic_callback(const planner_msgs::msg::WrenchPlan::Sha
   // 3. Publish if the incoming message corresponds to the best valid ID
   if (found_valid && best_valid_id == msg->priority.id) {
     publisher_->publish(*msg);
-    last_published_id_ = msg->priority.id;
+    if (last_published_id_ != msg->priority.id) {
+      RCLCPP_INFO(this->get_logger(), "Switch and Publish ID: %d", msg->priority.id);
+      // RCLCPP_INFO(this->get_logger(), "Immediate Publish ID: %d", msg->priority.id);
+    }
 
-    // Debug
-    RCLCPP_INFO(this->get_logger(), "Immediate Publish ID: %d", msg->priority.id);
+    last_published_id_ = msg->priority.id;
   }
 }
 
@@ -81,12 +83,10 @@ void WrenchPlanSelector::timer_callback()
   rclcpp::Time current_time = this->now();
 
   // 1. Clean up expired messages
-  bool cleanup_occurred = false;
   for (auto it = active_plans_.begin(); it != active_plans_.end();) {
     if (is_expired(it->second, current_time)) {
       RCLCPP_INFO(this->get_logger(), "ID %d timed out", it->first);
       it = active_plans_.erase(it);
-      cleanup_occurred = true;
     } else {
       ++it;
     }
