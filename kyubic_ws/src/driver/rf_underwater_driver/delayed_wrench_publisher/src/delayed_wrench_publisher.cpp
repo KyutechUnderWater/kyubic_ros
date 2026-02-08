@@ -82,7 +82,7 @@ void DelayedWrenchPublisher::init_wrench_plan_data(
   // --- Targets ---
   wrench_msg_.targets.x = target_x;
   wrench_msg_.targets.y = target_y;
-  wrench_msg_.targets.y = target_z;
+  wrench_msg_.targets.z = target_z;
 }
 
 void DelayedWrenchPublisher::feedback_callback(const planner_msgs::msg::PDLAFeedback::SharedPtr msg)
