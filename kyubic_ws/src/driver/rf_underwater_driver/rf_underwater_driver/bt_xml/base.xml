@@ -20,7 +20,7 @@
         message="Waypoint Action Start"
         topic_name="/talker" />
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-        csv_file_path="/home/ros/kyubic_ros/kyubic_ws/src/driver/rf_underwater_driver/rf_underwater_driver/waypoint/boustrophedon.csv" />
+        csv_file_path="/home/ros/kyubic_ros/kyubic_ws/src/driver/rf_underwater_driver/rf_underwater_driver/waypoint/strate.csv" />
       <Talker name="AutomatickTalker"
         message="Waypoint Action Successful"
         topic_name="/talker" />
