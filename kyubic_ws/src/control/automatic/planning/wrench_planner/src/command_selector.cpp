@@ -13,7 +13,7 @@ namespace planner::wrench_planner
 WrenchPlanSelector::WrenchPlanSelector(const rclcpp::NodeOptions & options)
 : Node("wrench_plan_selector", options)
 {
-  rclcpp::QoS qos(10);
+  rclcpp::QoS qos(1);
 
   // Initialize Subscriber
   subscription_ = this->create_subscription<planner_msgs::msg::WrenchPlan>(
