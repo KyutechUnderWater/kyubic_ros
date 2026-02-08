@@ -191,6 +191,7 @@ void PDLAPlanner::_runPlannerLogic(
     odom_copy->status.imu.id == common_msgs::msg::Status::ERROR ||
     odom_copy->status.dvl.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
+    return;
 
     // Control when some sensors become unusable
     auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>();
