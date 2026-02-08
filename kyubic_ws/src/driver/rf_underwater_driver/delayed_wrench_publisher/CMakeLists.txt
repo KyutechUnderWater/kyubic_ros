@@ -23,6 +23,12 @@ ament_auto_add_executable(${PROJECT_NAME}
   ./src/delayed_wrench_publisher.cpp
 )
 
+install(DIRECTORY
+  config
+  launch
+  DESTINATION share/${PROJECT_NAME}
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

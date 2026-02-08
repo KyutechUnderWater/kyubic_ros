@@ -24,10 +24,13 @@ public:
 
 private:
   /**
-   * @brief Populates the WrenchPlan message with predefined values.
-   * @note Hardcoded data is defined here.
+   * @brief Populates the WrenchPlan message with predefined values and parameters.
+   * @param priority The priority ID from config.
+   * @param timeout_ms The timeout in milliseconds from config.
+   * @param target_x The target x position from config.
+   * @param target_y The target y position from config.
    */
-  void init_wrench_plan_data();
+  void init_wrench_plan_data(int priority, int timeout_ms, double target_x, double target_y);
 
   /**
    * @brief Callback function for PDLAFeedback.
@@ -76,6 +79,10 @@ private:
 
   //! Flag to ensure the trigger happens only once
   bool is_triggered_;
+
+  double initial_delay_sec;
+  double execution_duration_sec;
+  double publish_rate_hz;
 };
 
 #endif  // DELAYED_WRENCH_PUBLISHER_HPP_

@@ -1,0 +1,9 @@
+/**:
+  ros__parameters:
+    priority: 1
+    timeout_ms: 5000
+    initial_delay_sec: 5.0      # 待機時間
+    execution_duration_sec: 10.0 # 送信継続時間
+    publish_rate_hz: 5.0         # 送信周波数
+    target_x: 1.0                # 目標位置 x
+    target_y: 1.0                # 目標位置 y
