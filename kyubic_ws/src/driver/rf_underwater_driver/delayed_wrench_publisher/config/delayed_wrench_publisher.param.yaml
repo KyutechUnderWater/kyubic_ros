@@ -1,9 +1,11 @@
 /**:
   ros__parameters:
-    priority: 1
-    timeout_ms: 5000
-    initial_delay_sec: 5.0      # 待機時間
-    execution_duration_sec: 10.0 # 送信継続時間
+    priority: 0
+    timeout_ms: 1000
+    initial_delay_sec: 20.0      # 待機時間
+    execution_duration_sec: 8.0 # 送信継続時間
     publish_rate_hz: 5.0         # 送信周波数
-    target_x: 1.0                # 目標位置 x
-    target_y: 1.0                # 目標位置 y
+    trigger_step_idx: 2          # 処理開始のWaypoint番号
+    target_x: 0.0                # 目標位置 x
+    target_y: 0.0                # 目標位置 y
+    target_z: 0.3                # 目標位置 z

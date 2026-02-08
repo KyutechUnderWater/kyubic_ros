@@ -16,8 +16,10 @@ DelayedWrenchPublisher::DelayedWrenchPublisher()
   initial_delay_sec = this->declare_parameter("initial_delay_sec", 10.0);
   execution_duration_sec = this->declare_parameter("execution_duration_sec", 30.0);
   publish_rate_hz = this->declare_parameter("publish_rate_hz", 5.0);
+  trigger_step_idx = this->declare_parameter("trigger_step_idx", 0);
   double target_x = this->declare_parameter("target_x", 0.0);
   double target_y = this->declare_parameter("target_y", 0.0);
+  double target_z = this->declare_parameter("target_z", 0.0);
 
   // Convert times to std::chrono
   auto initial_delay = std::chrono::duration<double>(initial_delay_sec);
@@ -26,7 +28,7 @@ DelayedWrenchPublisher::DelayedWrenchPublisher()
 
   // --- Initialize message data ---
   // Pass priority and timeout_ms to the initialization function
-  init_wrench_plan_data(priority, timeout_ms, target_x, target_y);
+  init_wrench_plan_data(priority, timeout_ms, target_x, target_y, target_z);
 
   // --- Create Publisher ---
   publisher_ = this->create_publisher<planner_msgs::msg::WrenchPlan>("wrench_plan", 10);
@@ -62,7 +64,7 @@ DelayedWrenchPublisher::DelayedWrenchPublisher()
 }
 
 void DelayedWrenchPublisher::init_wrench_plan_data(
-  int priority, int timeout_ms, double target_x, double target_y)
+  int priority, int timeout_ms, double target_x, double target_y, double target_z)
 {
   // Set the requested fields using parameters.
 
@@ -74,14 +76,18 @@ void DelayedWrenchPublisher::init_wrench_plan_data(
   wrench_msg_.has_master = false;
   wrench_msg_.has_slave = false;
 
+  // --- Z mode ---
+  wrench_msg_.z_mode = planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH;
+
   // --- Targets ---
   wrench_msg_.targets.x = target_x;
   wrench_msg_.targets.y = target_y;
+  wrench_msg_.targets.y = target_z;
 }
 
 void DelayedWrenchPublisher::feedback_callback(const planner_msgs::msg::PDLAFeedback::SharedPtr msg)
 {
-  (void)msg;  // Unused
+  if (msg->step_idx != trigger_step_idx) return;
 
   // Only trigger on the first feedback received
   if (!is_triggered_) {
@@ -96,8 +102,9 @@ void DelayedWrenchPublisher::delay_timer_callback()
   RCLCPP_INFO(this->get_logger(), "  %.1fs passed.", initial_delay_sec);
 
   RCLCPP_INFO(
-    this->get_logger(), "Starting %.1fHz publication for %.1fs. Target: %.2f, %.2f",
-    publish_rate_hz, execution_duration_sec, wrench_msg_.targets.x, wrench_msg_.targets.y);
+    this->get_logger(), "Starting %.1fHz publication for %.1fs. Target: %.2f, %.2f, %.2f",
+    publish_rate_hz, execution_duration_sec, wrench_msg_.targets.x, wrench_msg_.targets.y,
+    wrench_msg_.targets.z);
 
   // Stop the initial delay timer
   delay_timer_->cancel();

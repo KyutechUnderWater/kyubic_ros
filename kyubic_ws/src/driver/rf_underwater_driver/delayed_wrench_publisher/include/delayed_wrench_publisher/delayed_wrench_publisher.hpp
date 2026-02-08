@@ -30,7 +30,8 @@ private:
    * @param target_x The target x position from config.
    * @param target_y The target y position from config.
    */
-  void init_wrench_plan_data(int priority, int timeout_ms, double target_x, double target_y);
+  void init_wrench_plan_data(
+    int priority, int timeout_ms, double target_x, double target_y, double target_z);
 
   /**
    * @brief Callback function for PDLAFeedback.
@@ -79,6 +80,8 @@ private:
 
   //! Flag to ensure the trigger happens only once
   bool is_triggered_;
+
+  uint32_t trigger_step_idx;
 
   double initial_delay_sec;
   double execution_duration_sec;
