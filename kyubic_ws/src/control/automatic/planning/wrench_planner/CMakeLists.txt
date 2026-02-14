@@ -27,10 +27,6 @@ ament_auto_add_library(zero_order_hold_component SHARED
   ./src/zero_order_hold.cpp
 )
 
-ament_auto_add_library(wrench_plan_selector_component SHARED
-  ./src/command_selector.cpp
-)
-
 # register components
 rclcpp_components_register_node(wrench_planner_component
   PLUGIN "planner::wrench_planner::WrenchPlanner"
@@ -42,16 +38,10 @@ rclcpp_components_register_node(zero_order_hold_component
   EXECUTABLE zero_order_hold_component_node
 )
 
-rclcpp_components_register_node(wrench_plan_selector_component
-  PLUGIN "planner::wrench_planner::WrenchPlanSelector"
-  EXECUTABLE wrench_plan_selector_component_node
-)
-
 # set install config
 install(TARGETS
   wrench_planner_component
   zero_order_hold_component
-  wrench_plan_selector_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin

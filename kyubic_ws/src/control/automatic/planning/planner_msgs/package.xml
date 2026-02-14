@@ -13,7 +13,6 @@
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
   <depend>action_msgs</depend>
-  <depend>common_msgs</depend>
   <depend>localization_msgs</depend>
   <depend>p_pid_controller_msgs</depend>
 
