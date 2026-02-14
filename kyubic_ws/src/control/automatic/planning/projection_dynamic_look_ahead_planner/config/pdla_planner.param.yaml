@@ -7,14 +7,14 @@
     look_ahead_scale: 1.0
 
     reach_tolerance:
+      x: 0.05
+      y: 0.05
+      z: 0.05
+      roll: 1.0
+      yaw: 1.0
+    waypoint_tolerance:
       x: 0.1
       y: 0.1
       z: 0.1
-      roll: 10.0
-      yaw: 5.0
-    waypoint_tolerance:
-      x: 0.2
-      y: 0.2
-      z: 0.2
-      roll: 10.0
-      yaw: 5.0
+      roll: 3.0
+      yaw: 3.0
