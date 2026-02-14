@@ -37,15 +37,28 @@ WrenchPlanner::WrenchPlanner(const rclcpp::NodeOptions & options) : Node("wrench
 
 void WrenchPlanner::_update_wrench()
 {
-  if (!goal_current_odom_->has_slave) {
-    if (!odom_updated_) {
-      RCLCPP_DEBUG(
-        this->get_logger(),
-        "Waiting for Odometry data... cannot calculate pid and publish robot_force yet.");
-      return;
-    }
+  if (!odom_updated_) {
+    RCLCPP_DEBUG(
+      this->get_logger(),
+      "Waiting for Odometry data... cannot calculate pid and publish robot_force yet.");
+    return;
+  }
+  odom_updated_ = false;
 
-    odom_updated_ = false;
+  if (!goal_current_odom_->has_master) {
+    goal_current_odom_->master.x = current_odom_->pose.position.x;
+    goal_current_odom_->master.y = current_odom_->pose.position.y;
+    goal_current_odom_->master.roll = current_odom_->pose.orientation.x;
+    goal_current_odom_->master.yaw = current_odom_->pose.orientation.z;
+
+    if (goal_current_odom_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
+      goal_current_odom_->master.z = current_odom_->pose.position.z_depth;
+    } else if (goal_current_odom_->z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
+      goal_current_odom_->master.z = current_odom_->pose.position.z_altitude;
+    }
+  }
+
+  if (!goal_current_odom_->has_slave) {
     goal_current_odom_->slave.x = current_odom_->twist.linear.x;
     goal_current_odom_->slave.y = current_odom_->twist.linear.y;
     goal_current_odom_->slave.roll = current_odom_->twist.angular.x;
