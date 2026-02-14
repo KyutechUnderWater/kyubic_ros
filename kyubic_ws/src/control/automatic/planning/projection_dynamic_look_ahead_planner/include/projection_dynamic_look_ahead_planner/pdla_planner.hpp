@@ -83,6 +83,8 @@ private:
   std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> active_goal_handle_;
 
   size_t step_idx = 0;
+  rclcpp::Time step_start_time_;
+  double waypoint_timeout_sec_ = 0.0;
 };
 
 }  // namespace planner::pdla_planner
