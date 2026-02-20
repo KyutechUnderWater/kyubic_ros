@@ -31,9 +31,13 @@ private:
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_;
 
   std::array<double, 3> offset_angle;
+  double offset_accel_z = 0.0;
   double roll = 0.0;
   double pitch = 0.0;
   double yaw = 0.0;
+  std::array<double, 100> accel_z;
+
+  uint32_t count = 100;
 
   /**
    * @brief Update imu data

@@ -55,6 +55,7 @@ void RtcGnss::protolink_callback(const ProtoRtcGnss & _msg)
     std::make_unique<driver_msgs::msg::RtcGnss>(protolink__driver_msgs__RtcGnss::convert(_msg));
   msg->header.stamp = this->get_clock()->now();
   msg->header.frame_id = "gnss_link";
+  msg->status.id = common_msgs::msg::Status::NORMAL;
 
   pub_->publish(std::move(msg));
   RCLCPP_DEBUG(

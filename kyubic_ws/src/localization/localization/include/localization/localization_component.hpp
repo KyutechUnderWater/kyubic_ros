@@ -10,15 +10,9 @@
 #ifndef _LOCALIZATIN_COMPONENT_HPP
 #define _LOCALIZATIN_COMPONENT_HPP
 
-#include <atomic>
-#include <driver_msgs/msg/gnss.hpp>
-#include <driver_msgs/msg/imu.hpp>
-#include <geodetic_converter/geodetic_converter.hpp>
 #include <localization_msgs/msg/odometry.hpp>
-#include <localization_msgs/srv/reset.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
-#include <visualization_msgs/msg/marker_array.hpp>
 
 /**
  * @namespace localization
@@ -43,37 +37,29 @@ using FutureAndRequestId = rclcpp::Client<std_srvs::srv::Trigger>::SharedFuture;
 class Localization : public rclcpp::Node
 {
 private:
-  uint8_t coord_system_id;
   rclcpp::CallbackGroup::SharedPtr client_cb_group_;
-  rclcpp::CallbackGroup::SharedPtr gnss_cb_group_;
-  rclcpp::Publisher<localization_msgs::msg::Odometry>::SharedPtr pub_odom_;
-  rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_pub_;
+  rclcpp::Publisher<localization_msgs::msg::Odometry>::SharedPtr pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_depth_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_imu_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_dvl_;
-  rclcpp::Subscription<driver_msgs::msg::Gnss>::SharedPtr sub_gnss_;
-  rclcpp::Subscription<driver_msgs::msg::IMU>::SharedPtr sub_imu_raw_;
-  rclcpp::Service<localization_msgs::srv::Reset>::SharedPtr srv_;
+  rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_gnss_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_depth_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_imu_;
   rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_dvl_;
+  rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_gnss_;
 
   rclcpp::TimerBase::SharedPtr timer_;
 
-  std::shared_ptr<common::GeodeticConverter> geo_converter_;
+  std::shared_ptr<localization_msgs::msg::Odometry> odom_depth_;
   std::shared_ptr<localization_msgs::msg::Odometry> odom_msg_;
-  std::shared_ptr<driver_msgs::msg::Gnss> gnss_msg_;
-  std::shared_ptr<driver_msgs::msg::IMU> imu_raw_msg_;
-  common::Geodetic origin_geodetic;
-  common::Geodetic reference_geodetic;
-  common::PlaneXY reference_plane;
-  double azimuth;
 
-  std::atomic<bool> gnss_updated{false};
-
-  bool gnss_enable = false;
-  uint8_t enabled_sensor = 0b11111000;
-  uint8_t all_updated = 0b11111000;
+  bool depth_enable_ = false;
+  bool imu_enable_ = false;
+  bool dvl_enable_ = false;
+  bool gnss_enable_ = false;
+  uint8_t enabled_sensors_ = 0;
+  uint8_t updated_ = 0;
 
   /**
    * @brief Update depth odometry
@@ -85,31 +71,19 @@ private:
    * @brief Update imu transformed
    * @details Acquisition the imu transformed data.
    */
-  void imu_callback(const localization_msgs::msg::Odometry::UniquePtr msg);
+  void imu_callback(const localization_msgs::msg::Odometry::SharedPtr msg);
 
   /**
    * @brief Update dvl odometry
    * @details Acquisitionn the dvl odometry.
    */
-  void dvl_callback(const localization_msgs::msg::Odometry::UniquePtr msg);
+  void dvl_callback(const localization_msgs::msg::Odometry::SharedPtr msg);
 
   /**
-   * @brief Update gnss data
-   * @details Acquisitionn the gnss data.
+   * @brief Update global position
+   * @details Acquisitionn the global position.
    */
-  void gnss_callback(const driver_msgs::msg::Gnss::UniquePtr msg);
-
-  /**
-   * @brief Update imu data
-   * @details Acquisitionn the imu data.
-   */
-  void imu_raw_callback(const driver_msgs::msg::IMU::UniquePtr msg);
-
-  /**
-   * @brief calculate geodetic uding gnss and dvl odometry
-   * @details Acquisitionn the dvl odometry.
-   */
-  void _calc_global_pos(const localization_msgs::msg::Odometry::SharedPtr odom_);
+  void gnss_callback(const localization_msgs::msg::Odometry::SharedPtr msg);
 
   /**
    * @brief If all data is updated, Publish odometry.
@@ -122,8 +96,8 @@ private:
    * @details Execute a reset function when requested by the client.
    */
   void reset_callback(
-    const localization_msgs::srv::Reset::Request::SharedPtr request,
-    const localization_msgs::srv::Reset::Response::SharedPtr response);
+    const std_srvs::srv::Trigger::Request::SharedPtr request,
+    const std_srvs::srv::Trigger::Response::SharedPtr response);
 
   /**
    * @brief Check if the server is running

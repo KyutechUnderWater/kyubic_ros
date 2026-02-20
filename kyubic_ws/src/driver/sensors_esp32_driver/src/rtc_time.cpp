@@ -55,6 +55,7 @@ void RtcTime::protolink_callback(const ProtoRtcTime & _msg)
     std::make_unique<driver_msgs::msg::RtcTime>(protolink__driver_msgs__RtcTime::convert(_msg));
   msg->header.stamp = this->get_clock()->now();
   msg->header.frame_id = "time_link";
+  msg->status.id = common_msgs::msg::Status::NORMAL;
 
   pub_->publish(std::move(msg));
   RCLCPP_DEBUG(

@@ -2,4 +2,5 @@
 std_msgs/Header header
 localization_msgs/Status status
 localization_msgs/Pose pose
-localization_msgs/Twist twist
+localization_msgs/BaseAxes twist
+localization_msgs/BaseAxes accel
