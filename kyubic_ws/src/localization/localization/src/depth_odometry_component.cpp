@@ -66,11 +66,10 @@ void DepthOdometry::update_callback(const driver_msgs::msg::Depth::UniquePtr msg
 
     // Publish
     {
-      // copy msg
       odom_msg->header = msg->header;
-      odom_msg->pose.position.z_depth = pos_z - offset_pos_z;
+      odom_msg->status.depth.id = common_msgs::msg::Status::NORMAL;
 
-      // add velocity
+      odom_msg->pose.position.z_depth = pos_z - offset_pos_z;
       odom_msg->twist.linear.z_depth = vel_z;
     }
     RCLCPP_DEBUG(this->get_logger(), "Calculated depth odometry");
@@ -86,7 +85,7 @@ void DepthOdometry::reset_callback(
   RCLCPP_INFO(this->get_logger(), "Depth odometry reset");
 
   response->success = true;
-  response->message = "";
+  response->message = "Depth odometry reset successfully";
 }
 
 void DepthOdometry::reset()

@@ -49,6 +49,11 @@ ament_auto_add_library(dvl_odometry_component SHARED
   ./src/dvl_odometry_component.cpp
 )
 
+## gnss_global_pos_component
+ament_auto_add_library(gnss_global_pos_component SHARED
+  ./src/gnss_global_position_component.cpp
+)
+
 ## localization_component
 ament_auto_add_library(localization_component SHARED
   ./src/localization_component.cpp
@@ -70,6 +75,11 @@ rclcpp_components_register_node(dvl_odometry_component
   EXECUTABLE dvl_odometry_component_node
 )
 
+rclcpp_components_register_node(gnss_global_pos_component
+  PLUGIN "localization::gnss::GnssGlobalPosition"
+  EXECUTABLE gnss_global_pos_component_node
+)
+
 rclcpp_components_register_node(localization_component
   PLUGIN "localization::Localization"
   EXECUTABLE localization_component_node
@@ -80,6 +90,7 @@ install(TARGETS
   depth_odometry_component
   imu_transform_component
   dvl_odometry_component
+  gnss_global_pos_component
   localization_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

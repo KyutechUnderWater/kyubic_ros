@@ -9,13 +9,13 @@ import math  # for radians conversion and interpolation
 
 # カスタムメッセージ型のインポート
 try:
-    from localization_msgs.msg import Odometry, Point, EulerAngle, Pose, Twist
+    from localization_msgs.msg import Odometry, Point, Pose, BaseAxes
 except ImportError:
     print(
         "Error: Could not import custom messages. "
         "Please ensure 'localization_msgs' package is built in your ROS2 workspace."
     )
-    print("Example: from your_package_name.msg import Odometry, Point, EulerAngle, Pose, Twist")
+    print("Example: from your_package_name.msg import Odometry, Point, Pose, BaseAxes")
     sys.exit(1)
 
 import sys
@@ -212,22 +212,20 @@ class OdometryPublisher(Node):
         odom_msg.pose.position.y = interp_y
         odom_msg.pose.position.z_depth = interp_z
         odom_msg.pose.position.z_altitude = 0.0  # CSVにないので0.0
-        odom_msg.pose.position.z_altitude_estimate = 0.0  # CSVにないので0.0
 
         # Orientationの設定
-        odom_msg.pose.orientation = EulerAngle()
+        odom_msg.pose.orientation = Vector3()
         odom_msg.pose.orientation.x = interp_roll
         odom_msg.pose.orientation.y = 0.0  # CSVにないので0.0
         odom_msg.pose.orientation.z = interp_yaw
 
         # Twistの設定 (計算した速度・角速度を設定)
-        odom_msg.twist = Twist()
+        odom_msg.twist = BaseAxes()
         odom_msg.twist.linear = Point()
         odom_msg.twist.linear.x = self.current_linear_x
         odom_msg.twist.linear.y = self.current_linear_y
         odom_msg.twist.linear.z_depth = self.current_linear_z
         odom_msg.twist.linear.z_altitude = 0.0  # CSVにないので0.0
-        odom_msg.twist.linear.z_altitude_estimate = 0.0  # CSVにないので0.0
 
         odom_msg.twist.angular = Vector3()
         odom_msg.twist.angular.x = self.current_angular_roll  # rollの角速度

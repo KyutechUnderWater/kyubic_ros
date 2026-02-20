@@ -9,11 +9,6 @@
 
 #include "localization/imu_transform_component.hpp"
 
-#include <cmath>
-#include <cstdlib>
-#include <functional>
-#include <numbers>
-
 namespace localization::imu
 {
 
@@ -41,8 +36,14 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
     odom_msg->status.imu.id = common_msgs::msg::Status::ERROR;
   } else {
     // z-axis transform
+    double accel_x = msg->accel.y;
+    double accel_y = -msg->accel.y;
     double gyro_x = msg->gyro.y;
     double gyro_y = -msg->gyro.x;
+
+    // circular buffer for calculate offset
+    accel_z[count++ % 100] = msg->accel.z;
+    if (count == 1e6) count = 100;
 
     roll = msg->orient.y;
     pitch = -msg->orient.x;
@@ -55,6 +56,12 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
     // Publish
     {
       odom_msg->header = msg->header;
+      odom_msg->status.imu.id = common_msgs::msg::Status::NORMAL;
+
+      odom_msg->accel.linear.x = accel_x;
+      odom_msg->accel.linear.y = accel_y;
+      odom_msg->accel.linear.z_depth = msg->accel.z - offset_accel_z;
+      odom_msg->accel.linear.z_altitude = -msg->accel.z + offset_accel_z;
 
       odom_msg->twist.angular.x = gyro_x;
       odom_msg->twist.angular.y = gyro_y;
@@ -62,7 +69,6 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
 
       odom_msg->pose.orientation.x = roll - offset_angle.at(0);
       odom_msg->pose.orientation.y = pitch - offset_angle.at(1);
-
       odom_msg->pose.orientation.z = yaw_offset;
     }
     RCLCPP_DEBUG(this->get_logger(), "Calculated IMU transform");
@@ -78,10 +84,15 @@ void IMUTransform::reset_callback(
   RCLCPP_INFO(this->get_logger(), "Reset");
 
   response->success = true;
-  response->message = "";
+  response->message = "IMU transform reset successfully";
 }
 
-void IMUTransform::reset() { offset_angle = {roll, pitch, yaw}; }
+void IMUTransform::reset()
+{
+  // NOTE: After 2seconds(when 50Hz) from node start, available to calculate offset
+  offset_angle = {roll, pitch, yaw};
+  offset_accel_z = std::accumulate(accel_z.begin(), accel_z.end(), 0.0) / accel_z.size();
+}
 
 }  // namespace localization::imu
 

@@ -4,11 +4,14 @@
     offset_y: 0.0
     offset_z: 0.0
 
+/localization/gnss/gnss_global_position_component:
+  ros__parameters:
+    coord_system_id: 3
+    azimuth_offset: 0
 
 /localization/localization_component:
   ros__parameters:
-    coord_system_id: 3
     depth: true # If true, depth enable
     imu: true # If true, imu enable
-    dvl: true # If true, dvl enable. Required imu is true.
-    gnss: false # If true, calculate global possition
+    dvl: true # If true, dvl enable. The imu is automatically true.
+    gnss: false # If true, calculate global possition. The imu and dvl is automatically true.
