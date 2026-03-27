@@ -54,6 +54,7 @@ void Environment::protolink_callback(const ProtoEnvironment & _msg)
   auto msg = std::make_unique<driver_msgs::msg::Environment>(
     protolink__driver_msgs__Environment::convert(_msg));
   msg->header.stamp = this->get_clock()->now();
+  msg->status.id = common_msgs::msg::Status::NORMAL;
 
   pub_->publish(std::move(msg));
   RCLCPP_DEBUG(

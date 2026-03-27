@@ -44,9 +44,15 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
-  if (!msg->velocity_valid || imu_msg_->status.imu.id == common_msgs::msg::Status::ERROR) {
-    RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
+  bool imu_updated = (this->get_clock()->now() - imu_msg_->header.stamp) < 50ms;
+
+  if (
+    !msg->velocity_valid || !imu_updated ||
+    imu_msg_->status.imu.id == common_msgs::msg::Status::ERROR) {
+    RCLCPP_ERROR(
+      this->get_logger(), "Don't calculate odometry. Because dvl or imu data is invalid");
     odom_msg->header = msg->header;
+    odom_msg->status.imu.id = common_msgs::msg::Status::ERROR;
     odom_msg->status.dvl.id = common_msgs::msg::Status::ERROR;
   } else {
     auto now = this->get_clock()->now();
@@ -74,17 +80,20 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 
     {
       odom_msg->header = msg->header;
+      odom_msg->status.imu.id = imu_msg_->status.imu.id;
+      odom_msg->status.dvl.id = common_msgs::msg::Status::NORMAL;
 
       odom_msg->pose.position.x = pos_x;
       odom_msg->pose.position.y = pos_y;
       odom_msg->pose.position.z_altitude = msg->altitude;
 
-      odom_msg->pose.orientation = imu_msg_->pose.orientation;
-      odom_msg->twist.angular = imu_msg_->twist.angular;
-
       odom_msg->twist.linear.x = vel_robot_world.x();
       odom_msg->twist.linear.y = vel_robot_world.y();
       odom_msg->twist.linear.z_altitude = vel_robot_world.z();
+
+      odom_msg->pose.orientation = imu_msg_->pose.orientation;
+      odom_msg->twist.angular = imu_msg_->twist.angular;
+      odom_msg->accel = imu_msg_->accel;
     }
     RCLCPP_DEBUG(this->get_logger(), "Calculated DVL odometry");
   }
@@ -104,7 +113,7 @@ void DVLOdometry::reset_callback(
   RCLCPP_INFO(this->get_logger(), "Reset");
 
   response->success = true;
-  response->message = "";
+  response->message = "DVL odometry reset successfully";
 }
 
 void DVLOdometry::reset()

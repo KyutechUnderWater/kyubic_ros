@@ -52,6 +52,7 @@ void Leak::protolink_callback(const ProtoBoolStamped & _msg)
   auto msg = std::make_unique<driver_msgs::msg::BoolStamped>(
     protolink__driver_msgs__BoolStamped::convert(_msg));
   msg->header.stamp = this->get_clock()->now();
+  msg->status.id = common_msgs::msg::Status::NORMAL;
 
   pub_->publish(std::move(msg));
   RCLCPP_DEBUG(this->get_logger(), "Protolink Publish  --->  data: %d\n", _msg.data());

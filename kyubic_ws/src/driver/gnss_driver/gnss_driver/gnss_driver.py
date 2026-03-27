@@ -4,6 +4,7 @@ from sensor_msgs.msg import NavSatFix, NavSatStatus
 from std_msgs.msg import Float64
 from std_msgs.msg import Float32MultiArray
 from driver_msgs.msg import Gnss
+from common_msgs.msg import Status
 import sys
 import socket
 import pynmea2
@@ -60,7 +61,7 @@ class GnssPublisher(Node):
             self.get_logger().info("Connection successful.")
 
             buffer = ""
-            timeout_count = 0  
+            timeout_count = 0
 
             while rclpy.ok():
                 try:
@@ -68,7 +69,7 @@ class GnssPublisher(Node):
                     if not raw_data:
                         self.get_logger().warning("Connection closed by server.")
                         break
-                    timeout_count = 0# データが来たらリセット
+                    timeout_count = 0  # データが来たらリセット
                     buffer += raw_data
                 except socket.timeout:
                     timeout_count += 1
@@ -80,7 +81,7 @@ class GnssPublisher(Node):
 
                 except Exception as e:
                     self.get_logger().error(f"Socket error: {e}")
-                    break                
+                    break
 
                 while "\n" in buffer:
                     line, buffer = buffer.split("\n", 1)
@@ -216,9 +217,9 @@ class GnssPublisher(Node):
                                     f"Direction: {self.latest_azimuth:.2f} degrees"
                                 )
 
+                            gnss_data_msg.status.id = Status.NORMAL
                             self.gnss_data_publisher_.publish(gnss_data_msg)
 
-                    
                     except pynmea2.ParseError as e:
                         self.get_logger().warning(
                             f'Failed to parse NMEA sentence: "{line}". Reason: {e}'

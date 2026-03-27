@@ -32,7 +32,7 @@ BT::NodeStatus ResetLocalization::onStart()
   std::chrono::duration<double> timeout(timeout_sec_opt.value_or(1.0));
 
   if (!client_ || last_service_name_ != service_name) {
-    client_ = ros_node_->create_client<localization_msgs::srv::Reset>(service_name);
+    client_ = ros_node_->create_client<std_srvs::srv::Trigger>(service_name);
     last_service_name_ = service_name;
   }
 
@@ -43,9 +43,7 @@ BT::NodeStatus ResetLocalization::onStart()
     return BT::NodeStatus::FAILURE;
   }
 
-  auto request = std::make_shared<localization_msgs::srv::Reset::Request>();
-  request->azimuth = 0.0;
-
+  auto request = std::make_shared<std_srvs::srv::Trigger::Request>();
   RCLCPP_INFO(
     ros_node_->get_logger(), "[%s] Calling localization reset: %s", this->name().c_str(),
     service_name.c_str());

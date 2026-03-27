@@ -18,6 +18,7 @@
   <depend>behaviortree_cpp</depend>
   <depend>joy_common</depend>
 
+  <depend>std_srvs</depend>
   <depend>lifecycle_msgs</depend>
   <depend>planner_msgs</depend>
   <depend>driver_msgs</depend>

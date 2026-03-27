@@ -9,18 +9,6 @@
 
 #include "localization/localization_component.hpp"
 
-#include <functional>
-#include <future>
-#include <geodetic_converter/geodetic_converter.hpp>
-#include <memory>
-#include <rclcpp/client.hpp>
-#include <rclcpp/logging.hpp>
-#include <rclcpp/qos.hpp>
-#include <utility>
-
-#include "driver_msgs/msg/gnss.hpp"
-#include "localization_msgs/srv/reset.hpp"
-
 using namespace std::chrono_literals;
 
 namespace localization
@@ -28,47 +16,42 @@ namespace localization
 
 Localization::Localization(const rclcpp::NodeOptions & options) : Node("localization", options)
 {
-  coord_system_id = this->declare_parameter("coord_system_id", 1);
-  geo_converter_ = std::make_shared<common::GeodeticConverter>(coord_system_id);
-  origin_geodetic = geo_converter_->getOrigin();
+  depth_enable_ = this->declare_parameter("depth", false);
+  imu_enable_ = this->declare_parameter("imu", false);
+  dvl_enable_ = this->declare_parameter("dvl", false);
+  gnss_enable_ = this->declare_parameter("gnss", false);
 
-  bool depth_enable = this->declare_parameter("depth", false);
-  bool imu_enable = this->declare_parameter("imu", false);
-  bool dvl_enable = this->declare_parameter("dvl", false);
-  gnss_enable = this->declare_parameter("gnss", false);
-  enabled_sensor |= depth_enable << 2 | imu_enable << 1 | (imu_enable ? dvl_enable : 0);
-
-  gnss_msg_ = std::make_shared<driver_msgs::msg::Gnss>();
-  imu_raw_msg_ = std::make_shared<driver_msgs::msg::IMU>();
+  odom_depth_ = std::make_shared<localization_msgs::msg::Odometry>();
   odom_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
-  odom_msg_->pose.global_pos.coordinate_system_id = coord_system_id;
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   // Create publisher
-  pub_odom_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
-  marker_pub_ =
-    this->create_publisher<visualization_msgs::msg::MarkerArray>("/fixed_locations", 10);
+  pub_ = create_publisher<localization_msgs::msg::Odometry>("odom", qos);
 
-  // Create subscription
-  gnss_cb_group_ = this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-  auto gnss_sub_opt = rclcpp::SubscriptionOptions();
-  gnss_sub_opt.callback_group = gnss_cb_group_;
+  // Create subscriber
+  if (depth_enable_) {
+    enabled_sensors_ |= 0b00000001;
+    sub_depth_ = create_subscription<localization_msgs::msg::Odometry>(
+      "depth/odom", qos, std::bind(&Localization::depth_callback, this, std::placeholders::_1));
+  }
 
-  sub_depth_ = create_subscription<localization_msgs::msg::Odometry>(
-    "depth/odom", qos, std::bind(&Localization::depth_callback, this, std::placeholders::_1));
-  sub_imu_ = create_subscription<localization_msgs::msg::Odometry>(
-    "imu/transformed", qos, std::bind(&Localization::imu_callback, this, std::placeholders::_1));
-  sub_dvl_ = create_subscription<localization_msgs::msg::Odometry>(
-    "dvl/odom", qos, std::bind(&Localization::dvl_callback, this, std::placeholders::_1));
-  sub_gnss_ = create_subscription<driver_msgs::msg::Gnss>(
-    "gnss", qos, std::bind(&Localization::gnss_callback, this, std::placeholders::_1),
-    gnss_sub_opt);
-  sub_imu_raw_ = create_subscription<driver_msgs::msg::IMU>(
-    "imu", qos, std::bind(&Localization::imu_raw_callback, this, std::placeholders::_1));
+  if (gnss_enable_) {
+    enabled_sensors_ |= 0b00001110;
+    sub_gnss_ = create_subscription<localization_msgs::msg::Odometry>(
+      "gnss/global_pos", qos, std::bind(&Localization::gnss_callback, this, std::placeholders::_1));
+  } else if (dvl_enable_) {
+    enabled_sensors_ |= 0b00000110;
+    sub_dvl_ = create_subscription<localization_msgs::msg::Odometry>(
+      "dvl/odom", qos, std::bind(&Localization::dvl_callback, this, std::placeholders::_1));
+  } else if (imu_enable_) {
+    enabled_sensors_ |= 0b00000010;
+    sub_imu_ = create_subscription<localization_msgs::msg::Odometry>(
+      "imu/transformed", qos, std::bind(&Localization::imu_callback, this, std::placeholders::_1));
+  }
 
   // Create server
-  srv_ = create_service<localization_msgs::srv::Reset>(
+  srv_ = create_service<std_srvs::srv::Trigger>(
     "reset",
     std::bind(&Localization::reset_callback, this, std::placeholders::_1, std::placeholders::_2),
     qos, nullptr);
@@ -78,6 +61,7 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
   client_depth_ = create_client<std_srvs::srv::Trigger>("depth/reset", qos, client_cb_group_);
   client_imu_ = create_client<std_srvs::srv::Trigger>("imu/reset", qos, client_cb_group_);
   client_dvl_ = create_client<std_srvs::srv::Trigger>("dvl/reset", qos, client_cb_group_);
+  client_gnss_ = create_client<std_srvs::srv::Trigger>("gnss/reset", qos, client_cb_group_);
 
   // Create wall timer
   timer_ = create_wall_timer(100ms, std::bind(&Localization::publisher, this));
@@ -85,218 +69,77 @@ Localization::Localization(const rclcpp::NodeOptions & options) : Node("localiza
 
 void Localization::depth_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
 {
-  odom_msg_->header = msg->header;
-  odom_msg_->status.depth.id = msg->status.depth.id;
-  odom_msg_->pose.position.z_depth = msg->pose.position.z_depth;
-  odom_msg_->twist.linear.z_depth = msg->twist.linear.z_depth;
+  odom_depth_->header = msg->header;
+  odom_depth_->status.depth.id = msg->status.depth.id;
+  odom_depth_->pose.position.z_depth = msg->pose.position.z_depth;
+  odom_depth_->twist.linear.z_depth = msg->twist.linear.z_depth;
 
-  all_updated |= 4;
+  updated_ |= 0b00000001;
   RCLCPP_DEBUG(this->get_logger(), "Updated Depth odometry");
 }
 
-void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
+void Localization::imu_callback(const localization_msgs::msg::Odometry::SharedPtr msg)
 {
-  odom_msg_->header = msg->header;
-  odom_msg_->status.imu.id = msg->status.imu.id;
-  odom_msg_->pose.orientation = msg->pose.orientation;
-  odom_msg_->twist.angular = msg->twist.angular;
-
-  all_updated |= 2;
+  odom_msg_ = msg;
+  updated_ |= 0b00000010;
   RCLCPP_DEBUG(this->get_logger(), "Updated IMU transformed");
 }
 
-void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePtr msg)
+void Localization::dvl_callback(const localization_msgs::msg::Odometry::SharedPtr msg)
 {
-  odom_msg_->header = msg->header;
-  odom_msg_->status.dvl.id = msg->status.dvl.id;
-
-  odom_msg_->pose.position.x = msg->pose.position.x;
-  odom_msg_->pose.position.y = msg->pose.position.y;
-  odom_msg_->pose.position.z_altitude = msg->pose.position.z_altitude;
-
-  odom_msg_->pose.orientation = msg->pose.orientation;
-  odom_msg_->twist.angular = msg->twist.angular;
-
-  odom_msg_->twist.linear.x = msg->twist.linear.x;
-  odom_msg_->twist.linear.y = msg->twist.linear.y;
-  odom_msg_->twist.linear.z_altitude = msg->twist.linear.z_altitude;
-
-  all_updated |= 1;
+  odom_msg_ = msg;
+  updated_ |= 0b00000110;
   RCLCPP_DEBUG(this->get_logger(), "Updated DVL odometry");
 }
 
-void Localization::gnss_callback(driver_msgs::msg::Gnss::UniquePtr msg)
+void Localization::gnss_callback(const localization_msgs::msg::Odometry::SharedPtr msg)
 {
-  gnss_msg_ = std::move(msg);
-  gnss_updated = true;
-  RCLCPP_DEBUG(this->get_logger(), "Updated GNSS data");
-}
-
-void Localization::imu_raw_callback(driver_msgs::msg::IMU::UniquePtr msg)
-{
-  imu_raw_msg_ = std::move(msg);
-  RCLCPP_DEBUG(this->get_logger(), "Updated IMU data");
-}
-
-void Localization::_calc_global_pos(const localization_msgs::msg::Odometry::SharedPtr odom_)
-{
-  double azimuth_rad = (azimuth + reference_plane.meridian_convergence) * std::numbers::pi / 180;
-  double plane_x =
-    odom_->pose.position.x * cos(azimuth_rad) - odom_->pose.position.y * sin(azimuth_rad);
-  double plane_y =
-    odom_->pose.position.x * sin(azimuth_rad) + odom_->pose.position.y * cos(azimuth_rad);
-
-  plane_x += reference_plane.x;
-  plane_y += reference_plane.y;
-
-  common::Geodetic current_geodetic = geo_converter_->xy2geo({plane_x, plane_y, 0.0, 0.0});
-
-  auto & global_pos_msg = odom_->pose.global_pos;
-  global_pos_msg.current_pose.plane_x = plane_x;
-  global_pos_msg.current_pose.plane_y = plane_y;
-  global_pos_msg.current_pose.latitude = current_geodetic.latitude;
-  global_pos_msg.current_pose.longitude = current_geodetic.longitude;
-  global_pos_msg.ref_pose.latitude = reference_geodetic.latitude;
-  global_pos_msg.ref_pose.longitude = reference_geodetic.longitude;
-  global_pos_msg.ref_pose.plane_x = reference_plane.x;
-  global_pos_msg.ref_pose.plane_y = reference_plane.y;
-  global_pos_msg.ref_pose.meridian_convergence = reference_plane.meridian_convergence;
-  global_pos_msg.azimuth = azimuth;
-
-  std::array<common::PlaneXY, 6> xy_geo;
-  for (int i = 0; i < 4; i++) {
-    common::Geodetic anchor;
-    anchor.latitude = geo_converter_->dms2deg(ANCHOR_POINTS_DMS[i][0]);
-    anchor.longitude = geo_converter_->dms2deg(ANCHOR_POINTS_DMS[i][1]);
-    xy_geo[i] = geo_converter_->geo2xy({anchor.latitude, anchor.longitude, 0.0, 0.0});
-  }
-  xy_geo[4] =
-    geo_converter_->geo2xy({reference_geodetic.latitude, reference_geodetic.longitude, 0.0, 0.0});
-  xy_geo[5] =
-    geo_converter_->geo2xy({current_geodetic.latitude, current_geodetic.longitude, 0.0, 0.0});
-
-  int id = 0;
-  double scale = 1.0;
-  visualization_msgs::msg::MarkerArray marker_array;
-
-  visualization_msgs::msg::Marker marker;
-  marker.header.frame_id = "map";
-  marker.header.stamp = this->get_clock()->now();
-  marker.ns = "fixed_points";
-  marker.id = id++;
-  marker.type = visualization_msgs::msg::Marker::CUBE;
-  marker.action = visualization_msgs::msg::Marker::ADD;
-  marker.pose.position.x = 0.0;
-  marker.pose.position.y = 0.0;
-  marker.scale.x = scale;
-  marker.scale.y = scale;
-  marker.scale.z = scale;
-  marker.color.a = 0.8;
-  marker.color.r = 1.0;
-  marker.color.g = 0.0;
-  marker.color.b = 0.0;
-  marker.lifetime = rclcpp::Duration(0, 0);
-  marker_array.markers.push_back(marker);
-
-  for (size_t i = 1; i < xy_geo.size(); i++) {
-    xy_geo[i].x -= xy_geo[0].x;
-    xy_geo[i].y -= xy_geo[0].y;
-
-    visualization_msgs::msg::Marker marker;
-    marker.header.frame_id = "map";
-    marker.header.stamp = this->get_clock()->now();
-    marker.ns = "fixed_points";
-    marker.id = id++;
-    marker.type = visualization_msgs::msg::Marker::CUBE;
-    marker.action = visualization_msgs::msg::Marker::ADD;
-    marker.pose.position.x = xy_geo[i].x;
-    marker.pose.position.y = xy_geo[i].y;
-    marker.scale.x = scale;
-    marker.scale.y = scale;
-    marker.scale.z = scale;
-    marker.color.a = 0.8;
-    marker.color.r = 1.0;
-    marker.color.g = 0.0;
-    marker.color.b = 0.0;
-    marker.lifetime = rclcpp::Duration(0, 0);
-    marker_array.markers.push_back(marker);
-  }
-  marker_array.markers[0].color.r = 1.0;
-  marker_array.markers[0].color.g = 1.0;
-  marker_array.markers[0].color.b = 1.0;
-  marker_array.markers[4].color.r = 1.0;
-  marker_array.markers[4].color.g = 1.0;
-  marker_array.markers[5].color.r = 0.0;
-  marker_array.markers[5].color.b = 1.0;
-
-  marker_pub_->publish(marker_array);
+  odom_msg_ = msg;
+  updated_ |= 0b00001110;
+  RCLCPP_DEBUG(this->get_logger(), "Updated DVL odometry");
 }
 
 void Localization::publisher()
 {
-  if (all_updated != enabled_sensor) {
+  if (updated_ != enabled_sensors_) {
     RCLCPP_DEBUG(this->get_logger(), "Don't update. Wait data comming.");
     return;
   }
   RCLCPP_INFO(this->get_logger(), "Updated localization");
 
-  auto odom_msg_buf_ = std::make_shared<localization_msgs::msg::Odometry>(*odom_msg_);
-
-  // Calc global position from odom
-  if (gnss_enable) _calc_global_pos(odom_msg_buf_);
-
   // Copy object (shared_ptr -> unique_ptr)
-  auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>(*odom_msg_buf_);
-  pub_odom_->publish(std::move(odom_msg));
+  auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>(*odom_msg_);
+
+  // Copy depth data
+  if (depth_enable_) {
+    odom_msg->status.depth.id = odom_depth_->status.depth.id;
+    odom_msg->pose.position.z_depth = odom_depth_->pose.position.z_depth;
+    odom_msg->twist.linear.z_depth = odom_depth_->twist.linear.z_depth;
+  }
+
+  pub_->publish(std::move(odom_msg));
 
   // Reset flag
-  all_updated = 0b11111000;
+  updated_ = 0;
 }
 
 void Localization::reset_callback(
-  const localization_msgs::srv::Reset::Request::SharedPtr reqest,
-  const localization_msgs::srv::Reset::Response::SharedPtr response)
+  [[maybe_unused]] const std_srvs::srv::Trigger::Request::SharedPtr request,
+  const std_srvs::srv::Trigger::Response::SharedPtr response)
 {
-  if (gnss_enable) {
-    RCLCPP_INFO(this->get_logger(), "Waiting for GNSS data...");
-
-    gnss_updated = false;
-
-    bool timeout = true;
-    for (int i = 0; i < 15; i++) {
-      if (gnss_updated) {
-        timeout = false;
-        break;
-      }
-      std::this_thread::sleep_for(200ms);
-    }
-
-    // Check timeout
-    if (timeout) {
-      response->success = false;
-      response->message = "Timeout: No GNSS data in 3s.";
-      RCLCPP_ERROR(this->get_logger(), "%s", response->message.c_str());
-      return;
-    }
-
-    azimuth = imu_raw_msg_->orient.z + reqest->azimuth;
-    reference_geodetic.latitude = gnss_msg_->fix.latitude;
-    reference_geodetic.longitude = gnss_msg_->fix.longitude;
-    reference_plane =
-      geo_converter_->geo2xy({reference_geodetic.latitude, reference_geodetic.longitude, 0.0, 0.0});
-  }
-
   int result = ~this->reset();
 
   // Check reset
   std::string error_msg = "";
-  if (result & 1) error_msg += "DVL didn't reset\n";
+  if (result & 1) error_msg += "Depth didn't reset\n";
   if ((result >> 1) & 1) error_msg += "IMU didn't reset\n";
-  if ((result >> 2) & 1) error_msg += "Depth didn't reset\n";
+  if ((result >> 2) & 1) error_msg += "DVL didn't reset\n";
+  if ((result >> 3) & 1) error_msg += "GNSS didn't reset\n";
 
   // Prepare response message
   if (error_msg == "") {
     response->success = true;
+    response->message = "Localization reset successfully";
     RCLCPP_INFO(this->get_logger(), "The reset was successful");
   } else {
     response->success = false;
@@ -334,6 +177,13 @@ bool Localization::_reset_response(
   FutureAndRequestId future_, std::chrono::duration<long, std::ratio<1, 1000>> dulation,
   std::string service_name)
 {
+  // Check future empty
+  if (!future_.valid()) {
+    RCLCPP_ERROR(
+      this->get_logger(), "Invalid future: %s request was not sent.", service_name.c_str());
+    return false;
+  }
+
   std::future_status status = future_.wait_for(dulation);
   if (status == std::future_status::ready) {
     if (future_.get()->success) {
@@ -350,15 +200,42 @@ bool Localization::_reset_response(
 
 int Localization::reset()
 {
-  FutureAndRequestId depth_future_, imu_future_, dvl_future_;
-  if (_is_server_active(client_depth_)) depth_future_ = _reset_request(client_depth_);
-  if (_is_server_active(client_imu_)) imu_future_ = _reset_request(client_imu_);
-  if (_is_server_active(client_dvl_)) dvl_future_ = _reset_request(client_dvl_);
+  // Define a struct to group the target sensor information for the reset
+  struct ResetTarget
+  {
+    bool is_enabled;
+    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client;
+    const char * name;
+    int bit_shift;
+    FutureAndRequestId future;
+  };
+
+  // Create an array of configurations for each sensor
+  ResetTarget targets[] = {
+    {depth_enable_, client_depth_, "depth/reset", 0, {}},
+    {imu_enable_, client_imu_, "imu/reset", 1, {}},
+    {dvl_enable_, client_dvl_, "dvl/reset", 2, {}},
+    {gnss_enable_, client_gnss_, "gnss/reset", 3, {}}};
+
+  // Send reset requests in parallel only to the enabled sensors
+  for (auto & target : targets) {
+    if (target.is_enabled && _is_server_active(target.client)) {
+      target.future = _reset_request(target.client);
+    }
+  }
 
   int result = 0;
-  result |= static_cast<int>(_reset_response(depth_future_, 5000ms, "depth/reset")) << 2;
-  result |= static_cast<int>(_reset_response(imu_future_, 5000ms, "imu/reset")) << 1;
-  result |= static_cast<int>(_reset_response(dvl_future_, 5000ms, "dvl/reset"));
+
+  // Collect results and perform bitwise operations
+  for (auto & target : targets) {
+    if (!target.is_enabled) {
+      result |= (1 << target.bit_shift);
+    } else {
+      // Wait for the response and reflect the success/failure in the specific bit
+      bool success = _reset_response(target.future, 1000ms, target.name);
+      result |= (static_cast<int>(success) << target.bit_shift);
+    }
+  }
 
   return result;
 }

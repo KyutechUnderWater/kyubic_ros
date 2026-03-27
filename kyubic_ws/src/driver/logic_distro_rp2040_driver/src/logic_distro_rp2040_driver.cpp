@@ -84,6 +84,7 @@ void LogicDistroRP2040::protolink_callback(const ProtoPowerState & _msg)
   driver_msgs::msg::PowerState msg = protolink__driver_msgs__PowerState::convert(_msg);
   msg.header.stamp = this->get_clock()->now();
   msg.header.frame_id = "power_link";
+  msg.status.id = common_msgs::msg::Status::NORMAL;
 
   protolink_publisher_udp_->send(_msg);
   pub_->publish(msg);

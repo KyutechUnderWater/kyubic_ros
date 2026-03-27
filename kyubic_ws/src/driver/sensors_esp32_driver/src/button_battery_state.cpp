@@ -57,6 +57,7 @@ void ButtonBatteryState::protolink_callback(const ProtoButtonBatteryState & _msg
     protolink__driver_msgs__ButtonBatteryState::convert(_msg));
   msg->header.stamp = this->get_clock()->now();
   msg->header.frame_id = "battery";
+  msg->status.id = common_msgs::msg::Status::NORMAL;
 
   pub_->publish(std::move(msg));
   RCLCPP_DEBUG(

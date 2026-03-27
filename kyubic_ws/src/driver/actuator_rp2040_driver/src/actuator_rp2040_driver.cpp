@@ -144,6 +144,7 @@ void ActuatorRP2040::wrench_callback(geometry_msgs::msg::WrenchStamped::SharedPt
 
   // 1. Prepare and Publish ROS Message
   auto thruster_msg = std::make_unique<driver_msgs::msg::Thruster>();
+  thruster_msg->status.id = common_msgs::msg::Status::NORMAL;
   thruster_msg->thr1 = thrusts[0];
   thruster_msg->thr2 = thrusts[1];
   thruster_msg->thr3 = thrusts[2];
