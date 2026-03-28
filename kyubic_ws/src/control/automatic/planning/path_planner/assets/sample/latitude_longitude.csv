@@ -1,12 +1,11 @@
 parameter_label,value,x,y,z,z_mode,roll,yaw,wait_ms,fine,blank,catmull_x,catmull_y,catmull_z,catmull_z_mode,catmull_roll,catmull_yaw,catmull_wait_ms,catmull_fine
-limit_speed_rate,0.8,,,,,,,,,,,,,,,,,
-timeout_sec,120,,,,,,,,,,,,,,,,,
 checkpoint_end_row,3,,,,,,,,,,,,,,,,,
 catmull_rom,0,,,,,,,,,,,,,,,,,
 catmull_end_row,0,,,,,,,,,,,,,,,,,
 catmull_density,6,,,,,,,,,,,,,,,,,
 catmull_min_distance,0.2,,,,,,,,,,,,,,,,,
 catmull_orient_LERP,1,,,,,,,,,,,,,,,,,
+timeout_sec,120,,,,,,,,,,,,,,,,,
 use_geodetic_coords,1,,,,,,,,,,,,,,,,,
 origin_lat,33.900000,,,,,,,,,,,,,,,,,
 origin_lon,130.900000,,,,,,,,,,,,,,,,,

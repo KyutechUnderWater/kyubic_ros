@@ -8,7 +8,7 @@
  **********************************************/
 
 #include "path_planner/path_csv_loader.hpp"
-#include <geodetic_converter/geodetic_converter.h>
+#include <geodetic_converter/geodetic_converter.hpp>
 
 #include <algorithm>
 #include <fstream>
@@ -101,11 +101,20 @@ void PathCsvLoader::parse(const std::string & csv_path)
   while (std::getline(file, line)) {
     line_num++;
 
+    if (!line.empty() && line.back() == '\r') {
+      line.pop_back();
+    }
+
     std::stringstream ss(line);
     std::string token;
     std::vector<std::string> tokens;
     while (std::getline(ss, token, ',')) {
       tokens.push_back(token);
+    }
+    
+    // std::getline omits the last empty field if the string ends with the delimiter
+    if (!line.empty() && line.back() == ',') {
+      tokens.push_back("");
     }
 
     // データがあるか確認
@@ -150,9 +159,14 @@ void PathCsvLoader::parse(const std::string & csv_path)
   }
 
   // --- Geodetic Initialization ---
-  geodetic_converter::GeodeticConverter geodetic_conv;
-  if(data_->params_.use_geodetic_coords) {
-    geodetic_conv.initialiseReference(data_->params_.origin_lat, data_->params_.origin_lon, 0.0);
+  std::shared_ptr<common::GeodeticConverter> geodetic_conv;
+  common::PlaneXY origin_xy;
+  if (data_->params_.use_geodetic_coords) {
+    geodetic_conv = std::make_shared<common::GeodeticConverter>(data_->params_.system_id);
+    common::Geodetic origin_geo;
+    origin_geo.latitude = data_->params_.origin_lat;
+    origin_geo.longitude = data_->params_.origin_lon;
+    origin_xy = geodetic_conv->geo2xy(origin_geo);
   }
 
   // --- 第2パス: データ行を解析 ---
@@ -165,10 +179,14 @@ void PathCsvLoader::parse(const std::string & csv_path)
         double cp_y = stod_strict(tokens[3], "y");
         
         if (data_->params_.use_geodetic_coords) {
-          double lat = cp_x;
-          double lon = cp_y;
-          double dummy_z;
-          geodetic_conv.geodetic2Enu(lat, lon, 0.0, &cp_x, &cp_y, &dummy_z);
+          common::Geodetic target_geo;
+          target_geo.latitude = cp_x;
+          target_geo.longitude = cp_y;
+          common::PlaneXY target_xy = geodetic_conv->geo2xy(target_geo);
+          // Calculate relative offsets in local ENU or local Cartesian frame.
+          // JGD Plane Cartesian: X is North, Y is East. Assuming robot 'x' aligns with North and 'y' with East.
+          cp_x = target_xy.x - origin_xy.x;
+          cp_y = target_xy.y - origin_xy.y;
         }
 
         data_->checkpoints_.push_back(PoseData(
@@ -185,10 +203,12 @@ void PathCsvLoader::parse(const std::string & csv_path)
         double cat_y = stod_strict(tokens[offset + 3], "catmull_y");
         
         if (data_->params_.use_geodetic_coords) {
-          double lat = cat_x;
-          double lon = cat_y;
-          double dummy_z;
-          geodetic_conv.geodetic2Enu(lat, lon, 0.0, &cat_x, &cat_y, &dummy_z);
+          common::Geodetic target_geo;
+          target_geo.latitude = cat_x;
+          target_geo.longitude = cat_y;
+          common::PlaneXY target_xy = geodetic_conv->geo2xy(target_geo);
+          cat_x = target_xy.x - origin_xy.x;
+          cat_y = target_xy.y - origin_xy.y;
         }
 
         data_->catmulls_.push_back(PoseData(
