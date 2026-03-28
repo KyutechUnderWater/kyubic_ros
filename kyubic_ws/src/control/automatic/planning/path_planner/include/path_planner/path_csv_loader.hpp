@@ -32,6 +32,11 @@ public:
   bool catmull_orient_LERP = false;
   int timeout_sec = 0;
 
+  bool use_geodetic_coords = false;
+  double origin_lat = 0.0;
+  double origin_lon = 0.0;
+  int system_id = 0;
+
   void print() const
   {
     std::cout << "  checkpoint_end_row: " << checkpoint_end_row << std::endl;
@@ -147,6 +152,16 @@ private:
 
 public:
   explicit PathCsvLoader();
+
+  /**
+   * @brief デフォルトの原点（緯度/経度/系ID）をセットする
+   */
+  void setDefaultOrigin(double lat, double lon, int sys_id)
+  {
+    data_->params_.origin_lat = lat;
+    data_->params_.origin_lon = lon;
+    data_->params_.system_id = sys_id;
+  }
 
   /**
      * @brief CSVファイルをパースする

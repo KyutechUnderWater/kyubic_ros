@@ -8,6 +8,7 @@
  **********************************************/
 
 #include "path_planner/path_csv_loader.hpp"
+#include <geodetic_converter/geodetic_converter.h>
 
 #include <algorithm>
 #include <fstream>
@@ -134,10 +135,24 @@ void PathCsvLoader::parse(const std::string & csv_path)
         data_->params_.catmull_orient_LERP = stoi_strict(tokens[1], label);
       } else if (label == "timeout_sec") {
         data_->params_.timeout_sec = stoi_strict(tokens[1], label);
+      } else if (label == "use_geodetic_coords") {
+        data_->params_.use_geodetic_coords = stob_strict(tokens[1], label);
+      } else if (label == "origin_lat") {
+        data_->params_.origin_lat = stod_strict(tokens[1], label);
+      } else if (label == "origin_lon") {
+        data_->params_.origin_lon = stod_strict(tokens[1], label);
+      } else if (label == "system_id") {
+        data_->params_.system_id = stoi_strict(tokens[1], label);
       } else {
         throw std::runtime_error("Unkown parameter " + label);
       }
     }
+  }
+
+  // --- Geodetic Initialization ---
+  geodetic_converter::GeodeticConverter geodetic_conv;
+  if(data_->params_.use_geodetic_coords) {
+    geodetic_conv.initialiseReference(data_->params_.origin_lat, data_->params_.origin_lon, 0.0);
   }
 
   // --- 第2パス: データ行を解析 ---
@@ -146,8 +161,18 @@ void PathCsvLoader::parse(const std::string & csv_path)
     try {
       // Checkpointデータ
       if (is_allNonEmpty(std::vector<std::string>(tokens.begin() + 2, tokens.begin() + 7))) {
+        double cp_x = stod_strict(tokens[2], "x");
+        double cp_y = stod_strict(tokens[3], "y");
+        
+        if (data_->params_.use_geodetic_coords) {
+          double lat = cp_x;
+          double lon = cp_y;
+          double dummy_z;
+          geodetic_conv.geodetic2Enu(lat, lon, 0.0, &cp_x, &cp_y, &dummy_z);
+        }
+
         data_->checkpoints_.push_back(PoseData(
-          stod_strict(tokens[2], "x"), stod_strict(tokens[3], "y"), stod_strict(tokens[4], "z"),
+          cp_x, cp_y, stod_strict(tokens[4], "z"),
           stoi_strict(tokens[5], "z_mode"), stod_strict(tokens[6], "roll"),
           stod_strict(tokens[7], "yaw"), stod_strict(tokens[8], "wait_ms"),
           stob_strict(tokens[9], "fine")));
@@ -156,9 +181,19 @@ void PathCsvLoader::parse(const std::string & csv_path)
       uint8_t offset = 9;
       if (is_allNonEmpty(
             std::vector<std::string>(tokens.begin() + offset + 2, tokens.begin() + offset + 9))) {
+        double cat_x = stod_strict(tokens[offset + 2], "catmull_x");
+        double cat_y = stod_strict(tokens[offset + 3], "catmull_y");
+        
+        if (data_->params_.use_geodetic_coords) {
+          double lat = cat_x;
+          double lon = cat_y;
+          double dummy_z;
+          geodetic_conv.geodetic2Enu(lat, lon, 0.0, &cat_x, &cat_y, &dummy_z);
+        }
+
         data_->catmulls_.push_back(PoseData(
-          stod_strict(tokens[offset + 2], "catmull_x"),
-          stod_strict(tokens[offset + 3], "catmull_y"),
+          cat_x,
+          cat_y,
           stod_strict(tokens[offset + 4], "catmull_z"),
           stoi_strict(tokens[offset + 5], "catmull_z_mode"),
           stod_strict(tokens[offset + 6], "catmull_roll"),

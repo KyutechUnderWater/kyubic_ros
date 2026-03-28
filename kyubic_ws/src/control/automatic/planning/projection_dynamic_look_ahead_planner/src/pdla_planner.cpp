@@ -107,6 +107,21 @@ void PDLAPlanner::handle_accepted(
   RCLCPP_INFO(this->get_logger(), "CSV path: %s", file_path_.c_str());
 
   PathCsvLoader loader;
+
+  // Set default origin from current odometry if available
+  {
+    std::lock_guard<std::mutex> odom_lock(odom_mutex_);
+    if (current_odom_) {
+      loader.setDefaultOrigin(current_odom_->ref_pose.global_pos.latitude,
+                              current_odom_->ref_pose.global_pos.longitude,
+                              current_odom_->ref_pose.global_pos.coordinate_system_id);
+      RCLCPP_INFO(this->get_logger(), "Set default origin from current odom: lat=%.10f, lon=%.10f, id=%d",
+                  current_odom_->ref_pose.global_pos.latitude,
+                  current_odom_->ref_pose.global_pos.longitude,
+                  current_odom_->ref_pose.global_pos.coordinate_system_id);
+    }
+  }
+
   try {
     loader.parse(file_path_);
   } catch (const std::exception & e) {
