@@ -112,13 +112,15 @@ void PDLAPlanner::handle_accepted(
   {
     std::lock_guard<std::mutex> odom_lock(odom_mutex_);
     if (current_odom_) {
-      loader.setDefaultOrigin(current_odom_->pose.global_pos.ref_pose.latitude,
-                              current_odom_->pose.global_pos.ref_pose.longitude,
-                              current_odom_->pose.global_pos.coordinate_system_id);
-      RCLCPP_INFO(this->get_logger(), "Set default origin from current odom: lat=%.10f, lon=%.10f, id=%d",
-                  current_odom_->pose.global_pos.ref_pose.latitude,
-                  current_odom_->pose.global_pos.ref_pose.longitude,
-                  current_odom_->pose.global_pos.coordinate_system_id);
+      loader.setDefaultOrigin(
+        current_odom_->pose.global_pos.ref_pose.latitude,
+        current_odom_->pose.global_pos.ref_pose.longitude,
+        current_odom_->pose.global_pos.coordinate_system_id);
+      RCLCPP_INFO(
+        this->get_logger(), "Set default origin from current odom: lat=%.10f, lon=%.10f, id=%d",
+        current_odom_->pose.global_pos.ref_pose.latitude,
+        current_odom_->pose.global_pos.ref_pose.longitude,
+        current_odom_->pose.global_pos.coordinate_system_id);
     }
   }
 
