@@ -108,8 +108,18 @@ void PDLAPlanner::handle_accepted(
 
   PathCsvLoader loader;
 
-  // Set default origin from current odometry if available
-  {
+  // Read default origin from ROS parameters (global yaml)
+  double param_origin_lat = this->declare_parameter("origin_lat", 0.0);
+  double param_origin_lon = this->declare_parameter("origin_lon", 0.0);
+  int param_sys_id = this->declare_parameter("coord_system_id", 0);
+
+  if (param_origin_lat != 0.0 && param_origin_lon != 0.0) {
+    loader.setDefaultOrigin(param_origin_lat, param_origin_lon, param_sys_id);
+    RCLCPP_INFO(
+      this->get_logger(), "Set default origin from ROS params: lat=%.6f, lon=%.6f, id=%d",
+      param_origin_lat, param_origin_lon, param_sys_id);
+  } else {
+    // Fallback to current odometry if parameters are missing
     std::lock_guard<std::mutex> odom_lock(odom_mutex_);
     if (current_odom_) {
       loader.setDefaultOrigin(
@@ -208,7 +218,7 @@ void PDLAPlanner::_runPlannerLogic(
     odom_copy->status.imu.id == common_msgs::msg::Status::ERROR ||
     odom_copy->status.dvl.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
-    return;
+    //return;
 
     // TODO: Don't calculate the pid when some sensors become unusable
     // Control when some sensors become unusable
@@ -354,7 +364,18 @@ void PDLAPlanner::_runPlannerLogic(
       msg->targets.y = virtual_goal_point.y();
       msg->targets.z = virtual_goal_point.z();
       msg->targets.roll = target_pose_.at(step_idx).roll;
-      msg->targets.yaw = target_pose_.at(step_idx).yaw;
+
+      // Dynamic Yaw Control (Line-of-Sight)
+      double dx = virtual_goal_point.x() - odom_copy->pose.position.x;
+      double dy = virtual_goal_point.y() - odom_copy->pose.position.y;
+
+      // Ignore CSV yaw completely. Point towards virtual_goal_point.
+      // If the robot is extremely close to the goal, maintain current orientation to prevent spinning.
+      if (std::hypot(dx, dy) > 0.05) {
+        msg->targets.yaw = std::atan2(dy, dx) * 180.0 / M_PI;
+      } else {
+        msg->targets.yaw = odom_copy->pose.orientation.z;
+      }
 
       msg->has_master = true;
       msg->master.x = odom_copy->pose.position.x;

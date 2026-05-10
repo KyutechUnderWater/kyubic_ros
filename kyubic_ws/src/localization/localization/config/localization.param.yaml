@@ -1,14 +1,19 @@
+/**:
+  ros__parameters:
+    coord_system_id: 3
+    origin_lat: 33.900000
+    origin_lon: 130.900000
+
 /localization/dvl/dvl_odometry_component:
   ros__parameters:
-    offset_x: 0.4375
+    offset_x: 0.0
     offset_y: 0.0
     offset_z: 0.0
 
-
 /localization/localization_component:
   ros__parameters:
-    coord_system_id: 3
     depth: true # If true, depth enable
     imu: true # If true, imu enable
     dvl: true # If true, dvl enable. Required imu is true.
     gnss: false # If true, calculate global possition
+

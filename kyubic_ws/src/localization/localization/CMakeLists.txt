@@ -54,6 +54,11 @@ ament_auto_add_library(localization_component SHARED
   ./src/localization_component.cpp
 )
 
+## gnss_odometry_component
+ament_auto_add_library(gnss_odometry_component SHARED
+  ./src/gnss_odometry_component.cpp
+)
+
 # register components
 rclcpp_components_register_node(depth_odometry_component
   PLUGIN "localization::depth::DepthOdometry"
@@ -75,12 +80,18 @@ rclcpp_components_register_node(localization_component
   EXECUTABLE localization_component_node
 )
 
+rclcpp_components_register_node(gnss_odometry_component
+  PLUGIN "localization::gnss::GnssOdometry"
+  EXECUTABLE gnss_odometry_component_node
+)
+
 # set install config
 install(TARGETS
   depth_odometry_component
   imu_transform_component
   dvl_odometry_component
   localization_component
+  gnss_odometry_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin

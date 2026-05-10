@@ -22,6 +22,10 @@ def generate_launch_description():
         [FindPackageShare("qr_planner"), "config", "qr_planner.param.yaml"]
     )
 
+    cfg_localization = PathJoinSubstitution(
+        [FindPackageShare("localization"), "config", "localization.param.yaml"]
+    )
+
     cfg_wrench_planner = PathJoinSubstitution(
         [FindPackageShare("wrench_planner"), "config", "wrench_planner.param.yaml"]
     )
@@ -54,12 +58,13 @@ def generate_launch_description():
                 package="projection_dynamic_look_ahead_planner",
                 plugin="planner::pdla_planner::PDLAPlanner",
                 remappings=[
-                    ("odom", "/localization/odom"),
+                    ("odom", "/localization/gnss/odom"),
                     ("goal_current_odom", "/planner/wrench_planner/zoh_wrench_plan"),
                 ],
                 parameters=[
                     {"path_planner_path": path_planner_path},
                     cfg_pdla_planner,
+                    cfg_localization,
                 ],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
