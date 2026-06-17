@@ -73,6 +73,10 @@ void GnssOdometry::gnss_callback(const driver_msgs::msg::Gnss::UniquePtr msg)
   odom_msg->pose.global_pos.coordinate_system_id = coord_system_id_;
   odom_msg->pose.global_pos.ref_pose.latitude = origin_geo_.latitude;
   odom_msg->pose.global_pos.ref_pose.longitude = origin_geo_.longitude;
+  
+  // Set the current raw GNSS position for debugging/logging visibility
+  odom_msg->pose.global_pos.current_pose.latitude = msg->fix.latitude;
+  odom_msg->pose.global_pos.current_pose.longitude = msg->fix.longitude;
 
   if (last_imu_msg_) {
     odom_msg->pose.orientation = last_imu_msg_->pose.orientation;

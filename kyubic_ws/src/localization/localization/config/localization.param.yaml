@@ -1,8 +1,8 @@
 /**:
   ros__parameters:
-    coord_system_id: 3
-    origin_lat: 33.900000
-    origin_lon: 130.900000
+    coord_system_id: 2
+    origin_lat: 33.890094
+    origin_lon: 131.002511
 
 /localization/dvl/dvl_odometry_component:
   ros__parameters:

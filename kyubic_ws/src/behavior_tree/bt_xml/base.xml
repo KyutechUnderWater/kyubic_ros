@@ -10,7 +10,7 @@
       <Talker name="AutomatickTalker"
               message="Automatick Mode Start"
               topic_name="/talker"/>
-      <ResetLocalization service_name="/localization/reset"
+      <ResetLocalization service_name="/localization/depth/reset"
                          timeout_sec="2.0"/>
       <LifecycleManager name="ActivateZOHNode"
                         node_name="planner/wrench_planner/zoh_wrench_planner_component"
@@ -20,7 +20,7 @@
               message="Waypoint Action Start"
               topic_name="/talker"/>
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-                      csv_file_path="assets/sample/latitude_longitude.csv"/>
+                      csv_file_path="assets/sample/handy_test.csv"/>
       <Talker name="AutomatickTalker"
               message="Waypoint Action Successful"
               topic_name="/talker"/>
@@ -140,7 +140,7 @@
     <Action ID="ResetLocalization"
             editable="true">
       <input_port name="service_name"
-                  default="/localization/reset"/>
+                  default="/localization/depth/reset"/>
       <input_port name="timeout_sec"
                   default="1.0"/>
     </Action>

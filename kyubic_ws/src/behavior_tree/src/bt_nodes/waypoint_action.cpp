@@ -58,8 +58,9 @@ BT::NodeStatus WaypointAction::onResult(const WrappedResult & wr)
 void WaypointAction::onFeedback(const std::shared_ptr<const Feedback> feedback)
 {
   std::string s = std::format(
-    "WaypointAction Feedback: Current Index {:2d}, x: {:.2f}, y: {:.2f}, z_depth: {:.2f}",
-    feedback->step_idx, feedback->odom.pose.position.x, feedback->odom.pose.position.y,
+    "WaypointAction Feedback: Current Index {:2d}, Lat: {:.6f}, Lon: {:.6f}, z_depth: {:.2f}",
+    feedback->step_idx, feedback->odom.pose.global_pos.current_pose.latitude, 
+    feedback->odom.pose.global_pos.current_pose.longitude,
     feedback->odom.pose.position.z_depth);
 
   auto msg = std::make_unique<std_msgs::msg::String>();
