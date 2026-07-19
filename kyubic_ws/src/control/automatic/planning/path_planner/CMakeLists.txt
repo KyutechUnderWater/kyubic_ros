@@ -16,14 +16,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
-find_package(geodetic_converter REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_library(path_csv_loader SHARED
   ./src/path_csv_loader.cpp
 )
-set_property(TARGET path_csv_loader PROPERTY POSITION_INDEPENDENT_CODE ON)
-ament_target_dependencies(path_csv_loader geodetic_converter)
 
 install(TARGETS
   path_csv_loader
