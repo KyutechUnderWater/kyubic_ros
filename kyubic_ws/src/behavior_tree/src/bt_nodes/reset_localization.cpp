@@ -59,7 +59,7 @@ BT::NodeStatus ResetLocalization::onRunning()
       auto response = future_response_.get();
       if (response->success) {
         RCLCPP_INFO(
-          ros_node_->get_logger(), "[%s] Reset successful.",
+          ros_node_->get_logger(), "[%s] Reset successful (Origin set to Current Pose).",
           this->name().c_str());
         return BT::NodeStatus::SUCCESS;
       } else {
