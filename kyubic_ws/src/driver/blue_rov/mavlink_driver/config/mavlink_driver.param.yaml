@@ -1,0 +1,46 @@
+/**:
+  ros__parameters:
+    endpoint: "udpin:0.0.0.0:14550"
+    source_system: 255
+    source_component: 190
+    command_rate_hz: 10.0
+    connection_timeout_s: 3.0
+    reconnect_delay_s: 2.0
+    command_timeout_s: 0.5
+    control_heartbeat_timeout_s: 1.0
+    require_control_heartbeat: true
+    set_armed_timeout_s: 3.0
+
+    # Begin bench tests with this conservative range.  Calibrate signs and
+    # ranges while the vehicle is secured before operating in water.
+    pwm_min: 1300
+    pwm_neutral: 1500
+    pwm_max: 1700
+    depth_scale: 1.0
+
+    axis.roll.channel: 2
+    axis.roll.limit: 3.0
+    axis.roll.invert: false
+    axis.heave.channel: 3
+    axis.heave.limit: 17.0
+    axis.heave.invert: false
+    axis.yaw.channel: 4
+    axis.yaw.limit: 10.0
+    axis.yaw.invert: false
+    axis.forward.channel: 5
+    axis.forward.limit: 52.0
+    axis.forward.invert: false
+    axis.lateral.channel: 6
+    axis.lateral.limit: 30.0
+    axis.lateral.invert: false
+
+    camera_channel: 8
+    camera_angle_min_deg: 0.0
+    camera_angle_max_deg: 180.0
+    camera_pwm_min: 1100
+    camera_pwm_max: 1900
+
+    # 0 disables a channel. If both channels are equal, their maximum is sent.
+    # The default maps the existing right light to RC9.
+    led_left_channel: 0
+    led_right_channel: 9
