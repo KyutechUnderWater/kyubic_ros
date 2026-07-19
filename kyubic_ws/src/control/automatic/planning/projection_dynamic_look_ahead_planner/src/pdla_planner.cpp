@@ -95,7 +95,6 @@ void PDLAPlanner::handle_accepted(
   if (!file_path_.empty() && file_path_[0] != '/') {
     try {
       std::string package_share_dir = ament_index_cpp::get_package_share_directory("path_planner");
-
       // パスを結合 (shareディレクトリ + XMLに書かれた相対パス)
       file_path_ = package_share_dir + "/" + file_path_;
 
@@ -160,12 +159,17 @@ void PDLAPlanner::handle_accepted(
     return;
   }
 
-  // Set waypoint action timeout
-  timeout_->set_timeout(path->get_params().timeout_sec * 1e9);
-  timeout_->reset(this->get_clock()->now());
+  // Set waypoint action timeout parameters
+  // Deprecated global timeout usage, now using it as per-waypoint timeout
+  // timeout_->set_timeout(path->get_params().timeout_sec * 1e9);
+  // timeout_->reset(this->get_clock()->now());
+
+  // Store the per-waypoint timeout duration
+  waypoint_timeout_sec_ = path->get_params().timeout_sec;
 
   // Reset variables
   this->step_idx = 0;
+  this->step_start_time_ = this->get_clock()->now();
   this->last_reached_ = false;
   this->first_reached_ = true;
   {
@@ -267,8 +271,20 @@ void PDLAPlanner::_runPlannerLogic(
     //   RCLCPP_WARN(this->get_logger(), "Constrained Control (Sensor Error)");
     // }
   } else {
-    // ウェイポイント到達判定
     bool reached = false;
+
+    // Timeout Skip Check
+    if (waypoint_timeout_sec_ > 0) {
+      auto now = this->get_clock()->now();
+      if ((now - step_start_time_).seconds() > waypoint_timeout_sec_) {
+        RCLCPP_WARN(
+          this->get_logger(), "Waypoint %lu timed out (%.1f s). Skipping to next.", step_idx + 1,
+          waypoint_timeout_sec_);
+        reached = true;  // Treat as reached to trigger increment
+                         // Note: Effectively we skip. If it allows moving to next, it works.
+      }
+    }
+
     PoseData target = target_pose_.at(step_idx);
     Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
 
@@ -290,7 +306,8 @@ void PDLAPlanner::_runPlannerLogic(
     }
 
     if (reached) {
-      timeout_->reset(this->get_clock()->now());
+      // timeout_->reset(this->get_clock()->now()); // Global timeout reset not needed
+      step_start_time_ = this->get_clock()->now();  // Reset timer for next waypoint
 
       if (step_idx == target_pose_.size() - 1) {
         RCLCPP_INFO(this->get_logger(), "Reached end point!");
@@ -483,14 +500,14 @@ void PDLAPlanner::timerCallback()
     return;
   }
 
-  if (timeout_->is_timeout(this->get_clock()->now())) {
-    auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
-    result->success = false;
-    active_goal_handle_->abort(result);
-    active_goal_handle_.reset();
-
-    RCLCPP_ERROR(this->get_logger(), "Timeout reached (Odom might be lost)! Aborting goal.");
-  }
+  // Global timeout is disabled as per user request.
+  // if (timeout_->is_timeout(this->get_clock()->now())) {
+  //   auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
+  //   result->success = false;
+  //   active_goal_handle_->abort(result);
+  //   active_goal_handle_.reset();
+  //   RCLCPP_ERROR(this->get_logger(), "Timeout reached (Odom might be lost)! Aborting goal.");
+  // }
 }
 
 }  // namespace planner::pdla_planner

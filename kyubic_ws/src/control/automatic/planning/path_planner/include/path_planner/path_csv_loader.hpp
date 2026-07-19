@@ -12,6 +12,7 @@
 
 #include <array>
 #include <cstddef>
+#include <geodetic_converter/geodetic_converter.hpp>
 #include <iomanip>
 #include <iostream>
 #include <memory>
@@ -46,6 +47,10 @@ public:
     std::cout << "  catmull_min_distance: " << catmull_density << std::endl;
     std::cout << "  catmull_orient_LERP: " << catmull_orient_LERP << std::endl;
     std::cout << "  timeout_sec: " << timeout_sec << std::endl;
+    std::cout << "  use_geodetic_coords: " << use_geodetic_coords << std::endl;
+    std::cout << "  origin_lat: " << origin_lat << std::endl;
+    std::cout << "  origin_lon: " << origin_lon << std::endl;
+    std::cout << "  system_id: " << system_id << std::endl;
     std::cout << std::endl;
   }
 };
@@ -174,6 +179,7 @@ public:
      * @return 読み込んだCsvDataへのconst参照
      */
   const std::shared_ptr<PathData> get_data() const { return data_; }
+
 };
 
 }  // namespace planner
