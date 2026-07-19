@@ -1,0 +1,5 @@
+/**:
+  ros__parameters:
+    tcp_ip: "192.168.9.100"
+    tcp_port: 5050
+    hdop_error_factor: 2.0
