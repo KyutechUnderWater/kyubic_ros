@@ -27,7 +27,7 @@ source install/setup.bash
 ros2 launch mavlink_driver mavlink_driver.launch.py
 ```
 
-`launch/mavlink_driver.launch.py`は`/driver/blue_rov/mavlink_driver/mavlink_driver`を起動し、`config/mavlink_driver.param.yaml`をロード。`log_level`引数あり。
+`launch/mavlink_driver.launch.py`は`/driver/blue_rov/mavlink_driver/mavlink_driver`を起動し、`config/mavlink_driver.param.yaml`をロード。`log_level`引数あり。IMUと深度は機体に依存しない共通Topicの`/driver/imu`と`/driver/depth`へPublishする。
 
 ## 通信
 
@@ -45,6 +45,8 @@ ros2 launch mavlink_driver mavlink_driver.launch.py
 | Service | `set_armed` | `std_srvs/srv/SetBool` | `true`: ARM、`false`: DISARM。ACKとheartbeatで確認 |
 
 namespaceは`/driver/blue_rov/mavlink_driver`。Actionは使用なし。RC overrideは`command_rate_hz`周期、GCS heartbeatは1秒周期。
+
+launchファイルは相対名`imu`と`depth`だけを共通Topicへremapする。その他のTopicとServiceは`/driver/blue_rov/mavlink_driver`配下に配置される。
 
 ### MAVLink変換と接続状態
 
@@ -90,6 +92,8 @@ namespaceは`/driver/blue_rov/mavlink_driver`。Actionは使用なし。RC overr
 
 ```bash
 ros2 node info /driver/blue_rov/mavlink_driver/mavlink_driver
+ros2 topic echo /driver/imu
+ros2 topic echo /driver/depth
 ros2 topic echo /driver/blue_rov/mavlink_driver/vehicle_state
 ros2 service call /driver/blue_rov/mavlink_driver/set_armed std_srvs/srv/SetBool "{data: false}"
 ```
