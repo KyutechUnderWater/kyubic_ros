@@ -20,7 +20,7 @@
               message="Waypoint Action Start"
               topic_name="/talker"/>
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-                      csv_file_path="assets/sample/handy_test.csv"/>
+                      csv_file_path="assets/sample/latitude_longitude.csv"/>
       <Talker name="AutomatickTalker"
               message="Waypoint Action Successful"
               topic_name="/talker"/>

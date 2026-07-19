@@ -1,6 +1,4 @@
 #include "behavior_tree/reset_localization.hpp"
-#include <std_srvs/srv/trigger.hpp>
-
 namespace behavior_tree
 {
 
@@ -14,7 +12,7 @@ ResetLocalization::ResetLocalization(
 BT::PortsList ResetLocalization::providedPorts()
 {
   return {
-    BT::InputPort<std::string>("service_name", "/localization/depth/reset", "Name of the reset service"),
+    BT::InputPort<std::string>("service_name", "/localization/reset", "Name of the reset service"),
     BT::InputPort<double>("timeout_sec", 1.0, "Service wait timeout (seconds)")};
 }
 
@@ -33,7 +31,7 @@ BT::NodeStatus ResetLocalization::onStart()
   std::chrono::duration<double> timeout(timeout_sec_opt.value_or(1.0));
 
   if (!client_ || last_service_name_ != service_name) {
-    client_ = ros_node_->create_client<std_srvs::srv::Trigger>(service_name);
+    client_ = ros_node_->create_client<localization_msgs::srv::Reset>(service_name);
     last_service_name_ = service_name;
   }
 
@@ -44,7 +42,7 @@ BT::NodeStatus ResetLocalization::onStart()
     return BT::NodeStatus::FAILURE;
   }
 
-  auto request = std::make_shared<std_srvs::srv::Trigger::Request>();
+  auto request = std::make_shared<localization_msgs::srv::Reset::Request>();
 
   RCLCPP_INFO(
     ros_node_->get_logger(), "[%s] Calling localization reset: %s", this->name().c_str(),

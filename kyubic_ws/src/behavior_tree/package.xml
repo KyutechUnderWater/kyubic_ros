@@ -23,7 +23,6 @@
   <depend>driver_msgs</depend>
   <depend>localization_msgs</depend>
   <depend>joy_common_msgs</depend>
-  <depend>std_srvs</depend>
   <depend>action_tutorials_interfaces</depend>
   <depend>wrench_action_sample_msgs</depend>
 
