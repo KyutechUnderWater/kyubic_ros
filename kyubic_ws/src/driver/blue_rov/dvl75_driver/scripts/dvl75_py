@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+"""Run the retained Python implementation of the DVL-75 ROS 2 driver."""
+
+from dvl75_driver.dvl75_driver import main
+
+
+if __name__ == "__main__":
+    main()
