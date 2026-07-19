@@ -45,11 +45,14 @@ install(TARGETS system_health_check_plugins
 pluginlib_export_plugin_description_file(system_health_check plugins.xml)
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
+
+  ament_add_gtest(test_unit_conversion test/test_unit_conversion.cpp)
+  target_include_directories(test_unit_conversion PRIVATE include)
 endif()
 
 ament_auto_package(USE_SCOPED_HEADER_INSTALL_DIR)
-
