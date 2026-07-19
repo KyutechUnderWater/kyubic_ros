@@ -140,6 +140,8 @@ class GnssPublisher(Node):
                         elif isinstance(msg, pynmea2.types.talker.GGA) and msg.latitude != 0.0:
                             gnss_data_msg = Gnss()
                             now = self.get_clock().now().to_msg()
+                            gnss_data_msg.header.stamp = now
+                            gnss_data_msg.header.frame_id = "gnss_link"
 
                             # NavSatFixメッセージの作成と配信
                             fix_msg = NavSatFix()

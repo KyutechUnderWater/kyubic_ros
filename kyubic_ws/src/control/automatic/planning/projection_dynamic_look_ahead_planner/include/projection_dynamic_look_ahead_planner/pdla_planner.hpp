@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <localization_msgs/msg/odometry.hpp>
+#include <geometry_msgs/msg/point.hpp>
 #include <mutex>
 #include <path_planner/path_csv_loader.hpp>
 #include <planner_msgs/action/pdla.hpp>
@@ -39,6 +40,7 @@ private:
   rclcpp::CallbackGroup::SharedPtr callback_group_;
 
   rclcpp::Publisher<planner_msgs::msg::WrenchPlan>::SharedPtr pub_;
+  rclcpp::Publisher<geometry_msgs::msg::Point>::SharedPtr distance_pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_;
   rclcpp_action::Server<planner_msgs::action::PDLA>::SharedPtr action_server_;
 
@@ -83,6 +85,8 @@ private:
   std::shared_ptr<rclcpp_action::ServerGoalHandle<planner_msgs::action::PDLA>> active_goal_handle_;
 
   size_t step_idx = 0;
+  rclcpp::Time step_start_time_;
+  double waypoint_timeout_sec_ = 0.0;
 };
 
 }  // namespace planner::pdla_planner

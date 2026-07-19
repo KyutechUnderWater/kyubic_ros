@@ -1,5 +1,4 @@
 #include "behavior_tree/reset_localization.hpp"
-
 namespace behavior_tree
 {
 
@@ -44,7 +43,6 @@ BT::NodeStatus ResetLocalization::onStart()
   }
 
   auto request = std::make_shared<localization_msgs::srv::Reset::Request>();
-  request->azimuth = 0.0;
 
   RCLCPP_INFO(
     ros_node_->get_logger(), "[%s] Calling localization reset: %s", this->name().c_str(),

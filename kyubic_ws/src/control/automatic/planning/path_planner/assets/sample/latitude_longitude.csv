@@ -1,0 +1,12 @@
+parameter_label,value,x,y,z,z_mode,roll,yaw,wait_ms,fine,blank,catmull_x,catmull_y,catmull_z,catmull_z_mode,catmull_roll,catmull_yaw,catmull_wait_ms,catmull_fine
+checkpoint_end_row,3,33.889961,131.002581,1.0,0.0,0.0,0.0,1000,0,,,,,,,,,
+catmull_rom,0,33.889933,131.002613,1.0,0.0,0.0,0.0,1000,0,,,,,,,,,
+catmull_end_row,0,33.889906,131.002588,1.0,0.0,0.0,0.0,1000,1,,,,,,,,,
+catmull_density,6,,,,,,,,,,,,,,,,,
+catmull_min_distance,0.2,,,,,,,,,,,,,,,,,
+catmull_orient_LERP,1,,,,,,,,,,,,,,,,,
+timeout_sec,300,,,,,,,,,,,,,,,,,
+use_geodetic_coords,2,,,,,,,,,,,,,,,,,
+origin_lat,33.890094,,,,,,,,,,,,,,,,,
+origin_lon,131.002511,,,,,,,,,,,,,,,,,
+system_id,1,,,,,,,,,,,,,,,,,

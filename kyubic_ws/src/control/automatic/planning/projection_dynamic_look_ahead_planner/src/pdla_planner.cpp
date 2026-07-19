@@ -42,6 +42,7 @@ PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_plann
   rclcpp::QoS qos(rclcpp::KeepLast(1));
   callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
   pub_ = create_publisher<planner_msgs::msg::WrenchPlan>("goal_current_odom", qos);
+  distance_pub_ = create_publisher<geometry_msgs::msg::Point>("distance_to_waypoint", qos);
 
   sub_ = create_subscription<localization_msgs::msg::Odometry>(
     "odom", qos, std::bind(&PDLAPlanner::odometryCallback, this, std::placeholders::_1));
@@ -95,7 +96,6 @@ void PDLAPlanner::handle_accepted(
   if (!file_path_.empty() && file_path_[0] != '/') {
     try {
       std::string package_share_dir = ament_index_cpp::get_package_share_directory("path_planner");
-
       // パスを結合 (shareディレクトリ + XMLに書かれた相対パス)
       file_path_ = package_share_dir + "/" + file_path_;
 
@@ -107,6 +107,33 @@ void PDLAPlanner::handle_accepted(
   RCLCPP_INFO(this->get_logger(), "CSV path: %s", file_path_.c_str());
 
   PathCsvLoader loader;
+
+  // Read default origin from ROS parameters (global yaml)
+  double param_origin_lat = this->declare_parameter("origin_lat", 0.0);
+  double param_origin_lon = this->declare_parameter("origin_lon", 0.0);
+  int param_sys_id = this->declare_parameter("coord_system_id", 0);
+
+  if (param_origin_lat != 0.0 && param_origin_lon != 0.0) {
+    loader.setDefaultOrigin(param_origin_lat, param_origin_lon, param_sys_id);
+    RCLCPP_INFO(
+      this->get_logger(), "Set default origin from ROS params: lat=%.6f, lon=%.6f, id=%d",
+      param_origin_lat, param_origin_lon, param_sys_id);
+  } else {
+    // Fallback to current odometry if parameters are missing
+    std::lock_guard<std::mutex> odom_lock(odom_mutex_);
+    if (current_odom_) {
+      loader.setDefaultOrigin(
+        current_odom_->pose.global_pos.ref_pose.latitude,
+        current_odom_->pose.global_pos.ref_pose.longitude,
+        current_odom_->pose.global_pos.coordinate_system_id);
+      RCLCPP_INFO(
+        this->get_logger(), "Set default origin from current odom: lat=%.10f, lon=%.10f, id=%d",
+        current_odom_->pose.global_pos.ref_pose.latitude,
+        current_odom_->pose.global_pos.ref_pose.longitude,
+        current_odom_->pose.global_pos.coordinate_system_id);
+    }
+  }
+
   try {
     loader.parse(file_path_);
   } catch (const std::exception & e) {
@@ -133,12 +160,17 @@ void PDLAPlanner::handle_accepted(
     return;
   }
 
-  // Set waypoint action timeout
-  timeout_->set_timeout(path->get_params().timeout_sec * 1e9);
-  timeout_->reset(this->get_clock()->now());
+  // Set waypoint action timeout parameters
+  // Deprecated global timeout usage, now using it as per-waypoint timeout
+  // timeout_->set_timeout(path->get_params().timeout_sec * 1e9);
+  // timeout_->reset(this->get_clock()->now());
+
+  // Store the per-waypoint timeout duration
+  waypoint_timeout_sec_ = path->get_params().timeout_sec;
 
   // Reset variables
   this->step_idx = 0;
+  this->step_start_time_ = this->get_clock()->now();
   this->last_reached_ = false;
   this->first_reached_ = true;
   {
@@ -191,7 +223,7 @@ void PDLAPlanner::_runPlannerLogic(
     odom_copy->status.imu.id == common_msgs::msg::Status::ERROR ||
     odom_copy->status.dvl.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
-    return;
+    //return;
 
     // TODO: Don't calculate the pid when some sensors become unusable
     // Control when some sensors become unusable
@@ -240,10 +272,31 @@ void PDLAPlanner::_runPlannerLogic(
     //   RCLCPP_WARN(this->get_logger(), "Constrained Control (Sensor Error)");
     // }
   } else {
-    // ウェイポイント到達判定
     bool reached = false;
+
+    // Timeout Skip Check
+    if (waypoint_timeout_sec_ > 0) {
+      auto now = this->get_clock()->now();
+      if ((now - step_start_time_).seconds() > waypoint_timeout_sec_) {
+        RCLCPP_WARN(
+          this->get_logger(), "Waypoint %lu timed out (%.1f s). Skipping to next.", step_idx + 1,
+          waypoint_timeout_sec_);
+        reached = true;  // Treat as reached to trigger increment
+                         // Note: Effectively we skip. If it allows moving to next, it works.
+      }
+    }
+
     PoseData target = target_pose_.at(step_idx);
     Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
+
+    // 目的地までの相対距離（絶対座標X,Y）を計算してパブリッシュ
+    auto distance_msg = std::make_unique<geometry_msgs::msg::Point>();
+    distance_msg->x = target.x - odom_copy->pose.position.x;
+    distance_msg->y = target.y - odom_copy->pose.position.y;
+    distance_msg->z = 0.0;
+    if (distance_pub_) {
+      distance_pub_->publish(std::move(distance_msg));
+    }
 
     if (
       _checkReached(target, odom_copy, tol) ||
@@ -263,7 +316,8 @@ void PDLAPlanner::_runPlannerLogic(
     }
 
     if (reached) {
-      timeout_->reset(this->get_clock()->now());
+      // timeout_->reset(this->get_clock()->now()); // Global timeout reset not needed
+      step_start_time_ = this->get_clock()->now();  // Reset timer for next waypoint
 
       if (step_idx == target_pose_.size() - 1) {
         RCLCPP_INFO(this->get_logger(), "Reached end point!");
@@ -337,7 +391,18 @@ void PDLAPlanner::_runPlannerLogic(
       msg->targets.y = virtual_goal_point.y();
       msg->targets.z = virtual_goal_point.z();
       msg->targets.roll = target_pose_.at(step_idx).roll;
-      msg->targets.yaw = target_pose_.at(step_idx).yaw;
+
+      // Dynamic Yaw Control (Line-of-Sight)
+      double dx = virtual_goal_point.x() - odom_copy->pose.position.x;
+      double dy = virtual_goal_point.y() - odom_copy->pose.position.y;
+
+      // Ignore CSV yaw completely. Point towards virtual_goal_point.
+      // If the robot is extremely close to the goal, maintain current orientation to prevent spinning.
+      if (std::hypot(dx, dy) > 0.05) {
+        msg->targets.yaw = std::atan2(dy, dx) * 180.0 / M_PI;
+      } else {
+        msg->targets.yaw = odom_copy->pose.orientation.z;
+      }
 
       msg->has_master = true;
       msg->master.x = odom_copy->pose.position.x;
@@ -387,11 +452,10 @@ bool PDLAPlanner::_checkReached(
                            : odom->pose.position.z_altitude;
 
   // Check if reached target
+  // Check if reached target (Only check X, Y, Z for PDLA since Yaw is controlled dynamically for line-of-sight)
   if (
     abs(target.x - odom->pose.position.x) < tol.x &&
-    abs(target.y - odom->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z &&
-    abs(target.roll - odom->pose.orientation.x) < tol.roll &&
-    abs(target.yaw - odom->pose.orientation.z) < tol.yaw) {
+    abs(target.y - odom->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z) {
     if (!last_reached_) fine_reached_time_ = this->get_clock()->now();
     last_reached_ = false;
 
@@ -445,14 +509,14 @@ void PDLAPlanner::timerCallback()
     return;
   }
 
-  if (timeout_->is_timeout(this->get_clock()->now())) {
-    auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
-    result->success = false;
-    active_goal_handle_->abort(result);
-    active_goal_handle_.reset();
-
-    RCLCPP_ERROR(this->get_logger(), "Timeout reached (Odom might be lost)! Aborting goal.");
-  }
+  // Global timeout is disabled as per user request.
+  // if (timeout_->is_timeout(this->get_clock()->now())) {
+  //   auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
+  //   result->success = false;
+  //   active_goal_handle_->abort(result);
+  //   active_goal_handle_.reset();
+  //   RCLCPP_ERROR(this->get_logger(), "Timeout reached (Odom might be lost)! Aborting goal.");
+  // }
 }
 
 }  // namespace planner::pdla_planner

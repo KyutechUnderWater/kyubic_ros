@@ -1,4 +1,6 @@
-# gnss_launch.py
+import os
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
@@ -9,6 +11,10 @@ def generate_launch_description():
     """
     GNSSドライバーノードを起動するためのLaunchDescriptionを生成
     """
+
+    config = os.path.join(
+        get_package_share_directory("gnss_driver"), "config", "gnss_driver.param.yaml"
+    )
 
     log_level_arg = DeclareLaunchArgument(
         "log_level",
@@ -24,6 +30,7 @@ def generate_launch_description():
         name="gnss_publisher_node",  # これはノード名
         namespace="driver/gnss_driver",  # これが名前空間
         output="screen",
+        parameters=[config],
         arguments=["--ros-args", "--log-level", log_level_config],
     )
 

@@ -32,6 +32,7 @@ install(TARGETS
 ament_auto_add_executable(main
   ./src/main.cpp
 )
+target_link_libraries(main path_csv_loader)
 
 install(DIRECTORY
   assets

@@ -81,6 +81,21 @@ def generate_launch_description():
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
             ),
+            ComposableNode(
+                name="gnss_odometry_component",
+                namespace="localization/gnss",
+                package="localization",
+                plugin="localization::gnss::GnssOdometry",
+                remappings=[
+                    ("gnss", "/driver/gnss_driver/gnss"),
+                    ("transformed_imu", "/localization/imu/transformed"),
+                    ("depth_odom", "/localization/depth/odom"),
+                ],
+                parameters=[config],
+                extra_arguments=[
+                    {"use_intra_process_comms": True}
+                ],  # enable intra-process communication
+            ),
         ],
     )
 
