@@ -1,0 +1,20 @@
+/**:
+  ros__parameters:
+    #path_csv: "assets/kobe/gate_path.csv"
+    path_csv: "assets/kobe/sample.csv"
+
+    fine_timer_ms: 3000 # [ms]
+    look_ahead_scale: 1.0
+
+    reach_tolerance:
+      x: 0.05
+      y: 0.05
+      z: 0.05
+      roll: 1.0
+      yaw: 1.0
+    waypoint_tolerance:
+      x: 0.1
+      y: 0.1
+      z: 0.1
+      roll: 3.0
+      yaw: 3.0
