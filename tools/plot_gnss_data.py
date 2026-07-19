@@ -47,7 +47,7 @@ def plot_gnss(csv_path, output_png):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input', default='/home/ros/kyubic_ros/kyubic_ws/gnss_data.csv')
-    parser.add_argument('--output', default='/home/ros/kyubic_ros/kyubic_ws/gnss_trajectory_plot.png')
+    parser.add_argument('--input', default='/home/ros/kyubic_ros/tools/gnss_data.csv')
+    parser.add_argument('--output', default='/home/ros/kyubic_ros/tools/gnss_trajectory_plot.png')
     args = parser.parse_args()
     plot_gnss(args.input, args.output)

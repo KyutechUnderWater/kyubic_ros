@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 timestamps = []
 depths = []
 
-with open('/home/ros/kyubic_ros/kyubic_ws/depth_data.csv', 'r') as f:
+with open('/home/ros/kyubic_ros/tools/depth_data.csv', 'r') as f:
     reader = csv.reader(f)
     next(reader) # skip header
     for row in reader:
@@ -25,5 +25,5 @@ plt.legend()
 # Invert Y axis so downward is positive
 plt.gca().invert_yaxis()
 
-plt.savefig('/home/ros/kyubic_ros/kyubic_ws/depth_plot.png')
+plt.savefig('/home/ros/kyubic_ros/tools/depth_plot.png')
 print("Plot saved to depth_plot.png")

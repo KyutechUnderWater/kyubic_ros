@@ -93,7 +93,7 @@ plt.xlabel('Time [s]')
 plt.grid(True)
 
 plt.tight_layout()
-output_path = 'scratch/bag_error_plot.png'
+output_path = os.path.join(os.path.dirname(__file__), 'bag_error_plot.png')
 os.makedirs(os.path.dirname(output_path), exist_ok=True)
 plt.savefig(output_path)
 print(f'Plot saved as {output_path}')
