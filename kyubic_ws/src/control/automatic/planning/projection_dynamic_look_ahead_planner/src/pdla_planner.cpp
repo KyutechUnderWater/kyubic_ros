@@ -42,6 +42,7 @@ PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_plann
   rclcpp::QoS qos(rclcpp::KeepLast(1));
   callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
   pub_ = create_publisher<planner_msgs::msg::WrenchPlan>("goal_current_odom", qos);
+  distance_pub_ = create_publisher<geometry_msgs::msg::Point>("distance_to_waypoint", qos);
 
   sub_ = create_subscription<localization_msgs::msg::Odometry>(
     "odom", qos, std::bind(&PDLAPlanner::odometryCallback, this, std::placeholders::_1));
@@ -288,6 +289,15 @@ void PDLAPlanner::_runPlannerLogic(
     PoseData target = target_pose_.at(step_idx);
     Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
 
+    // 目的地までの相対距離（絶対座標X,Y）を計算してパブリッシュ
+    auto distance_msg = std::make_unique<geometry_msgs::msg::Point>();
+    distance_msg->x = target.x - odom_copy->pose.position.x;
+    distance_msg->y = target.y - odom_copy->pose.position.y;
+    distance_msg->z = 0.0;
+    if (distance_pub_) {
+      distance_pub_->publish(std::move(distance_msg));
+    }
+
     if (
       _checkReached(target, odom_copy, tol) ||
       step_state_ == planner_msgs::action::PDLA::Feedback::WAITING) {
@@ -442,11 +452,10 @@ bool PDLAPlanner::_checkReached(
                            : odom->pose.position.z_altitude;
 
   // Check if reached target
+  // Check if reached target (Only check X, Y, Z for PDLA since Yaw is controlled dynamically for line-of-sight)
   if (
     abs(target.x - odom->pose.position.x) < tol.x &&
-    abs(target.y - odom->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z &&
-    abs(target.roll - odom->pose.orientation.x) < tol.roll &&
-    abs(target.yaw - odom->pose.orientation.z) < tol.yaw) {
+    abs(target.y - odom->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z) {
     if (!last_reached_) fine_reached_time_ = this->get_clock()->now();
     last_reached_ = false;
 

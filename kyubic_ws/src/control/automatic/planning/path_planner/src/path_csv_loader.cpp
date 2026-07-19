@@ -147,9 +147,15 @@ void PathCsvLoader::parse(const std::string & csv_path)
       } else if (label == "use_geodetic_coords") {
         data_->params_.use_geodetic_coords = stob_strict(tokens[1], label);
       } else if (label == "origin_lat") {
-        data_->params_.origin_lat = stod_strict(tokens[1], label);
+        if (data_->params_.origin_lat == 0.0) {
+          data_->params_.origin_lat = stod_strict(tokens[1], label);
+        } else {
+          std::cout << "Ignoring origin_lat in CSV because a default origin was already forced." << std::endl;
+        }
       } else if (label == "origin_lon") {
-        data_->params_.origin_lon = stod_strict(tokens[1], label);
+        if (data_->params_.origin_lon == 0.0) {
+          data_->params_.origin_lon = stod_strict(tokens[1], label);
+        }
       } else if (label == "system_id") {
         data_->params_.system_id = stoi_strict(tokens[1], label);
       } else {
