@@ -42,6 +42,7 @@ PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_plann
   rclcpp::QoS qos(rclcpp::KeepLast(1));
   callback_group_ = this->create_callback_group(rclcpp::CallbackGroupType::Reentrant);
   pub_ = create_publisher<planner_msgs::msg::WrenchPlan>("goal_current_odom", qos);
+  distance_pub_ = create_publisher<geometry_msgs::msg::Point>("distance_to_waypoint", qos);
 
   sub_ = create_subscription<localization_msgs::msg::Odometry>(
     "odom", qos, std::bind(&PDLAPlanner::odometryCallback, this, std::placeholders::_1));
@@ -107,26 +108,29 @@ void PDLAPlanner::handle_accepted(
 
   PathCsvLoader loader;
 
-  // Set default origin from current odometry if available
-  {
+  // Read default origin from ROS parameters (global yaml)
+  double param_origin_lat = this->declare_parameter("origin_lat", 0.0);
+  double param_origin_lon = this->declare_parameter("origin_lon", 0.0);
+  int param_sys_id = this->declare_parameter("coord_system_id", 0);
+
+  if (param_origin_lat != 0.0 && param_origin_lon != 0.0) {
+    loader.setDefaultOrigin(param_origin_lat, param_origin_lon, param_sys_id);
+    RCLCPP_INFO(
+      this->get_logger(), "Set default origin from ROS params: lat=%.6f, lon=%.6f, id=%d",
+      param_origin_lat, param_origin_lon, param_sys_id);
+  } else {
+    // Fallback to current odometry if parameters are missing
     std::lock_guard<std::mutex> odom_lock(odom_mutex_);
     if (current_odom_) {
-      // Assuming ref_pose contains the origin
-      // Note: Odom message definition check confirmed:
-      // localization_msgs/Odometry -> pose -> global_pos (GlobalPos) -> ref_pose (Geodetic)
-      const auto & ref = current_odom_->pose.global_pos.ref_pose;
-      int sys_id = current_odom_->pose.global_pos.coordinate_system_id;
-
+      loader.setDefaultOrigin(
+        current_odom_->pose.global_pos.ref_pose.latitude,
+        current_odom_->pose.global_pos.ref_pose.longitude,
+        current_odom_->pose.global_pos.coordinate_system_id);
       RCLCPP_INFO(
-        this->get_logger(),
-        "Setting default origin from Odom Ref Pose: Lat=%.6f, Lon=%.6f, SysID=%d", ref.latitude,
-        ref.longitude, sys_id);
-
-      loader.setDefaultOrigin(ref.latitude, ref.longitude, sys_id);
-    } else {
-      RCLCPP_WARN(
-        this->get_logger(),
-        "Current Odom not valid yet. Default origin might be zero if not in CSV.");
+        this->get_logger(), "Set default origin from current odom: lat=%.10f, lon=%.10f, id=%d",
+        current_odom_->pose.global_pos.ref_pose.latitude,
+        current_odom_->pose.global_pos.ref_pose.longitude,
+        current_odom_->pose.global_pos.coordinate_system_id);
     }
   }
 
@@ -219,52 +223,54 @@ void PDLAPlanner::_runPlannerLogic(
     odom_copy->status.imu.id == common_msgs::msg::Status::ERROR ||
     odom_copy->status.dvl.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
+    //return;
 
+    // TODO: Don't calculate the pid when some sensors become unusable
     // Control when some sensors become unusable
-    auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>();
-    msg->header.stamp = this->get_clock()->now();
-    msg->z_mode = target_pose_.at(step_idx).z_mode;
-
-    if (
-      odom_copy->status.depth.id != common_msgs::msg::Status::ERROR &&
-      target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-      msg->targets.z = target_pose_.at(step_idx).z;
-      msg->master.z = odom_copy->pose.position.z_depth;
-      msg->slave.z = odom_copy->twist.linear.z_depth;
-    } else if (
-      odom_copy->status.dvl.id != common_msgs::msg::Status::ERROR &&
-      target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-      msg->targets.z = target_pose_.at(step_idx).z;
-      msg->master.z = odom_copy->pose.position.z_altitude;
-      msg->slave.z = odom_copy->twist.linear.z_altitude;
-    }
-
-    if (odom_copy->status.imu.id != common_msgs::msg::Status::ERROR) {
-      msg->targets.roll = target_pose_.at(step_idx).roll;
-      msg->targets.yaw = target_pose_.at(step_idx).yaw;
-
-      msg->master.roll = odom_copy->pose.orientation.x;
-      msg->master.yaw = odom_copy->pose.orientation.z;
-
-      msg->slave.roll = odom_copy->twist.angular.x;
-      msg->slave.yaw = odom_copy->twist.angular.z;
-    }
-
-    if (odom_copy->status.dvl.id != common_msgs::msg::Status::ERROR) {
-      msg->targets.x = target_pose_.at(step_idx).x;
-      msg->targets.y = target_pose_.at(step_idx).y;
-
-      msg->master.x = odom_copy->pose.position.x;
-      msg->master.y = odom_copy->pose.position.y;
-
-      msg->slave.x = odom_copy->twist.linear.x;
-      msg->slave.y = odom_copy->twist.linear.y;
-    }
-
-    {
-      pub_->publish(std::move(msg));
-      RCLCPP_WARN(this->get_logger(), "Constrained Control (Sensor Error)");
-    }
+    // auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>();
+    // msg->header.stamp = this->get_clock()->now();
+    // msg->z_mode = target_pose_.at(step_idx).z_mode;
+    //
+    // if (
+    //   odom_copy->status.depth.id != common_msgs::msg::Status::ERROR &&
+    //   target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
+    //   msg->targets.z = target_pose_.at(step_idx).z;
+    //   msg->master.z = odom_copy->pose.position.z_depth;
+    //   msg->slave.z = odom_copy->twist.linear.z_depth;
+    // } else if (
+    //   odom_copy->status.dvl.id != common_msgs::msg::Status::ERROR &&
+    //   target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
+    //   msg->targets.z = target_pose_.at(step_idx).z;
+    //   msg->master.z = odom_copy->pose.position.z_altitude;
+    //   msg->slave.z = odom_copy->twist.linear.z_altitude;
+    // }
+    //
+    // if (odom_copy->status.imu.id != common_msgs::msg::Status::ERROR) {
+    //   msg->targets.roll = target_pose_.at(step_idx).roll;
+    //   msg->targets.yaw = target_pose_.at(step_idx).yaw;
+    //
+    //   msg->master.roll = odom_copy->pose.orientation.x;
+    //   msg->master.yaw = odom_copy->pose.orientation.z;
+    //
+    //   msg->slave.roll = odom_copy->twist.angular.x;
+    //   msg->slave.yaw = odom_copy->twist.angular.z;
+    // }
+    //
+    // if (odom_copy->status.dvl.id != common_msgs::msg::Status::ERROR) {
+    //   msg->targets.x = target_pose_.at(step_idx).x;
+    //   msg->targets.y = target_pose_.at(step_idx).y;
+    //
+    //   msg->master.x = odom_copy->pose.position.x;
+    //   msg->master.y = odom_copy->pose.position.y;
+    //
+    //   msg->slave.x = odom_copy->twist.linear.x;
+    //   msg->slave.y = odom_copy->twist.linear.y;
+    // }
+    //
+    // {
+    //   pub_->publish(std::move(msg));
+    //   RCLCPP_WARN(this->get_logger(), "Constrained Control (Sensor Error)");
+    // }
   } else {
     bool reached = false;
 
@@ -282,6 +288,15 @@ void PDLAPlanner::_runPlannerLogic(
 
     PoseData target = target_pose_.at(step_idx);
     Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
+
+    // 目的地までの相対距離（絶対座標X,Y）を計算してパブリッシュ
+    auto distance_msg = std::make_unique<geometry_msgs::msg::Point>();
+    distance_msg->x = target.x - odom_copy->pose.position.x;
+    distance_msg->y = target.y - odom_copy->pose.position.y;
+    distance_msg->z = 0.0;
+    if (distance_pub_) {
+      distance_pub_->publish(std::move(distance_msg));
+    }
 
     if (
       _checkReached(target, odom_copy, tol) ||
@@ -376,8 +391,20 @@ void PDLAPlanner::_runPlannerLogic(
       msg->targets.y = virtual_goal_point.y();
       msg->targets.z = virtual_goal_point.z();
       msg->targets.roll = target_pose_.at(step_idx).roll;
-      msg->targets.yaw = target_pose_.at(step_idx).yaw;
 
+      // Dynamic Yaw Control (Line-of-Sight)
+      double dx = virtual_goal_point.x() - odom_copy->pose.position.x;
+      double dy = virtual_goal_point.y() - odom_copy->pose.position.y;
+
+      // Ignore CSV yaw completely. Point towards virtual_goal_point.
+      // If the robot is extremely close to the goal, maintain current orientation to prevent spinning.
+      if (std::hypot(dx, dy) > 0.05) {
+        msg->targets.yaw = std::atan2(dy, dx) * 180.0 / M_PI;
+      } else {
+        msg->targets.yaw = odom_copy->pose.orientation.z;
+      }
+
+      msg->has_master = true;
       msg->master.x = odom_copy->pose.position.x;
       msg->master.y = odom_copy->pose.position.y;
       msg->master.roll = odom_copy->pose.orientation.x;
@@ -425,11 +452,10 @@ bool PDLAPlanner::_checkReached(
                            : odom->pose.position.z_altitude;
 
   // Check if reached target
+  // Check if reached target (Only check X, Y, Z for PDLA since Yaw is controlled dynamically for line-of-sight)
   if (
     abs(target.x - odom->pose.position.x) < tol.x &&
-    abs(target.y - odom->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z &&
-    abs(target.roll - odom->pose.orientation.x) < tol.roll &&
-    abs(target.yaw - odom->pose.orientation.z) < tol.yaw) {
+    abs(target.y - odom->pose.position.y) < tol.y && abs(target.z - current_z_val) < tol.z) {
     if (!last_reached_) fine_reached_time_ = this->get_clock()->now();
     last_reached_ = false;
 

@@ -8,6 +8,7 @@
  **********************************************/
 
 #include "path_planner/path_csv_loader.hpp"
+#include <geodetic_converter/geodetic_converter.hpp>
 
 #include <algorithm>
 #include <fstream>
@@ -100,11 +101,20 @@ void PathCsvLoader::parse(const std::string & csv_path)
   while (std::getline(file, line)) {
     line_num++;
 
+    if (!line.empty() && line.back() == '\r') {
+      line.pop_back();
+    }
+
     std::stringstream ss(line);
     std::string token;
     std::vector<std::string> tokens;
     while (std::getline(ss, token, ',')) {
       tokens.push_back(token);
+    }
+    
+    // std::getline omits the last empty field if the string ends with the delimiter
+    if (!line.empty() && line.back() == ',') {
+      tokens.push_back("");
     }
 
     // データがあるか確認
@@ -137,9 +147,15 @@ void PathCsvLoader::parse(const std::string & csv_path)
       } else if (label == "use_geodetic_coords") {
         data_->params_.use_geodetic_coords = stob_strict(tokens[1], label);
       } else if (label == "origin_lat") {
-        data_->params_.origin_lat = stod_strict(tokens[1], label);
+        if (data_->params_.origin_lat == 0.0) {
+          data_->params_.origin_lat = stod_strict(tokens[1], label);
+        } else {
+          std::cout << "Ignoring origin_lat in CSV because a default origin was already forced." << std::endl;
+        }
       } else if (label == "origin_lon") {
-        data_->params_.origin_lon = stod_strict(tokens[1], label);
+        if (data_->params_.origin_lon == 0.0) {
+          data_->params_.origin_lon = stod_strict(tokens[1], label);
+        }
       } else if (label == "system_id") {
         data_->params_.system_id = stoi_strict(tokens[1], label);
       } else {
@@ -149,7 +165,6 @@ void PathCsvLoader::parse(const std::string & csv_path)
   }
 
   // --- 第2パス: データ行を解析 ---
-  // Coordinate Converter
   std::unique_ptr<common::GeodeticConverter> converter;
   common::PlaneXY origin_xy;
 

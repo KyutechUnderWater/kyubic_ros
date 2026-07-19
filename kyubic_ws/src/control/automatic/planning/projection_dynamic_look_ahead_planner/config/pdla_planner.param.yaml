@@ -4,17 +4,17 @@
     path_csv: "assets/kobe/sample.csv"
 
     fine_timer_ms: 3000 # [ms]
-    look_ahead_scale: 1.0
+    look_ahead_scale: 0.2
 
     reach_tolerance:
-      x: 0.1
-      y: 0.1
-      z: 0.1
-      roll: 10.0
+      x: 0.2
+      y: 0.2
+      z: 0.05
+      roll: 20.0
       yaw: 5.0
     waypoint_tolerance:
       x: 0.2
       y: 0.2
-      z: 0.2
-      roll: 10.0
+      z: 0.05
+      roll: 20.0
       yaw: 5.0

@@ -159,6 +159,16 @@ public:
   explicit PathCsvLoader();
 
   /**
+   * @brief デフォルトの原点（緯度/経度/系ID）をセットする
+   */
+  void setDefaultOrigin(double lat, double lon, int sys_id)
+  {
+    data_->params_.origin_lat = lat;
+    data_->params_.origin_lon = lon;
+    data_->params_.system_id = sys_id;
+  }
+
+  /**
      * @brief CSVファイルをパースする
      * @param csv_path パース対象のCSVファイルパス
      */
@@ -170,18 +180,6 @@ public:
      */
   const std::shared_ptr<PathData> get_data() const { return data_; }
 
-  /**
-     * @brief Set default origin for geodetic conversion
-     * @param lat Origin latitude
-     * @param lon Origin longitude
-     * @param sys_id System ID (1-19)
-     */
-  void setDefaultOrigin(double lat, double lon, int sys_id)
-  {
-    data_->params_.origin_lat = lat;
-    data_->params_.origin_lon = lon;
-    data_->params_.system_id = sys_id;
-  }
 };
 
 }  // namespace planner

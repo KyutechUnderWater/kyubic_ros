@@ -148,7 +148,7 @@ void ZeroOrderHold::odomCallback(const localization_msgs::msg::Odometry::SharedP
     if (copy_master(_msg) && copy_slave(_msg)) {
       auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>(*hold_msg_);
       pub_->publish(std::move(msg));
-      RCLCPP_INFO_THROTTLE(
+      RCLCPP_WARN_THROTTLE(
         this->get_logger(), *this->get_clock(), 2000,
         "Published WrenchPlan (ZeroOrderHold): x(%.3f), y(%.3f), z(%.3f), roll(%.3f), yaw(%.3f)",
         hold_msg_->targets.x, hold_msg_->targets.y, hold_msg_->targets.z, hold_msg_->targets.roll,
