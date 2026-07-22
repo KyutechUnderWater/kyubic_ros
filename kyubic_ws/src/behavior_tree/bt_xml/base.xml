@@ -10,8 +10,10 @@
       <Talker name="AutomatickTalker"
               message="Automatick Mode Start"
               topic_name="/talker"/>
-      <ResetLocalization service_name="/localization/reset"
-                         timeout_sec="2.0"/>
+      <RetryUntilSuccessful num_attempts="5">
+        <ResetLocalization service_name="/localization/reset"
+                           timeout_sec="2.0" />
+      </RetryUntilSuccessful>
       <LifecycleManager name="ActivateZOHNode"
                         node_name="planner/wrench_planner/zoh_wrench_planner_component"
                         transition="activate"
