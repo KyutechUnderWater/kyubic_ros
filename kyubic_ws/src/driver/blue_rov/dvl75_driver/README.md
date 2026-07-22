@@ -1,6 +1,6 @@
 # dvl75_driver
 
-Cerulean Sonar DVL-75のUDP計測値をROS 2トピックへ変換するドライバー。標準の`dvl75_driver`実行ファイルは、ロード可能なC++コンポーネント`dvl75_driver::Dvl75Driver`から生成。従来のPython実装は検証用に`dvl75_py`として保持。共通用途には既存の`driver_msgs/msg/DVL`、DVL-75固有の計測値には`blue_rov_msgs/msg/DVL75`を使用。デバイス固有の通信・永続設定は[README_DVL75.md](README_DVL75.md)を参照。
+Cerulean Sonar DVL-75のUDP計測値をROS 2トピックへ変換するC++ドライバー。`dvl75_driver`実行ファイルは、ロード可能なコンポーネント`dvl75_driver::Dvl75Driver`から生成。共通用途には既存の`driver_msgs/msg/DVL`、DVL-75固有の計測値には`blue_rov_msgs/msg/DVL75`を使用。デバイス固有の通信・永続設定は[README_DVL75.md](README_DVL75.md)を参照。
 
 ## 概要
 
@@ -24,7 +24,6 @@ flowchart LR
 
 - ROS 2 `rclcpp`、`rclcpp_components`
 - `custom_socket`。UDP送受信、送信元取得、bind、タイムアウト処理
-- Python版検証時のみROS 2 `rclpy`
 - `common_msgs`
 - `driver_msgs`
 - `blue_rov_msgs`
@@ -42,18 +41,22 @@ source install/setup.bash
 ros2 launch dvl75_driver dvl75_driver.launch.py
 ```
 
-Python版を使用する場合:
+### 初期設定
+
+DVLを初めて接続するときだけ、初期設定専用launchを実行する。
 
 ```bash
-ros2 launch dvl75_driver dvl75_py.launch.py
+ros2 launch dvl75_driver dvl75_setup.launch.py
 ```
+
+このlaunchは`apply_device_config=true`を明示的に上書きし、`SEND-DVEXT ON`と`SEND-DVPDL ON`、および設定ファイルで指定した初期コマンドを送信する。`DVPDL`受信を確認したら`Ctrl-C`で停止し、以後は通常の`dvl75_driver.launch.py`を使用する。通常起動ではDVLの永続設定を変更しない。初期設定launchと通常launchを同時に起動しないこと。
 
 ### launch構成
 
 | launchファイル | 起動プロセス | ノード | 主な設定 |
 | --- | --- | --- | --- |
-| `launch/dvl75_driver.launch.py` | `component_container_mt` | コンテナ: `/driver/blue_rov/dvl75_driver/dvl75_driver_container`、ロードノード: `/driver/blue_rov/dvl75_driver/dvl75_driver` | コンポーネント: `dvl75_driver::Dvl75Driver`。`config/dvl75_driver.param.yaml`、`log_level`引数 |
-| `launch/dvl75_py.launch.py` | Python `dvl75_py` | `/driver/blue_rov/dvl75_driver/dvl75_py` | C++版との比較・切り戻し用。同じ設定ファイル、`log_level`引数 |
+| `launch/dvl75_driver.launch.py` | `component_container_mt` | コンテナ: `/driver/blue_rov/dvl75_driver/dvl75_driver_container`、ロードノード: `/driver/blue_rov/dvl75_driver/dvl75_driver` | 通常運用。永続設定を変更しない |
+| `launch/dvl75_setup.launch.py` | `component_container_mt` | コンテナ: `/driver/blue_rov/dvl75_driver/dvl75_setup_container`、ロードノード: `/driver/blue_rov/dvl75_driver/dvl75_setup` | 初期設定専用。`apply_device_config=true`を上書き |
 
 ## ノードと通信
 
@@ -110,7 +113,7 @@ Subscribe・Actionは使用なし。
 | `minimum_locked_beams` | integer | `3` | `3` | 最小ロックビーム数。3–4 |
 | `position_axis_sign` | double[3] | `[1,1,1]` | `[1,1,1]` | 位置差分の軸符号。有限かつゼロ不可 |
 | `angle_axis_sign` | double[3] | `[1,1,1]` | `[1,1,1]` | 角度差分の軸符号。有限かつゼロ不可 |
-| `apply_device_config` | bool | `false` | `true` | 起動時の永続DVL設定送信。DVEXT・DVPDLを必ず有効化 |
+| `apply_device_config` | bool | `false` | `false` | 通常運用では永続設定を変更しない。初期設定launchだけが`true`へ上書き |
 | `device_host_address` | string | 空文字 | 空文字 | `HOST-ADDRESS`へ渡す値 |
 | `startup_commands` | string[] | `[]` | 未設定 | 追加で送信する1行コマンド列。DVEXT・DVPDLのOFFは指定不可。空の場合はYAMLから省略 |
 
@@ -128,11 +131,10 @@ ros2 topic echo /driver/blue_rov/dvl75_driver/dvl75
 
 ## 運用・停止・テスト
 
-- 初回設定時のみ`apply_device_config: true`。確認後は`false`へ復帰
+- 初回設定時だけ`dvl75_setup.launch.py`を使用し、通常運用では`dvl75_driver.launch.py`を使用
 - 軸符号は拘束状態で確認
 - 停止はlaunch端末で`Ctrl-C`。ソケットを閉じ、受信スレッドをjoin
-- C++パーサーテスト: `colcon test --packages-select dvl75_driver`
-- Pythonパーサーテスト: `python3 -m unittest discover -s test -p 'test_*.py'`
+- パーサーテスト: `colcon test --packages-select dvl75_driver`
 
 ## 既知の制約
 

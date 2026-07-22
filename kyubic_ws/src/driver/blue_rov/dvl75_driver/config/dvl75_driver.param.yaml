@@ -22,9 +22,9 @@
     position_axis_sign: [1.0, 1.0, 1.0]
     angle_axis_sign: [1.0, 1.0, 1.0]
 
-    # Apply persistent DVL configuration on every node startup. This sends
-    # SEND-DVEXT ON and SEND-DVPDL ON to the configured DVL endpoint.
-    apply_device_config: true
+    # Normal operation never modifies the DVL's persistent configuration.
+    # Run dvl75_setup.launch.py once when provisioning a DVL instead.
+    apply_device_config: false
     device_host_address: ""
     # Omit startup_commands when no additional command is required. An empty
     # YAML sequence has no element type and cannot represent ROS string[].

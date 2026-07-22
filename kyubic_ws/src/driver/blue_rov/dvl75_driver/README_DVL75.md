@@ -29,7 +29,7 @@ DVL-75の工場出荷時設定は、UDPメッセージを`255.255.255.255:27000`
 
 受信パケットの送信元IPはDVL自身のIPであり、`dvl_address`と一致するパケットだけを受け入れる。例えば`192.168.2.111:50000 > 255.255.255.255:27000`の場合、`dvl_address`は`192.168.2.111`、`dvl_command_port`は`50000`。
 
-`apply_device_config: true`かつ`device_host_address`を設定すると、`HOST-ADDRESS <IP>:<port>`をDVLへ送信する。これはDVLの送信先をユニキャストへ変更する永続設定であり、ブロードキャスト受信から変更する場合は、ROSホストのIP・ポートを正しく設定すること。
+初期設定専用の`dvl75_setup.launch.py`を実行し、かつ`device_host_address`を設定すると、`HOST-ADDRESS <IP>:<port>`をDVLへ送信する。これはDVLの送信先をユニキャストへ変更する永続設定であり、ブロードキャスト受信から変更する場合は、ROSホストのIP・ポートを正しく設定すること。
 
 | 取得項目 | 内容 | ROS 2へのPublish |
 | --- | --- | --- |
@@ -60,14 +60,20 @@ DVL-75の工場出荷時設定は、UDPメッセージを`255.255.255.255:27000`
 
 ## 初期化・永続設定
 
-`apply_device_config: true`の場合、以下をUDPでDVLへ送信。
+通常の`dvl75_driver.launch.py`は永続設定を変更しない。DVLを初めて接続するときだけ、次を実行する。
+
+```bash
+ros2 launch dvl75_driver dvl75_setup.launch.py
+```
+
+初期設定launchは`apply_device_config=true`を上書きし、以下をUDPでDVLへ送信する。
 
 1. `device_host_address`が非空の場合: `HOST-ADDRESS <値>`
 2. `SEND-DVEXT ON`
 3. `SEND-DVPDL ON`
 4. `startup_commands`の各行
 
-`$DVEXT`と`$DVPDL`は本ドライバーに必須の出力。個別のON/OFFパラメータは持たず、`apply_device_config: true`では両方を必ずONにしてDVLへ永続設定する。`apply_device_config: false`は起動時の設定送信だけを省略し、DVLがすでに送信している`$DVEXT`・`$DVPDL`の受信、速度計算、トピックPublishは停止しない。
+`$DVEXT`と`$DVPDL`は本ドライバーに必須の出力。初期設定launchは両方を必ずONにしてDVLへ永続設定する。`$DVPDL`受信を確認したら`Ctrl-C`で停止し、以後は通常launchを使用する。通常launchは設定送信を省略するだけで、DVLがすでに送信している`$DVEXT`・`$DVPDL`の受信、速度計算、トピックPublishは停止しない。初期設定launchと通常launchは同時に起動しない。
 
 `command`サービスおよび`startup_commands`でも、`SEND-DVEXT OFF`と`SEND-DVPDL OFF`は拒否する。過去の設定や別ツールによって両出力がすでにONなら、`apply_device_config: false`でも`$DVPDL`を受信して`DVL.velocity`を計算する。
 

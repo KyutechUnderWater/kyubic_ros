@@ -13,7 +13,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-find_package(ament_cmake_python REQUIRED)
 find_package(blue_rov_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(common_msgs REQUIRED)
@@ -22,8 +21,6 @@ find_package(driver_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
-
-ament_python_install_package(${PROJECT_NAME})
 
 add_library(dvl75_parser src/dvl75_parser.cpp)
 target_include_directories(dvl75_parser PUBLIC include)
@@ -54,11 +51,6 @@ install(TARGETS dvl75_driver_component
   RUNTIME DESTINATION bin
 )
 
-install(PROGRAMS
-  scripts/dvl75_py
-  DESTINATION lib/${PROJECT_NAME}
-)
-
 install(DIRECTORY
   config
   launch
@@ -68,16 +60,14 @@ install(DIRECTORY
 if(BUILD_TESTING)
   find_package(ament_cmake_clang_format QUIET)
   find_package(ament_cmake_gtest REQUIRED)
-  find_package(ament_cmake_pytest REQUIRED)
 
   if(ament_cmake_clang_format_FOUND)
-    ament_clang_format(CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../../../.clang-format)
+    ament_clang_format(CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../.clang-format)
   endif()
 
   ament_add_gtest(test_dvl75_parser test/test_dvl75_parser.cpp)
   target_link_libraries(test_dvl75_parser dvl75_parser)
   target_include_directories(test_dvl75_parser PRIVATE include)
-  ament_add_pytest_test(test_parser test/test_parser.py)
 endif()
 
 ament_package()
