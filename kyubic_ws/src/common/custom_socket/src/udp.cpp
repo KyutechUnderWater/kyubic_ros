@@ -14,14 +14,17 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#include <cerrno>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 
 namespace common
 {
 
-UdpSocket::UdpSocket() : sockfd_(-1), is_connected_(false)
+UdpSocket::UdpSocket()
+: sockfd_(-1), is_connected_(false)
 {
   // Create socket
   sockfd_ = socket(AF_INET, SOCK_DGRAM, 0);
@@ -43,9 +46,17 @@ UdpSocket::~UdpSocket()
 
 void UdpSocket::setTimeout(int sec)
 {
+  setTimeout(std::chrono::seconds(sec));
+}
+
+void UdpSocket::setTimeout(std::chrono::milliseconds timeout)
+{
+  if (timeout.count() < 0) {
+    throw std::invalid_argument("UDP timeout must not be negative");
+  }
   struct timeval tv;
-  tv.tv_sec = sec;
-  tv.tv_usec = 0;
+  tv.tv_sec = static_cast<time_t>(timeout.count() / 1000);
+  tv.tv_usec = static_cast<suseconds_t>((timeout.count() % 1000) * 1000);
   setsockopt(sockfd_, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
   setsockopt(sockfd_, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
 }
@@ -58,11 +69,19 @@ void UdpSocket::setBroadcast(bool enable)
 
 bool UdpSocket::bind(int port)
 {
+  return bind("0.0.0.0", port);
+}
+
+bool UdpSocket::bind(const std::string & address, int port)
+{
   struct sockaddr_in addr;
   std::memset(&addr, 0, sizeof(addr));
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
-  addr.sin_addr.s_addr = INADDR_ANY;  // Recieve all devices
+  if (inet_pton(AF_INET, address.c_str(), &addr.sin_addr) != 1) {
+    std::cerr << "Invalid bind address: " << address << std::endl;
+    return false;
+  }
 
   if (::bind(sockfd_, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
     perror("Bind failed");
@@ -73,6 +92,20 @@ bool UdpSocket::bind(int port)
 
 std::vector<uint8_t> UdpSocket::receive(size_t max_len)
 {
+  try {
+    auto datagram = receiveFrom(max_len);
+    return datagram ? std::move(datagram->data) : std::vector<uint8_t>{};
+  } catch (const std::runtime_error & error) {
+    std::cerr << error.what() << std::endl;
+    return {};
+  }
+}
+
+std::optional<UdpDatagram> UdpSocket::receiveFrom(size_t max_len)
+{
+  if (max_len == 0U) {
+    throw std::invalid_argument("UDP receive buffer must not be empty");
+  }
   std::vector<uint8_t> buffer(max_len);
   struct sockaddr_in sender_addr;
   socklen_t addr_len = sizeof(sender_addr);
@@ -84,17 +117,19 @@ std::vector<uint8_t> UdpSocket::receive(size_t max_len)
   // Timeout or Error
   if (len < 0) {
     if (errno == EAGAIN || errno == EWOULDBLOCK) {
-      std::cerr << "Timeout reached." << std::endl;
-    } else if (errno == ECONNREFUSED) {
-      std::cerr << "Port closed (ICMP Unreachable)." << std::endl;
-    } else {
-      perror("recvfrom failed");
+      return std::nullopt;
     }
-    return {};
+    throw std::runtime_error(std::string("recvfrom failed: ") + std::strerror(errno));
   }
 
   buffer.resize(len);
-  return buffer;
+  char sender_address[INET_ADDRSTRLEN]{};
+  if (inet_ntop(AF_INET, &sender_addr.sin_addr, sender_address,
+      sizeof(sender_address)) == nullptr)
+  {
+    throw std::runtime_error(std::string("inet_ntop failed: ") + std::strerror(errno));
+  }
+  return UdpDatagram{std::move(buffer), sender_address, ntohs(sender_addr.sin_port)};
 }
 
 bool UdpSocket::setDestination(const std::string & host, int port)
@@ -133,7 +168,10 @@ ssize_t UdpSocket::sendTo(const std::vector<uint8_t> & data, const std::string &
   std::memset(&dest_addr, 0, sizeof(dest_addr));
   dest_addr.sin_family = AF_INET;
   dest_addr.sin_port = htons(port);
-  inet_pton(AF_INET, host.c_str(), &dest_addr.sin_addr);
+  if (inet_pton(AF_INET, host.c_str(), &dest_addr.sin_addr) != 1) {
+    errno = EINVAL;
+    return -1;
+  }
 
   return ::sendto(
     sockfd_, data.data(), data.size(), 0, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
