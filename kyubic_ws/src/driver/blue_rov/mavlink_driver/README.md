@@ -62,7 +62,7 @@ launchファイルは相対名`imu`と`depth`だけを共通Topicへremapする�
 | `BATTERY_STATUS` | 電圧[mV]をV、電流[cA]をAへ変換して`power_state`へPublish |
 | `VFR_HUD` | `alt * depth_scale`を`depth.depth`へPublish |
 | `SCALED_PRESSURE2` | 温度[centi-degree]を°Cへ変換し、後続`depth.temperature`へ使用 |
-| `ATTITUDE` | roll/pitch/yaw[rad]を`imu.orient`の度へ、角速度はrad/sのまま`imu.gyro`へPublish |
+| `ATTITUDE` | roll/pitch/yaw[rad]を`imu.orient`のdegreeへ、角速度をdegree/sへ変換して`imu.gyro`へPublish |
 | `GPS_RAW_INT` | 緯度・経度を`1e7`、高度を`1000`で除算して`gnss`へPublish |
 | `COMMAND_ACK` | ARM/DISARMコマンドの受理確認へ使用 |
 

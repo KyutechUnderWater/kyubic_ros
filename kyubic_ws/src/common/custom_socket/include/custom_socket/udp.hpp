@@ -18,6 +18,10 @@
 #include <string>
 #include <vector>
 
+/**
+ * @namespace common
+ * @brief Shared communication utilities used by ROS drivers.
+ */
 namespace common
 {
 

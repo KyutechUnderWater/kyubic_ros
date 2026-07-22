@@ -57,13 +57,15 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
     tf2::Vector3 vel_raw(msg->velocity.x, msg->velocity.y, msg->velocity.z);
 
     tf2::Vector3 angular_vel(
-      imu_msg_->twist.angular.x * RADIAN_SCALE, imu_msg_->twist.angular.y * RADIAN_SCALE,
-      imu_msg_->twist.angular.z * RADIAN_SCALE);
+      imu_msg_->twist.angular.x * DEGREE_TO_RADIAN,
+      imu_msg_->twist.angular.y * DEGREE_TO_RADIAN,
+      imu_msg_->twist.angular.z * DEGREE_TO_RADIAN);
 
     tf2::Quaternion q_rot;
     q_rot.setRPY(
-      imu_msg_->pose.orientation.x * RADIAN_SCALE, imu_msg_->pose.orientation.y * RADIAN_SCALE,
-      imu_msg_->pose.orientation.z * RADIAN_SCALE);
+      imu_msg_->pose.orientation.x * DEGREE_TO_RADIAN,
+      imu_msg_->pose.orientation.y * DEGREE_TO_RADIAN,
+      imu_msg_->pose.orientation.z * DEGREE_TO_RADIAN);
 
     tf2::Vector3 vel_robot_body = vel_raw - angular_vel.cross(lever_arm);
 
