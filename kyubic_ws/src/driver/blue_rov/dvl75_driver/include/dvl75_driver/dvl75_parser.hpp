@@ -12,6 +12,10 @@
 #include <string>
 #include <variant>
 
+/**
+ * @namespace dvl75_driver
+ * @brief ROS 2 driver and parser support for the Cerulean Sonar DVL-75.
+ */
 namespace dvl75_driver
 {
 
@@ -49,6 +53,7 @@ struct Dvpdl
 class ParseError : public std::runtime_error
 {
 public:
+  /** @brief Inherit constructors that describe the parsing failure. */
   using std::runtime_error::runtime_error;
 };
 
