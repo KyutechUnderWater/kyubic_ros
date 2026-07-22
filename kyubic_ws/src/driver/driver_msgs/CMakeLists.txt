@@ -40,6 +40,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 	"./msg/SystemSwitch.msg"
 	"./msg/SystemStatus.msg"
 	"./msg/Thruster.msg"
+	"./msg/VehicleState.msg"
 
 	"srv/Command.srv"
 	DEPENDENCIES std_msgs
@@ -51,4 +52,3 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 ament_export_dependencies(rosidl_default_runtime)
 
 ament_package()
-

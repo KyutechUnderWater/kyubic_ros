@@ -14,6 +14,8 @@
 #include <memory>
 #include <serial/serial.hpp>
 
+#include "imu_driver/unit_conversion.hpp"
+
 /**
  * @namespace driver::imu_driver
  * @brief For imu driver
@@ -123,9 +125,7 @@ const int default_baudrate = 460800;  /// Default baudrate.
 /**
  * @brief The scale factor for each data
  */
-const double temp_sf = 0.00699411;      /// for 16bit attitude data [degree celsius/LSB]
-const double gyro_sf = 1.0 / 66.0;      /// for 16bit gyro data [(degree/s)/LSB]
-const double accel_sf = 1.0 / 4.0;      /// for 16bit, output range ±8 acceleration data [(mG)/LSB]
+const double temp_sf = 0.00699411;  /// for 16bit attitude data [degree celsius/LSB]
 const double qtn_sf = 1.0 / (1 << 14);  /// for 16bit quaternion data [-/LSB]
 const double atti_sf = 0.00699411;      /// for 16bit attitude data [degree/LSB]
 
