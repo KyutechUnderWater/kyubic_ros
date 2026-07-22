@@ -320,9 +320,9 @@ class MavlinkDriver(Node):
         message.accel.x = math.nan
         message.accel.y = math.nan
         message.accel.z = math.nan
-        message.gyro.x = mav_message.rollspeed
-        message.gyro.y = mav_message.pitchspeed
-        message.gyro.z = mav_message.yawspeed
+        message.gyro.x = radians_to_degrees(mav_message.rollspeed)
+        message.gyro.y = radians_to_degrees(mav_message.pitchspeed)
+        message.gyro.z = radians_to_degrees(mav_message.yawspeed)
         message.orient.x = radians_to_degrees(mav_message.roll)
         message.orient.y = radians_to_degrees(mav_message.pitch)
         message.orient.z = radians_to_degrees(mav_message.yaw)
