@@ -14,8 +14,8 @@
     surface_rise_offset_m: 4.0 # [m] SURFACEで浮上する量
 
     # ---- 音響(SBL)・画像処理連携(要チューニング。符号は要実機検証、README参照) ----
-    hydrophone_pitch_threshold_deg: 30.0 # [deg] これを超えたら「十分近い」とみなす(PingerDirection.pitch_deg)
-    hydrophone_score_threshold: 0.0 # [0.0-1.0想定] これ未満のPingerDirection.scoreは「未発見」扱い。score未整備/常に1.0なら変更不要
+    hydrophone_pitch_threshold_deg: 30.0 # [deg] これを超えたら「十分近い」とみなす(PingerDirection.pitch)
+    hydrophone_score_threshold: 1.0e6 # PingerDirection.scoreは誤差(小さいほど良い)。これを超えたら「未発見」扱い。実機の典型誤差レンジ確認まで大きめ(常に許可)
     yolo_confidence_threshold: 0.5 # これ未満の検出は無視する
     yolo_stale_timeout_sec: 1.0 # [s] timestampがこれより古い検出は無視する
 

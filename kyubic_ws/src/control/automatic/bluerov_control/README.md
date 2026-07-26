@@ -98,11 +98,13 @@ ros2 launch bluerov_control bluerov_control.launch.py
   実際の前進速度を見ながら徐々に上げる。
 - `descend_depth_m` / `dive_offset_m` / `post_check_rise_offset_m` / `surface_rise_offset_m`:
   ミッションの深度形状。プール/競技フィールドの水深に合わせて調整。
-- `hydrophone_pitch_threshold_deg`: `PingerDirection.pitch_deg`向けの閾値。符号の向きが実機で
+- `hydrophone_pitch_threshold_deg`: `PingerDirection.pitch`向けの閾値。符号の向きが実機で
   未検証(コード内コメント参照)。逆方向に動くようであれば、`flow.py`の
   `handle_search_hydrophone`内の不等号を`<`に変更する必要がある。
-- `hydrophone_score_threshold`: `PingerDirection.score`の下限ゲート。音響班とスケールを
-  すり合わせるまでは既定`0.0`(常に許可)のままでよい。
+- `hydrophone_score_threshold`: `PingerDirection.score`の上限ゲート。**`score`はconfidence
+  (大きいほど良い)ではなく、`sbl_direction_estimator_node`側の最適化計算の誤差(小さいほど良い)**
+  なので、`score`がこの値**以下**なら使う判定になる(`perception.is_pinger_direction_usable`)。
+  実機での典型的な誤差レンジが未確認のため、既定`1.0e6`(常に許可)のままでよい。
 - `odom_timeout_s`: `/localization/odom`の最終受信からこの秒数を超えたらEMERGENCYに
   強制遷移する(§5「安全機構」参照)。DVL/localizationが不安定な環境では短すぎる値だと
   誤検知で頻繁に緊急浮上してしまうため、実機のodom更新頻度・瞬断傾向を見て調整する。
@@ -113,7 +115,7 @@ ros2 launch bluerov_control bluerov_control.launch.py
 
 | トピック | 型 | 説明 | 実装時にすべきこと |
 |---|---|---|---|
-| `pinger_direction` | `bluerov_control_msgs/PingerDirection` | 音響(SBL)によるピンガー方向推定(pitch/yaw/score) | 音響班の`sbl_estimation_node`(実装ファイル名`sbl_direction_estimator_node.py`)がこのトピックに発行する |
+| `pinger_direction` | `planner_msgs/PingerDirection` | 音響(SBL)によるピンガー方向推定(yaw/pitch/score)。実装参考: `kyubic_ws/src/sample/othersapmleCode/` | 音響班の`sbl_estimation_node`(`sbl_direction_estimator_node.py`)がこのトピックに発行する |
 | `buoy_detection` | `bluerov_control_msgs/BuoyDetection` | 画像処理によるブイ検出 | 画像処理担当のノードが、このトピックに発行する |
 | `wrench_plan` | `planner_msgs/WrenchPlan` | SEARCH_HYDROPHONE探索中に追従する絶対移動目標(`targets.x/y/z`、`z_mode`) | 音響班の`sbl_controller_node`がこのトピックに発行する。`bluerov_control`自身は`targets`のみ読み、`master`/`slave`/`has_master`/`has_slave`は無視する |
 
@@ -121,8 +123,8 @@ ros2 launch bluerov_control bluerov_control.launch.py
 フォールバックする。動作確認には`ros2 topic pub`でダミー値を注入できる:
 
 ```bash
-ros2 topic pub /perception/pinger_direction bluerov_control_msgs/msg/PingerDirection \
-  "{detected: true, yaw_deg: 0.0, pitch_deg: 35.0, score: 1.0}" --rate 5
+ros2 topic pub /pinger_direction planner_msgs/msg/PingerDirection \
+  "{yaw: 0.0, pitch: 35.0, score: 0.01}" --rate 5
 
 ros2 topic pub /perception/buoy_detection bluerov_control_msgs/msg/BuoyDetection \
   "{detected: true, relative_buoy_x_m: 1.0, relative_buoy_y_m: 0.0, relative_buoy_z_m: 0.5, confidence: 0.9}" --rate 5

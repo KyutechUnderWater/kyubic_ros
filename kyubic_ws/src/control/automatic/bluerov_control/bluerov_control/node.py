@@ -9,13 +9,13 @@ emergency_surfacing)への配線は launch/bluerov_control.launch.py 側の rema
 
 import numpy as np
 import rclpy
-from bluerov_control_msgs.msg import BuoyDetection, PingerDirection
+from bluerov_control_msgs.msg import BuoyDetection
 from driver_msgs.msg import VehicleState
 from geometry_msgs.msg import WrenchStamped
 from lifecycle_msgs.msg import Transition
 from lifecycle_msgs.srv import ChangeState
 from localization_msgs.msg import Odometry
-from planner_msgs.msg import WrenchPlan
+from planner_msgs.msg import PingerDirection, WrenchPlan
 from rclpy.node import Node
 from std_msgs.msg import Bool
 from std_srvs.srv import SetBool
@@ -90,8 +90,11 @@ class BlueRovControlNode(Node):
             hydrophone_pitch_threshold_deg=self.declare_parameter(
                 "hydrophone_pitch_threshold_deg", 30.0
             ).value,
+            # PingerDirection.scoreはconfidence(大きいほど良い)ではなく、
+            # sbl_direction_estimator_nodeの最適化計算の誤差(小さいほど良い)。
+            # 実機での典型的な誤差レンジが未確認のため、既定値は大きめ(常に許可)にしている。
             hydrophone_score_threshold=self.declare_parameter(
-                "hydrophone_score_threshold", 0.0
+                "hydrophone_score_threshold", 1.0e6
             ).value,
             yolo_confidence_threshold=self.declare_parameter(
                 "yolo_confidence_threshold", 0.5

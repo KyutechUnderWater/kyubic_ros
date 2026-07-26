@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python3 -)"
+      "Bash(python3 -)",
+      "Bash(python3 -m py_compile bluerov_control/flow.py bluerov_control/perception.py bluerov_control/node.py bluerov_control/control.py launch/bluerov_control.launch.py)"
     ]
   }
 }

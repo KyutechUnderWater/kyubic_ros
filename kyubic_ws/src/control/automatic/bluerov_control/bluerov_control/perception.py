@@ -2,7 +2,7 @@
 
 blueRovControl/perception.py からの移植。get_latest_hydrophone_bearing() /
 get_latest_yolo_detection() (共に NotImplementedError のプレースホルダだった)は、
-ROS2化に伴い bluerov_control_msgs/PingerDirection・BuoyDetection トピックの
+ROS2化に伴い planner_msgs/PingerDirection・bluerov_control_msgs/BuoyDetection トピックの
 subscriber(node.py側)に置き換わったため、ここには残していない。
 音響(SBL)側の「機体座標系の相対値→NED絶対座標」変換は sbl_controller_node が
 planner_msgs/WrenchPlanとして計算済みの絶対座標を渡してくるため、このモジュールでは
@@ -32,13 +32,18 @@ def is_buoy_detection_usable(
 
 
 def is_pinger_direction_usable(pinger_direction, score_threshold: float) -> bool:
-    """detectedがFalse、またはscoreが閾値未満の推定は使わない。
+    """未受信、またはscore(最適化計算の誤差。値が小さいほど良い)が閾値を超える推定は使わない。
 
-    pinger_direction: bluerov_control_msgs/PingerDirection、または None(まだ一度も受信していない)。
+    pinger_direction: planner_msgs/PingerDirection、または None(まだ一度も受信していない)。
+    sbl_direction_estimator_node(kyubic_ws/src/sample/othersapmleCode/参照)は
+    信号を検出できなかった周期はメッセージ自体をpublishしない設計のため、
+    「未検出」はdetectedフラグではなくctx.pinger_directionがNoneのままであることで表す。
+    scoreはBuoyDetection.confidenceのような0-1のconfidenceではなくscipy.optimize.minimizeの
+    残差(誤差)なので、しきい値判定は「以下なら使う」であり「以上」ではない点に注意。
     """
-    if pinger_direction is None or not pinger_direction.detected:
+    if pinger_direction is None:
         return False
-    return pinger_direction.score >= score_threshold
+    return pinger_direction.score <= score_threshold
 
 
 def body_offset_to_ned(

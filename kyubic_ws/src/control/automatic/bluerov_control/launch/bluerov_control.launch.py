@@ -40,7 +40,9 @@ def generate_launch_description() -> LaunchDescription:
             ("robot_force", "/driver/blue_rov/mavlink_driver/robot_force"),
             ("heartbeat", "/driver/blue_rov/mavlink_driver/heartbeat"),
             ("set_armed", "/driver/blue_rov/mavlink_driver/set_armed"),
-            ("pinger_direction", "/perception/pinger_direction"),
+            # sbl_direction_estimator_node(kyubic_ws/src/sample/othersapmleCode/参照)の
+            # topic_nameパラメータ既定値 "/pinger_direction" にそのまま合わせている
+            ("pinger_direction", "/pinger_direction"),
             ("buoy_detection", "/perception/buoy_detection"),
             # TODO: 音響班のsbl_controller_nodeが決まり次第、実際のトピック名に合わせて確認・調整する
             ("wrench_plan", "/acoustics/sbl_controller/wrench_plan"),

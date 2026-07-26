@@ -88,7 +88,7 @@ class MissionContext:
     )
 
     pinger_direction: object = (
-        None  # 最新の bluerov_control_msgs/PingerDirection(未受信ならNone)
+        None  # 最新の planner_msgs/PingerDirection(未受信ならNone)
     )
     wrench_plan: object = (
         None  # sbl_controller_nodeが発行する最新の planner_msgs/WrenchPlan(未受信ならNone)
@@ -246,12 +246,12 @@ def handle_search_hydrophone(ctx: MissionContext) -> State:
         return State.SEARCH_HYDROPHONE
 
     # TODO(要ハードウェア仕様確認): 不等号の向きは "対象がハイドロフォンより深い(HYDRO_DIVEで
-    # さらに+2.5m潜る設計と整合)" と仮定して pitch_deg > THRESHOLD (見下ろす角度が大きい=近い) に
-    # している。ただしPingerDirectionの「正=対象が下方向」の定義と実機の取り付け向きに
-    # 完全に依存するため、実機で必ず符号を検証すること。逆であれば `<` に戻す。
+    # さらに+2.5m潜る設計と整合)" と仮定して pitch > THRESHOLD (見下ろす角度が大きい=近い) に
+    # している。ただしPingerDirection.pitchの符号定義と実機の取り付け向きに完全に依存するため、
+    # 実機で必ず符号を検証すること。逆であれば `<` に戻す。
     if (
         perception.is_pinger_direction_usable(pinger, ctx.params.hydrophone_score_threshold)
-        and pinger.pitch_deg > ctx.params.hydrophone_pitch_threshold_deg
+        and pinger.pitch > ctx.params.hydrophone_pitch_threshold_deg
     ):
         # 閾値を超えた瞬間、WrenchPlanが示していた絶対座標を「発見した対象の絶対座標」として
         # 記録する(sbl_controller_nodeの出力をそのまま信頼する)。以降のHOLD_TARGET/
