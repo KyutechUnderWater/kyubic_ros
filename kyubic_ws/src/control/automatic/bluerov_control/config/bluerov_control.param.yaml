@@ -1,0 +1,77 @@
+/**:
+  ros__parameters:
+    main_loop_hz: 10.0 # [Hz] FSM+制御ループの目標周波数
+
+    # ---- ミッションタイミング(blueRovControl/params.pyから移植、要チューニング) ----
+    init_wait_sec: 180.0 # [s] 起動後、深度まで潜り始めるまでの待機時間
+    search_timeout_sec: 420.0 # [s] SEARCH_HYDROPHONEに入ってからのタイムアウト
+    mic_confirm_timeout_sec: 45.0 # [s] discovered_target確定後、マイクで確認が取れるまでの上限時間
+
+    # ---- ミッション形状(blueRovControl/flow.pyのハードコード値から移植) ----
+    descend_depth_m: 7.0 # [m] DESCEND_TO_7Mが目指す絶対深度
+    dive_offset_m: 2.5 # [m] VISUAL_DIVE/HYDRO_DIVEで現在地から追加で潜る量
+    post_check_rise_offset_m: 0.5 # [m] VISUAL_POST_CHECK/HYDRO_NEAR_SURFACEで浮上する量
+    surface_rise_offset_m: 4.0 # [m] SURFACEで浮上する量
+
+    # ---- ハイドロフォン・画像処理連携(要チューニング。符号は要実機検証、README参照) ----
+    hydrophone_pitch_threshold_deg: 30.0 # [deg] これを超えたら「十分近い」とみなす
+    hydrophone_assumed_distance_m: 5.0 # [m] ハイドロフォンは距離を測れないための仮定値
+    yolo_confidence_threshold: 0.5 # これ未満の検出は無視する
+    yolo_stale_timeout_sec: 1.0 # [s] timestampがこれより古い検出は無視する
+
+    # ---- 到達判定・緊急停止しきい値 ----
+    position_tolerance_m: 0.2 # [m] 水平方向の到達とみなす距離
+    depth_tolerance_m: 0.1 # [m] 深度方向の到達とみなす距離
+    surface_z_threshold_m: 0.1 # [m] これより浅い(水面に近い)とEMERGENCYに遷移
+
+    # ---- デバッグ用(実センサ未接続でも状態遷移をテストできるように上書き可能) ----
+    debug.image_processing_available: true # SEARCH_HYDROPHONE発見時にVISUAL系へ行くかHOLD_TARGETへ行くか
+    debug.mic_data_from_above: false # VISUAL_CHECK_MIC/HYDRO_CHECK_MICでSURFACEへ行くかどうか
+
+    # ---- 緊急停止(emergency_surfacing)配線 ----
+    emergency_change_state_service: "/emergency/emergency_surfacing/change_state"
+
+    # ---- PIDゲイン(blueRovControl/params.pyから移植した初期値。
+    #      出力先がMAVLink MANUAL_CONTROLスケールからWrenchStamped/mavlink_driverの
+    #      axis.<name>.limitスケールに変わったため、実機でのリチューニングが前提。README参照) ----
+    pid.surge_outer.kp: 0.15
+    pid.surge_outer.ki: 0.0
+    pid.surge_outer.kd: 0.0
+    pid.surge_outer.output_limits: [0.0, 0.3] # [m/s]
+    pid.surge_outer.windup_limit: 0.6
+    pid.surge_outer.angle_error_deg: false
+
+    pid.heave_outer.kp: 0.3
+    pid.heave_outer.ki: 0.0
+    pid.heave_outer.kd: 0.0
+    pid.heave_outer.output_limits: [-0.3, 0.3] # [m/s]
+    pid.heave_outer.windup_limit: 0.6
+    pid.heave_outer.angle_error_deg: false
+
+    pid.yaw_outer.kp: 0.5
+    pid.yaw_outer.ki: 0.0
+    pid.yaw_outer.kd: 0.0
+    pid.yaw_outer.output_limits: [-20.0, 20.0] # [deg/s]
+    pid.yaw_outer.windup_limit: 40.0
+    pid.yaw_outer.angle_error_deg: true
+
+    pid.surge_inner.kp: 1000.0
+    pid.surge_inner.ki: 0.0
+    pid.surge_inner.kd: 0.0
+    pid.surge_inner.output_limits: [0.0, 400.0] # WrenchStamped.wrench.force.x に渡す値(要リチューニング)
+    pid.surge_inner.windup_limit: 0.4
+    pid.surge_inner.angle_error_deg: false
+
+    pid.heave_inner.kp: 800.0
+    pid.heave_inner.ki: 0.0
+    pid.heave_inner.kd: 0.0
+    pid.heave_inner.output_limits: [-300.0, 300.0] # WrenchStamped.wrench.force.z に渡す値(要リチューニング)
+    pid.heave_inner.windup_limit: 0.4
+    pid.heave_inner.angle_error_deg: false
+
+    pid.yaw_inner.kp: 20.0
+    pid.yaw_inner.ki: 0.0
+    pid.yaw_inner.kd: 0.0
+    pid.yaw_inner.output_limits: [-500.0, 500.0] # WrenchStamped.wrench.torque.z に渡す値(要リチューニング)
+    pid.yaw_inner.windup_limit: 25.0
+    pid.yaw_inner.angle_error_deg: false

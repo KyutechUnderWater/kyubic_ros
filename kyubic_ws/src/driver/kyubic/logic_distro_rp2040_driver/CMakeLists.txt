@@ -16,6 +16,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
+find_package(protolink REQUIRED)
 ament_auto_find_build_dependencies()
 
 add_protolink_message_from_ros_message("driver_msgs" "PowerState")

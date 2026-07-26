@@ -22,21 +22,30 @@ EOT
 nvm install 24
 
 # verifies the right Node.js version is in the environment
-node -v # should print `v24.1.0`
+node -v # should print `v24.x.x`
 
 # verifies the right NPM version is in the environment
-npm -v # should print `11.3.0`
+npm -v # should print `11.x.x`
 
-# Install Neovim
+# Install Neovim (Extract mode to avoid FUSE requirement in Docker)
 orig_path=$(pwd)
 mkdir -p $HOME_DIR/Apps/nvim && nvim_dir=$_ && cd $nvim_dir
-curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage
-chmod u+x ./nvim-linux-x86_64.appimage && $_ --version
-if [[ $? == 0 ]]; then
-	ln -s $nvim_dir/nvim-linux-x86_64.appimage /usr/bin/nvim
+
+# Detect Architecture
+ARCH=$(uname -m)
+if [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then
+    NVIM_APPIMAGE="nvim-linux-arm64.appimage"
 else
-	./nvim-linux-x86_64.appimage --appimage-extract >&/dev/null && ln -s $nvim_dir/squashfs-root/usr/bin/nvim /usr/bin/nvim
+    NVIM_APPIMAGE="nvim-linux-x86_64.appimage"
 fi
+
+curl -LO https://github.com/neovim/neovim/releases/latest/download/$NVIM_APPIMAGE
+chmod u+x ./$NVIM_APPIMAGE
+
+# Do not execute directly (avoids FUSE error), extract it instead
+./$NVIM_APPIMAGE --appimage-extract
+ln -s $nvim_dir/squashfs-root/usr/bin/nvim /usr/bin/nvim
+
 cd $orig_path
 
 git clone https://github.com/atomon/astronvim_v5.git $HOME_DIR/.config/nvim

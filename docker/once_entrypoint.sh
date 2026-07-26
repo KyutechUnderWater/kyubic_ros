@@ -1,15 +1,14 @@
 #!/bin/bash
 
 # Set user and group
-groupmod -g $GROUP_ID ros
-usermod -u $USER_ID -g $GROUP_ID -G sudo ros
+groupmod -g "$GROUP_ID" ros
+usermod -u "$USER_ID" -g "$GROUP_ID" -G sudo ros
 
-# Set passward
-sh -c "echo "ros:$1" | chpasswd"
+# Set password
+echo "ros:$1" | chpasswd
 
 # Resolve hostname
-## sudo: unable to resolve host kyubic: Temporary failure in name resolution
-sh -c 'echo 192.168.9.100 kyubic >> /etc/hosts'
+echo "192.168.9.100 kyubic" >> /etc/hosts
 
 # Set python-env with uv
 gosu ros bash -l -c 'cd ~/kyubic_ros && uv venv --system-site-packages && uv sync'
@@ -23,10 +22,11 @@ EOT'
 
 # Add aliases to .bash_aliases
 if [ "$2" = "true" ]; then
-	BYOBU_STARTUP="client_byobu.sh"
+    BYOBU_STARTUP="client_byobu.sh"
 else
-	BYOBU_STARTUP="kyubic_byobu.sh"
+    BYOBU_STARTUP="kyubic_byobu.sh"
 fi
+
 gosu ros env BYOBU_STARTUP="$BYOBU_STARTUP" bash -c 'cat << EOT >> ~/.bash_aliases
 alias build="colcon build --symlink-install --cmake-args -GNinja"
 alias byobu=$HOME/kyubic_ros/docker/script/$BYOBU_STARTUP
@@ -36,11 +36,10 @@ EOT'
 gosu ros bash -c 'git config --global --add safe.directory /home/ros/kyubic_ros'
 
 # Build ROS packages
-gosu ros bash -i -c 'cd ~/kyubic_ros/kyubic_ws &&
-	colcon build --symlink-install --cmake-args -GNinja'
+gosu ros bash -i -c 'cd ~/kyubic_ros/kyubic_ws && colcon build --symlink-install --cmake-args -GNinja'
 
 gosu ros bash -i -c 'cd ~/kyubic_ros/kyubic_ws && pre-commit install'
 
-# Give execute permission
+# Give execute permission (対象をディレクトリ内のファイルに変更)
 gosu ros bash -i -c 'chmod +x $HOME/kyubic_ros/docker/script/*'
-gosu ros bash -i -c 'chmod +x $HOME/kyubic_ros/docker/byobu/bin'
+gosu ros bash -i -c 'chmod +x $HOME/kyubic_ros/docker/byobu/bin/*'
