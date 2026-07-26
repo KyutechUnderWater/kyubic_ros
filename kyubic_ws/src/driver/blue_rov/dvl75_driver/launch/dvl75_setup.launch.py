@@ -31,6 +31,7 @@ def generate_launch_description() -> LaunchDescription:
                         name="dvl75_setup",
                         namespace="driver/blue_rov/dvl75_driver",
                         parameters=[config, {"apply_device_config": True}],
+                        remappings=[("dvl", "/driver/dvl")],
                     ),
                 ],
                 arguments=["--ros-args", "--log-level", LaunchConfiguration("log_level")],

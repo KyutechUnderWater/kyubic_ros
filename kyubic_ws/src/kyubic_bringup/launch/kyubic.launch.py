@@ -10,7 +10,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             IncludeLaunchDescription(
-                PathJoinSubstitution([driver_launcher_dir, "driver_launcher.launch.py"]),
+                PathJoinSubstitution([driver_launcher_dir, "kyubic_driver.launch.py"]),
                 launch_arguments={
                     "log_level": "warn",
                 }.items(),

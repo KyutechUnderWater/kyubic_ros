@@ -41,7 +41,7 @@ def generate_launch_description():
             name="wrench_planner_component",
             remappings=[
                 ("odom", "/localization/odom"),
-                ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
+                ("robot_force", "/driver/robot_force"),
                 ("targets", "/rt_pose_plotter/targets"),
             ],
             parameters=[

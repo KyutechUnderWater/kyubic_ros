@@ -76,7 +76,7 @@
           topic_name: /driver/actuator_rp2040_driver/thruster
           timeout_ms: 1000
         robot_force_subscriber_check:
-          topic_name: /driver/actuator_rp2040_driver/robot_force
+          topic_name: /driver/robot_force
           timeout_ms: 1000
         led_subscriber_check:
           topic_name: /driver/actuator_rp2040_driver/led
@@ -87,7 +87,7 @@
 
       dvl_driver:
         dvl_topic_status_check:
-          topic_name: /driver/dvl_driver/dvl
+          topic_name: /driver/dvl
           timeout_ms: 1000
         command_service_server_check:
           service_name: /driver/dvl_driver/command
@@ -95,7 +95,7 @@
 
       imu_driver:
         imu_topic_status_check:
-          topic_name: /driver/imu_driver/imu
+          topic_name: /driver/imu
           timeout_ms: 1000
 
       logic_distro_rp2040_driver:
@@ -114,7 +114,7 @@
           topic_name: /driver/sensors_esp32_driver/buzzer_switch
           timeout_ms: 1000
         depth_topic_status_check:
-          topic_name: /driver/sensors_esp32_driver/depth
+          topic_name: /driver/depth
           timeout_ms: 2000
         depth_type_subscriber_check:
           topic_name: /driver/sensors_esp32_driver/depth_type
@@ -150,7 +150,7 @@
     localization:
       depth:
         depth_topic_status_check:
-          topic_name: /driver/sensors_esp32_driver/depth
+          topic_name: /driver/depth
           timeout_ms: 1000
         depth_odom_topic_status_check:
           topic_name: /localization/depth/odom
@@ -161,7 +161,7 @@
 
       dvl:
         dvl_topic_status_check:
-          topic_name: /driver/dvl_driver/dvl
+          topic_name: /driver/dvl
           timeout_ms: 1000
         dvl_odom_topic_status_check:
           topic_name: /localization/dvl/odom
@@ -172,7 +172,7 @@
 
       imu:
         imu_topic_status_check:
-          topic_name: /driver/imu_driver/imu
+          topic_name: /driver/imu
           timeout_ms: 1000
         imu_transformed_topic_status_check:
           topic_name: /localization/imu/transformed
@@ -232,7 +232,7 @@
           topic_name: /planner/wrench_planner/zoh_wrench_plan
           timeout_ms: 1000
         robot_force_topic_publisher_check:
-          topic_name: /driver/actuator_rp2040_driver/robot_force
+          topic_name: /driver/robot_force
           timeout_ms: 1000
         targets_topic_publisher_check:
           topic_name: /rt_pose_plotter/targets
@@ -253,7 +253,7 @@
         topic_name: /joy_common/joy_common
         timeout_ms: 1000
       robot_force_topic_status_check:
-        topic_name: /driver/actuator_rp2040_driver/robot_force
+        topic_name: /driver/robot_force
         timeout_ms: 1000
 
     joy_common:

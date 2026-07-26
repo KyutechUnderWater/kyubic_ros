@@ -26,6 +26,7 @@ def generate_launch_description():
                 namespace="driver/dvl_driver",
                 executable="dvl_driver",
                 parameters=[config],
+                remappings=[("dvl", "/driver/dvl")],
                 output="screen",
                 arguments=[
                     "--ros-args",

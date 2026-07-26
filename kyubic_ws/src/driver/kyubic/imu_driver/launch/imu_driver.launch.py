@@ -26,6 +26,7 @@ def generate_launch_description():
                 namespace="driver/imu_driver",
                 executable="imu_driver",
                 parameters=[config],
+                remappings=[("imu", "/driver/imu")],
                 output="screen",
                 arguments=[
                     "--ros-args",

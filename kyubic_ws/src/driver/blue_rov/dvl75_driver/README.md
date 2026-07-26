@@ -9,7 +9,7 @@ flowchart LR
     S[("物理デバイス: Cerulean Sonar DVL-75")]
     D[["UDP・NMEAパーサー"]]
     N("ROS 2 ノード: /driver/blue_rov/dvl75_driver/dvl75_driver")
-    T1(["ROS 2 トピック: dvl"])
+    T1(["ROS 2 トピック: /driver/dvl"])
     T2(["ROS 2 トピック: dvl75"])
 
     S -->|"UDP 27000: DVEXT / DVPDL"| D
@@ -60,11 +60,11 @@ ros2 launch dvl75_driver dvl75_setup.launch.py
 
 ## ノードと通信
 
-ノード名は`dvl75_driver`、launch時のnamespaceは`/driver/blue_rov/dvl75_driver`。
+ノード名は`dvl75_driver`、launch時のnamespaceは`/driver/blue_rov/dvl75_driver`。共通型の相対Topic `dvl`は、launchファイルで機体に依存しない`/driver/dvl`へremapする。
 
 | 種別 | 相対名 | launch時の完全名 | 型 | QoS・条件 |
 | --- | --- | --- | --- | --- |
-| Publish | `dvl` | `/driver/blue_rov/dvl75_driver/dvl` | `driver_msgs/msg/DVL` | KeepLast 10。`$DVPDL`受信ごと、または受信タイムアウト時 |
+| Publish | `dvl` | `/driver/dvl` | `driver_msgs/msg/DVL` | KeepLast 10。`$DVPDL`受信ごと、または受信タイムアウト時 |
 | Publish | `dvl75` | `/driver/blue_rov/dvl75_driver/dvl75` | `blue_rov_msgs/msg/DVL75` | KeepLast 10。最新DVEXTを統合し、`$DVPDL`受信ごとに1回 |
 | Service | `command` | `/driver/blue_rov/dvl75_driver/command` | `driver_msgs/srv/Command` | DVLへ1行のASCIIコマンドをUDP送信 |
 
@@ -121,9 +121,9 @@ Subscribe・Actionは使用なし。
 
 ```bash
 ros2 node info /driver/blue_rov/dvl75_driver/dvl75_driver
-ros2 topic info /driver/blue_rov/dvl75_driver/dvl --verbose
-ros2 topic hz /driver/blue_rov/dvl75_driver/dvl
-ros2 topic echo /driver/blue_rov/dvl75_driver/dvl
+ros2 topic info /driver/dvl --verbose
+ros2 topic hz /driver/dvl
+ros2 topic echo /driver/dvl
 ros2 topic echo /driver/blue_rov/dvl75_driver/dvl75
 ```
 

@@ -38,7 +38,7 @@ def generate_launch_description():
 
     nodes = []
     for exe in executable_list:
-        node_remappings = []
+        node_remappings = [("depth", "/driver/depth")] if exe == "depth_component_node" else []
 
         # Nodeの定義
         node = Node(

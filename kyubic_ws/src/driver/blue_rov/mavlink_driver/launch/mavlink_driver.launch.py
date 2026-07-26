@@ -28,6 +28,11 @@ def generate_launch_description():
                 name="mavlink_driver",
                 namespace="driver/blue_rov/mavlink_driver",
                 parameters=[config],
+                remappings=[
+                    ("depth", "/driver/depth"),
+                    ("imu", "/driver/imu"),
+                    ("robot_force", "/driver/robot_force"),
+                ],
                 arguments=["--ros-args", "--log-level", LaunchConfiguration("log_level")],
                 output="screen",
             ),

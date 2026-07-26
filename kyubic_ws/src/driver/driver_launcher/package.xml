@@ -3,11 +3,19 @@
 <package format="3">
   <name>driver_launcher</name>
   <version>0.1.0</version>
-  <description>launcher to launch driver packages</description>
+  <description>Launch the drivers required by each vehicle.</description>
   <maintainer email="kyutech.robosub@gmail.com">Ryohei Ohnishi</maintainer>
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>dvl75_driver</exec_depend>
+  <exec_depend>imu_driver</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>logic_distro_rp2040_driver</exec_depend>
+  <exec_depend>mavlink_driver</exec_depend>
+  <exec_depend>sensors_esp32_driver</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

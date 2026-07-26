@@ -37,7 +37,7 @@ def generate_launch_description():
                 namespace="localization/depth",
                 package="localization",
                 plugin="localization::depth::DepthOdometry",
-                remappings=[("depth", "/driver/sensors_esp32_driver/depth")],
+                remappings=[("depth", "/driver/depth")],
                 parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
@@ -48,7 +48,7 @@ def generate_launch_description():
                 namespace="localization/imu",
                 package="localization",
                 plugin="localization::imu::IMUTransform",
-                remappings=[("imu", "/driver/imu_driver/imu")],
+                remappings=[("imu", "/driver/imu")],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
@@ -59,7 +59,7 @@ def generate_launch_description():
                 package="localization",
                 plugin="localization::dvl::DVLOdometry",
                 remappings=[
-                    ("dvl", "/driver/dvl_driver/dvl"),
+                    ("dvl", "/driver/dvl"),
                     (
                         "transformed_imu",
                         "/localization/imu/transformed",
@@ -75,7 +75,10 @@ def generate_launch_description():
                 namespace="localization",
                 package="localization",
                 plugin="localization::Localization",
-                remappings=[("gnss", "/driver/gnss_driver/gnss")],
+                remappings=[
+                    ("gnss", "/driver/gnss_driver/gnss"),
+                    ("imu", "/driver/imu"),
+                ],
                 parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
