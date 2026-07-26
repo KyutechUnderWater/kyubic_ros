@@ -76,7 +76,7 @@
           topic_name: /driver/actuator_rp2040_driver/thruster
           timeout_ms: 1000
         robot_force_subscriber_check:
-          topic_name: /driver/actuator_rp2040_driver/robot_force
+          topic_name: /driver/robot_force
           timeout_ms: 1000
         led_subscriber_check:
           topic_name: /driver/actuator_rp2040_driver/led
@@ -232,7 +232,7 @@
           topic_name: /planner/wrench_planner/zoh_wrench_plan
           timeout_ms: 1000
         robot_force_topic_publisher_check:
-          topic_name: /driver/actuator_rp2040_driver/robot_force
+          topic_name: /driver/robot_force
           timeout_ms: 1000
         targets_topic_publisher_check:
           topic_name: /rt_pose_plotter/targets
@@ -253,7 +253,7 @@
         topic_name: /joy_common/joy_common
         timeout_ms: 1000
       robot_force_topic_status_check:
-        topic_name: /driver/actuator_rp2040_driver/robot_force
+        topic_name: /driver/robot_force
         timeout_ms: 1000
 
     joy_common:

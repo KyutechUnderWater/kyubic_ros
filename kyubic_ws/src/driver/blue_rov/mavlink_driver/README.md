@@ -46,7 +46,9 @@ ros2 launch mavlink_driver mavlink_driver.launch.py
 
 namespaceは`/driver/blue_rov/mavlink_driver`。Actionは使用なし。RC overrideは`command_rate_hz`周期、GCS heartbeatは1秒周期。
 
-launchファイルは相対名`imu`と`depth`だけを共通Topicへremapする。その他のTopicとServiceは`/driver/blue_rov/mavlink_driver`配下に配置される。
+launchファイルは相対名`imu`、`depth`、`robot_force`を、それぞれ機体非依存の
+共通Topic `/driver/imu`、`/driver/depth`、`/driver/robot_force` へremapする。
+その他のTopicとServiceは`/driver/blue_rov/mavlink_driver`配下に配置される。
 
 ### MAVLink変換と接続状態
 

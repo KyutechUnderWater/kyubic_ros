@@ -116,7 +116,7 @@ def generate_launch_description():
                 remappings=[
                     ("odom", "/localization/odom"),
                     ("goal_current_odom", "/planner/wrench_planner/goal_current_odom"),
-                    ("robot_force", "/driver/actuator_rp2040_driver/robot_force"),
+                    ("robot_force", "/driver/robot_force"),
                     ("targets", "/rt_pose_plotter/targets"),
                 ],
                 parameters=[
