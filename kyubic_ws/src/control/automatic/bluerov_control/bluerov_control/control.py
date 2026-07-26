@@ -17,7 +17,7 @@ PIDの計算式・カスケード構成自体は変更していないが、以�
 import math
 from dataclasses import dataclass
 
-from .pid import PID
+from .pid import PID, VelocityPID
 from .utility import rotation_matrix_from_euler_deg
 
 
@@ -54,12 +54,15 @@ class ControlLoop:
         depth_tolerance: float,
         surface_z_threshold: float,
     ):
+        # 外側(位置)ループはKyubicのp_pid_controllerと同じく単純なP(clamp付き)なので
+        # `PID`(位置形)をki=kd=0で使う。内側(速度)ループはKyubicの
+        # pid_controller::VelocityPID(速度形PID)を移植した`VelocityPID`を使う。
         self._surge_outer_pid = PID(**gains["surge_outer"])
         self._heave_outer_pid = PID(**gains["heave_outer"])
         self._yaw_outer_pid = PID(**gains["yaw_outer"])
-        self._surge_inner_pid = PID(**gains["surge_inner"])
-        self._heave_inner_pid = PID(**gains["heave_inner"])
-        self._yaw_inner_pid = PID(**gains["yaw_inner"])
+        self._surge_inner_pid = VelocityPID(**gains["surge_inner"])
+        self._heave_inner_pid = VelocityPID(**gains["heave_inner"])
+        self._yaw_inner_pid = VelocityPID(**gains["yaw_inner"])
         self._position_tolerance = position_tolerance
         self._depth_tolerance = depth_tolerance
         self._surface_z_threshold = surface_z_threshold
@@ -77,9 +80,15 @@ class ControlLoop:
         ):
             pid.reset()
 
-    def is_emergency(self, position_z: float) -> bool:
-        """position_z(NED、正=下方向)が浅すぎる(水面に近すぎる)場合にTrue。"""
-        return position_z < self._surface_z_threshold
+    def is_emergency(self, position_z: float, odom_stale: bool = False) -> bool:
+        """position_z(NED、正=下方向)が浅すぎる(水面に近すぎる)場合、または
+        odom_staleがTrue(/localization/odomが一定時間途絶えている。node.py側で判定)の場合にTrue。
+
+        masudanote.md Day4「位置センサー(DVL・オドメトリ)の死亡監視」に基づく。
+        odomが死んでいるのに位置制御を続けると計算が狂って暴走しうるため、position_z自体も
+        古い値かもしれない前提でodom_staleを独立した条件として扱う(どちらか一方で緊急)。
+        """
+        return position_z < self._surface_z_threshold or odom_stale
 
     def is_target_reached(self, dx: float, dy: float, dz: float) -> bool:
         horizontal_distance = math.sqrt(dx**2 + dy**2)
@@ -96,6 +105,7 @@ class ControlLoop:
         heave_velocity_world: float,
         yaw_rate_deg: float,
         dt: float,
+        odom_stale: bool = False,
     ) -> ControlResult:
         """制御ループの1周期分を実行する。
 
@@ -107,11 +117,13 @@ class ControlLoop:
             heave_velocity_world: world(NED)座標系での上下方向速度 [m/s]。
             yaw_rate_deg: 現在のyaw角速度 [deg/s]。
             dt: 前回tickからの経過時間 [s]。
+            odom_stale: /localization/odomの最終受信からodom_timeout_sを超えた場合True
+                (node.py側で判定して渡す)。
 
         Returns:
             ControlResult: emergency/reached状態と、WrenchStampedへ渡す各軸コマンド。
         """
-        if self.is_emergency(position_z):
+        if self.is_emergency(position_z, odom_stale):
             return ControlResult(emergency=True, reached=False)
 
         if self.is_target_reached(dx, dy, dz):

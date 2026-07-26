@@ -125,7 +125,7 @@ const int default_baudrate = 460800;  /// Default baudrate.
 /**
  * @brief The scale factor for each data
  */
-const double temp_sf = 0.00699411;  /// for 16bit attitude data [degree celsius/LSB]
+const double temp_sf = 0.00699411;      /// for 16bit attitude data [degree celsius/LSB]
 const double qtn_sf = 1.0 / (1 << 14);  /// for 16bit quaternion data [-/LSB]
 const double atti_sf = 0.00699411;      /// for 16bit attitude data [degree/LSB]
 

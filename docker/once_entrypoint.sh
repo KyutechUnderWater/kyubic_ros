@@ -30,6 +30,7 @@ fi
 gosu ros env BYOBU_STARTUP="$BYOBU_STARTUP" bash -c 'cat << EOT >> ~/.bash_aliases
 alias build="colcon build --symlink-install --cmake-args -GNinja"
 alias byobu=$HOME/kyubic_ros/docker/script/$BYOBU_STARTUP
+alias blue_byobu=$HOME/kyubic_ros/docker/script/blue_byobu.sh
 EOT'
 
 # Set config for git

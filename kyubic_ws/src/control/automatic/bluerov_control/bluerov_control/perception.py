@@ -2,13 +2,14 @@
 
 blueRovControl/perception.py からの移植。get_latest_hydrophone_bearing() /
 get_latest_yolo_detection() (共に NotImplementedError のプレースホルダだった)は、
-ROS2化に伴い bluerov_control_msgs/HydrophoneBearing・BuoyDetection トピックの
+ROS2化に伴い bluerov_control_msgs/PingerDirection・BuoyDetection トピックの
 subscriber(node.py側)に置き換わったため、ここには残していない。
-本モジュールが持つのは「機体座標系(body frame)の相対値」を
-NED絶対座標に変換する純粋な幾何計算のみ。
+音響(SBL)側の「機体座標系の相対値→NED絶対座標」変換は sbl_controller_node が
+planner_msgs/WrenchPlanとして計算済みの絶対座標を渡してくるため、このモジュールでは
+行わない(bearing_to_body_offsetは削除済み)。本モジュールが持つのは画像処理
+(BuoyDetection、機体座標系の相対値)をNED絶対座標に変換する純粋な幾何計算と、
+各センサ入力の有効性判定のみ。
 """
-
-import math
 
 import numpy as np
 
@@ -30,18 +31,14 @@ def is_buoy_detection_usable(
     return not now_sec - stamp_sec > stale_timeout_sec
 
 
-def bearing_to_body_offset(pitch_deg: float, yaw_deg: float, assumed_distance: float) -> tuple:
+def is_pinger_direction_usable(pinger_direction, score_threshold: float) -> bool:
+    """detectedがFalse、またはscoreが閾値未満の推定は使わない。
+
+    pinger_direction: bluerov_control_msgs/PingerDirection、または None(まだ一度も受信していない)。
     """
-    ハイドロフォンの pitch, yaw [度] から、機体座標系における相対オフセット (bx, by, bz) [m] を返す。
-    距離は測定できないため assumed_distance [m] を仮定する(球面座標→直交座標変換)。
-    """
-    pitch = math.radians(pitch_deg)
-    yaw = math.radians(yaw_deg)
-    horizontal = assumed_distance * math.cos(pitch)
-    bx = horizontal * math.cos(yaw)
-    by = horizontal * math.sin(yaw)
-    bz = assumed_distance * math.sin(pitch)
-    return (bx, by, bz)
+    if pinger_direction is None or not pinger_direction.detected:
+        return False
+    return pinger_direction.score >= score_threshold
 
 
 def body_offset_to_ned(

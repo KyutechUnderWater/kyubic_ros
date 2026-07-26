@@ -64,7 +64,7 @@ kyubic_ws/src/
   localization/    localization + localization_msgs (Pose, Odometry, GlobalPos, Geodetic, ...)
   control/
     manual/          joy2wrench, joy_common(_msgs) — teleop input -> wrench
-    automatic/        planning, emergency
+    automatic/        planning, emergency, bluerov_control(_msgs) — BlueROV mission FSM (see below)
     controller/       p_pid_controller(_msgs)
   behavior_tree/    BT.CPP-based mission logic; bt_xml/ holds mission trees (base.xml, qr.xml, kobe2025.xml, ...)
   kyubic_bringup/   top-level launch entry points (kyubic.launch.py, kyubic_post.launch.py, client*.launch.py, manual.launch.py, web_visualizer.launch.py)
@@ -87,6 +87,10 @@ This is the architectural rule that lets `localization`, `dashboard`, and other 
 - BlueROV's `mavlink_driver` only sends RC override to the vehicle when ALL of: connected, explicitly ARMed via the `set_armed` service (never auto-armed), `robot_force` received within `command_timeout_s` (default 0.5s), and (if `require_control_heartbeat` is set) `heartbeat` received `true` within `control_heartbeat_timeout_s` (default 1.0s). Otherwise it sends neutral PWM. Keep this failsafe behavior in mind when writing or debugging any control node that drives BlueROV.
 
 See `blueNote.md` (Japanese) for a much deeper walkthrough of the BlueROV driver stack (mavlink_driver / dvl75_driver), including full pub/sub tables, config file locations, and manual bring-up/ARM/test procedures — read it before doing nontrivial BlueROV driver work. Per-package READMEs also exist for `driver_launcher`, `mavlink_driver`, `dvl75_driver`, and `blue_rov_msgs`.
+
+## BlueROV mission control: `blueRovControl/` vs `bluerov_control`
+
+The repo-root `blueRovControl/` directory (`main.py`, `flow.py`, `mavlink_io.py`, `qekf.py`, ...) is a **legacy, non-ROS2 standalone Python prototype** of the BlueROV mission state machine — it talks to MAVLink and a self-parsed IMU/DVL socket stream directly and is not built/run through colcon. It is superseded by `kyubic_ws/src/control/automatic/bluerov_control` (+ `bluerov_control_msgs`), a proper ROS 2 (`ament_python`) port: a single `bluerov_control_node` runs the same INIT→...→SURFACE FSM as a 10 Hz timer callback, subscribing to `/localization/odom` (replacing the old self-rolled QEKF) and `vehicle_state`, and publishing `robot_force` + `heartbeat` (remapped to `mavlink_driver`'s topics) plus stub perception/planning topics (`pinger_direction`, `buoy_detection`, defined in `bluerov_control_msgs`; `wrench_plan`, `planner_msgs/WrenchPlan`) that safely no-op until real sensor/acoustics nodes exist — SEARCH_HYDROPHONE's movement target is computed entirely externally (by an `sbl_controller_node`, not yet built) and consumed as an absolute `WrenchPlan` target rather than derived locally from bearing angles. Start order for a full BlueROV mission run: `driver_launcher blue_rov_driver.launch.py` → `localization localization_components.launch.py` → `bluerov_control bluerov_control.launch.py`. See `kyubic_ws/src/control/automatic/bluerov_control/README.md` (Japanese) for the full concept walkthrough, known limitations carried over from the old prototype (unverified sign conventions, lost gyro-bias correction), and PID retuning notes — the old PID gains are a starting point only since the output now goes through `mavlink_driver`'s `robot_force`/axis-limit scaling instead of raw MAVLink `MANUAL_CONTROL` PWM values. Don't add new functionality to `blueRovControl/`; extend the ROS2 port instead.
 
 ## Typical bring-up entry points
 

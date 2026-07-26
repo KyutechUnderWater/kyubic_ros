@@ -9,12 +9,13 @@ emergency_surfacing)への配線は launch/bluerov_control.launch.py 側の rema
 
 import numpy as np
 import rclpy
-from bluerov_control_msgs.msg import BuoyDetection, HydrophoneBearing
+from bluerov_control_msgs.msg import BuoyDetection, PingerDirection
 from driver_msgs.msg import VehicleState
 from geometry_msgs.msg import WrenchStamped
 from lifecycle_msgs.msg import Transition
 from lifecycle_msgs.srv import ChangeState
 from localization_msgs.msg import Odometry
+from planner_msgs.msg import WrenchPlan
 from rclpy.node import Node
 from std_msgs.msg import Bool
 from std_srvs.srv import SetBool
@@ -33,6 +34,7 @@ class BlueRovControlNode(Node):
         position_tolerance_m = self.declare_parameter("position_tolerance_m", 0.2).value
         depth_tolerance_m = self.declare_parameter("depth_tolerance_m", 0.1).value
         surface_z_threshold_m = self.declare_parameter("surface_z_threshold_m", 0.1).value
+        self._odom_timeout_s = self.declare_parameter("odom_timeout_s", 1.0).value
         main_loop_hz = self.declare_parameter("main_loop_hz", 10.0).value
         self._emergency_change_state_service = self.declare_parameter(
             "emergency_change_state_service", "/emergency/emergency_surfacing/change_state"
@@ -50,6 +52,7 @@ class BlueRovControlNode(Node):
         self._state = flow.State.INIT
 
         self._latest_odom: Odometry | None = None
+        self._last_odom_received_time = None  # rclpy.time.Time。_odom_callbackが受信毎に更新
         self._latest_vehicle_state: VehicleState | None = None
         self._mission_start = None
         self._last_control_tick_time = None
@@ -62,9 +65,10 @@ class BlueRovControlNode(Node):
         self.create_subscription(Odometry, "odom", self._odom_callback, 10)
         self.create_subscription(VehicleState, "vehicle_state", self._vehicle_state_callback, 10)
         self.create_subscription(
-            HydrophoneBearing, "hydrophone_bearing", self._hydrophone_bearing_callback, 10
+            PingerDirection, "pinger_direction", self._pinger_direction_callback, 10
         )
         self.create_subscription(BuoyDetection, "buoy_detection", self._buoy_detection_callback, 10)
+        self.create_subscription(WrenchPlan, "wrench_plan", self._wrench_plan_callback, 10)
 
         self._set_armed_client = self.create_client(SetBool, "set_armed")
         self._emergency_change_state_client = self.create_client(
@@ -86,8 +90,8 @@ class BlueRovControlNode(Node):
             hydrophone_pitch_threshold_deg=self.declare_parameter(
                 "hydrophone_pitch_threshold_deg", 30.0
             ).value,
-            hydrophone_assumed_distance_m=self.declare_parameter(
-                "hydrophone_assumed_distance_m", 5.0
+            hydrophone_score_threshold=self.declare_parameter(
+                "hydrophone_score_threshold", 0.0
             ).value,
             yolo_confidence_threshold=self.declare_parameter(
                 "yolo_confidence_threshold", 0.5
@@ -124,6 +128,40 @@ class BlueRovControlNode(Node):
             "angle_error_deg": angle_v,
         }
 
+    def _declare_velocity_pid(
+        self,
+        name: str,
+        kp: float,
+        ki: float,
+        kd: float,
+        output_limits: tuple,
+        kf: float = 0.0,
+        offset: float = 0.0,
+        angle_error_deg: bool = False,
+    ) -> dict:
+        """内側(速度)ループ用。`VelocityPID`(pid_controller::VelocityPIDの移植)のパラメータを宣言する。
+
+        `_declare_pid`のwindup_limitに代わり、D項ローパスフィルタ係数kfと
+        フィードフォワードoffsetを宣言する(速度形PIDは出力を毎周期クランプするため
+        専用のwindup_limitは不要)。
+        """
+        kp_v = self.declare_parameter(f"pid.{name}.kp", kp).value
+        ki_v = self.declare_parameter(f"pid.{name}.ki", ki).value
+        kd_v = self.declare_parameter(f"pid.{name}.kd", kd).value
+        limits_v = self.declare_parameter(f"pid.{name}.output_limits", list(output_limits)).value
+        kf_v = self.declare_parameter(f"pid.{name}.kf", kf).value
+        offset_v = self.declare_parameter(f"pid.{name}.offset", offset).value
+        angle_v = self.declare_parameter(f"pid.{name}.angle_error_deg", angle_error_deg).value
+        return {
+            "kp": kp_v,
+            "ki": ki_v,
+            "kd": kd_v,
+            "output_limits": tuple(limits_v),
+            "kf": kf_v,
+            "offset": offset_v,
+            "angle_error_deg": angle_v,
+        }
+
     def _declare_pid_gains(self) -> dict:
         # 各ゲインの初期値は blueRovControl/params.py と同じ。ただし出力先が
         # MAVLink MANUAL_CONTROLスケールからWrenchStamped/axis.limitスケールに変わったため、
@@ -132,14 +170,14 @@ class BlueRovControlNode(Node):
             "surge_outer": self._declare_pid("surge_outer", 0.15, 0.0, 0.0, (0.0, 0.3), 0.6, False),
             "heave_outer": self._declare_pid("heave_outer", 0.3, 0.0, 0.0, (-0.3, 0.3), 0.6, False),
             "yaw_outer": self._declare_pid("yaw_outer", 0.5, 0.0, 0.0, (-20.0, 20.0), 40.0, True),
-            "surge_inner": self._declare_pid(
-                "surge_inner", 1000.0, 0.0, 0.0, (0.0, 400.0), 0.4, False
+            "surge_inner": self._declare_velocity_pid(
+                "surge_inner", 1000.0, 0.0, 0.0, (0.0, 400.0)
             ),
-            "heave_inner": self._declare_pid(
-                "heave_inner", 800.0, 0.0, 0.0, (-300.0, 300.0), 0.4, False
+            "heave_inner": self._declare_velocity_pid(
+                "heave_inner", 800.0, 0.0, 0.0, (-300.0, 300.0)
             ),
-            "yaw_inner": self._declare_pid(
-                "yaw_inner", 20.0, 0.0, 0.0, (-500.0, 500.0), 25.0, False
+            "yaw_inner": self._declare_velocity_pid(
+                "yaw_inner", 20.0, 0.0, 0.0, (-500.0, 500.0)
             ),
         }
 
@@ -147,15 +185,19 @@ class BlueRovControlNode(Node):
 
     def _odom_callback(self, msg: Odometry) -> None:
         self._latest_odom = msg
+        self._last_odom_received_time = self.get_clock().now()
 
     def _vehicle_state_callback(self, msg: VehicleState) -> None:
         self._latest_vehicle_state = msg
 
-    def _hydrophone_bearing_callback(self, msg: HydrophoneBearing) -> None:
-        self._ctx.hydrophone_bearing = msg
+    def _pinger_direction_callback(self, msg: PingerDirection) -> None:
+        self._ctx.pinger_direction = msg
 
     def _buoy_detection_callback(self, msg: BuoyDetection) -> None:
         self._ctx.buoy_detection = msg
+
+    def _wrench_plan_callback(self, msg: WrenchPlan) -> None:
+        self._ctx.wrench_plan = msg
 
     # ---- メインループ ----
 
@@ -235,6 +277,11 @@ class BlueRovControlNode(Node):
             vx_world, vy_world, vz_world, roll_deg, pitch_deg, yaw_deg
         )
 
+        # masudanote.md Day4「位置センサー死亡監視」: odomが一定時間更新されていなければ、
+        # position_z等が古い値でも構わずEMERGENCYへ倒す(ControlLoop.is_emergency参照)。
+        odom_age_sec = (now - self._last_odom_received_time).nanoseconds * 1e-9
+        odom_stale = odom_age_sec > self._odom_timeout_s
+
         result = self._control_loop.tick(
             dx,
             dy,
@@ -245,6 +292,7 @@ class BlueRovControlNode(Node):
             heave_velocity_world=vz_world,
             yaw_rate_deg=yaw_rate_deg,
             dt=dt,
+            odom_stale=odom_stale,
         )
 
         if result.emergency or result.reached:

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git check-ignore *)",
+      "Bash(git config *)",
+      "Bash(cat >> *)",
+      "Bash(python3 -m py_compile pid.py control.py node.py)",
+      "Read(//tmp/**)",
+      "Bash(python3 -)",
+      "Bash(xargs -I{} echo {})",
+      "Bash(python3 -m py_compile bluerov_control/flow.py bluerov_control/perception.py bluerov_control/node.py bluerov_control/control.py launch/bluerov_control.launch.py)",
+      "Read(//kyubic_ros/.venv/bin/**)",
+      "Bash(/kyubic_ros/.venv/bin/python3 -c \"import numpy; print\\(numpy.__version__\\)\")",
+      "Bash(uv run *)",
+      "Bash(python3 -m py_compile bluerov_control/control.py bluerov_control/node.py)"
+    ],
+    "additionalDirectories": [
+      "/kyubic_ros/.claude/notes"
+    ]
+  }
+}

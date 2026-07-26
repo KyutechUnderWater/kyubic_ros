@@ -17,6 +17,7 @@
   <depend>localization_msgs</depend>
   <depend>driver_msgs</depend>
   <depend>bluerov_control_msgs</depend>
+  <depend>planner_msgs</depend>
 
   <test_depend>ament_flake8</test_depend>
   <test_depend>ament_pep257</test_depend>

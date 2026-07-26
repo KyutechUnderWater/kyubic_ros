@@ -42,7 +42,10 @@ ros2 launch bluerov_control bluerov_control.launch.py
   このノードは以下をSubscribe(受信)する:
   - `odom` (実際には `/localization/odom` にremap): 現在の位置・姿勢・速度
   - `vehicle_state`: BlueROVの武装/接続状態
-  - `hydrophone_bearing` / `buoy_detection`: センサースタブ(§4参照)
+  - `pinger_direction` / `buoy_detection`: センサースタブ(§4参照)
+  - `wrench_plan`: 音響(SBL)班の`sbl_controller_node`が発行する、SEARCH_HYDROPHONE探索中の
+    絶対移動目標(`planner_msgs/WrenchPlan`。§4参照)。このパッケージ自身は方角から
+    移動目標への変換を行わない(sbl_controller_nodeに委譲している)
 
   以下をPublish(送信)する:
   - `robot_force` (`/driver/blue_rov/mavlink_driver/robot_force` にremap):
@@ -95,9 +98,14 @@ ros2 launch bluerov_control bluerov_control.launch.py
   実際の前進速度を見ながら徐々に上げる。
 - `descend_depth_m` / `dive_offset_m` / `post_check_rise_offset_m` / `surface_rise_offset_m`:
   ミッションの深度形状。プール/競技フィールドの水深に合わせて調整。
-- `hydrophone_pitch_threshold_deg`: 符号の向きが実機で未検証(コード内コメント参照)。
-  逆方向に動くようであれば、`flow.py`の`handle_search_hydrophone`内の不等号を
-  `<`に変更する必要がある。
+- `hydrophone_pitch_threshold_deg`: `PingerDirection.pitch_deg`向けの閾値。符号の向きが実機で
+  未検証(コード内コメント参照)。逆方向に動くようであれば、`flow.py`の
+  `handle_search_hydrophone`内の不等号を`<`に変更する必要がある。
+- `hydrophone_score_threshold`: `PingerDirection.score`の下限ゲート。音響班とスケールを
+  すり合わせるまでは既定`0.0`(常に許可)のままでよい。
+- `odom_timeout_s`: `/localization/odom`の最終受信からこの秒数を超えたらEMERGENCYに
+  強制遷移する(§5「安全機構」参照)。DVL/localizationが不安定な環境では短すぎる値だと
+  誤検知で頻繁に緊急浮上してしまうため、実機のodom更新頻度・瞬断傾向を見て調整する。
 
 ## 4. スタブ(未実装)一覧
 
@@ -105,25 +113,47 @@ ros2 launch bluerov_control bluerov_control.launch.py
 
 | トピック | 型 | 説明 | 実装時にすべきこと |
 |---|---|---|---|
-| `hydrophone_bearing` | `bluerov_control_msgs/HydrophoneBearing` | ハイドロフォンの測角(pitch/yaw) | 実際のハイドロフォン読み出しノードを作り、このトピックに発行する |
+| `pinger_direction` | `bluerov_control_msgs/PingerDirection` | 音響(SBL)によるピンガー方向推定(pitch/yaw/score) | 音響班の`sbl_estimation_node`(実装ファイル名`sbl_direction_estimator_node.py`)がこのトピックに発行する |
 | `buoy_detection` | `bluerov_control_msgs/BuoyDetection` | 画像処理によるブイ検出 | 画像処理担当のノードが、このトピックに発行する |
+| `wrench_plan` | `planner_msgs/WrenchPlan` | SEARCH_HYDROPHONE探索中に追従する絶対移動目標(`targets.x/y/z`、`z_mode`) | 音響班の`sbl_controller_node`がこのトピックに発行する。`bluerov_control`自身は`targets`のみ読み、`master`/`slave`/`has_master`/`has_slave`は無視する |
 
 未受信の間、`bluerov_control_node`はクラッシュせず安全側(その場で待機/検出なし扱い)に
 フォールバックする。動作確認には`ros2 topic pub`でダミー値を注入できる:
 
 ```bash
-ros2 topic pub /perception/hydrophone_bearing bluerov_control_msgs/msg/HydrophoneBearing \
-  "{pitch_deg: 35.0, yaw_deg: 0.0}" --rate 5
+ros2 topic pub /perception/pinger_direction bluerov_control_msgs/msg/PingerDirection \
+  "{detected: true, yaw_deg: 0.0, pitch_deg: 35.0, score: 1.0}" --rate 5
 
 ros2 topic pub /perception/buoy_detection bluerov_control_msgs/msg/BuoyDetection \
   "{detected: true, relative_buoy_x_m: 1.0, relative_buoy_y_m: 0.0, relative_buoy_z_m: 0.5, confidence: 0.9}" --rate 5
+
+ros2 topic pub /acoustics/sbl_controller/wrench_plan planner_msgs/msg/WrenchPlan \
+  "{z_mode: 0, has_master: true, targets: {x: 3.0, y: 1.0, z: 7.0}}" --rate 5
 ```
+(`z_mode: 0` = `Z_MODE_DEPTH`。`/acoustics/sbl_controller/wrench_plan`は暫定のトピック名で、
+音響班のノードが決まり次第 [launch/bluerov_control.launch.py](launch/bluerov_control.launch.py)
+のremapを実際の名前に合わせて確認・調整すること。)
 
 また、`debug.image_processing_available` / `debug.mic_data_from_above` パラメータを
 `ros2 param set`(起動前ならYAML編集)で切り替えることで、VISUAL系/HYDRO系どちらの
 分岐にも人為的に進めてテストできる。
 
-## 5. 既知の制約(移植に伴うトレードオフ)
+## 5. 安全機構(フェイルセーフ)
+
+- **odom死活監視**: `docs/masudanote.md`のDay4「位置センサー(DVL・オドメトリ)の死亡監視」に
+  基づき、`/localization/odom`が`odom_timeout_s`(既定1.0秒)より長く更新されなければ、
+  現在Stateに関わらず強制的に`State.EMERGENCY`へ遷移し`emergency_surfacing`を起動する
+  (`node.py`の`_tick_fn`が受信時刻を追跡し、`control.ControlLoop.tick(..., odom_stale=...)`
+  経由で`is_emergency`に渡す)。DVLがロストしたまま古いodom値でPID制御を続けると
+  計算が暴走しうるための対策。
+  - **未実装のスコープ判断**: `masudanote.md`は`VISUAL_ATTACK`中に限り、odomを無視して
+    カメラ画像のみによる直接推力制御でタスクを継続する例外を提案しているが、
+    `bluerov_control`には現状そのような「odom非依存の直接推力制御モード」自体が無く
+    (`VISUAL_ATTACK`も`_move_toward`による絶対座標PIDを使う)、この例外は実装していない。
+    そのため`VISUAL_ATTACK`中にodomが途絶えた場合も他State同様EMERGENCYに入る。
+    ビジュアルサーボによる直接制御モードを追加する場合は別途検討が必要。
+
+## 6. 既知の制約(移植に伴うトレードオフ)
 
 - 姿勢/速度/深度の推定を、旧実装の自前QEKF(BNO08x IMU + DVL自前パース)から
   既存の`localization`パッケージ(`/localization/odom`)に置き換えた。この結果:
@@ -135,8 +165,13 @@ ros2 topic pub /perception/buoy_detection bluerov_control_msgs/msg/BuoyDetection
     (`control.py`のdocstring参照)。ドリフトが問題になる場合は`localization`側の改善が必要。
 - 深度(`z_depth`)・ハイドロフォンpitchの符号が、NED慣習(正=下方向)と実機で一致しているかは
   **未検証**(旧実装から引き継いだ制約。コード内コメント参照)。
+- SEARCH_HYDROPHONEの移動目標(§4の`wrench_plan`)は、このパッケージ外(音響班の
+  `sbl_controller_node`)が計算する絶対座標にそのまま追従する設計になった。
+  そのため目標の質(ノイズ・オーバーシュート・停止時の値の扱い)は完全に
+  `sbl_controller_node`側の責任であり、`bluerov_control`側では平滑化や妥当性チェックを
+  一切行わない(`wrench_plan`未受信時のみ、安全側でその場待機にフォールバックする)。
 
-## 6. 旧Python実装(`blueRovControl/`)のレビュー
+## 7. 旧Python実装(`blueRovControl/`)のレビュー
 
 移植作業を通じて判明した、旧実装自体の実装漏れ・改善余地:
 

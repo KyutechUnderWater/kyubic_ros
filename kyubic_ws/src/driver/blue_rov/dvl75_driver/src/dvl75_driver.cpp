@@ -5,11 +5,6 @@
 
 #include "dvl75_driver/dvl75_driver.hpp"
 
-#include "rclcpp_components/register_node_macro.hpp"
-
-#include "common_msgs/msg/status.hpp"
-#include "geometry_msgs/msg/vector3.hpp"
-
 #include <algorithm>
 #include <array>
 #include <cctype>
@@ -20,6 +15,10 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+
+#include "common_msgs/msg/status.hpp"
+#include "geometry_msgs/msg/vector3.hpp"
+#include "rclcpp_components/register_node_macro.hpp"
 
 namespace dvl75_driver
 {

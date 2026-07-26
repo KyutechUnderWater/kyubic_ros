@@ -13,9 +13,9 @@
     post_check_rise_offset_m: 0.5 # [m] VISUAL_POST_CHECK/HYDRO_NEAR_SURFACEで浮上する量
     surface_rise_offset_m: 4.0 # [m] SURFACEで浮上する量
 
-    # ---- ハイドロフォン・画像処理連携(要チューニング。符号は要実機検証、README参照) ----
-    hydrophone_pitch_threshold_deg: 30.0 # [deg] これを超えたら「十分近い」とみなす
-    hydrophone_assumed_distance_m: 5.0 # [m] ハイドロフォンは距離を測れないための仮定値
+    # ---- 音響(SBL)・画像処理連携(要チューニング。符号は要実機検証、README参照) ----
+    hydrophone_pitch_threshold_deg: 30.0 # [deg] これを超えたら「十分近い」とみなす(PingerDirection.pitch_deg)
+    hydrophone_score_threshold: 0.0 # [0.0-1.0想定] これ未満のPingerDirection.scoreは「未発見」扱い。score未整備/常に1.0なら変更不要
     yolo_confidence_threshold: 0.5 # これ未満の検出は無視する
     yolo_stale_timeout_sec: 1.0 # [s] timestampがこれより古い検出は無視する
 
@@ -23,6 +23,7 @@
     position_tolerance_m: 0.2 # [m] 水平方向の到達とみなす距離
     depth_tolerance_m: 0.1 # [m] 深度方向の到達とみなす距離
     surface_z_threshold_m: 0.1 # [m] これより浅い(水面に近い)とEMERGENCYに遷移
+    odom_timeout_s: 1.0 # [s] /localization/odomがこれより長く途絶えたらEMERGENCYに遷移(masudanote.md Day4)
 
     # ---- デバッグ用(実センサ未接続でも状態遷移をテストできるように上書き可能) ----
     debug.image_processing_available: true # SEARCH_HYDROPHONE発見時にVISUAL系へ行くかHOLD_TARGETへ行くか
@@ -55,23 +56,23 @@
     pid.yaw_outer.windup_limit: 40.0
     pid.yaw_outer.angle_error_deg: true
 
+    # surge/heave/yaw の inner は速度形PID(VelocityPID)。出力を毎周期クランプするため
+    # windup_limitは無い。kf(D項ローパスフィルタ、既定0=フィルタなし)とoffset(浮力トリム等の
+    # フィードフォワード、既定0.0)は未指定ならコード側の既定値が使われる。
     pid.surge_inner.kp: 1000.0
     pid.surge_inner.ki: 0.0
     pid.surge_inner.kd: 0.0
     pid.surge_inner.output_limits: [0.0, 400.0] # WrenchStamped.wrench.force.x に渡す値(要リチューニング)
-    pid.surge_inner.windup_limit: 0.4
     pid.surge_inner.angle_error_deg: false
 
     pid.heave_inner.kp: 800.0
     pid.heave_inner.ki: 0.0
     pid.heave_inner.kd: 0.0
     pid.heave_inner.output_limits: [-300.0, 300.0] # WrenchStamped.wrench.force.z に渡す値(要リチューニング)
-    pid.heave_inner.windup_limit: 0.4
     pid.heave_inner.angle_error_deg: false
 
     pid.yaw_inner.kp: 20.0
     pid.yaw_inner.ki: 0.0
     pid.yaw_inner.kd: 0.0
     pid.yaw_inner.output_limits: [-500.0, 500.0] # WrenchStamped.wrench.torque.z に渡す値(要リチューニング)
-    pid.yaw_inner.windup_limit: 25.0
     pid.yaw_inner.angle_error_deg: false

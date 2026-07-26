@@ -40,8 +40,10 @@ def generate_launch_description() -> LaunchDescription:
             ("robot_force", "/driver/blue_rov/mavlink_driver/robot_force"),
             ("heartbeat", "/driver/blue_rov/mavlink_driver/heartbeat"),
             ("set_armed", "/driver/blue_rov/mavlink_driver/set_armed"),
-            ("hydrophone_bearing", "/perception/hydrophone_bearing"),
+            ("pinger_direction", "/perception/pinger_direction"),
             ("buoy_detection", "/perception/buoy_detection"),
+            # TODO: 音響班のsbl_controller_nodeが決まり次第、実際のトピック名に合わせて確認・調整する
+            ("wrench_plan", "/acoustics/sbl_controller/wrench_plan"),
         ],
         arguments=["--ros-args", "--log-level", log_level],
     )

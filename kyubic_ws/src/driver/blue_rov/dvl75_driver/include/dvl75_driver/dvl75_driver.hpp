@@ -6,15 +6,6 @@
 #ifndef DVL75_DRIVER__DVL75_DRIVER_HPP_
 #define DVL75_DRIVER__DVL75_DRIVER_HPP_
 
-#include "builtin_interfaces/msg/time.hpp"
-#include "custom_socket/udp.hpp"
-#include "dvl75_driver/dvl75_parser.hpp"
-#include "rclcpp/rclcpp.hpp"
-
-#include "blue_rov_msgs/msg/dvl75.hpp"
-#include "driver_msgs/msg/dvl.hpp"
-#include "driver_msgs/srv/command.hpp"
-
 #include <array>
 #include <atomic>
 #include <chrono>
@@ -25,6 +16,14 @@
 #include <string>
 #include <thread>
 #include <vector>
+
+#include "blue_rov_msgs/msg/dvl75.hpp"
+#include "builtin_interfaces/msg/time.hpp"
+#include "custom_socket/udp.hpp"
+#include "driver_msgs/msg/dvl.hpp"
+#include "driver_msgs/srv/command.hpp"
+#include "dvl75_driver/dvl75_parser.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 /**
  * @namespace dvl75_driver

@@ -23,8 +23,7 @@
 namespace common
 {
 
-UdpSocket::UdpSocket()
-: sockfd_(-1), is_connected_(false)
+UdpSocket::UdpSocket() : sockfd_(-1), is_connected_(false)
 {
   // Create socket
   sockfd_ = socket(AF_INET, SOCK_DGRAM, 0);
@@ -44,10 +43,7 @@ UdpSocket::~UdpSocket()
   }
 }
 
-void UdpSocket::setTimeout(int sec)
-{
-  setTimeout(std::chrono::seconds(sec));
-}
+void UdpSocket::setTimeout(int sec) { setTimeout(std::chrono::seconds(sec)); }
 
 void UdpSocket::setTimeout(std::chrono::milliseconds timeout)
 {
@@ -67,10 +63,7 @@ void UdpSocket::setBroadcast(bool enable)
   setsockopt(sockfd_, SOL_SOCKET, SO_BROADCAST, &yes, sizeof(yes));
 }
 
-bool UdpSocket::bind(int port)
-{
-  return bind("0.0.0.0", port);
-}
+bool UdpSocket::bind(int port) { return bind("0.0.0.0", port); }
 
 bool UdpSocket::bind(const std::string & address, int port)
 {
@@ -124,9 +117,8 @@ std::optional<UdpDatagram> UdpSocket::receiveFrom(size_t max_len)
 
   buffer.resize(len);
   char sender_address[INET_ADDRSTRLEN]{};
-  if (inet_ntop(AF_INET, &sender_addr.sin_addr, sender_address,
-      sizeof(sender_address)) == nullptr)
-  {
+  if (
+    inet_ntop(AF_INET, &sender_addr.sin_addr, sender_address, sizeof(sender_address)) == nullptr) {
     throw std::runtime_error(std::string("inet_ntop failed: ") + std::strerror(errno));
   }
   return UdpDatagram{std::move(buffer), sender_address, ntohs(sender_addr.sin_port)};

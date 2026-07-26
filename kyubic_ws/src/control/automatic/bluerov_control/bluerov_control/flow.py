@@ -8,10 +8,15 @@ Stateへ行くか」の判断だけを行う(旧実装と同じ設計方針)。
   - 自前QEKF(ctx.position/ctx.quaternion を control_tick が毎回書き戻す設計)から
     /localization/odom の購読値(node.pyがmission_tick呼び出し前に
     ctx.position/ctx.orientation_deg へ書き込む)に変わった。
-  - ハイドロフォン/画像処理の実データは bluerov_control_msgs トピックの購読値
-    (ctx.hydrophone_bearing / ctx.buoy_detection、共に未受信ならNone)を使う。
-    未受信時に例外を投げていた旧実装(perception.get_latest_*がNotImplementedError)
-    と異なり、安全側(その場で待機/検出なし扱い)にフォールバックする。
+  - 音響(SBL)/画像処理の実データは bluerov_control_msgs・planner_msgs トピックの
+    購読値(ctx.pinger_direction / ctx.wrench_plan / ctx.buoy_detection、いずれも
+    未受信ならNone)を使う。未受信時に例外を投げていた旧実装
+    (perception.get_latest_*がNotImplementedError)と異なり、安全側
+    (その場で待機/検出なし扱い)にフォールバックする。
+    SEARCH_HYDROPHONEの移動目標(dx,dy,dz)は、このパッケージ内では計算しない。
+    音響班のsbl_controller_nodeが方角(ctx.pinger_direction)から決定し
+    planner_msgs/WrenchPlanとして発行した絶対座標(ctx.wrench_plan.targets)を
+    そのまま追従する(§詳細はbluerov_control/README.md参照)。
   - 深度/オフセット定数(7.0m, 2.5m, 0.5m, 4.0m)や各種閾値は ctx.params
     (node.pyがROS2パラメータから構築するMissionParams)経由で読む。
 """
@@ -52,7 +57,7 @@ class MissionParams:
     search_timeout_sec: float
     mic_confirm_timeout_sec: float
     hydrophone_pitch_threshold_deg: float
-    hydrophone_assumed_distance_m: float
+    hydrophone_score_threshold: float
     yolo_confidence_threshold: float
     yolo_stale_timeout_sec: float
     descend_depth_m: float
@@ -82,8 +87,11 @@ class MissionContext:
         None  # マイク確認待ちループに入った時刻。discovered_target確定時に一度だけ設定
     )
 
-    hydrophone_bearing: object = (
-        None  # 最新の bluerov_control_msgs/HydrophoneBearing(未受信ならNone)
+    pinger_direction: object = (
+        None  # 最新の bluerov_control_msgs/PingerDirection(未受信ならNone)
+    )
+    wrench_plan: object = (
+        None  # sbl_controller_nodeが発行する最新の planner_msgs/WrenchPlan(未受信ならNone)
     )
     buoy_detection: object = None  # 最新の bluerov_control_msgs/BuoyDetection(未受信ならNone)
     image_processing_available: bool = True  # デバッグ用パラメータで上書き可能(README参照)
@@ -105,6 +113,31 @@ def _orientation_or_zero(ctx: MissionContext) -> tuple:
 
 def _position_or_zero(ctx: MissionContext) -> np.ndarray:
     return ctx.position if ctx.position is not None else np.zeros(3)
+
+
+_WRENCH_PLAN_Z_MODE_DEPTH = 0  # planner_msgs/WrenchPlan.Z_MODE_DEPTH。flow.pyはROSメッセージ型を
+# 直接importしない方針(node.py側でのみ型を扱う)のため、数値として複製している。
+
+
+def _wrench_plan_absolute_target(ctx: MissionContext) -> np.ndarray | None:
+    """最新のWrenchPlan(sbl_controller_nodeが発行)から絶対目標座標(NED)を取り出す。
+    未受信ならNone。
+
+    targets.master/slaveやhas_master/has_slaveはwrench_planner側の多段(PDLA等)
+    処理専用のフィールドで、SEARCH_HYDROPHONEが必要とする単一の絶対目標としては
+    使わないため無視し、常にtargets.x/y/zのみを見る。
+    z_modeがZ_MODE_ALTITUDEの場合、bluerov_controlのposition表現は常にNEDの
+    z_depthであり単純に置き換えられないため、z成分は信用せず現在深度を維持する
+    (安全側)。
+    """
+    plan = ctx.wrench_plan
+    if plan is None:
+        return None
+    if plan.z_mode == _WRENCH_PLAN_Z_MODE_DEPTH:
+        z = plan.targets.z
+    else:
+        z = _position_or_zero(ctx)[2]
+    return np.array([plan.targets.x, plan.targets.y, z])
 
 
 def _run_control_tick(ctx: MissionContext, dx, dy, dz):
@@ -202,43 +235,38 @@ def handle_search_hydrophone(ctx: MissionContext) -> State:
     if _time_in_state(ctx) > ctx.params.search_timeout_sec:
         return State.SURFACE
 
-    bearing = ctx.hydrophone_bearing
-    if bearing is None:
-        # ハイドロフォンのデータをまだ一度も受信していない。安全側に倒し、その場で待機する。
+    pinger = ctx.pinger_direction
+    target = _wrench_plan_absolute_target(ctx)
+    if pinger is None or target is None:
+        # PingerDirection/WrenchPlanのどちらかをまだ一度も受信していない。
+        # 安全側に倒し、その場で待機する(片方だけの受信では動かない=単一ガード)。
         result = _run_control_tick(ctx, 0.0, 0.0, 0.0)
         if result.emergency:
             return State.EMERGENCY
         return State.SEARCH_HYDROPHONE
 
-    roll_deg, pitch_deg, yaw_deg = _orientation_or_zero(ctx)
-
     # TODO(要ハードウェア仕様確認): 不等号の向きは "対象がハイドロフォンより深い(HYDRO_DIVEで
     # さらに+2.5m潜る設計と整合)" と仮定して pitch_deg > THRESHOLD (見下ろす角度が大きい=近い) に
-    # している。ただしHydrophoneBearingの「正=対象が下方向」の定義と実機の取り付け向きに
+    # している。ただしPingerDirectionの「正=対象が下方向」の定義と実機の取り付け向きに
     # 完全に依存するため、実機で必ず符号を検証すること。逆であれば `<` に戻す。
-    if bearing.pitch_deg > ctx.params.hydrophone_pitch_threshold_deg:
-        # 閾値を超えた瞬間の推定座標を「発見した対象の絶対座標」として記録する。
-        # 以降のHOLD_TARGET/HYDRO_DIVE/HYDRO_APPROACHはこれを参照するので、
-        # ここで一度も呼ばれなければ後続Stateは目標を持てない。
-        body_offset = perception.bearing_to_body_offset(
-            bearing.pitch_deg, bearing.yaw_deg, ctx.params.hydrophone_assumed_distance_m
-        )
-        ctx.discovered_target = perception.body_offset_to_ned(
-            _position_or_zero(ctx), roll_deg, pitch_deg, yaw_deg, body_offset
-        )
+    if (
+        perception.is_pinger_direction_usable(pinger, ctx.params.hydrophone_score_threshold)
+        and pinger.pitch_deg > ctx.params.hydrophone_pitch_threshold_deg
+    ):
+        # 閾値を超えた瞬間、WrenchPlanが示していた絶対座標を「発見した対象の絶対座標」として
+        # 記録する(sbl_controller_nodeの出力をそのまま信頼する)。以降のHOLD_TARGET/
+        # HYDRO_DIVE/HYDRO_APPROACHはこれを参照するので、ここで一度も呼ばれなければ
+        # 後続Stateは目標を持てない。
+        ctx.discovered_target = target
         ctx.attack_retry_started_at = ctx.elapsed_time  # マイク確認待ちループのタイムアウト起点
         if ctx.image_processing_available:
             return State.VISUAL_DIVE
         return State.HOLD_TARGET
 
-    # 探索は毎tick方角を再計算するので、target_positionのキャッシュは使わない。
-    # 「現在位置からのオフセット」が欲しいので、回転だけ適用し原点はゼロのまま渡す。
-    body_offset = perception.bearing_to_body_offset(
-        bearing.pitch_deg, bearing.yaw_deg, ctx.params.hydrophone_assumed_distance_m
-    )
-    dx, dy, dz = perception.body_offset_to_ned(
-        np.zeros(3), roll_deg, pitch_deg, yaw_deg, body_offset
-    )
+    # 探索中は毎tick、sbl_controller_nodeが発行する最新のWrenchPlan絶対目標との差分を
+    # 計算して追従する(target_positionキャッシュは使わない。targetそのものが
+    # 外部ノードから毎tick更新され続けるため)。
+    dx, dy, dz = target - _position_or_zero(ctx)
     result = _run_control_tick(ctx, dx, dy, dz)
     if result.emergency:
         return State.EMERGENCY

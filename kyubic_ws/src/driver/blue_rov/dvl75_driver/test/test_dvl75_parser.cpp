@@ -1,11 +1,11 @@
-#include "dvl75_driver/dvl75_parser.hpp"
-#include "gtest/gtest.h"
-
 #include <cstdint>
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <variant>
+
+#include "dvl75_driver/dvl75_parser.hpp"
+#include "gtest/gtest.h"
 
 namespace
 {
