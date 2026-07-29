@@ -24,6 +24,7 @@ setup(
     entry_points={
         "console_scripts": [
             "bluerov_control_node = bluerov_control.node:main",
+            "bluerov_heartbeat_publisher = bluerov_control.heartbeat_publisher:main",
         ],
     },
 )

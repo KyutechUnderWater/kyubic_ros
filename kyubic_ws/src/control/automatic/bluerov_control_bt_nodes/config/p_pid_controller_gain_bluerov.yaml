@@ -1,0 +1,71 @@
+# BlueROV用 p_pid_controller ゲイン。
+#
+# Kyubic本家の config/p_pid_controller_gain.yaml (p_pid_controllerパッケージ) をひな型に、
+# 数値はゼロから保守的に設定した仮の初期値(未実機チューニング)。Kyubicのゲインは
+# Kyubicの機体質量・スラスタ配置に合わせたものなのでそのまま転用していない。
+#
+# k/lo/hi        : 外側(位置)ループ。P制御のみ、出力(速度指令相当)をlo/hiにクランプ
+# vpid.kp/ki/kd  : 内側(速度)ループ。速度形PID
+# vpid.kf        : D項ローパスフィルタ係数(0=フィルタなし)
+# vpid.lo/hi     : 内側ループの最終出力(force.x/y/z, torque.x/z)のクランプ範囲。
+#                  mavlink_driverのrobot_force -> axis.<name>.limit でPWMへスケールされる値
+#
+# roll軸: bluerov_control(旧Python実装)はroll制御を一切行っていなかった。mavlink_driverの
+# robot_forceはtorque.xをaxis.roll経由でPWMへ変換できるため理論上は制御可能だが、実機未検証。
+# 事故防止のため、出力レンジ(vpid.lo/hi)を他軸より大幅に絞ってある。実機で機体を拘束した
+# 状態で少しずつ広げること。
+x:
+  k: 0.3
+  lo: -0.2
+  hi: 0.2
+  vpid:
+    kp: 20.0
+    ki: 2.0
+    kd: 0.0
+    kf: 0.0
+    lo: -50.0
+    hi: 50.0
+y:
+  k: 0.3
+  lo: -0.2
+  hi: 0.2
+  vpid:
+    kp: 20.0
+    ki: 2.0
+    kd: 0.0
+    kf: 0.0
+    lo: -50.0
+    hi: 50.0
+z:
+  k: 0.3
+  lo: -0.2
+  hi: 0.2
+  vpid:
+    kp: 20.0
+    ki: 2.0
+    kd: 0.0
+    kf: 0.0
+    lo: -50.0
+    hi: 50.0
+roll:
+  k: 0.1
+  lo: -5.0
+  hi: 5.0
+  vpid:
+    kp: 1.0
+    ki: 0.0
+    kd: 0.0
+    kf: 0.0
+    lo: -5.0
+    hi: 5.0
+yaw:
+  k: 0.3
+  lo: -20.0
+  hi: 20.0
+  vpid:
+    kp: 5.0
+    ki: 0.0
+    kd: 0.0
+    kf: 0.0
+    lo: -50.0
+    hi: 50.0

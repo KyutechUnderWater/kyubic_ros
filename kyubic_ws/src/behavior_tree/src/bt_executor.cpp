@@ -31,6 +31,9 @@
 #include "behavior_tree/update_mode.hpp"
 #include "behavior_tree/waypoint_action.hpp"
 
+// BlueROV固有のBT葉ノード(bluerov_control_bt_nodesパッケージ)
+#include "bluerov_control_bt_nodes/set_depth_target.hpp"
+
 using namespace behavior_tree;
 
 int main(int argc, char ** argv)
@@ -58,6 +61,7 @@ int main(int argc, char ** argv)
   factory.registerNodeType<ResetLocalization>("ResetLocalization", logger_pub, node);
   factory.registerNodeType<FindPingerAction>("FindPingerAction", logger_pub, node);
   factory.registerNodeType<Talker>("Talker", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::SetDepthTarget>("SetDepthTarget", node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");

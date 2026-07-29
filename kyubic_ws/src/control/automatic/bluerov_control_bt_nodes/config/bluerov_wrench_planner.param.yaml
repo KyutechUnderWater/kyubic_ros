@@ -1,0 +1,6 @@
+# Kyubic本家の wrench_planner/config/wrench_planner.param.yaml と同じ構造。
+# pid_gain_yaml は p_pid_controller_gain_bluerov.yaml (同ディレクトリ) を指す。
+/**:
+  ros__parameters:
+    pid_gain_yaml: "p_pid_controller_gain_bluerov.yaml"
+    timeout_ms: 1000
