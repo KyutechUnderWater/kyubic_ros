@@ -1,0 +1,50 @@
+camera:
+  # 水中・カメラハウジング装着状態で校正した値へ置き換える。
+  # position_estimation_enabled=trueの場合、fxとfyは正の値が必要。
+  fx: 0.0
+  fy: 0.0
+
+  # 仮の主点位置。水中校正結果で置き換える。
+  cx: 960.0
+  cy: 540.0
+
+  calibration_width: 1920
+  calibration_height: 1080
+
+range:
+  # 初期方式: pinhole_area
+  # 水槽内でBBox距離校正を実施した後: inverse_scale
+  model: pinhole_area
+
+  # 使用するブイのおおよその実寸[m]
+  buoy_width_m: 0.110
+  buoy_height_m: 0.170
+
+  # inverse_scale用: Zc = scale_a / sqrt(bbox_area/image_area) + scale_b
+  scale_a: 0.0
+  scale_b: 0.0
+
+  min_range_m: 0.10
+  max_range_m: 8.00
+
+transform:
+  # カメラ光学座標から機体base_link（FRD）への回転行列。
+  # camera optical: X=画像右、Y=画像下、Z=カメラ前方
+  # base_link FRD:  X=機体前、Y=機体右、Z=機体下
+  # 正面・水平に取り付けたカメラでは以下の対応になる。
+  # body_x = camera_z
+  # body_y = camera_x
+  # body_z = camera_y
+  camera_to_body_rotation:
+    - [0.0, 0.0, 1.0]
+    - [1.0, 0.0, 0.0]
+    - [0.0, 1.0, 0.0]
+
+  # base_link原点から見たカメラ光学原点の位置[m]。
+  # 順番は [前方X, 右方向Y, 下方向Z]。
+  # 実機のカメラ取付位置を測定して置き換える。
+  camera_to_body_translation_m: [0.0, 0.0, 0.0]
+
+validation:
+  # BBoxが画像端に触れると面積が欠けるため、座標を無効化する。
+  border_margin_px: 2
