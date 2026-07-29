@@ -12,6 +12,7 @@ echo "192.168.9.100 kyubic" >> /etc/hosts
 
 # Set python-env with uv
 gosu ros bash -l -c 'cd ~/kyubic_ros && uv venv --system-site-packages && uv sync'
+gosu ros bash -l -c '~/kyubic_ros/docker/sync_ros_python_deps.sh'
 
 # Add command to .bashrc
 gosu ros bash -c 'cat << EOT >> ~/.bashrc
