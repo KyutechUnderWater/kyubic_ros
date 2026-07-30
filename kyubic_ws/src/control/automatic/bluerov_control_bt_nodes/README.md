@@ -86,7 +86,7 @@ ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py depth_target_m:=1.0
 | `GoToDepth` | 絶対深度(`depth_absolute_m`)または起動時点からの相対オフセット(`depth_offset_m`)へ向かう。x,y,roll,yawはodomから読んだ起動時点の現在値を維持する。深度が`tolerance_m`(既定0.1m)以内になるまで`RUNNING`を返し続け、到達で`SUCCESS`。両ポートとも省略時はROSパラメータ`default_depth_m`(`depth_target_m`launch引数)にフォールバック(DESCEND_TO_7M用) | [go_to_depth.hpp](include/bluerov_control_bt_nodes/go_to_depth.hpp) / [.cpp](src/go_to_depth.cpp) |
 | `GoToBlackboardTarget` | BTブラックボードのキー(`target_x`/`target_y`/`target_z`、通常は`{discovered_target...}`のような形で他ノードの出力をバインドする)が示す絶対座標へ向かう。roll/yawは起動時点の現在値を維持。到達判定は`position_tolerance_m`(既定0.2m)/`depth_tolerance_m`(既定0.1m)。VISUAL_ATTACK/HYDRO_APPROACH用。**`mission_origin_x`/`mission_origin_y`/`field_size_m`によるフィールド境界チェック付き**(範囲外なら`publish`せず`FAILURE`。§6参照) | [go_to_blackboard_target.hpp](include/bluerov_control_bt_nodes/go_to_blackboard_target.hpp) / [.cpp](src/go_to_blackboard_target.cpp) |
 | `CheckPingerFound` | `pinger_direction`と`zoh_wrench_plan`を購読し、ハイドロフォンで「発見」したかを判定する(旧`handle_search_hydrophone`の発見判定部分)。**移動自体はこのノードの責務ではない**(sbl_controller_nodeが`zoh_wrench_plan`へ発行し続ける値にZOH経由でそのまま追従する)。発見の瞬間、その時点の`zoh_wrench_plan.targets`を`target_x/y/z`へ出力して`SUCCESS`。閾値未達・未受信の間は`RUNNING` | [check_pinger_found.hpp](include/bluerov_control_bt_nodes/check_pinger_found.hpp) / [.cpp](src/check_pinger_found.cpp) |
-| `CheckBuoyDetected` | `buoy_detection`を購読し、confidence/timestampで有効性判定(旧`perception.is_buoy_detection_usable`と同じ)。有効ならodomの姿勢で機体座標系オフセットをNEDへ回転し(旧`perception.body_offset_to_ned`相当、tf2で実装)、`target_x/y/z`へ出力して`SUCCESS`。それ以外は`RUNNING`。VISUAL_DETECT用 | [check_buoy_detected.hpp](include/bluerov_control_bt_nodes/check_buoy_detected.hpp) / [.cpp](src/check_buoy_detected.cpp) |
+| `CheckBuoyDetected` | `buoy_detection`を購読し、confidence/timestampで有効性判定(旧`perception.is_buoy_detection_usable`と同じ)。有効ならodomの姿勢で機体座標系オフセットをNEDへ回転し(旧`perception.body_offset_to_ned`相当、tf2で実装)、`target_x/y/z`へ出力して`SUCCESS`。それ以外は`RUNNING`。VISUAL_DETECT用。`buoy_detection`(`bluerov_control_msgs/msg/BuoyDetection`)の実publisherは`buoy_detector_driver`(`driver/blue_rov/buoy_detector_driver`、画像処理班の`perception/buoy_detector`が発行する`BuoyRelativePosition`を変換する中継アダプタ。詳細は同パッケージのREADME参照) | [check_buoy_detected.hpp](include/bluerov_control_bt_nodes/check_buoy_detected.hpp) / [.cpp](src/check_buoy_detected.cpp) |
 | `CheckRosBoolParam` | ROSパラメータ(`param_name`)の真偽値で即座に`SUCCESS`/`FAILURE`を返す汎用Condition。旧`debug.image_processing_available`/`debug.mic_data_from_above`の2用途に共通で使う | [check_ros_bool_param.hpp](include/bluerov_control_bt_nodes/check_ros_bool_param.hpp) / [.cpp](src/check_ros_bool_param.cpp) |
 | `CaptureMissionOrigin` | `odom`を購読し、`status.dvl.id == NORMAL`のodomを受信するまで`RUNNING`で待機する(単に最初のodomではなく、Part Aの`has_valid_measurement_`と同じ考え方でDVLが有効ロックしたことを確認する)。条件を満たしたodomの位置(x, y)を`mission_origin_x`/`mission_origin_y`としてブラックボードへ確定し`SUCCESS`。`GoToBlackboardTarget`のフィールド境界チェックの原点として使われる。個別のタイムアウトは持たない(呼び出し側XMLで`Timeout`に包む。§6参照) | [capture_mission_origin.hpp](include/bluerov_control_bt_nodes/capture_mission_origin.hpp) / [.cpp](src/capture_mission_origin.cpp) |
 
@@ -178,9 +178,15 @@ field_size_m]`(既定`field_size_m=10.0`)の範囲外なら、`publish`せず`FA
 - PIDゲイン([config/p_pid_controller_gain_bluerov.yaml](config/p_pid_controller_gain_bluerov.yaml))は
   Phase 1のまま変更していない。実機未チューニングの保守的な初期値。特にroll軸は旧
   `bluerov_control`が一度も制御したことがない軸なので出力レンジを大きく絞ってある
-- `sbl_controller_node`(音響班)・画像処理ノードは引き続き外部/未実装。`CheckPingerFound`/
-  `CheckBuoyDetected`はそれぞれの入力トピックが来ない限り`RUNNING`のまま安全に待機し続ける
-  (§8の`ros2 topic pub`で代用してテストする)
+- `sbl_controller_node`(音響班、`zoh_wrench_plan`を発行する側)は引き続き外部/未実装。
+  `CheckPingerFound`は`pinger_direction`/`zoh_wrench_plan`の入力トピックが来ない限り
+  `RUNNING`のまま安全に待機し続ける(§8の`ros2 topic pub`で代用してテストする)
+- `CheckBuoyDetected`が購読する`buoy_detection`は、中継アダプタ`buoy_detector_driver`
+  (`driver/blue_rov/buoy_detector_driver`)により実publisherが存在するようになった。ただし
+  上流の`perception/buoy_detector`(YOLO検出)自体はYOLOモデル・水中カメラ校正が未整備のため
+  まだ実行できない(詳細は`buoy_detector_driver/README.md`§4)。実機のYOLO検出が動くまでは、
+  引き続き§8の`ros2 topic pub`で`buoy_detection`(または`buoy_detector_driver`経由で
+  `/buoy/relative_position`)へダミーデータを注入してテストする
 - `RETURN_HOME`は旧実装も無条件成功のスタブだったため、`Surface`到達=ツリー終端という形に
   そのまま対応させた(`planner_msgs/action/Return.action`という定義はあるが、呼び出し元・
   サーバーどちらもKyubic側含めリポジトリ内に存在しないため、ちゃんとした実装はまだ無い)
@@ -229,15 +235,22 @@ ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py main_tree:=MainTree_Hy
 ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py main_tree:=MainTree_Surface
 ```
 
-`sbl_controller_node`/画像処理ノードがまだ無いので、`CheckPingerFound`/`CheckBuoyDetected`を
-動かすには別ターミナルでダミーデータを注入する(機体を拘束した状態で):
+`sbl_controller_node`(音響班)、および実機のYOLO検出(`perception/buoy_detector`、モデル・
+カメラ校正が未整備。§6参照)がまだ無いので、`CheckPingerFound`/`CheckBuoyDetected`を動かすには
+別ターミナルでダミーデータを注入する(機体を拘束した状態で):
 
 ```bash
 ros2 topic pub /pinger_direction planner_msgs/msg/PingerDirection \
   "{yaw: 0.0, pitch: 35.0, score: 0.01}" --rate 5
 
+# buoy_detection(BuoyDetection)へ直接注入する場合(buoy_detector_driverを経由しない簡易テスト)
 ros2 topic pub /perception/buoy_detection bluerov_control_msgs/msg/BuoyDetection \
   "{detected: true, relative_buoy_x_m: 1.0, relative_buoy_y_m: 0.0, relative_buoy_z_m: 0.5, confidence: 0.9}" --rate 5
+
+# buoy_detector_driverの変換ロジックも合わせて確認したい場合は、代わりにこちらへ注入する
+# (buoy_detector_driverを別途起動しておくこと。詳細はdriver/blue_rov/buoy_detector_driver/README.md)
+# ros2 topic pub /buoy/relative_position buoy_interfaces/msg/BuoyRelativePosition \
+#   "{detected: true, position_valid: true, confidence: 0.9, relative_buoy_x_m: 1.0, relative_buoy_y_m: 0.0, relative_buoy_z_m: 0.5}" --rate 5
 
 # sbl_controller_node相当(SEARCH_HYDROPHONE中の追従目標)
 ros2 topic pub /planner/wrench_planner/zoh_wrench_plan planner_msgs/msg/WrenchPlan \

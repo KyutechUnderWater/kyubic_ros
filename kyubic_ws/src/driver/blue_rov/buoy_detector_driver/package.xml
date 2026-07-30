@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>buoy_detector_driver</name>
+  <version>0.1.0</version>
+  <description>
+    Adapter node that converts buoy_interfaces/msg/BuoyRelativePosition (published by
+    perception/buoy_detector) into bluerov_control_msgs/msg/BuoyDetection so that
+    bluerov_control_bt_nodes's CheckBuoyDetected has a real publisher to subscribe to.
+    Subscribe-and-republish only; does not perform coordinate transforms or actuate anything.
+  </description>
+  <maintainer email="kyutech.robosub@gmail.com">Kyutech Underwater</maintainer>
+  <license>Apache License 2.0</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>rclpy</depend>
+  <depend>buoy_interfaces</depend>
+  <depend>bluerov_control_msgs</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
