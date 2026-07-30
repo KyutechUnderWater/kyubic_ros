@@ -32,7 +32,11 @@
 #include "behavior_tree/waypoint_action.hpp"
 
 // BlueROV固有のBT葉ノード(bluerov_control_bt_nodesパッケージ)
-#include "bluerov_control_bt_nodes/set_depth_target.hpp"
+#include "bluerov_control_bt_nodes/check_buoy_detected.hpp"
+#include "bluerov_control_bt_nodes/check_pinger_found.hpp"
+#include "bluerov_control_bt_nodes/check_ros_bool_param.hpp"
+#include "bluerov_control_bt_nodes/go_to_blackboard_target.hpp"
+#include "bluerov_control_bt_nodes/go_to_depth.hpp"
 
 using namespace behavior_tree;
 
@@ -43,6 +47,10 @@ int main(int argc, char ** argv)
   // 1. Create the Node
   auto node = std::make_shared<rclcpp::Node>("bt_executor_node");
   std::string bt_xml_path = node->declare_parameter<std::string>("bt_xml_file", "");
+  // 空なら従来通りXML自身のmain_tree_to_execute属性を使う。非空ならXML内の指定した
+  // BehaviorTree IDをrootとして実行する(状態ごとの単体テスト用。BlueROVの
+  // bluerov_control_bt_nodesが導入した仕組みで、既存の使い方には影響しない)。
+  std::string main_tree_id = node->declare_parameter<std::string>("main_tree_id", "");
 
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub =
     node->create_publisher<std_msgs::msg::String>("logger", 10);
@@ -61,7 +69,12 @@ int main(int argc, char ** argv)
   factory.registerNodeType<ResetLocalization>("ResetLocalization", logger_pub, node);
   factory.registerNodeType<FindPingerAction>("FindPingerAction", logger_pub, node);
   factory.registerNodeType<Talker>("Talker", node);
-  factory.registerNodeType<bluerov_control_bt_nodes::SetDepthTarget>("SetDepthTarget", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::GoToDepth>("GoToDepth", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::GoToBlackboardTarget>(
+    "GoToBlackboardTarget", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::CheckPingerFound>("CheckPingerFound", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::CheckBuoyDetected>("CheckBuoyDetected", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::CheckRosBoolParam>("CheckRosBoolParam", node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");
@@ -85,7 +98,14 @@ int main(int argc, char ** argv)
   // 5. Create tree
   BT::Tree tree;
   try {
-    tree = factory.createTreeFromFile(xml_path, blackboard);
+    if (main_tree_id.empty()) {
+      tree = factory.createTreeFromFile(xml_path, blackboard);
+    } else {
+      RCLCPP_INFO(node->get_logger(), "main_tree_id指定あり: '%s' をrootとして実行します",
+        main_tree_id.c_str());
+      factory.registerBehaviorTreeFromFile(xml_path);
+      tree = factory.createTree(main_tree_id, blackboard);
+    }
   } catch (const std::exception & e) {
     RCLCPP_ERROR(node->get_logger(), "Failed to create tree: %s", e.what());
     rclcpp::shutdown();

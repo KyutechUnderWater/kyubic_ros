@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+BlueROV Phase 2: 旧 bluerov_control/flow.py の17状態をすべてBT化したもの。
+
+【状態対応の要約(README参照)】
+  INIT                              -> Delay 2000ms
+  DESCEND_TO_7M                     -> GoToDepth(ポート省略、ROSパラメータdefault_depth_mへ)
+  SEARCH_HYDROPHONE                 -> Timeout(search_timeout_ms)でCheckPingerFoundをラップ
+  発見後のVISUAL/HYDRO分岐           -> CheckRosBoolParam(debug.image_processing_available)
+  VISUAL_DIVE..VISUAL_POST_CHECKループ -> VisualPath SubTree
+  HOLD_TARGET..HYDRO_CHECK_MICループ  -> HydroPath SubTree
+  SURFACE -> RETURN_HOME -> DONE     -> Surface SubTree(成功=ツリー終端)
+  EMERGENCY                          -> Emergency SubTree(Phase 1から変更なし)
+
+【個別テスト】main_tree_idパラメータ(bt_executor.cpp、Phase 2で追加)で
+MainTree以外のBehaviorTree IDを直接rootとして起動できる。例:
+  ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py main_tree:=MainTree_VisualPath
+README「個別テスト方法」参照。
+
+【タイムアウトの考え方】search_timeout(7分)・mic_confirm_timeout(45秒)で主要な待機状態を
+すべて束縛し、さらにAutoSequence全体を大枠のタイムアウト(既定30分)で覆うことで
+「無限にRUNNINGし続ける状態」を作らないようにしている(依頼書4節の安全要件2)。
+GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムアウトを持たないが、
+これらは必ずいずれかのTimeoutでラップされた区間の中でのみ使われる。
+-->
+<root BTCPP_format="4"
+      main_tree_to_execute="MainTree">
+
+  <BehaviorTree ID="Configure">
+    <Delay delay_msec="2000">
+      <Sequence name="ConfigureSequence">
+        <LifecycleManager name="ConfigureZOHNode"
+                          node_name="planner/wrench_planner/zoh_wrench_planner_component"
+                          transition="configure"
+                          timeout_sec="1"/>
+        <LifecycleManager name="ConfigureEmergencyNode"
+                          node_name="emergencyNode"
+                          transition="configure"
+                          timeout_sec="1"/>
+      </Sequence>
+    </Delay>
+  </BehaviorTree>
+
+  <BehaviorTree ID="Emergency">
+    <Sequence name="EmergencySequence">
+      <Fallback>
+        <LifecycleManager name="DeactivateZOHNode"
+                          node_name="planner/wrench_planner/zoh_wrench_planner_component"
+                          transition="deactivate"
+                          timeout_sec="1"/>
+        <AlwaysSuccess/>
+      </Fallback>
+      <Talker name="EmergencyTalker"
+              message="Emergency Mode Start"
+              topic_name="/talker"/>
+      <LifecycleManager name="ActivateEmergencyNode"
+                        node_name="emergencyNode"
+                        transition="activate"
+                        timeout_sec="1"/>
+      <AlwaysRunning name="EmergencyRunning"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- 旧VISUAL_DIVE(dive_offset_m=2.5) -> [VISUAL_CHECK_MIC/VISUAL_DETECT/VISUAL_ATTACK/
+       VISUAL_POST_CHECK ループ、mic_confirm_timeout_sec=45で束縛] -->
+  <BehaviorTree ID="VisualPath">
+    <Sequence name="VisualDive">
+      <GoToDepth name="VisualDiveStep" depth_offset_m="2.5"/>
+      <Fallback name="MicConfirmedOrEmergency">
+        <Timeout msec="45000">
+          <RetryUntilSuccessful num_attempts="-1">
+            <Fallback name="CheckMicOrAttack">
+              <Sequence name="MicConfirmed">
+                <CheckRosBoolParam param_name="debug.mic_data_from_above" default_value="false"/>
+                <SubTree ID="Surface"/>
+              </Sequence>
+              <Sequence name="DetectAndAttack">
+                <CheckBuoyDetected target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+                <GoToBlackboardTarget name="VisualAttack"
+                                      target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+                <GoToDepth name="VisualPostCheck" depth_offset_m="-0.5"/>
+                <AlwaysFailure/>
+              </Sequence>
+            </Fallback>
+          </RetryUntilSuccessful>
+        </Timeout>
+        <!-- mic_confirm_timeout_sec超過。旧flow.pyの_with_mic_confirm_timeoutと同じくEMERGENCYへ。 -->
+        <SubTree ID="Emergency"/>
+      </Fallback>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- 旧HOLD_TARGET(素通り) -> HYDRO_DIVE(dive_offset_m=2.5) -> [HYDRO_APPROACH/
+       HYDRO_NEAR_SURFACE/HYDRO_CHECK_MIC ループ、mic_confirm_timeout_sec=45で束縛]。
+       discovered_target(target_x/y/z)は親から引き継いだハイドロフォン発見時の値をそのまま使う
+       (画像処理による再検出はしない、旧handle_hold_targetのコメントと同じ考え方)。 -->
+  <BehaviorTree ID="HydroPath">
+    <Sequence name="HydroDive">
+      <GoToDepth name="HydroDiveStep" depth_offset_m="2.5"/>
+      <Fallback name="MicConfirmedOrEmergency">
+        <Timeout msec="45000">
+          <RetryUntilSuccessful num_attempts="-1">
+            <Fallback name="CheckMicOrApproach">
+              <Sequence name="MicConfirmed">
+                <CheckRosBoolParam param_name="debug.mic_data_from_above" default_value="false"/>
+                <SubTree ID="Surface"/>
+              </Sequence>
+              <Sequence name="ApproachAndCheck">
+                <GoToBlackboardTarget name="HydroApproach"
+                                      target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+                <GoToDepth name="HydroNearSurface" depth_offset_m="-0.5"/>
+                <AlwaysFailure/>
+              </Sequence>
+            </Fallback>
+          </RetryUntilSuccessful>
+        </Timeout>
+        <SubTree ID="Emergency"/>
+      </Fallback>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- 旧SURFACE(surface_rise_offset_m=4.0の相対浮上) -> RETURN_HOME -> DONE。
+       RETURN_HOMEは旧実装も無条件DONEのスタブだったため、SUCCESS=ツリー終端がそのまま対応する。 -->
+  <BehaviorTree ID="Surface">
+    <GoToDepth name="SurfaceStep" depth_offset_m="-4.0"/>
+  </BehaviorTree>
+
+  <!-- 旧DESCEND_TO_7M -> SEARCH_HYDROPHONE(発見判定、search_timeout_sec=420で束縛) ->
+       発見後はVISUAL/HYDROへ分岐。Timeoutでの全体束縛(既定30分)はAutoSequence全体を覆う。 -->
+  <BehaviorTree ID="Auto">
+    <Timeout msec="1800000" name="OverallMissionTimeout">
+      <Sequence name="AutoSequence">
+        <LifecycleManager name="ActivateZOHNode"
+                          node_name="planner/wrench_planner/zoh_wrench_planner_component"
+                          transition="activate"
+                          timeout_sec="1"/>
+        <Talker name="AutoTalker"
+                message="Descending to depth"
+                topic_name="/talker"/>
+        <!-- depth_absolute_m/depth_offset_mともに省略。ROSパラメータdefault_depth_mへ
+             フォールバックする(Phase 1と同じ、depth_target_m launch引数で指定)。 -->
+        <GoToDepth name="DescendTo7m"/>
+        <Fallback name="FoundOrSearchTimeoutSurface">
+          <Sequence name="FoundAndDispatch">
+            <Timeout msec="420000">
+              <CheckPingerFound pitch_threshold_deg="30.0"
+                                score_threshold="1.0e6"
+                                target_x="{target_x}"
+                                target_y="{target_y}"
+                                target_z="{target_z}"/>
+            </Timeout>
+            <Fallback name="VisualOrHydro">
+              <Sequence name="TryVisual">
+                <CheckRosBoolParam param_name="debug.image_processing_available"
+                                   default_value="true"/>
+                <SubTree ID="VisualPath"
+                        target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+              </Sequence>
+              <SubTree ID="HydroPath"
+                      target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+            </Fallback>
+          </Sequence>
+          <!-- search_timeout_sec(7分)超過。旧flow.pyと同じくSURFACE(EMERGENCYではない)。 -->
+          <SubTree ID="Surface"/>
+        </Fallback>
+      </Sequence>
+    </Timeout>
+  </BehaviorTree>
+
+  <BehaviorTree ID="MainTree">
+    <Delay delay_msec="2000">
+      <Fallback name="MainFallback">
+        <Sequence name="NormalSequence">
+          <SubTree ID="Configure"/>
+          <SubTree ID="Auto"/>
+        </Sequence>
+        <SubTree ID="Emergency"/>
+      </Fallback>
+    </Delay>
+  </BehaviorTree>
+
+  <!-- ==================== 個別テスト用エントリポイント ====================
+       main_tree_id launch引数でこれらのいずれかを直接rootとして起動できる。
+       Configureとzoh activateを行った上で、対象SubTreeだけをテストする。
+       discovered_target(target_x/y/z)はダミー座標をSetBlackboardで注入する
+       (実機テストでは水深・水平方向とも近距離の安全な値にすること)。 -->
+
+  <BehaviorTree ID="MainTree_SearchOnly">
+    <Sequence>
+      <SubTree ID="Configure"/>
+      <LifecycleManager name="ActivateZOHNodeTest"
+                        node_name="planner/wrench_planner/zoh_wrench_planner_component"
+                        transition="activate"
+                        timeout_sec="1"/>
+      <Timeout msec="420000">
+        <CheckPingerFound pitch_threshold_deg="30.0"
+                          score_threshold="1.0e6"
+                          target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+      </Timeout>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="MainTree_VisualPath">
+    <Sequence>
+      <SubTree ID="Configure"/>
+      <LifecycleManager name="ActivateZOHNodeTest"
+                        node_name="planner/wrench_planner/zoh_wrench_planner_component"
+                        transition="activate"
+                        timeout_sec="1"/>
+      <SetBlackboard value="0.0" output_key="target_x"/>
+      <SetBlackboard value="0.0" output_key="target_y"/>
+      <SetBlackboard value="1.0" output_key="target_z"/>
+      <SubTree ID="VisualPath" target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="MainTree_HydroPath">
+    <Sequence>
+      <SubTree ID="Configure"/>
+      <LifecycleManager name="ActivateZOHNodeTest"
+                        node_name="planner/wrench_planner/zoh_wrench_planner_component"
+                        transition="activate"
+                        timeout_sec="1"/>
+      <SetBlackboard value="0.0" output_key="target_x"/>
+      <SetBlackboard value="0.0" output_key="target_y"/>
+      <SetBlackboard value="1.0" output_key="target_z"/>
+      <SubTree ID="HydroPath" target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="MainTree_Surface">
+    <Sequence>
+      <SubTree ID="Configure"/>
+      <LifecycleManager name="ActivateZOHNodeTest"
+                        node_name="planner/wrench_planner/zoh_wrench_planner_component"
+                        transition="activate"
+                        timeout_sec="1"/>
+      <SubTree ID="Surface"/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="GoToDepth"
+            editable="true">
+      <input_port name="depth_absolute_m"/>
+      <input_port name="depth_offset_m"/>
+      <input_port name="tolerance_m"
+                  default="0.1"/>
+      <input_port name="topic_name"
+                  default="zoh_wrench_plan"/>
+      <input_port name="odom_topic_name"
+                  default="odom"/>
+    </Action>
+    <Action ID="GoToBlackboardTarget"
+            editable="true">
+      <input_port name="target_x"/>
+      <input_port name="target_y"/>
+      <input_port name="target_z"/>
+      <input_port name="position_tolerance_m"
+                  default="0.2"/>
+      <input_port name="depth_tolerance_m"
+                  default="0.1"/>
+      <input_port name="topic_name"
+                  default="zoh_wrench_plan"/>
+      <input_port name="odom_topic_name"
+                  default="odom"/>
+    </Action>
+    <Action ID="CheckPingerFound"
+            editable="true">
+      <input_port name="pinger_direction_topic"
+                  default="pinger_direction"/>
+      <input_port name="wrench_plan_topic"
+                  default="zoh_wrench_plan"/>
+      <input_port name="pitch_threshold_deg"
+                  default="30.0"/>
+      <input_port name="score_threshold"
+                  default="1.0e6"/>
+      <output_port name="target_x"/>
+      <output_port name="target_y"/>
+      <output_port name="target_z"/>
+    </Action>
+    <Action ID="CheckBuoyDetected"
+            editable="true">
+      <input_port name="buoy_detection_topic"
+                  default="buoy_detection"/>
+      <input_port name="odom_topic_name"
+                  default="odom"/>
+      <input_port name="confidence_threshold"
+                  default="0.5"/>
+      <input_port name="stale_timeout_sec"
+                  default="1.0"/>
+      <output_port name="target_x"/>
+      <output_port name="target_y"/>
+      <output_port name="target_z"/>
+    </Action>
+    <Condition ID="CheckRosBoolParam"
+               editable="true">
+      <input_port name="param_name"/>
+      <input_port name="default_value"
+                  default="true"/>
+    </Condition>
+  </TreeNodesModel>
+
+</root>

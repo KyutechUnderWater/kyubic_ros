@@ -5,8 +5,9 @@
   <version>0.1.0</version>
   <description>
     BlueROV-specific Behavior Tree leaf nodes for reuse with Kyubic's bt_executor
-    (behavior_tree package). Phase 1: SetDepthTarget only (publish a one-shot absolute
-    depth WrenchPlan target, holding current x/y/roll/yaw).
+    (behavior_tree package). Phase 2: GoToDepth/GoToBlackboardTarget (movement),
+    CheckPingerFound/CheckBuoyDetected (detection), CheckRosBoolParam (generic debug-flag
+    condition) -- covers all 17 states of the former bluerov_control flow.py FSM.
   </description>
   <maintainer email="kyutech.robosub@gmail.com">Kyutech Underwater</maintainer>
   <license>Apache License 2.0</license>
@@ -17,6 +18,8 @@
   <depend>behaviortree_cpp</depend>
   <depend>planner_msgs</depend>
   <depend>localization_msgs</depend>
+  <depend>bluerov_control_msgs</depend>
+  <depend>tf2</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

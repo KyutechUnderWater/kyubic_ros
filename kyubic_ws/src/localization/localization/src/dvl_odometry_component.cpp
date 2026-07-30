@@ -48,6 +48,21 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
     odom_msg->header = msg->header;
     odom_msg->status.dvl.id = common_msgs::msg::Status::ERROR;
+    // 直前の有効値を保持したままpublishする(ゼロ値が新鮮な値であるかのように
+    // 下流(localization_component等)へ伝播するのを防ぐ。Part A参照)。
+    // pos_x/pos_yは常に有効(reset()の0初期化がdead-reckoning原点として正当な値)。
+    odom_msg->pose.position.x = pos_x;
+    odom_msg->pose.position.y = pos_y;
+    // altitude/velocityは一度も有効値を受信していなければ0を「保持値」と称さない
+    // (has_valid_measurement_==falseの間はodom_msgのデフォルト0のままにする。
+    // status.dvl.id==ERRORなので下流はどのみち使わないが、この層単体でも
+    // 「未計測」と「保持値」を混同しないようにする)。
+    if (has_valid_measurement_) {
+      odom_msg->pose.position.z_altitude = last_altitude_;
+      odom_msg->twist.linear.x = last_velocity_world_.x();
+      odom_msg->twist.linear.y = last_velocity_world_.y();
+      odom_msg->twist.linear.z_altitude = last_velocity_world_.z();
+    }
   } else {
     auto now = this->get_clock()->now();
     double dt = (now - pre_time).nanoseconds() * 1e-9;
@@ -72,6 +87,9 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 
     pos_x += vel_robot_world.x() * dt;
     pos_y += vel_robot_world.y() * dt;
+    last_altitude_ = msg->altitude;
+    last_velocity_world_ = vel_robot_world;
+    has_valid_measurement_ = true;
 
     {
       odom_msg->header = msg->header;
@@ -112,6 +130,9 @@ void DVLOdometry::reset()
 {
   pre_time = this->get_clock()->now();
   pos_x = pos_y = 0.0;
+  last_altitude_ = 0.0;
+  last_velocity_world_ = tf2::Vector3(0.0, 0.0, 0.0);
+  has_valid_measurement_ = false;
 }
 
 }  // namespace localization::dvl

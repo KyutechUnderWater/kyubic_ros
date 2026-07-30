@@ -41,6 +41,8 @@ setup(
         "console_scripts": [
             "buoy_detector_node = "
             "buoy_detector.buoy_detector_node:main",
+            "buoy_logger_node = "
+            "buoy_detector.buoy_logger_node:main",
         ],
     },
 )

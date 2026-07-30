@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(python3 -)",
-      "Bash(python3 -m py_compile bluerov_control/flow.py bluerov_control/perception.py bluerov_control/node.py bluerov_control/control.py launch/bluerov_control.launch.py)"
+      "Bash(python3 -m py_compile bluerov_control/flow.py bluerov_control/perception.py bluerov_control/node.py bluerov_control/control.py launch/bluerov_control.launch.py)",
+      "Read(//kyubic_ros/kyubic_ws/src/driver/blue_rov/dvl75_driver/src/**)",
+      "Read(//kyubic_ros/kyubic_ws/src/localization/localization/src/**)"
     ]
   }
 }

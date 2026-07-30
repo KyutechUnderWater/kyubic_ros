@@ -23,6 +23,7 @@
 #include "driver_msgs/msg/dvl.hpp"
 #include "driver_msgs/srv/command.hpp"
 #include "dvl75_driver/dvl75_parser.hpp"
+#include "geometry_msgs/msg/vector3.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 /**
@@ -142,6 +143,22 @@ private:
    */
   void publish_error_dvl(const builtin_interfaces::msg::Time & stamp);
 
+  /**
+   * @brief Publish a minimal invalid DVL75 measurement (dvext_valid=dvpdl_valid=false).
+   * @details Called when a sentence fails to parse, so the diagnostic dvl75 topic is not
+   * completely silent during parse failures (previously nothing was published at all).
+   * @param stamp ROS time assigned to the error message header.
+   */
+  void publish_error_dvl75(const builtin_interfaces::msg::Time & stamp);
+
+  /**
+   * @brief Fill velocity/altitude from the last valid measurement, if any.
+   * @details Keeps driver_msgs::msg::DVL from carrying a fresh-looking zero while
+   * velocity_valid==false. Thread-safe (locks data_mutex_).
+   * @param message Message to fill; velocity_valid/status.id must already be set by the caller.
+   */
+  void apply_held_measurement(driver_msgs::msg::DVL & message) const;
+
   /** @brief Detect DVPDL reception timeouts and publish one error transition. */
   void timeout_callback();
 
@@ -194,6 +211,12 @@ private:
   std::optional<Dvext> last_dvext_;
   SteadyTime last_dvext_time_{};  ///< Reception time of the cached DVEXT.
   SteadyTime last_dvpdl_time_{};  ///< Reception time of the latest DVPDL.
+  /** @brief Last measurement_valid==true velocity/altitude, held (not zeroed) while
+   * measurement_valid==false so driver_msgs::msg::DVL never carries a fresh-looking zero.
+   * Consumers must still gate on velocity_valid/status.id; this is defense-in-depth. */
+  geometry_msgs::msg::Vector3 last_valid_velocity_{};
+  double last_valid_altitude_{0.0};
+  bool has_valid_measurement_{false};
   /** @brief Whether the current timeout was published. */
   bool timeout_reported_{false};
   std::optional<std::uint8_t> last_tracking_status_;     ///< Last logged tracking status.

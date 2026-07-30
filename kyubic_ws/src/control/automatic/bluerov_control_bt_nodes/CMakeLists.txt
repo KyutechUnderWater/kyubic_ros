@@ -18,7 +18,11 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_library(bluerov_control_bt_nodes SHARED
-  ./src/set_depth_target.cpp
+  ./src/go_to_depth.cpp
+  ./src/go_to_blackboard_target.cpp
+  ./src/check_pinger_found.cpp
+  ./src/check_buoy_detected.cpp
+  ./src/check_ros_bool_param.cpp
 )
 
 install(DIRECTORY

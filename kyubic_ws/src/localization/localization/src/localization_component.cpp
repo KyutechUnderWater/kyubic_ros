@@ -87,8 +87,12 @@ void Localization::depth_callback(const localization_msgs::msg::Odometry::Unique
 {
   odom_msg_->header = msg->header;
   odom_msg_->status.depth.id = msg->status.depth.id;
-  odom_msg_->pose.position.z_depth = msg->pose.position.z_depth;
-  odom_msg_->twist.linear.z_depth = msg->twist.linear.z_depth;
+  // ERROR時はフィールドを更新せず、直前の融合済み値を保持する(Part A参照)。
+  // statusフラグ自体は上で常に伝播させるので、下流はERRORかどうかを知ることができる。
+  if (msg->status.depth.id != common_msgs::msg::Status::ERROR) {
+    odom_msg_->pose.position.z_depth = msg->pose.position.z_depth;
+    odom_msg_->twist.linear.z_depth = msg->twist.linear.z_depth;
+  }
 
   all_updated |= 4;
   RCLCPP_DEBUG(this->get_logger(), "Updated Depth odometry");
@@ -98,8 +102,10 @@ void Localization::imu_callback(const localization_msgs::msg::Odometry::UniquePt
 {
   odom_msg_->header = msg->header;
   odom_msg_->status.imu.id = msg->status.imu.id;
-  odom_msg_->pose.orientation = msg->pose.orientation;
-  odom_msg_->twist.angular = msg->twist.angular;
+  if (msg->status.imu.id != common_msgs::msg::Status::ERROR) {
+    odom_msg_->pose.orientation = msg->pose.orientation;
+    odom_msg_->twist.angular = msg->twist.angular;
+  }
 
   all_updated |= 2;
   RCLCPP_DEBUG(this->get_logger(), "Updated IMU transformed");
@@ -110,16 +116,18 @@ void Localization::dvl_callback(const localization_msgs::msg::Odometry::UniquePt
   odom_msg_->header = msg->header;
   odom_msg_->status.dvl.id = msg->status.dvl.id;
 
-  odom_msg_->pose.position.x = msg->pose.position.x;
-  odom_msg_->pose.position.y = msg->pose.position.y;
-  odom_msg_->pose.position.z_altitude = msg->pose.position.z_altitude;
+  if (msg->status.dvl.id != common_msgs::msg::Status::ERROR) {
+    odom_msg_->pose.position.x = msg->pose.position.x;
+    odom_msg_->pose.position.y = msg->pose.position.y;
+    odom_msg_->pose.position.z_altitude = msg->pose.position.z_altitude;
 
-  odom_msg_->pose.orientation = msg->pose.orientation;
-  odom_msg_->twist.angular = msg->twist.angular;
+    odom_msg_->pose.orientation = msg->pose.orientation;
+    odom_msg_->twist.angular = msg->twist.angular;
 
-  odom_msg_->twist.linear.x = msg->twist.linear.x;
-  odom_msg_->twist.linear.y = msg->twist.linear.y;
-  odom_msg_->twist.linear.z_altitude = msg->twist.linear.z_altitude;
+    odom_msg_->twist.linear.x = msg->twist.linear.x;
+    odom_msg_->twist.linear.y = msg->twist.linear.y;
+    odom_msg_->twist.linear.z_altitude = msg->twist.linear.z_altitude;
+  }
 
   all_updated |= 1;
   RCLCPP_DEBUG(this->get_logger(), "Updated DVL odometry");

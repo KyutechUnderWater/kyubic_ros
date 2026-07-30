@@ -12,6 +12,8 @@
 #ifndef _DVL_ODOMETRY_HPP
 #define _DVL_ODOMETRY_HPP
 
+#include <tf2/LinearMath/Vector3.h>
+
 #include <driver_msgs/msg/dvl.hpp>
 #include <driver_msgs/msg/imu.hpp>
 #include <localization_msgs/msg/odometry.hpp>
@@ -48,6 +50,15 @@ private:
 
   double pos_x = 0.0;
   double pos_y = 0.0;
+  // ERROR分岐(velocity_valid==false)でもzero値を送らないための直前値保持。
+  // pos_x/pos_yは元々累積値として保持されていたが、publishする際にERROR分岐で
+  // セットし忘れていた(Part A参照)。altitude/velocityは新規に保持する。
+  // pos_x/pos_yは reset() の0初期化がdead-reckoning原点として正当な値だが、
+  // altitude/velocityは「一度も有効値を受信していない」場合に0を保持値と混同すると
+  // Part Aと同じ問題が起動直後の数秒間だけ再発するため、has_valid_measurement_で区別する。
+  double last_altitude_ = 0.0;
+  tf2::Vector3 last_velocity_world_{0.0, 0.0, 0.0};
+  bool has_valid_measurement_ = false;
 
   /**
    * @brief Update position

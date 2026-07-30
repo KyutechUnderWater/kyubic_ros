@@ -9,7 +9,7 @@ Kyubicのbt_xml/base.xmlと同じ構造(Configure/Auto/Emergency SubTree + MainT
     BlueROVにそのまま使えるか未検証のため)
   - ハイドロフォン「発見」判定・VISUAL/HYDRO探索の分岐(Phase 2で追加予定)
 
-Autoでは、SetDepthTarget(このパッケージのBT葉ノード)で1回だけ絶対深度目標を
+Autoでは、GoToDepth(このパッケージのBT葉ノード)で1回だけ絶対深度目標を
 zoh_wrench_planへpublishしたあとはAlwaysRunningで待機するのみ。水平方向の追従は、
 別途 sbl_controller_node(音響班、未実装)が同じzoh_wrench_planへ継続的に
 WrenchPlanをpublishする前提(README参照)。
@@ -40,7 +40,9 @@ WrenchPlanをpublishする前提(README参照)。
       <Talker name="AutoTalker"
               message="Descending to depth"
               topic_name="/talker"/>
-      <SetDepthTarget depth_m="7.0"/>
+      <!-- depth_mは省略。ROSパラメータdefault_depth_m(bluerov_bt.launch.pyのdepth_target_m
+           launch引数から設定)にフォールバックする。プールの実測水深に合わせて調整するため。 -->
+      <GoToDepth/>
       <AlwaysRunning name="AutoRunning"/>
     </Sequence>
   </BehaviorTree>
@@ -79,7 +81,7 @@ WrenchPlanをpublishする前提(README参照)。
 
   <!-- Description of Node Models (used by Groot) -->
   <TreeNodesModel>
-    <Action ID="SetDepthTarget"
+    <Action ID="GoToDepth"
             editable="true">
       <input_port name="depth_m"/>
       <input_port name="topic_name"
