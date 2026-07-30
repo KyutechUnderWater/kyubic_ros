@@ -7,9 +7,15 @@ BlueROVをKyubicと同じ **Behavior Tree(BT) + `wrench_planner`(P-PID) + `zero_
 (`bt_xml/bluerov_phase2.xml`)へ移行済み。Phase 1(`bluerov_phase1.xml`、固定深度潜航のみ)は
 参考として残っているが、`bluerov_bt.launch.py`はPhase 2のXMLを使う。
 
-**重要な注意**: このPhase 2着手時点で、Phase 1のDVL/odomゼロ値伝播バグ修正(§8のPart A/B/C)は
-**プールでまだ再検証されていない**。依頼者はこれを把握した上でPhase 2の実装を進めることを
-明示的に選択した。実機テストの前に必ずPart A/B/Cの再検証を先に行うこと。
+**重要な注意(未検証リスクその1)**: このPhase 2着手時点で、Phase 1のDVL/odomゼロ値伝播バグ修正
+(§9のPart A/B/C)は**プールでまだ再検証されていない**。依頼者はこれを把握した上でPhase 2の実装を
+進めることを明示的に選択した。実機テストの前に必ずPart A/B/Cの再検証を先に行うこと。
+
+**重要な注意(未検証リスクその2)**: `CaptureMissionOrigin`(投入直後、浅い水深でDVLロックを
+待ってフィールド境界判定の原点を確定するノード)は、**その水深でDVLが実際にビームロックできるか
+プールで未検証**。ロックできない、または時間がかかりすぎる場合、`origin_capture_timeout_sec`
+(既定60秒)が競技本番でも毎回タイムアウトし`Emergency`へ落ちるリスクがある。詳細と実機テスト前に
+必須の確認事項は§6参照。
 
 対象読者: ROS2に触れ始めたばかりの開発者。
 
@@ -39,7 +45,7 @@ ros2 launch localization localization_components.launch.py
 # 3a. 【Phase 2: BT構成、通しでMainTreeを実行】このパッケージ
 ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py depth_target_m:=1.0
 
-# 3a'. 【個別テスト】特定のSubTreeだけを単体起動する(§7参照)
+# 3a'. 【個別テスト】特定のSubTreeだけを単体起動する(§8参照)
 # ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py main_tree:=MainTree_VisualPath
 
 # 3b. 【旧構成、切り戻し用】従来のFSM+PID(3a/3a'とは同時に起動しないこと。両方がrobot_forceを
@@ -78,17 +84,18 @@ ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py depth_target_m:=1.0
 | ノード | 役割 | ソース |
 |---|---|---|
 | `GoToDepth` | 絶対深度(`depth_absolute_m`)または起動時点からの相対オフセット(`depth_offset_m`)へ向かう。x,y,roll,yawはodomから読んだ起動時点の現在値を維持する。深度が`tolerance_m`(既定0.1m)以内になるまで`RUNNING`を返し続け、到達で`SUCCESS`。両ポートとも省略時はROSパラメータ`default_depth_m`(`depth_target_m`launch引数)にフォールバック(DESCEND_TO_7M用) | [go_to_depth.hpp](include/bluerov_control_bt_nodes/go_to_depth.hpp) / [.cpp](src/go_to_depth.cpp) |
-| `GoToBlackboardTarget` | BTブラックボードのキー(`target_x`/`target_y`/`target_z`、通常は`{discovered_target...}`のような形で他ノードの出力をバインドする)が示す絶対座標へ向かう。roll/yawは起動時点の現在値を維持。到達判定は`position_tolerance_m`(既定0.2m)/`depth_tolerance_m`(既定0.1m)。VISUAL_ATTACK/HYDRO_APPROACH用 | [go_to_blackboard_target.hpp](include/bluerov_control_bt_nodes/go_to_blackboard_target.hpp) / [.cpp](src/go_to_blackboard_target.cpp) |
+| `GoToBlackboardTarget` | BTブラックボードのキー(`target_x`/`target_y`/`target_z`、通常は`{discovered_target...}`のような形で他ノードの出力をバインドする)が示す絶対座標へ向かう。roll/yawは起動時点の現在値を維持。到達判定は`position_tolerance_m`(既定0.2m)/`depth_tolerance_m`(既定0.1m)。VISUAL_ATTACK/HYDRO_APPROACH用。**`mission_origin_x`/`mission_origin_y`/`field_size_m`によるフィールド境界チェック付き**(範囲外なら`publish`せず`FAILURE`。§6参照) | [go_to_blackboard_target.hpp](include/bluerov_control_bt_nodes/go_to_blackboard_target.hpp) / [.cpp](src/go_to_blackboard_target.cpp) |
 | `CheckPingerFound` | `pinger_direction`と`zoh_wrench_plan`を購読し、ハイドロフォンで「発見」したかを判定する(旧`handle_search_hydrophone`の発見判定部分)。**移動自体はこのノードの責務ではない**(sbl_controller_nodeが`zoh_wrench_plan`へ発行し続ける値にZOH経由でそのまま追従する)。発見の瞬間、その時点の`zoh_wrench_plan.targets`を`target_x/y/z`へ出力して`SUCCESS`。閾値未達・未受信の間は`RUNNING` | [check_pinger_found.hpp](include/bluerov_control_bt_nodes/check_pinger_found.hpp) / [.cpp](src/check_pinger_found.cpp) |
 | `CheckBuoyDetected` | `buoy_detection`を購読し、confidence/timestampで有効性判定(旧`perception.is_buoy_detection_usable`と同じ)。有効ならodomの姿勢で機体座標系オフセットをNEDへ回転し(旧`perception.body_offset_to_ned`相当、tf2で実装)、`target_x/y/z`へ出力して`SUCCESS`。それ以外は`RUNNING`。VISUAL_DETECT用 | [check_buoy_detected.hpp](include/bluerov_control_bt_nodes/check_buoy_detected.hpp) / [.cpp](src/check_buoy_detected.cpp) |
 | `CheckRosBoolParam` | ROSパラメータ(`param_name`)の真偽値で即座に`SUCCESS`/`FAILURE`を返す汎用Condition。旧`debug.image_processing_available`/`debug.mic_data_from_above`の2用途に共通で使う | [check_ros_bool_param.hpp](include/bluerov_control_bt_nodes/check_ros_bool_param.hpp) / [.cpp](src/check_ros_bool_param.cpp) |
+| `CaptureMissionOrigin` | `odom`を購読し、`status.dvl.id == NORMAL`のodomを受信するまで`RUNNING`で待機する(単に最初のodomではなく、Part Aの`has_valid_measurement_`と同じ考え方でDVLが有効ロックしたことを確認する)。条件を満たしたodomの位置(x, y)を`mission_origin_x`/`mission_origin_y`としてブラックボードへ確定し`SUCCESS`。`GoToBlackboardTarget`のフィールド境界チェックの原点として使われる。個別のタイムアウトは持たない(呼び出し側XMLで`Timeout`に包む。§6参照) | [capture_mission_origin.hpp](include/bluerov_control_bt_nodes/capture_mission_origin.hpp) / [.cpp](src/capture_mission_origin.cpp) |
 
 いずれも「未受信・未確定の間は`RUNNING`のまま待機し、誤って`SUCCESS`を返さない」という
 安全側の設計はPhase 1の`GoToDepth`(旧`SetDepthTarget`)と同じ。
 
 これらのノードは`behavior_tree`パッケージの`bt_executor.cpp`に追記して登録している
 (各ノードにつき`#include`1行+`factory.registerNodeType<...>`1行。既存ノードの登録・動作には
-触れていない)。加えてPhase 2では、状態ごとの個別テスト(§7)のために`bt_executor.cpp`へ
+触れていない)。加えてPhase 2では、状態ごとの個別テスト(§8)のために`bt_executor.cpp`へ
 `main_tree_id`という新規ROSパラメータも追加した(空なら従来通りXML自身の
 `main_tree_to_execute`属性を使うので、Phase 1時点の挙動に影響はない)。共有パッケージへの
 変更なので、取り込む際はメンテナ(Kyubic側)にも一言共有すること。
@@ -97,7 +104,8 @@ ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py depth_target_m:=1.0
 
 | 旧`flow.py`の状態(群) | BT表現(`bluerov_phase2.xml`) |
 |---|---|
-| `INIT` | `Delay 2000ms` |
+| `INIT` | `Delay {init_wait_ms}`(`init_wait_sec`、既定180秒。センサー・ドライバ安定化) |
+| (新規追加、旧`flow.py`に対応する状態は無い) | `INIT`直後・`Configure`/`Auto`の前で`Timeout {origin_capture_timeout_ms}`に包まれた`CaptureMissionOrigin`。フィールド境界判定の原点を確定する(§6参照) |
 | `DESCEND_TO_7M` | `Auto`内の`GoToDepth`(ポート省略、`default_depth_m`≒`depth_target_m`引数へ) |
 | `SEARCH_HYDROPHONE` | `Timeout msec=420000`(7分、`search_timeout_sec`)で`CheckPingerFound`をラップ。時間切れなら`Surface`へ、発見できたらVISUAL/HYDRO分岐へ |
 | 発見後の分岐 | `CheckRosBoolParam(debug.image_processing_available)`が真なら`VisualPath`、そうでなければ`HydroPath` |
@@ -109,13 +117,62 @@ ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py depth_target_m:=1.0
 | `SURFACE`→`RETURN_HOME`→`DONE` | `Surface` SubTree = `GoToDepth depth_offset_m="-4.0"`。成功=ツリー終端(`RETURN_HOME`/`DONE`は旧実装も無条件成功のスタブだったため、対応するノードは無い) |
 | `EMERGENCY` | `Emergency` SubTree(Phase 1から変更なし) |
 
-`AutoSequence`全体は`Timeout msec=1800000`(30分)で覆ってあり、個々のノードが無限に
-`RUNNING`し続けることが無いようにしている(§6参照)。
+`AutoSequence`全体は`Timeout {overall_mission_timeout_ms}`(`overall_mission_timeout_sec`、
+既定500秒)で覆ってあり、個々のノードが無限に`RUNNING`し続けることが無いようにしている
+(§7参照)。500秒は`search_timeout_sec`(420秒、7分)より必ず大きくする必要がある: 内側の
+`Timeout[CheckPingerFound]`は`AutoSequence`内の前段処理の分だけ外側より遅れて開始するため、
+両者を同じ値にすると探索が内側の期限をほぼ使い切った場合に、内側が自前で`Surface`へ落ちる前に
+外側が`AutoSequence`全体を`FAILURE`にしてしまい、本来`Surface`で終わるべき場面が`Emergency`に
+なってしまう(既定値500秒 = 420秒 + 前段処理/`VisualPath`・`HydroPath`の
+`mic_confirm_timeout_sec`分の余裕80秒)。
 
-## 6. 既知の制約・TODO
+## 6. ミッション原点とフィールド境界制限(`CaptureMissionOrigin` / `GoToBlackboardTarget`)
+
+競技フィールドは10m×10mで、フィールド外の物体を誤検出すると機体が場外へ向かってしまう
+リスクがある。これを防ぐため、`GoToBlackboardTarget`(`VISUAL_ATTACK`/`HYDRO_APPROACH`が
+向かう先)に境界チェックを追加した。
+
+**設計**: `CaptureMissionOrigin`が`MainTree`の`NormalSequence`冒頭(`Configure`/`Auto`より前、
+INIT終了時点)で実行され、そのときの機体位置(odomのx, y)を`mission_origin_x`/
+`mission_origin_y`としてブラックボードへ確定する。`GoToBlackboardTarget`は、目標座標が
+`[mission_origin_x, mission_origin_x + field_size_m] × [mission_origin_y, mission_origin_y +
+field_size_m]`(既定`field_size_m=10.0`)の範囲外なら、`publish`せず`FAILURE`を返す
+(誤検出扱いとして、既存の`RetryUntilSuccessful`ループへ自然に戻る。新しい分岐ロジックは
+不要)。範囲は原点から**+x方向・+y方向へ非対称**に伸びる矩形であり、原点を中心とした
+±5mの対称範囲ではない。
+
+**⚠️ 運用手順(コードでは担保していない、必ず守ること)**: +x/+yがフィールド奥方向を
+向くことは、**機体を投入地点でフィールド奥を向けて起動する**という運用手順のみで担保して
+いる。コード側でのヨー角補正は行っていない。起動時の向きを間違えると、境界チェックが
+実際のフィールドと無関係な方向を基準にしてしまい、正しく機能しない。
+
+**⚠️ 未検証リスク(実機テスト前に必ずプールで確認すること)**: `CaptureMissionOrigin`は
+競技規則上ひざ程度の浅い投入水深、かつ機体が潜航を開始する前(`DescendTo7m`より前)に
+実行される設計になっている。
+
+- DVLが、この浅い水深でビームロックできるかは**未検証**。ロックできない場合、
+  `origin_capture_timeout_sec`(既定60秒)が競技本番でも毎回タイムアウトし、
+  `Emergency`へ落ちてしまうリスクがある
+- 実機テスト前に必ず、投入直後のDVLロック状況(`status.dvl.id`が`NORMAL`になるか、
+  なるまでに何秒かかるか)を浅いプールで計測・確認すること(§8にプールテストの
+  確認項目として記載)
+- 計測の結果、ロックできない、または時間がかかりすぎる場合は、`CaptureMissionOrigin`の
+  呼び出し位置を`DescendTo7m`後(`Auto`内、より深い水深に到達した後)へ移す設計変更が
+  必要になる可能性がある。**現時点ではこの設計変更は行っておらず**、次の検証結果待ち
+
+`CaptureMissionOrigin`自体は個別のタイムアウトを持たない(`GoToDepth`等と同じ設計方針)ため、
+`MainTree`の`NormalSequence`内で明示的に`Timeout {origin_capture_timeout_ms}`
+(`origin_capture_timeout_sec`、既定60秒)に包んである。この区間は`overall_mission_timeout_ms`
+(`Auto`の内側のみを覆う)の対象外のため、別のタイムアウトが必要だった。タイムアウトすれば
+`NormalSequence`全体が`FAILURE`となり、既存の`Fallback[NormalSequence, Emergency]`構造が
+そのまま`Emergency`へ落とす。
+
+## 7. 既知の制約・TODO
 
 - **Part A/B/Cのプール再検証が未完了**(冒頭の注意参照)。Phase 2の実機テストはこれを
   先に済ませてから行うこと
+- **`CaptureMissionOrigin`の浅水深DVLロックが未検証**(冒頭の注意・§6参照)。Phase 2の
+  実機テストはこれも先に確認してから行うこと
 - `BatteryCheck`/`CheckSensorsStatus`は未組み込みのまま。Kyubicの閾値(4S/6S電池パック前提)が
   BlueROVにそのまま使えるか未検証のため
 - PIDゲイン([config/p_pid_controller_gain_bluerov.yaml](config/p_pid_controller_gain_bluerov.yaml))は
@@ -123,28 +180,32 @@ ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py depth_target_m:=1.0
   `bluerov_control`が一度も制御したことがない軸なので出力レンジを大きく絞ってある
 - `sbl_controller_node`(音響班)・画像処理ノードは引き続き外部/未実装。`CheckPingerFound`/
   `CheckBuoyDetected`はそれぞれの入力トピックが来ない限り`RUNNING`のまま安全に待機し続ける
-  (§7の`ros2 topic pub`で代用してテストする)
+  (§8の`ros2 topic pub`で代用してテストする)
 - `RETURN_HOME`は旧実装も無条件成功のスタブだったため、`Surface`到達=ツリー終端という形に
   そのまま対応させた(`planner_msgs/action/Return.action`という定義はあるが、呼び出し元・
   サーバーどちらもKyubic側含めリポジトリ内に存在しないため、ちゃんとした実装はまだ無い)
-- `GoToDepth`/`GoToBlackboardTarget`/`CheckBuoyDetected`自体は個別のタイムアウトを持たない
-  (旧`flow.py`もこれらの移動系状態には個別タイムアウトが無かったため、既存の安全水準は
-  維持している)。search_timeout(7分)・mic_confirm_timeout(45秒)・AutoSequence全体の
-  大枠タイムアウト(30分、旧`flow.py`には無かった新規の安全策)でこれらを束縛しているが、
-  唯一`DESCEND_TO_7M`相当(`Auto`冒頭の`GoToDepth`)はこの30分タイムアウトの内側にいるため
-  最終的には束縛されるものの、個別のタイムアウトは無い
+- `GoToDepth`/`GoToBlackboardTarget`/`CheckBuoyDetected`/`CaptureMissionOrigin`自体は
+  個別のタイムアウトを持たない(旧`flow.py`もこれらの移動系状態には個別タイムアウトが
+  無かったため、既存の安全水準は維持している)。search_timeout(7分)・
+  mic_confirm_timeout(45秒)・AutoSequence全体の大枠タイムアウト
+  (`overall_mission_timeout_sec`、既定500秒、旧`flow.py`には無かった新規の安全策)で
+  `GoToDepth`/`GoToBlackboardTarget`/`CheckBuoyDetected`を束縛しているが、唯一
+  `DESCEND_TO_7M`相当(`Auto`冒頭の`GoToDepth`)はこの500秒タイムアウトの内側にいるため
+  最終的には束縛されるものの、個別のタイムアウトは無い。`CaptureMissionOrigin`は
+  `Auto`の外(`overall_mission_timeout_ms`の対象外)にいるため、別途
+  `origin_capture_timeout_sec`(既定60秒)で束縛している(§6参照)
 - 旧`bluerov_control`(`flow.py`/`control.py`)は、このBT構成が実機で一通り検証できてから
   正式に廃止する予定(それまでは両方の起動経路が残る)
 - **odom鮮度の監視が無い**: `ZeroOrderHold`は`zoh_wrench_plan`(目標)側の途絶しか監視しておらず、
-  `odom`(現在値)側の鮮度は誰も見ていない。§8のPart A修正でDVL/depth/IMUがERROR時に直前値を
+  `odom`(現在値)側の鮮度は誰も見ていない。§9のPart A修正でDVL/depth/IMUがERROR時に直前値を
   保持するようになった結果、これらのセンサが長時間沈黙し続けると、`odom`が同じ値のまま
   「凍りついた」状態がそれと分からず流れ続けるという新たなリスクがある。対策案
   (`localization_component`が各センサのERROR継続時間を計測し閾値超過でさらなるフラグを立てる、
   `wrench_planner`側で`odom.header.stamp`の鮮度をチェックする等)は未実装、次回以降の検討事項。
 
-## 7. プールテストの進め方
+## 8. プールテストの進め方
 
-### 7.1 個別テスト方法(`main_tree`launch引数)
+### 8.1 個別テスト方法(`main_tree`launch引数)
 
 `bluerov_phase2.xml`は1ファイルに全SubTreeをまとめてあり、`bt_executor`の`main_tree_id`
 ROSパラメータ(`main_tree`launch引数)で、`MainTree`(通し実行)以外のBehaviorTree IDを
@@ -156,7 +217,9 @@ ROSパラメータ(`main_tree`launch引数)で、`MainTree`(通し実行)以外�
 ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py main_tree:=MainTree_SearchOnly
 
 # VisualPath(VISUAL_DIVE〜VISUAL_POST_CHECKループ)だけを単体テスト
-# (discovered_targetはダミー座標(0, 0, 1.0m)がXML内でSetBlackboardされる)
+# (discovered_targetのx/yはCaptureMissionOriginが確定したmission_origin_x/yそのもの、
+#  深度はダミー1.0mがXML内でSetBlackboardされる。境界チェックのFAILUREを意図的に
+#  試したい場合はbluerov_phase2.xmlのSetBlackboard value属性を書き換えること)
 ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py main_tree:=MainTree_VisualPath
 
 # HydroPath(HOLD_TARGET〜HYDRO_CHECK_MICループ)だけを単体テスト
@@ -181,7 +244,20 @@ ros2 topic pub /planner/wrench_planner/zoh_wrench_plan planner_msgs/msg/WrenchPl
   "{z_mode: 0, has_master: true, targets: {x: 1.0, y: 0.0, z: 1.0}}" --rate 5
 ```
 
-### 7.2 初期潜航と緊急浮上を別々に確認する
+### 8.2 次回プールテストの確認項目: `CaptureMissionOrigin`のDVLロック(§6の未検証リスク)
+
+§6で述べた通り、`CaptureMissionOrigin`は投入直後(競技規則上ひざ程度の浅い水深)で
+実行される設計であり、この水深でDVLがビームロックできるかは未検証。**実機テスト前に
+必ず以下を浅いプールで計測・確認すること**:
+
+- 投入直後、`ros2 topic echo /localization/odom --field status.dvl.id`等で
+  `status.dvl.id`が`NORMAL`(`0`)になるかを確認する
+- `NORMAL`になるまでに何秒かかるかを計測し、`origin_capture_timeout_sec`(既定60秒)に
+  対して十分な余裕があるかを確認する
+- ロックできない、または時間がかかりすぎる場合は、`CaptureMissionOrigin`の呼び出し位置を
+  `DescendTo7m`後へ移す設計変更が必要になる(§6参照、現時点では未対応)
+
+### 8.3 初期潜航と緊急浮上を別々に確認する
 
 `depth_target_m`(既定`1.0`m)を競技用水槽の想定深度からプールの実測水深に変える必要があるため、
 「潜行できるか」と「深いところからの緊急浮上を再現できるか」を**同じ1回のテストで両立させようと
@@ -203,7 +279,7 @@ ros2 lifecycle set /emergencyNode configure
 ros2 lifecycle set /emergencyNode activate
 ```
 
-## 8. プール実験で発見された不具合の修正(2026年)
+## 9. プール実験で発見された不具合の修正(2026年)
 
 初回プール実験で「DVLが壁に近づくと`/localization/odom`にゼロ値が出て、PID制御が振動する」
 事象が発生した。原因は、DVL/depth/IMUのいずれかが計測エラー(`status.<sensor>.id == ERROR`)に

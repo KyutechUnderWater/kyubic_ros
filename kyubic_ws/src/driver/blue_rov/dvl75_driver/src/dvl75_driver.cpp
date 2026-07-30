@@ -77,6 +77,8 @@ Dvl75Driver::Dvl75Driver(const rclcpp::NodeOptions & options) : Node("dvl75_driv
   device_host_address_ = declare_parameter<std::string>("device_host_address", "");
   startup_commands_ =
     declare_parameter<std::vector<std::string>>("startup_commands", std::vector<std::string>{});
+  resume_on_startup_ = declare_parameter<bool>("resume_on_startup", true);
+  pause_on_shutdown_ = declare_parameter<bool>("pause_on_shutdown", true);
   validate_configuration();
   position_axis_sign_ = parse_axis_sign(position_axis_sign, "position_axis_sign");
   angle_axis_sign_ = parse_axis_sign(angle_axis_sign, "angle_axis_sign");
@@ -114,17 +116,32 @@ Dvl75Driver::Dvl75Driver(const rclcpp::NodeOptions & options) : Node("dvl75_driv
     RCLCPP_INFO(
       get_logger(), "DVL persistent configuration is disabled; expecting DVEXT and DVPDL output.");
   }
+  if (resume_on_startup_) {
+    send_command_best_effort("RESUME");
+  }
 
   receiver_thread_ = std::thread(&Dvl75Driver::receive_loop, this);
 }
 
 Dvl75Driver::~Dvl75Driver()
 {
+  if (pause_on_shutdown_) {
+    send_command_best_effort("PAUSE");
+  }
   stop_requested_.store(true);
   if (receiver_thread_.joinable()) {
     receiver_thread_.join();
   }
   socket_.reset();
+}
+
+void Dvl75Driver::send_command_best_effort(const std::string & command) noexcept
+{
+  try {
+    send_command(command);
+  } catch (const std::exception & error) {
+    RCLCPP_WARN(get_logger(), "Failed to send DVL command '%s': %s", command.c_str(), error.what());
+  }
 }
 
 void Dvl75Driver::validate_configuration() const
@@ -259,7 +276,6 @@ void Dvl75Driver::process_packet(
     } catch (const ParseError & error) {
       RCLCPP_WARN(get_logger(), "Discarded invalid DVL packet: %s", error.what());
       publish_error_dvl(received_stamp);
-      publish_error_dvl75(received_stamp);
       continue;
     }
 
@@ -315,18 +331,8 @@ void Dvl75Driver::publish_dvpdl(
     message.altitude = dvext->altitude;
     message.status.id = locked_beam_count == 4U ? common_msgs::msg::Status::NORMAL
                                                 : common_msgs::msg::Status::WARNING;
-    {
-      std::lock_guard<std::mutex> lock(data_mutex_);
-      last_valid_velocity_ = message.velocity;
-      last_valid_altitude_ = message.altitude;
-      has_valid_measurement_ = true;
-    }
   } else {
-    // confidence/locked-beamが不足した無効測定。velocity_valid=falseなので下流
-    // (dvl_odometry_component)は本来このvelocity/altitudeを使わないが、念のため
-    // ゼロではなく直前の有効値で埋めておく(防御的な統一。Part A参照)。
     message.status.id = common_msgs::msg::Status::ERROR;
-    apply_held_measurement(message);
   }
   report_tracking_status(message.status.id, locked_beam_count, dvpdl.confidence);
   dvl_publisher_->publish(message);
@@ -360,35 +366,13 @@ void Dvl75Driver::publish_dvl75(
   dvl75_publisher_->publish(message);
 }
 
-void Dvl75Driver::publish_error_dvl75(const builtin_interfaces::msg::Time & stamp)
-{
-  blue_rov_msgs::msg::DVL75 message;
-  set_message_header(message, stamp, frame_id_);
-  message.dvext_valid = false;
-  message.dvpdl_valid = false;
-  dvl75_publisher_->publish(message);
-}
-
 void Dvl75Driver::publish_error_dvl(const builtin_interfaces::msg::Time & stamp)
 {
   driver_msgs::msg::DVL message;
   set_message_header(message, stamp, frame_id_);
   message.velocity_valid = false;
   message.status.id = common_msgs::msg::Status::ERROR;
-  apply_held_measurement(message);
   dvl_publisher_->publish(message);
-}
-
-void Dvl75Driver::apply_held_measurement(driver_msgs::msg::DVL & message) const
-{
-  std::lock_guard<std::mutex> lock(data_mutex_);
-  if (!has_valid_measurement_) {
-    // 有効な測定値をまだ一度も受信していない(起動直後)。ゼロのままにする以外に
-    // 選択肢が無いため、この場合だけはゼロが残る。velocity_valid=falseで区別できる。
-    return;
-  }
-  message.velocity = last_valid_velocity_;
-  message.altitude = last_valid_altitude_;
 }
 
 void Dvl75Driver::timeout_callback()

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>odom_distance_check</name>
+  <version>0.1.0</version>
+  <description>
+    Read-only diagnostic tool that records /localization/odom position deltas between
+    operator-marked points, to be compared by hand against a known physical distance moved.
+    Verifies DVL velocity integration accuracy in dvl_odometry_component. Subscribes only;
+    never publishes and cannot actuate the vehicle.
+  </description>
+  <maintainer email="kyutech.robosub@gmail.com">Kyutech Underwater</maintainer>
+  <license>Apache License 2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>common_msgs</depend>
+  <depend>localization_msgs</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

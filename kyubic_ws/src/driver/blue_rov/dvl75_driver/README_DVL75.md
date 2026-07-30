@@ -79,6 +79,12 @@ ros2 launch dvl75_driver dvl75_setup.launch.py
 
 `SEND-DVPDL ON`送信後に`$DVPDL`が未受信なら、速度情報が得られない構成異常としてERRORログを出力。
 
+## PAUSE / RESUME (電源投入時の自動Ping対策)
+
+DVL-75は電源投入と同時にPingを開始する。`resume_on_startup: true`（既定）の場合、ノード起動時に一度`RESUME`をDVLへ送信し、DVLが電源投入直後の状態のままでも本ドライバー起動と同時にPingを再開させる。`pause_on_shutdown: true`（既定）の場合、ノード終了時（`Ctrl-C`・プロセス終了）に一度`PAUSE`を送信し、本ドライバーが動いていない間はDVLを止めておく。
+
+どちらも永続設定ではなく一時的な状態変更のコマンドなので、`apply_device_config`の値に関係なく動作する。DVLが未接続・未応答の場合は送信失敗をWARNログに残すのみで、ノードの起動・終了処理は妨げない。
+
 ## 品質判定
 
 - 4本ロック: `NORMAL`

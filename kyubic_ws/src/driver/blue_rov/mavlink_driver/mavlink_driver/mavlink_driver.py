@@ -288,7 +288,7 @@ class MavlinkDriver(Node):
         if message_type == "BATTERY_STATUS":
             self._publish_power_state(message)
         elif message_type == "VFR_HUD":
-            self._publish_depth(message.alt * self._depth_scale)
+            self._publish_depth(-message.alt * self._depth_scale)
         elif message_type == "SCALED_PRESSURE2":
             with self._state_lock:
                 self._water_temperature = message.temperature / 100.0

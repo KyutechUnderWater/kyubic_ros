@@ -47,5 +47,15 @@ def generate_launch_description() -> LaunchDescription:
                 ),
                 launch_arguments={"log_level": log_level}.items(),
             ),
+            IncludeLaunchDescription(
+                PathJoinSubstitution(
+                    [
+                        FindPackageShare("reed_switch_driver"),
+                        "launch",
+                        "reed_switch_driver.launch.py",
+                    ]
+                ),
+                launch_arguments={"log_level": log_level}.items(),
+            ),
         ]
     )

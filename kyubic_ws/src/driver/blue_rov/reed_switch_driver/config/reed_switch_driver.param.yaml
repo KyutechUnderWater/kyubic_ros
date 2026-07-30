@@ -1,0 +1,13 @@
+/**:
+  ros__parameters:
+    reed_switch_pin: 17
+    led_pin: 27
+    debounce_s: 0.05
+    led_flash_duration_s: 0.2
+    # false: 磁石を抜いて回路が開いた瞬間にトリガー(競技会の一般的な方式)
+    # true : 磁石を近づけて回路が閉じた瞬間にトリガー
+    trigger_on_press: true
+
+    # BlueROV本体のライト(mavlink_driver経由、PWM 1100-1900)を一瞬点灯させる。
+    blue_led_on_pwm: 1900
+    blue_led_off_pwm: 1100

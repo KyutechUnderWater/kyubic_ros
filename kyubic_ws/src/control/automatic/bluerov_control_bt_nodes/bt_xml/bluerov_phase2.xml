@@ -4,8 +4,8 @@ BlueROV Phase 2: 旧 bluerov_control/flow.py の17状態をすべてBT化した�
 
 【ミッション定数の設定元】
   config/bluerov_mission.param.yaml (init_wait_sec, configure_delay_sec, search_timeout_sec,
-  mic_confirm_timeout_sec, dive_offset_m, post_check_rise_offset_m, surface_rise_offset_m,
-  descend_depth_m)
+  mic_confirm_timeout_sec, overall_mission_timeout_sec, origin_capture_timeout_sec,
+  dive_offset_m, post_check_rise_offset_m, surface_rise_offset_m, descend_depth_m, field_size_m)
   → 起動時に <LoadMissionParams/> が ROS パラメータを読みブラックボードへ載せる。
   → 本 XML 内の {init_wait_ms} 等がそれを参照する。
   descend_depth_m は launch 引数 depth_target_m でも上書き可能(default_depth_m)。
@@ -26,10 +26,18 @@ MainTree以外のBehaviorTree IDを直接rootとして起動できる。例:
 README「個別テスト方法」参照。
 
 【タイムアウトの考え方】search_timeout(7分)・mic_confirm_timeout(45秒)で主要な待機状態を
-すべて束縛し、さらにAutoSequence全体を大枠のタイムアウト(既定30分)で覆うことで
-「無限にRUNNINGし続ける状態」を作らないようにしている(依頼書4節の安全要件2)。
-GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムアウトを持たないが、
-これらは必ずいずれかのTimeoutでラップされた区間の中でのみ使われる。
+すべて束縛し、さらにAutoSequence全体を大枠のタイムアウト(overall_mission_timeout_sec、
+既定500秒)で覆うことで「無限にRUNNINGし続ける状態」を作らないようにしている
+(依頼書4節の安全要件2)。overall_mission_timeout_secはsearch_timeout_sec(420秒)より
+必ず大きい値にすること: 内側のTimeout[CheckPingerFound]はAutoSequence内で
+ActivateZOHNode/AutoTalker/DescendTo7mの分だけ外側より遅れて開始するため、
+両者を同じ値にすると探索が内側の期限をほぼ使い切った場合に、内側が自前でSURFACEへ
+落ちる前に外側がAutoSequence全体をFAILUREにしてしまい、本来SURFACEで終わるべき場面が
+EMERGENCYになる。既定値500秒 = 420(search_timeout_sec) + 80(前段処理 +
+VisualPath/HydroPathのmic_confirm_timeout_sec分の余裕)。
+GoToDepth/GoToBlackboardTarget/CheckBuoyDetected/CaptureMissionOrigin自体は個別の
+タイムアウトを持たないが、これらは必ずいずれかのTimeoutでラップされた区間の中でのみ
+使われる(CaptureMissionOriginはorigin_capture_timeout_secでMainTree側から包む)。
 -->
 <root BTCPP_format="4"
       main_tree_to_execute="MainTree">
@@ -92,7 +100,9 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
               <Sequence name="DetectAndAttack">
                 <CheckBuoyDetected target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
                 <GoToBlackboardTarget name="VisualAttack"
-                                      target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+                                      target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"
+                                      mission_origin_x="{mission_origin_x}" mission_origin_y="{mission_origin_y}"
+                                      field_size_m="{field_size_m}"/>
                 <!-- param: post_check_rise_offset_m → {post_check_depth_offset_m} (負=浮上) -->
                 <GoToDepth name="VisualPostCheck" depth_offset_m="{post_check_depth_offset_m}"/>
                 <AlwaysFailure/>
@@ -125,7 +135,9 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
               </Sequence>
               <Sequence name="ApproachAndCheck">
                 <GoToBlackboardTarget name="HydroApproach"
-                                      target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
+                                      target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"
+                                      mission_origin_x="{mission_origin_x}" mission_origin_y="{mission_origin_y}"
+                                      field_size_m="{field_size_m}"/>
                 <!-- param: post_check_rise_offset_m → {post_check_depth_offset_m} (負=浮上) -->
                 <GoToDepth name="HydroNearSurface" depth_offset_m="{post_check_depth_offset_m}"/>
                 <AlwaysFailure/>
@@ -146,7 +158,7 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
 
   <!-- 旧DESCEND_TO_7M -> SEARCH_HYDROPHONE(search_timeout_sec) -> VISUAL/HYDRO 分岐 -->
   <BehaviorTree ID="Auto">
-    <Timeout msec="900000" name="OverallMissionTimeout">
+    <Timeout msec="{overall_mission_timeout_ms}" name="OverallMissionTimeout">
       <Sequence name="AutoSequence">
         <LifecycleManager name="ActivateZOHNode"
                           node_name="planner/wrench_planner/zoh_wrench_planner_component"
@@ -192,6 +204,13 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
       <Delay delay_msec="{init_wait_ms}">
         <Fallback name="MainFallback">
           <Sequence name="NormalSequence">
+            <!-- param: origin_capture_timeout_sec → {origin_capture_timeout_ms}
+                 フィールド境界判定(GoToBlackboardTarget)の原点をodomから確定する。
+                 CaptureMissionOrigin自体は個別タイムアウトを持たないためTimeoutで包む
+                 (DVLが一度もNORMALにならない場合、無期限RUNNINGしないようにする)。 -->
+            <Timeout msec="{origin_capture_timeout_ms}">
+              <CaptureMissionOrigin/>
+            </Timeout>
             <SubTree ID="Configure"/>
             <SubTree ID="Auto"/>
           </Sequence>
@@ -232,8 +251,19 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
                         node_name="planner/wrench_planner/zoh_wrench_planner_component"
                         transition="activate"
                         timeout_sec="1"/>
-      <SetBlackboard value="0.0" output_key="target_x"/>
-      <SetBlackboard value="0.0" output_key="target_y"/>
+      <!-- param: origin_capture_timeout_sec → {origin_capture_timeout_ms}
+           GoToBlackboardTargetの境界チェックに使う原点を実際のodomから確定する
+           (本番のMainTreeと同じ経路をテストするため、原点自体はダミーにしない)。 -->
+      <Timeout msec="{origin_capture_timeout_ms}">
+        <CaptureMissionOrigin/>
+      </Timeout>
+      <!-- target_x/yはmission_origin_x/yそのものを注入する(=境界矩形の原点隅と一致するため
+           必ず境界チェックを通る)。固定座標(例えば0.0)にすると、テスト開始時の機体の
+           実際の位置次第で境界チェックが意図せずFAILUREになりうるため避けている。
+           境界チェックのFAILURE自体を確認したい場合は、value属性をmission_origin_x/yから
+           大きく離れた値に変更すること。 -->
+      <SetBlackboard value="{mission_origin_x}" output_key="target_x"/>
+      <SetBlackboard value="{mission_origin_y}" output_key="target_y"/>
       <SetBlackboard value="1.0" output_key="target_z"/>
       <SubTree ID="VisualPath" target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
     </Sequence>
@@ -247,8 +277,19 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
                         node_name="planner/wrench_planner/zoh_wrench_planner_component"
                         transition="activate"
                         timeout_sec="1"/>
-      <SetBlackboard value="0.0" output_key="target_x"/>
-      <SetBlackboard value="0.0" output_key="target_y"/>
+      <!-- param: origin_capture_timeout_sec → {origin_capture_timeout_ms}
+           GoToBlackboardTargetの境界チェックに使う原点を実際のodomから確定する
+           (本番のMainTreeと同じ経路をテストするため、原点自体はダミーにしない)。 -->
+      <Timeout msec="{origin_capture_timeout_ms}">
+        <CaptureMissionOrigin/>
+      </Timeout>
+      <!-- target_x/yはmission_origin_x/yそのものを注入する(=境界矩形の原点隅と一致するため
+           必ず境界チェックを通る)。固定座標(例えば0.0)にすると、テスト開始時の機体の
+           実際の位置次第で境界チェックが意図せずFAILUREになりうるため避けている。
+           境界チェックのFAILURE自体を確認したい場合は、value属性をmission_origin_x/yから
+           大きく離れた値に変更すること。 -->
+      <SetBlackboard value="{mission_origin_x}" output_key="target_x"/>
+      <SetBlackboard value="{mission_origin_y}" output_key="target_y"/>
       <SetBlackboard value="1.0" output_key="target_z"/>
       <SubTree ID="HydroPath" target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
     </Sequence>
@@ -292,6 +333,10 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
                   default="zoh_wrench_plan"/>
       <input_port name="odom_topic_name"
                   default="odom"/>
+      <input_port name="mission_origin_x"/>
+      <input_port name="mission_origin_y"/>
+      <input_port name="field_size_m"
+                  default="10.0"/>
     </Action>
     <Action ID="CheckPingerFound"
             editable="true">
@@ -330,6 +375,13 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
     <Action ID="LoadMissionParams"
             editable="true">
       <description>config/bluerov_mission.param.yaml をブラックボードへ載せる</description>
+    </Action>
+    <Action ID="CaptureMissionOrigin"
+            editable="true">
+      <input_port name="odom_topic_name"
+                  default="odom"/>
+      <description>status.dvl.id == NORMAL のodomを受信するまで待機し、mission_origin_x/yを
+      ブラックボードへ確定する(GoToBlackboardTargetのフィールド境界チェックの原点)</description>
     </Action>
   </TreeNodesModel>
 

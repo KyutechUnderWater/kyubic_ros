@@ -34,7 +34,12 @@ BT::PortsList GoToBlackboardTarget::providedPorts()
     BT::InputPort<double>("position_tolerance_m", 0.2, "水平方向の到達とみなす距離[m]"),
     BT::InputPort<double>("depth_tolerance_m", 0.1, "深度方向の到達とみなす距離[m]"),
     BT::InputPort<std::string>("topic_name", "zoh_wrench_plan", "publish先のWrenchPlanトピック"),
-    BT::InputPort<std::string>("odom_topic_name", "odom", "現在のroll/yawを読むodomトピック")};
+    BT::InputPort<std::string>("odom_topic_name", "odom", "現在のroll/yawを読むodomトピック"),
+    BT::InputPort<double>(
+      "mission_origin_x", "フィールド境界の原点x[m](通常は{mission_origin_x}を渡す)"),
+    BT::InputPort<double>(
+      "mission_origin_y", "フィールド境界の原点y[m](通常は{mission_origin_y}を渡す)"),
+    BT::InputPort<double>("field_size_m", 10.0, "原点から+x/+y方向のフィールド境界サイズ[m]")};
 }
 
 void GoToBlackboardTarget::odomCallback(const localization_msgs::msg::Odometry::SharedPtr msg)
@@ -61,6 +66,27 @@ BT::NodeStatus GoToBlackboardTarget::onRunning()
       // target_x/y/zが未指定(ブラックボードにまだ書き込まれていない等)。
       // 安全側に倒し、指定されるまで待機する(勝手にどこかへ向かわない)。
       return BT::NodeStatus::RUNNING;
+    }
+
+    double origin_x = 0.0;
+    double origin_y = 0.0;
+    if (!getInput("mission_origin_x", origin_x) || !getInput("mission_origin_y", origin_y)) {
+      // mission_origin_x/yが未設定(CaptureMissionOrigin未実行等)。境界チェックを
+      // 省略してpublishすることはせず、安全側に倒して待機する。
+      return BT::NodeStatus::RUNNING;
+    }
+    double field_size_m = 10.0;
+    getInput("field_size_m", field_size_m);
+
+    if (
+      target_x_ < origin_x || target_x_ > origin_x + field_size_m || target_y_ < origin_y ||
+      target_y_ > origin_y + field_size_m) {
+      RCLCPP_WARN(
+        ros_node_->get_logger(),
+        "GoToBlackboardTarget: target=(%.2f, %.2f) がフィールド範囲外(origin=(%.2f, %.2f) から"
+        "+%.1fm)。発見しなかった扱いとしてFAILUREを返す",
+        target_x_, target_y_, origin_x, origin_y, field_size_m);
+      return BT::NodeStatus::FAILURE;
     }
 
     planner_msgs::msg::WrenchPlan msg;

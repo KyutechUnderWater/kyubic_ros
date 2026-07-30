@@ -24,6 +24,7 @@ ament_auto_add_library(bluerov_control_bt_nodes SHARED
   ./src/check_buoy_detected.cpp
   ./src/check_ros_bool_param.cpp
   ./src/load_mission_params.cpp
+  ./src/capture_mission_origin.cpp
 )
 
 install(DIRECTORY

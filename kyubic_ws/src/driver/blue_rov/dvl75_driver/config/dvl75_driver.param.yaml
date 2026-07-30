@@ -29,3 +29,12 @@
     # Omit startup_commands when no additional command is required. An empty
     # YAML sequence has no element type and cannot represent ROS string[].
     # Example: startup_commands: ["SET-SOMETHING value"]
+
+    # RESUME/PAUSE are transient runtime state, not persistent device
+    # configuration, so these apply regardless of apply_device_config. The DVL
+    # pings continuously once powered, so this keeps it paused whenever this
+    # driver is not running and resumes it as soon as the driver starts.
+    # Failures (e.g. DVL unreachable) are logged as warnings and never block
+    # node startup/shutdown.
+    resume_on_startup: true
+    pause_on_shutdown: true

@@ -1,8 +1,9 @@
 import asyncio
+import collections
 import math
 import threading
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 
 from fastapi.responses import StreamingResponse
@@ -18,10 +19,22 @@ try:
     from rclpy.qos import qos_profile_sensor_data
     from cv_bridge import CvBridge
     import cv2
+    from std_msgs.msg import Bool
     from std_srvs.srv import SetBool
     from sensor_msgs.msg import Image
-    from driver_msgs.msg import Depth, Gnss, IMU, PowerState, VehicleState
+    from geometry_msgs.msg import WrenchStamped
+    from driver_msgs.msg import (
+        BoolStamped,
+        Depth,
+        Gnss,
+        IMU,
+        Int32Stamped,
+        LED,
+        PowerState,
+        VehicleState,
+    )
     from blue_rov_msgs.msg import DVL75
+    from localization_msgs.msg import Odometry
 
     ROS_AVAILABLE = True
 except ImportError:
@@ -38,7 +51,13 @@ except ImportError:
         def create_subscription(self, *args, **kwargs):
             pass
 
+        def create_publisher(self, *args, **kwargs):
+            return type("pub", (), {"publish": lambda self, msg: None})()
+
         def create_client(self, *args, **kwargs):
+            return None
+
+        def create_timer(self, *args, **kwargs):
             return None
 
         def get_clock(self):
@@ -48,6 +67,7 @@ except ImportError:
             pass
 
     Depth = Gnss = IMU = PowerState = VehicleState = DVL75 = object
+    BoolStamped = Int32Stamped = LED = WrenchStamped = Bool = Odometry = object
 
 
 # ==========================================
@@ -247,6 +267,37 @@ class CameraData:
         return (time.time() - self.last_update) > timeout_sec
 
 
+@dataclass
+class TrajectoryData(SensorData):
+    x: float = 0.0
+    y: float = 0.0
+    depth_m: float = 0.0
+    yaw: float = 0.0
+    points: collections.deque = field(default_factory=lambda: collections.deque(maxlen=500))
+
+
+@dataclass
+class MissionStartData:
+    last_update: float = 0.0
+    triggered: bool = False
+    triggered_at: float = 0.0
+
+
+@dataclass
+class LedControlState:
+    """実機にはライトが1基のみ搭載(mavlink_driver設定でled_left_channel=0)。"""
+
+    pwm: int = 1100
+
+
+@dataclass
+class ThrusterTestState:
+    test_force_n: float = 15.0
+    test_torque_nm: float = 2.0
+    pulse_duration_s: float = 1.0
+    manual_control_enabled: bool = False
+
+
 class RobotState:
     """アプリケーション全体の状態を保持するクラス"""
 
@@ -259,8 +310,20 @@ class RobotState:
         self.vehicle = VehicleStateData()
         self.dvl = DvlData()
         self.camera = CameraData()
+        self.trajectory = TrajectoryData()
+        self.mission_start = MissionStartData()
+        self.led_control = LedControlState()
+        self.thruster_test = ThrusterTestState()
         self.arm_service_available: bool = False
         self.warning_count: int = 0
+        self.event_log: list[str] = []
+
+    def log_event(self, text: str) -> None:
+        """UIのイベントログへ1行追加する(直近30件のみ保持)。"""
+        timestamp = time.strftime("%H:%M:%S")
+        self.event_log.append(f"[{timestamp}] {text}")
+        if len(self.event_log) > 30:
+            self.event_log.pop(0)
 
     def check_low_voltage_warning(self) -> bool:
         """低電圧が継続しているかチェックする。"""
@@ -314,10 +377,13 @@ class MonitorNode(Node):
         self.state = state
         self._bridge = CvBridge() if ROS_AVAILABLE else None
         self._min_camera_interval_s = 1.0 / 5.0
+        self._axis_pulse_timers: dict[str, threading.Timer] = {}
         self._init_params()
         self._init_subs()
+        self._init_pubs()
         self._init_service_client()
         self.create_timer(1.0, self._update_service_status)
+        self.create_timer(0.2, self._heartbeat_timer_callback)
 
     def _init_params(self):
         cfg = self.state.config
@@ -346,6 +412,19 @@ class MonitorNode(Node):
         self.create_subscription(
             Image, "image_raw", self.cb_camera, qos_profile_sensor_data
         )
+        self.create_subscription(Odometry, "odom", self.cb_odom, 10)
+        self.create_subscription(
+            BoolStamped, "mission_start_trigger", self.cb_mission_start, 10
+        )
+
+    def _init_pubs(self):
+        self._led_publisher = self.create_publisher(LED, "led", 10)
+        self._tilt_publisher = self.create_publisher(Int32Stamped, "camera_tilt", 10)
+        self._wrench_publisher = self.create_publisher(WrenchStamped, "robot_force", 10)
+        self._heartbeat_publisher = self.create_publisher(Bool, "heartbeat", 10)
+        self._mission_start_publisher = self.create_publisher(
+            BoolStamped, "mission_start_trigger", 10
+        )
 
     def _init_service_client(self):
         self._set_armed_client = self.create_client(SetBool, "set_armed")
@@ -354,6 +433,18 @@ class MonitorNode(Node):
         if self._set_armed_client is None:
             return
         self.state.arm_service_available = self._set_armed_client.service_is_ready()
+
+    def _heartbeat_timer_callback(self) -> None:
+        """manual_control_enabled中だけheartbeatを送り続ける。
+
+        送信を止めればmavlink_driver側のcontrol_heartbeat_timeout_sで
+        自動的にスラスターがニュートラルへ戻る安全設計。
+        """
+        if not self.state.thruster_test.manual_control_enabled:
+            return
+        message = Bool()
+        message.data = True
+        self._heartbeat_publisher.publish(message)
 
     def _update_common(self, data_obj: SensorData, msg) -> None:
         data_obj.last_update = time.time()
@@ -424,6 +515,98 @@ class MonitorNode(Node):
         self.state.camera.jpg_bytes = encoded.tobytes()
         self.state.camera.last_update = now
 
+    def cb_odom(self, msg) -> None:
+        d = self.state.trajectory
+        d.last_update = time.time()
+        d.x = msg.pose.position.x
+        d.y = msg.pose.position.y
+        d.depth_m = msg.pose.position.z_depth
+        d.yaw = msg.pose.orientation.z
+        d.points.append((d.x, d.y))
+
+    def cb_mission_start(self, msg) -> None:
+        d = self.state.mission_start
+        d.last_update = time.time()
+        if msg.data and not d.triggered:
+            d.triggered_at = time.time()
+            self.state.log_event("Mission start trigger received (reed switch)")
+        d.triggered = msg.data
+
+    def publish_led(self, left_pwm: int, right_pwm: int) -> None:
+        message = LED()
+        message.header.stamp = self.get_clock().now().to_msg()
+        message.status.id = 0
+        message.left = int(left_pwm)
+        message.right = int(right_pwm)
+        self._led_publisher.publish(message)
+
+    def publish_tilt(self, angle_deg: float) -> None:
+        message = Int32Stamped()
+        message.header.stamp = self.get_clock().now().to_msg()
+        message.status.id = 0
+        message.data = int(angle_deg)
+        self._tilt_publisher.publish(message)
+
+    def publish_mission_start_trigger(self) -> None:
+        message = BoolStamped()
+        message.header.stamp = self.get_clock().now().to_msg()
+        message.header.frame_id = "bluerov_dashboard"
+        message.status.id = 0
+        message.data = True
+        self._mission_start_publisher.publish(message)
+
+    def _publish_wrench(self, fx: float, fy: float, fz: float, tx: float, ty: float, tz: float) -> None:
+        message = WrenchStamped()
+        message.header.stamp = self.get_clock().now().to_msg()
+        message.header.frame_id = "base_link"
+        message.wrench.force.x = fx
+        message.wrench.force.y = fy
+        message.wrench.force.z = fz
+        message.wrench.torque.x = tx
+        message.wrench.torque.y = ty
+        message.wrench.torque.z = tz
+        self._wrench_publisher.publish(message)
+
+    def pulse_axis(self, axis: str, sign: float) -> None:
+        """指定軸へ一定時間だけ力/トルクを与え、その後ゼロへ戻す(スラスターテスト用)。"""
+        if not self.state.thruster_test.manual_control_enabled:
+            ui.notify("先に「Manual Control」を有効にしてください", type="warning")
+            return
+
+        force = self.state.thruster_test.test_force_n * sign
+        torque = self.state.thruster_test.test_torque_nm * sign
+        axis_wrench = {
+            "surge": (force, 0.0, 0.0, 0.0, 0.0, 0.0),
+            "sway": (0.0, force, 0.0, 0.0, 0.0, 0.0),
+            "heave": (0.0, 0.0, force, 0.0, 0.0, 0.0),
+            "roll": (0.0, 0.0, 0.0, torque, 0.0, 0.0),
+            "yaw": (0.0, 0.0, 0.0, 0.0, 0.0, torque),
+        }
+        if axis not in axis_wrench:
+            raise ValueError(f"unknown axis: {axis}")
+
+        existing_timer = self._axis_pulse_timers.get(axis)
+        if existing_timer is not None:
+            existing_timer.cancel()
+
+        self._publish_wrench(*axis_wrench[axis])
+        self.state.log_event(f"Thruster pulse: {axis} sign={sign:+.0f}")
+
+        duration = self.state.thruster_test.pulse_duration_s
+        timer = threading.Timer(duration, self._publish_wrench, args=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
+        self._axis_pulse_timers[axis] = timer
+        timer.start()
+
+    def emergency_stop(self) -> None:
+        """全軸ゼロ・ハートビート停止・Disarmを即座に行う。"""
+        for timer in self._axis_pulse_timers.values():
+            timer.cancel()
+        self._axis_pulse_timers.clear()
+        self._publish_wrench(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        self.state.thruster_test.manual_control_enabled = False
+        self.call_set_armed(False)
+        self.state.log_event("EMERGENCY STOP: disarm + zero wrench")
+
     def call_set_armed(self, armed: bool) -> None:
         if self._set_armed_client is None or not self._set_armed_client.service_is_ready():
             ui.notify("set_armedサービスに接続できません", type="warning")
@@ -438,9 +621,13 @@ class MonitorNode(Node):
             response = future.result()
         except Exception as error:
             self.get_logger().error(f"set_armed呼び出しに失敗しました: {error}")
+            self.state.log_event(f"set_armed({armed}) call failed: {error}")
             return
         if not response.success:
             self.get_logger().warning(f"set_armed({armed})が拒否されました: {response.message}")
+            self.state.log_event(f"set_armed({armed}) rejected: {response.message}")
+        else:
+            self.state.log_event(f"set_armed({armed}) confirmed")
 
 
 node_instance: Optional[MonitorNode] = None
@@ -646,6 +833,17 @@ def render_camera_column(state: RobotState) -> dict:
                 ui.button("DISARM", on_click=on_disarm).classes(
                     "flex-1 text-lg font-bold tracking-widest h-12 shadow-lg"
                 ).props('color="cyan-4" icon="stop_circle" no-caps')
+
+            def on_emergency_stop():
+                if node_instance:
+                    node_instance.emergency_stop()
+                    ui.notify("EMERGENCY STOP SENT", type="negative")
+                else:
+                    ui.notify("ROS Node Not Connected", type="warning")
+
+            ui.button("EMERGENCY STOP", on_click=on_emergency_stop).classes(
+                "w-full text-lg font-bold tracking-widest h-14 shadow-lg mt-3"
+            ).props('color="red-10" icon="dangerous" no-caps')
     return refs
 
 
@@ -742,6 +940,252 @@ def render_dvl_column(state: RobotState) -> dict:
     return refs
 
 
+def render_mission_start_column(state: RobotState) -> dict:
+    refs = {}
+    with ui.column().classes("col-span-1 gap-6"):
+        card_mission = CyberCard()
+        refs["card_mission"] = card_mission
+        with card_mission:
+            label_header("Mission Start", "flag_circle")
+            refs["led_mission_triggered"] = status_led_modern(
+                "Reed Switch", state.mission_start, "triggered"
+            )
+            refs["mission_elapsed_label"] = (
+                ui.label("--")
+                .classes("text-3xl font-bold stat-value leading-none mt-3")
+                .style(f"color: {UIColors.NEON_CYAN};")
+            )
+            ui.label("ELAPSED SINCE TRIGGER").classes(
+                "text-xs font-bold uppercase tracking-wide"
+            ).style(f"color: {UIColors.TEXT_SUB}")
+
+            def on_simulate_trigger():
+                if node_instance:
+                    node_instance.publish_mission_start_trigger()
+                    ui.notify("SENT: Simulated mission start trigger", type="info")
+                else:
+                    ui.notify("ROS Node Not Connected", type="warning")
+
+            ui.button("SIMULATE TRIGGER", on_click=on_simulate_trigger).classes(
+                "w-full font-bold tracking-widest h-10 shadow-lg mt-4"
+            ).props('color="purple-5" icon="bolt" no-caps')
+    return refs
+
+
+def render_led_tilt_column(state: RobotState) -> dict:
+    refs = {}
+    with ui.column().classes("col-span-1 gap-6"):
+        card_led = CyberCard()
+        refs["card_led"] = card_led
+        with card_led:
+            label_header("Light Control", "lightbulb")
+
+            with ui.column().classes("w-full mb-1 gap-0"):
+                with ui.row().classes("w-full justify-between items-end mb-1"):
+                    ui.label("LED").classes("text-sm font-bold").style(
+                        f"color: {UIColors.TEXT_SUB}"
+                    )
+                    ui.label().bind_text_from(state.led_control, "pwm").classes(
+                        "text-lg font-mono font-bold"
+                    ).style(f"color: {UIColors.NEON_CYAN}")
+                ui.slider(min=1100, max=1900, step=10).bind_value(
+                    state.led_control, "pwm"
+                ).props('color="cyan-4" track-color="grey-8"').classes("w-full")
+
+            def on_set_led():
+                if node_instance:
+                    node_instance.publish_led(state.led_control.pwm, state.led_control.pwm)
+                    ui.notify(f"SENT: LED {state.led_control.pwm}", type="info")
+                else:
+                    ui.notify("ROS Node Not Connected", type="warning")
+
+            ui.button("SET LIGHT", on_click=on_set_led).classes(
+                "w-full font-bold tracking-widest h-10 shadow-lg mt-3"
+            ).props('color="cyan-4" icon="wb_incandescent" no-caps')
+
+        card_tilt = CyberCard()
+        refs["card_tilt"] = card_tilt
+        with card_tilt:
+            label_header("Camera Tilt", "videocam")
+            ui.label(
+                "位置決めサーボではなく連続回転式のため、押している間だけ動き"
+                "離すと停止します(絶対角度指定は不可)。"
+            ).classes("text-xs font-bold mb-3").style(f"color: {UIColors.WARN}")
+
+            refs["tilt_state_label"] = (
+                ui.label("STOPPED")
+                .classes("text-sm font-bold tracking-widest mb-3")
+                .style(f"color: {UIColors.TEXT_SUB}")
+            )
+
+            def on_tilt_start(direction_deg: float, label: str):
+                def handler():
+                    if node_instance:
+                        node_instance.publish_tilt(direction_deg)
+                        refs["tilt_state_label"].text = f"MOVING: {label}"
+                        refs["tilt_state_label"].style(f"color: {UIColors.WARN};")
+                    else:
+                        ui.notify("ROS Node Not Connected", type="warning")
+
+                return handler
+
+            def on_tilt_stop():
+                if node_instance:
+                    node_instance.publish_tilt(90.0)
+                    refs["tilt_state_label"].text = "STOPPED"
+                    refs["tilt_state_label"].style(f"color: {UIColors.TEXT_SUB};")
+
+            with ui.row().classes("w-full gap-3"):
+                up_button = ui.button("▲ UP").classes(
+                    "flex-1 font-bold tracking-widest h-14 shadow-lg"
+                ).props('color="orange-5" no-caps')
+                up_button.on("mousedown", on_tilt_start(180.0, "UP"))
+                up_button.on("mouseup", on_tilt_stop)
+                up_button.on("mouseleave", on_tilt_stop)
+                up_button.on("touchstart", on_tilt_start(180.0, "UP"))
+                up_button.on("touchend", on_tilt_stop)
+
+                down_button = ui.button("▼ DOWN").classes(
+                    "flex-1 font-bold tracking-widest h-14 shadow-lg"
+                ).props('color="cyan-4" no-caps')
+                down_button.on("mousedown", on_tilt_start(0.0, "DOWN"))
+                down_button.on("mouseup", on_tilt_stop)
+                down_button.on("mouseleave", on_tilt_stop)
+                down_button.on("touchstart", on_tilt_start(0.0, "DOWN"))
+                down_button.on("touchend", on_tilt_stop)
+
+            ui.label(
+                "UP/DOWNが逆であれば、mavlink_driverのcamera_angle設定を反転してください。"
+            ).classes("text-[10px] mt-2").style(f"color: {UIColors.TEXT_SUB}")
+    return refs
+
+
+def render_thruster_test_column(state: RobotState) -> dict:
+    refs = {}
+    with ui.column().classes("col-span-1 lg:col-span-2 gap-6"):
+        card_thruster = CyberCard()
+        refs["card_thruster"] = card_thruster
+        with card_thruster:
+            label_header("Thruster Test", "settings_input_component")
+            ui.label(
+                "実際にスラスターが動きます。プロペラガード装着・拘束状態を確認してください。"
+            ).classes("text-xs font-bold mb-3").style(f"color: {UIColors.WARN}")
+
+            with ui.row().classes("w-full items-center justify-between mb-3"):
+                ui.label("MANUAL CONTROL (heartbeat)").classes("text-sm font-bold").style(
+                    f"color: {UIColors.TEXT_SUB}"
+                )
+
+                def on_manual_toggle(e):
+                    state.thruster_test.manual_control_enabled = e.value
+                    if node_instance:
+                        node_instance.state.log_event(
+                            f"Manual control {'ENABLED' if e.value else 'disabled'}"
+                        )
+
+                ui.switch(on_change=on_manual_toggle).bind_value(
+                    state.thruster_test, "manual_control_enabled"
+                ).props('color="red-6" keep-color size="lg"')
+
+            with ui.row().classes("w-full gap-4 mb-3"):
+                with ui.column().classes("flex-1"):
+                    ui.label("FORCE (N)").classes("text-xs font-bold").style(
+                        f"color: {UIColors.TEXT_SUB}"
+                    )
+                    ui.number(value=15.0, min=0.1, max=100.0, step=1.0).bind_value(
+                        state.thruster_test, "test_force_n"
+                    ).props("outlined dense").classes("w-full")
+                with ui.column().classes("flex-1"):
+                    ui.label("TORQUE (N*m)").classes("text-xs font-bold").style(
+                        f"color: {UIColors.TEXT_SUB}"
+                    )
+                    ui.number(value=2.0, min=0.1, max=20.0, step=0.5).bind_value(
+                        state.thruster_test, "test_torque_nm"
+                    ).props("outlined dense").classes("w-full")
+                with ui.column().classes("flex-1"):
+                    ui.label("PULSE (s)").classes("text-xs font-bold").style(
+                        f"color: {UIColors.TEXT_SUB}"
+                    )
+                    ui.number(value=1.0, min=0.2, max=5.0, step=0.1).bind_value(
+                        state.thruster_test, "pulse_duration_s"
+                    ).props("outlined dense").classes("w-full")
+
+            def make_pulse_handler(axis: str, sign: float):
+                def handler():
+                    if node_instance:
+                        node_instance.pulse_axis(axis, sign)
+                    else:
+                        ui.notify("ROS Node Not Connected", type="warning")
+
+                return handler
+
+            axis_labels = [
+                ("surge", "Surge (Fwd/Back)", "arrow_upward"),
+                ("sway", "Sway (L/R)", "arrow_forward"),
+                ("heave", "Heave (Up/Down)", "unfold_more"),
+                ("roll", "Roll", "sync"),
+                ("yaw", "Yaw", "rotate_right"),
+            ]
+            for axis_name, axis_label, icon_name in axis_labels:
+                with ui.row().classes("w-full items-center justify-between py-1"):
+                    with ui.row().classes("items-center gap-2"):
+                        ui.icon(icon_name, size="1.2rem").style(f"color: {UIColors.TEXT_SUB}")
+                        ui.label(axis_label).classes("text-sm font-bold").style(
+                            f"color: {UIColors.TEXT_MAIN}"
+                        )
+                    with ui.row().classes("gap-2"):
+                        ui.button("-", on_click=make_pulse_handler(axis_name, -1.0)).props(
+                            'color="cyan-4" dense'
+                        ).classes("w-12 font-bold")
+                        ui.button("+", on_click=make_pulse_handler(axis_name, 1.0)).props(
+                            'color="orange-5" dense'
+                        ).classes("w-12 font-bold")
+    return refs
+
+
+def render_trajectory_column(state: RobotState) -> dict:
+    refs = {}
+    with ui.column().classes("col-span-1 gap-6"):
+        card_traj = CyberCard(no_padding=True)
+        refs["card_traj"] = card_traj
+        with card_traj:
+            with ui.column().classes("p-4 w-full items-center"):
+                label_header("Trajectory (top-down)", "route")
+                with ui.element("div").classes(
+                    "relative w-64 h-64 flex items-center justify-center radar-grid my-2 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]"
+                ):
+                    refs["trajectory_svg"] = ui.html(
+                        '<svg width="220" height="220" viewBox="-110 -110 220 220" '
+                        'style="overflow: visible;">'
+                        '<polyline points="" fill="none" stroke="#06b6d4" stroke-width="2" '
+                        'id="traj-line" />'
+                        '<circle cx="0" cy="0" r="4" fill="#f97316" id="traj-current" />'
+                        "</svg>",
+                        sanitize=False,
+                    )
+
+                with ui.row().classes("w-full justify-between mt-4 px-2"):
+                    value_item("X", "m", state.trajectory, "x", "{:.2f}", UIColors.TEXT_MAIN)
+                    value_item("Y", "m", state.trajectory, "y", "{:.2f}", UIColors.TEXT_MAIN)
+                value_item(
+                    "Depth", "m", state.trajectory, "depth_m", "{:.2f}", UIColors.NEON_CYAN
+                )
+    return refs
+
+
+def render_event_log_row(state: RobotState) -> dict:
+    refs = {}
+    with ui.column().classes("col-span-1 lg:col-span-5 gap-6"):
+        card_log = CyberCard()
+        refs["card_log"] = card_log
+        with card_log:
+            label_header("Event Log", "history")
+            refs["event_log"] = ui.log(max_lines=100).classes(
+                "w-full h-40 font-mono text-xs leading-relaxed bg-black/30 p-2 rounded border"
+            ).style(f"border-color: {UIColors.BORDER}; color: {UIColors.NEON_CYAN};")
+    return refs
+
+
 # ==========================================
 # Section 7: Main Entry & Loop
 # ==========================================
@@ -763,12 +1207,64 @@ def index():
             refs_pwr = render_power_depth_column(app_state)
             refs_imu = render_imu_gnss_column(app_state)
             refs_dvl = render_dvl_column(app_state)
+            refs_mission = render_mission_start_column(app_state)
+            refs_led_tilt = render_led_tilt_column(app_state)
+            refs_thruster = render_thruster_test_column(app_state)
+            refs_traj = render_trajectory_column(app_state)
+            refs_log = render_event_log_row(app_state)
 
-    ui_refs = {**refs_cam, **refs_pwr, **refs_imu, **refs_dvl}
+    ui_refs = {
+        **refs_cam,
+        **refs_pwr,
+        **refs_imu,
+        **refs_dvl,
+        **refs_mission,
+        **refs_led_tilt,
+        **refs_thruster,
+        **refs_traj,
+        **refs_log,
+    }
+
+    last_logged_event_count = 0
 
     def update_ui():
+        nonlocal last_logged_event_count
         state = app_state
         cfg = state.config
+
+        # --- Event log (push only new entries) ---
+        new_events = state.event_log[last_logged_event_count:]
+        for entry in new_events:
+            ui_refs["event_log"].push(entry)
+        last_logged_event_count = len(state.event_log)
+
+        # --- Mission start elapsed time ---
+        if state.mission_start.triggered:
+            elapsed = time.time() - state.mission_start.triggered_at
+            ui_refs["mission_elapsed_label"].text = f"{elapsed:5.1f}s"
+        else:
+            ui_refs["mission_elapsed_label"].text = "--"
+        ui_refs["led_mission_triggered"]()
+
+        # --- Trajectory SVG (top-down, meters -> pixels, auto-scaled) ---
+        points = state.trajectory.points
+        if points:
+            max_extent = max(1.0, max(max(abs(px), abs(py)) for px, py in points))
+            scale = 90.0 / max_extent
+            svg_points = " ".join(f"{px * scale:.1f},{-py * scale:.1f}" for px, py in points)
+            cur_x, cur_y = points[-1]
+            ui.run_javascript(
+                f"""
+                const line = document.getElementById('traj-line');
+                const cur = document.getElementById('traj-current');
+                if (line) line.setAttribute('points', '{svg_points}');
+                if (cur) {{
+                    cur.setAttribute('cx', '{cur_x * scale:.1f}');
+                    cur.setAttribute('cy', '{-cur_y * scale:.1f}');
+                }}
+                """
+            )
+        ui_refs["card_traj"].update_status(0, state.trajectory.is_timeout(5.0))
 
         # --- Gauges ---
         ui_refs["gauge_depth"].value = state.depth.depth
@@ -809,6 +1305,10 @@ def index():
             state.dvl.status_id, state.dvl.is_timeout(cfg.timeout_dvl)
         )
         ui_refs["card_cam"].update_status(0, state.camera.is_timeout(cfg.timeout_camera))
+        ui_refs["card_thruster"].update_status(
+            1 if state.thruster_test.manual_control_enabled else 0, False
+        )
+        ui_refs["card_mission"].update_status(0 if state.mission_start.triggered else 1, False)
 
         # --- Global low-voltage alert ---
         if state.check_low_voltage_warning():

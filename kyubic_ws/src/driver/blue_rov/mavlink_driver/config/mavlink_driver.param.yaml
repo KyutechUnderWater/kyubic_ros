@@ -48,6 +48,12 @@
     axis.lateral.limit: 103.8
     axis.lateral.invert: false
 
+    # 実機で確認したところ、このチルト機構は位置決めサーボではなく連続回転式
+    # (中央付近のPWMで停止、両端に近づくほど回転速度が増す)。そのため
+    # camera_angle_min/max_degによる「角度」は実際には絶対位置を意味せず、
+    # 90度=停止・0/180度=それぞれの方向へ最大速度、という速度指令として
+    # 機能する。真の角度制御にはポテンショメータ等のフィードバックセンサが
+    # 別途必要。
     camera_channel: 8
     camera_angle_min_deg: 0.0
     camera_angle_max_deg: 180.0

@@ -8,6 +8,20 @@
     configure_delay_sec: 2.0 # Configure SubTree 内の Lifecycle ノード起動前の猶予
     search_timeout_sec: 420.0 # SEARCH_HYDROPHONE。Auto 内 CheckPingerFound を包む Timeout(7分)
     mic_confirm_timeout_sec: 45.0 # VisualPath/HydroPath の mic 確認ループ上限
+    # Auto(DescendTo7m〜VISUAL/HYDRO分岐)全体を包む大枠のタイムアウト。
+    # search_timeout_sec(420s)より必ず大きい値にすること: 内側Timeout(CheckPingerFound)は
+    # 外側より後(ActivateZOH/Talker/DescendTo7mの分)からカウントを始めるため、外側=内側だと
+    # 探索が内側の期限をほぼ使い切った場合に、内側が自前でSURFACEへ落ちる前に外側が
+    # AutoSequence全体をFAILUREにしてしまい、本来SURFACEで終わるべき場面がEmergencyになる。
+    # 420(search_timeout_sec) + 80(前段のActivateZOH/Talker/DescendTo7m + VisualPath/
+    # HydroPathのmic_confirm_timeout_sec分の余裕) = 500 を既定値とする。
+    overall_mission_timeout_sec: 500.0
+    # CaptureMissionOrigin(フィールド境界判定の原点確定)のタイムアウト。INIT終了後・
+    # Configure/Autoの前に実行され、status.dvl.idがNORMALになるodomを待つ。競技規則上
+    # 投入地点は浅い水深(ひざ程度)のため、この水深でDVLがビームロックできるかは
+    # 実機未検証(README「未検証リスク」参照)。ロックできない/時間がかかりすぎる場合、
+    # このタイムアウトが競技本番でも毎回発動しEmergencyへ落ちるリスクがある。
+    origin_capture_timeout_sec: 60.0
 
     # ---- 深度・オフセット [m] (GoToDepth depth_offset_m / default_depth_m) ----
     # NED: 正=下方向。descend は絶対深度、offset は現在地からの相対。
@@ -15,3 +29,11 @@
     dive_offset_m: 2.5 # VISUAL_DIVE / HYDRO_DIVE。発見後にさらに潜る量(正=下)
     post_check_rise_offset_m: 0.5 # VISUAL_POST_CHECK / HYDRO_NEAR_SURFACE。確認用の浮上量(正=上。XML では負の depth_offset として渡す)
     surface_rise_offset_m: 4.0 # SURFACE。ミッション終了時の浮上量(正=上。XML では負の depth_offset として渡す)
+
+    # ---- フィールド境界 [m] (GoToBlackboardTarget) ----
+    # 原点(CaptureMissionOriginが確定したINIT終了時点のodom位置)から+x方向・+y方向へ
+    # この距離を超えるdiscovered_targetは誤検出とみなしFAILUREにする(±対称ではなく、
+    # 原点から片方向へ伸びる矩形)。+x/+yがフィールド奥方向を向くことは、機体を
+    # 投入地点でフィールド奥を向けて起動する、という運用手順で担保する
+    # (コード側でのヨー角補正はしない。README参照)。
+    field_size_m: 10.0

@@ -32,6 +32,7 @@
 #include "behavior_tree/waypoint_action.hpp"
 
 // BlueROV固有のBT葉ノード(bluerov_control_bt_nodesパッケージ)
+#include "bluerov_control_bt_nodes/capture_mission_origin.hpp"
 #include "bluerov_control_bt_nodes/check_buoy_detected.hpp"
 #include "bluerov_control_bt_nodes/check_pinger_found.hpp"
 #include "bluerov_control_bt_nodes/check_ros_bool_param.hpp"
@@ -77,6 +78,8 @@ int main(int argc, char ** argv)
   factory.registerNodeType<bluerov_control_bt_nodes::CheckBuoyDetected>("CheckBuoyDetected", node);
   factory.registerNodeType<bluerov_control_bt_nodes::CheckRosBoolParam>("CheckRosBoolParam", node);
   factory.registerNodeType<bluerov_control_bt_nodes::LoadMissionParams>("LoadMissionParams", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::CaptureMissionOrigin>(
+    "CaptureMissionOrigin", node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");

@@ -23,7 +23,6 @@
 #include "driver_msgs/msg/dvl.hpp"
 #include "driver_msgs/srv/command.hpp"
 #include "dvl75_driver/dvl75_parser.hpp"
-#include "geometry_msgs/msg/vector3.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 /**
@@ -92,6 +91,16 @@ private:
   void apply_configuration();
 
   /**
+   * @brief Send RESUME or PAUSE without throwing, logging any failure instead.
+   *
+   * Used at startup/shutdown where a DVL that is unreachable or already in the
+   * requested state must not prevent the node from starting or stopping.
+   *
+   * @param command Either "RESUME" or "PAUSE".
+   */
+  void send_command_best_effort(const std::string & command) noexcept;
+
+  /**
    * @brief Validate and send one newline-terminated DVL command.
    * @param command Command text without a line terminator.
    * @throws std::invalid_argument If the command is empty, multiline, or disables required output.
@@ -143,22 +152,6 @@ private:
    */
   void publish_error_dvl(const builtin_interfaces::msg::Time & stamp);
 
-  /**
-   * @brief Publish a minimal invalid DVL75 measurement (dvext_valid=dvpdl_valid=false).
-   * @details Called when a sentence fails to parse, so the diagnostic dvl75 topic is not
-   * completely silent during parse failures (previously nothing was published at all).
-   * @param stamp ROS time assigned to the error message header.
-   */
-  void publish_error_dvl75(const builtin_interfaces::msg::Time & stamp);
-
-  /**
-   * @brief Fill velocity/altitude from the last valid measurement, if any.
-   * @details Keeps driver_msgs::msg::DVL from carrying a fresh-looking zero while
-   * velocity_valid==false. Thread-safe (locks data_mutex_).
-   * @param message Message to fill; velocity_valid/status.id must already be set by the caller.
-   */
-  void apply_held_measurement(driver_msgs::msg::DVL & message) const;
-
   /** @brief Detect DVPDL reception timeouts and publish one error transition. */
   void timeout_callback();
 
@@ -201,6 +194,8 @@ private:
   bool apply_device_config_{};       ///< Whether provisioning commands are sent at startup.
   std::string device_host_address_;  ///< Optional HOST-ADDRESS command value.
   std::vector<std::string> startup_commands_;  ///< Additional provisioning commands.
+  bool resume_on_startup_{};  ///< Whether to send RESUME once when the node starts.
+  bool pause_on_shutdown_{};  ///< Whether to send PAUSE once when the node stops.
 
   std::unique_ptr<common::UdpSocket> socket_;  ///< UDP transport owned by this node.
   std::atomic_bool stop_requested_{false};     ///< Receiver-thread shutdown request.
@@ -211,12 +206,6 @@ private:
   std::optional<Dvext> last_dvext_;
   SteadyTime last_dvext_time_{};  ///< Reception time of the cached DVEXT.
   SteadyTime last_dvpdl_time_{};  ///< Reception time of the latest DVPDL.
-  /** @brief Last measurement_valid==true velocity/altitude, held (not zeroed) while
-   * measurement_valid==false so driver_msgs::msg::DVL never carries a fresh-looking zero.
-   * Consumers must still gate on velocity_valid/status.id; this is defense-in-depth. */
-  geometry_msgs::msg::Vector3 last_valid_velocity_{};
-  double last_valid_altitude_{0.0};
-  bool has_valid_measurement_{false};
   /** @brief Whether the current timeout was published. */
   bool timeout_reported_{false};
   std::optional<std::uint8_t> last_tracking_status_;     ///< Last logged tracking status.
