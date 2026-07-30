@@ -153,7 +153,7 @@ class BuoyDetectorNode(Node):
 
         self.declare_parameter(
             "model_path",
-            str(package_share / "models" / "best.pt"),
+            str(package_share / "models" / "best_ncnn_model"),
         )
         self.declare_parameter(
             "config_path",
@@ -232,7 +232,9 @@ class BuoyDetectorNode(Node):
             )
 
     def _validate_parameters(self, model_path: Path) -> None:
-        if not model_path.is_file():
+        # NCNNエクスポートはmodel.ncnn.param/binを含むフォルダ形式、
+        # PyTorch(.pt)は単一ファイル形式なので両方を許容する。
+        if not model_path.is_file() and not model_path.is_dir():
             raise FileNotFoundError(
                 f"YOLOモデルがありません: {model_path}"
             )

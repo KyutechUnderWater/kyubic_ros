@@ -16,7 +16,8 @@ localization の localization_components.launch.py が別途起動済みであ�
 このPhase 2構成とは独立に残っている。移行が完了するまでは切り戻しできるよう並存させる。
 
 launch引数:
-  - depth_target_m(既定1.0m): DESCEND_TO_7M相当のGoToDepthが使う潜航目標深度
+  - depth_target_m(既定1.0m): DESCEND_TO_7M相当。config/bluerov_mission.param.yaml の descend_depth_m を
+    default_depth_m として上書きする(プール向けの快捷手段)
   - main_tree(既定""): 個別テスト用。bluerov_phase2.xml内の特定のBehaviorTree ID
     (MainTree_VisualPath等)を直接rootとして起動する。空なら通常通りMainTreeを実行する
     (例: ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py main_tree:=MainTree_VisualPath)
@@ -47,6 +48,9 @@ def generate_launch_description() -> LaunchDescription:
     )
     bt_xml_path = PathJoinSubstitution(
         [FindPackageShare("bluerov_control_bt_nodes"), "bt_xml", "bluerov_phase2.xml"]
+    )
+    mission_config = PathJoinSubstitution(
+        [FindPackageShare("bluerov_control_bt_nodes"), "config", "bluerov_mission.param.yaml"]
     )
 
     # zero_order_hold + wrench_planner (Kyubicのzoh_wrench_planner.launch.pyと同じ構成)
@@ -108,11 +112,13 @@ def generate_launch_description() -> LaunchDescription:
         executable="behavior_tree",
         name="btExecutorNode",
         parameters=[
+            mission_config,
             {
                 "bt_xml_file": bt_xml_path,
+                # descend_depth_m の launch 上書き(GoToDepth が参照する default_depth_m)
                 "default_depth_m": ParameterValue(depth_target_m, value_type=float),
                 "main_tree_id": main_tree,
-            }
+            },
         ],
         remappings=[
             ("odom", "/localization/odom"),
@@ -144,7 +150,7 @@ def generate_launch_description() -> LaunchDescription:
                 "depth_target_m",
                 default_value="1.0",
                 description="GoToDepth(DESCEND_TO_7M相当)の潜航目標深度[m](NED、正=下方向)。"
-                "プールの実測水深に合わせて指定すること(競技用水槽向けの既定7.0mは深すぎる場合がある)",
+                "bluerov_mission.param.yaml の descend_depth_m を上書きする。プールの実測水深に合わせること",
             ),
             DeclareLaunchArgument(
                 "main_tree",

@@ -64,9 +64,12 @@ class CameraDriver(Node):
         Returns:
             Gst.Pipeline: The constructed pipeline, not yet playing.
         """
+        # rtpjitterbufferでネットワークジッターによるパケット順序の乱れを吸収する。
+        # これが無いとUDP/RTP経由の映像はフレーム欠落・不規則な間隔になりやすい。
         pipeline_str = (
             f"udpsrc port={udp_port} ! "
             "application/x-rtp, payload=96 ! "
+            "rtpjitterbuffer latency=200 ! "
             "rtph264depay ! "
             "avdec_h264 ! "
             "videoconvert ! "

@@ -1,5 +1,5 @@
 /**:
   ros__parameters:
     udp_port: 5600
-    max_fps: 15.0
+    max_fps: 30.0
     frame_id: "bluerov_camera"

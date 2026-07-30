@@ -2,14 +2,22 @@
 <!--
 BlueROV Phase 2: 旧 bluerov_control/flow.py の17状態をすべてBT化したもの。
 
+【ミッション定数の設定元】
+  config/bluerov_mission.param.yaml (init_wait_sec, configure_delay_sec, search_timeout_sec,
+  mic_confirm_timeout_sec, dive_offset_m, post_check_rise_offset_m, surface_rise_offset_m,
+  descend_depth_m)
+  → 起動時に <LoadMissionParams/> が ROS パラメータを読みブラックボードへ載せる。
+  → 本 XML 内の {init_wait_ms} 等がそれを参照する。
+  descend_depth_m は launch 引数 depth_target_m でも上書き可能(default_depth_m)。
+
 【状態対応の要約(README参照)】
-  INIT                              -> Delay 2000ms
-  DESCEND_TO_7M                     -> GoToDepth(ポート省略、ROSパラメータdefault_depth_mへ)
-  SEARCH_HYDROPHONE                 -> Timeout(search_timeout_ms)でCheckPingerFoundをラップ
+  INIT                              -> Delay {init_wait_ms} (param: init_wait_sec。旧180秒)
+  DESCEND_TO_7M                     -> GoToDepth(ポート省略、default_depth_m / descend_depth_m)
+  SEARCH_HYDROPHONE                 -> Timeout {search_timeout_ms} で CheckPingerFound
   発見後のVISUAL/HYDRO分岐           -> CheckRosBoolParam(debug.image_processing_available)
   VISUAL_DIVE..VISUAL_POST_CHECKループ -> VisualPath SubTree
   HOLD_TARGET..HYDRO_CHECK_MICループ  -> HydroPath SubTree
-  SURFACE -> RETURN_HOME -> DONE     -> Surface SubTree(成功=ツリー終端)
+  SURFACE -> RETURN_HOME -> DONE     -> Surface SubTree (param: surface_rise_offset_m)
   EMERGENCY                          -> Emergency SubTree(Phase 1から変更なし)
 
 【個別テスト】main_tree_idパラメータ(bt_executor.cpp、Phase 2で追加)で
@@ -26,8 +34,14 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
 <root BTCPP_format="4"
       main_tree_to_execute="MainTree">
 
+  <!-- config/bluerov_mission.param.yaml → ブラックボード。各 SubTree の先頭で呼ぶ -->
+  <BehaviorTree ID="InitMission">
+    <LoadMissionParams name="LoadMissionParamsFromYaml"/>
+  </BehaviorTree>
+
   <BehaviorTree ID="Configure">
-    <Delay delay_msec="2000">
+    <!-- param: configure_delay_sec → {configure_delay_ms} (Lifecycle ノード起動の猶予) -->
+    <Delay delay_msec="{configure_delay_ms}">
       <Sequence name="ConfigureSequence">
         <LifecycleManager name="ConfigureZOHNode"
                           node_name="planner/wrench_planner/zoh_wrench_planner_component"
@@ -61,13 +75,14 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
     </Sequence>
   </BehaviorTree>
 
-  <!-- 旧VISUAL_DIVE(dive_offset_m=2.5) -> [VISUAL_CHECK_MIC/VISUAL_DETECT/VISUAL_ATTACK/
-       VISUAL_POST_CHECK ループ、mic_confirm_timeout_sec=45で束縛] -->
+  <!-- 旧VISUAL_DIVE(dive_offset_m) -> [VISUAL_CHECK_MIC/... ループ、mic_confirm_timeout_sec で束縛] -->
   <BehaviorTree ID="VisualPath">
     <Sequence name="VisualDive">
-      <GoToDepth name="VisualDiveStep" depth_offset_m="2.5"/>
+      <!-- param: dive_offset_m -->
+      <GoToDepth name="VisualDiveStep" depth_offset_m="{dive_offset_m}"/>
       <Fallback name="MicConfirmedOrEmergency">
-        <Timeout msec="45000">
+        <!-- param: mic_confirm_timeout_sec → {mic_confirm_timeout_ms} -->
+        <Timeout msec="{mic_confirm_timeout_ms}">
           <RetryUntilSuccessful num_attempts="-1">
             <Fallback name="CheckMicOrAttack">
               <Sequence name="MicConfirmed">
@@ -78,7 +93,8 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
                 <CheckBuoyDetected target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
                 <GoToBlackboardTarget name="VisualAttack"
                                       target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
-                <GoToDepth name="VisualPostCheck" depth_offset_m="-0.5"/>
+                <!-- param: post_check_rise_offset_m → {post_check_depth_offset_m} (負=浮上) -->
+                <GoToDepth name="VisualPostCheck" depth_offset_m="{post_check_depth_offset_m}"/>
                 <AlwaysFailure/>
               </Sequence>
             </Fallback>
@@ -96,9 +112,11 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
        (画像処理による再検出はしない、旧handle_hold_targetのコメントと同じ考え方)。 -->
   <BehaviorTree ID="HydroPath">
     <Sequence name="HydroDive">
-      <GoToDepth name="HydroDiveStep" depth_offset_m="2.5"/>
+      <!-- param: dive_offset_m -->
+      <GoToDepth name="HydroDiveStep" depth_offset_m="{dive_offset_m}"/>
       <Fallback name="MicConfirmedOrEmergency">
-        <Timeout msec="45000">
+        <!-- param: mic_confirm_timeout_sec → {mic_confirm_timeout_ms} -->
+        <Timeout msec="{mic_confirm_timeout_ms}">
           <RetryUntilSuccessful num_attempts="-1">
             <Fallback name="CheckMicOrApproach">
               <Sequence name="MicConfirmed">
@@ -108,7 +126,8 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
               <Sequence name="ApproachAndCheck">
                 <GoToBlackboardTarget name="HydroApproach"
                                       target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
-                <GoToDepth name="HydroNearSurface" depth_offset_m="-0.5"/>
+                <!-- param: post_check_rise_offset_m → {post_check_depth_offset_m} (負=浮上) -->
+                <GoToDepth name="HydroNearSurface" depth_offset_m="{post_check_depth_offset_m}"/>
                 <AlwaysFailure/>
               </Sequence>
             </Fallback>
@@ -119,16 +138,15 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
     </Sequence>
   </BehaviorTree>
 
-  <!-- 旧SURFACE(surface_rise_offset_m=4.0の相対浮上) -> RETURN_HOME -> DONE。
-       RETURN_HOMEは旧実装も無条件DONEのスタブだったため、SUCCESS=ツリー終端がそのまま対応する。 -->
+  <!-- 旧SURFACE(surface_rise_offset_m の相対浮上) -> RETURN_HOME -> DONE -->
   <BehaviorTree ID="Surface">
-    <GoToDepth name="SurfaceStep" depth_offset_m="-4.0"/>
+    <!-- param: surface_rise_offset_m → {surface_depth_offset_m} (負=浮上) -->
+    <GoToDepth name="SurfaceStep" depth_offset_m="{surface_depth_offset_m}"/>
   </BehaviorTree>
 
-  <!-- 旧DESCEND_TO_7M -> SEARCH_HYDROPHONE(発見判定、search_timeout_sec=420で束縛) ->
-       発見後はVISUAL/HYDROへ分岐。Timeoutでの全体束縛(既定30分)はAutoSequence全体を覆う。 -->
+  <!-- 旧DESCEND_TO_7M -> SEARCH_HYDROPHONE(search_timeout_sec) -> VISUAL/HYDRO 分岐 -->
   <BehaviorTree ID="Auto">
-    <Timeout msec="1800000" name="OverallMissionTimeout">
+    <Timeout msec="900000" name="OverallMissionTimeout">
       <Sequence name="AutoSequence">
         <LifecycleManager name="ActivateZOHNode"
                           node_name="planner/wrench_planner/zoh_wrench_planner_component"
@@ -137,12 +155,12 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
         <Talker name="AutoTalker"
                 message="Descending to depth"
                 topic_name="/talker"/>
-        <!-- depth_absolute_m/depth_offset_mともに省略。ROSパラメータdefault_depth_mへ
-             フォールバックする(Phase 1と同じ、depth_target_m launch引数で指定)。 -->
+        <!-- param: descend_depth_m (launch depth_target_m で default_depth_m 上書き可) -->
         <GoToDepth name="DescendTo7m"/>
         <Fallback name="FoundOrSearchTimeoutSurface">
           <Sequence name="FoundAndDispatch">
-            <Timeout msec="420000">
+            <!-- param: search_timeout_sec → {search_timeout_ms} -->
+            <Timeout msec="{search_timeout_ms}">
               <CheckPingerFound pitch_threshold_deg="30.0"
                                 score_threshold="1.0e6"
                                 target_x="{target_x}"
@@ -168,15 +186,19 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
   </BehaviorTree>
 
   <BehaviorTree ID="MainTree">
-    <Delay delay_msec="2000">
-      <Fallback name="MainFallback">
-        <Sequence name="NormalSequence">
-          <SubTree ID="Configure"/>
-          <SubTree ID="Auto"/>
-        </Sequence>
-        <SubTree ID="Emergency"/>
-      </Fallback>
-    </Delay>
+    <Sequence name="MainTreeSequence">
+      <SubTree ID="InitMission"/>
+      <!-- param: init_wait_sec → {init_wait_ms} (旧 INIT: センサー・ドライバ安定化の初期化待機) -->
+      <Delay delay_msec="{init_wait_ms}">
+        <Fallback name="MainFallback">
+          <Sequence name="NormalSequence">
+            <SubTree ID="Configure"/>
+            <SubTree ID="Auto"/>
+          </Sequence>
+          <SubTree ID="Emergency"/>
+        </Fallback>
+      </Delay>
+    </Sequence>
   </BehaviorTree>
 
   <!-- ==================== 個別テスト用エントリポイント ====================
@@ -187,12 +209,14 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
 
   <BehaviorTree ID="MainTree_SearchOnly">
     <Sequence>
+      <SubTree ID="InitMission"/>
       <SubTree ID="Configure"/>
       <LifecycleManager name="ActivateZOHNodeTest"
                         node_name="planner/wrench_planner/zoh_wrench_planner_component"
                         transition="activate"
                         timeout_sec="1"/>
-      <Timeout msec="420000">
+      <!-- param: search_timeout_sec → {search_timeout_ms} -->
+      <Timeout msec="{search_timeout_ms}">
         <CheckPingerFound pitch_threshold_deg="30.0"
                           score_threshold="1.0e6"
                           target_x="{target_x}" target_y="{target_y}" target_z="{target_z}"/>
@@ -202,6 +226,7 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
 
   <BehaviorTree ID="MainTree_VisualPath">
     <Sequence>
+      <SubTree ID="InitMission"/>
       <SubTree ID="Configure"/>
       <LifecycleManager name="ActivateZOHNodeTest"
                         node_name="planner/wrench_planner/zoh_wrench_planner_component"
@@ -216,6 +241,7 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
 
   <BehaviorTree ID="MainTree_HydroPath">
     <Sequence>
+      <SubTree ID="InitMission"/>
       <SubTree ID="Configure"/>
       <LifecycleManager name="ActivateZOHNodeTest"
                         node_name="planner/wrench_planner/zoh_wrench_planner_component"
@@ -230,6 +256,7 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
 
   <BehaviorTree ID="MainTree_Surface">
     <Sequence>
+      <SubTree ID="InitMission"/>
       <SubTree ID="Configure"/>
       <LifecycleManager name="ActivateZOHNodeTest"
                         node_name="planner/wrench_planner/zoh_wrench_planner_component"
@@ -300,6 +327,10 @@ GoToDepth/GoToBlackboardTarget/CheckBuoyDetected自体は個別のタイムア�
       <input_port name="default_value"
                   default="true"/>
     </Condition>
+    <Action ID="LoadMissionParams"
+            editable="true">
+      <description>config/bluerov_mission.param.yaml をブラックボードへ載せる</description>
+    </Action>
   </TreeNodesModel>
 
 </root>

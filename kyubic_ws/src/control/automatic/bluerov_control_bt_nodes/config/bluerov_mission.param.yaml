@@ -1,0 +1,17 @@
+# BlueROV Phase 2 ミッション定数 (bluerov_phase2.xml が LoadMissionParams 経由で参照)。
+# 旧 bluerov_control/config/bluerov_control.param.yaml のミッション部と同じ意味。
+# 変更後は launch 再読み込みのみでよい(BT XML の再ビルドは不要)。
+/**:
+  ros__parameters:
+    # ---- 待機・タイムアウト [s] (XML の Delay/Timeout → LoadMissionParams が *_ms へ変換) ----
+    init_wait_sec: 180.0 # ミッション開始前の初期化待機。旧 bluerov_control の INIT 相当(センサー・ドライバ安定化)
+    configure_delay_sec: 2.0 # Configure SubTree 内の Lifecycle ノード起動前の猶予
+    search_timeout_sec: 420.0 # SEARCH_HYDROPHONE。Auto 内 CheckPingerFound を包む Timeout(7分)
+    mic_confirm_timeout_sec: 45.0 # VisualPath/HydroPath の mic 確認ループ上限
+
+    # ---- 深度・オフセット [m] (GoToDepth depth_offset_m / default_depth_m) ----
+    # NED: 正=下方向。descend は絶対深度、offset は現在地からの相対。
+    descend_depth_m: 1.0 # DESCEND_TO_7M。GoToDepth ポート省略時 → default_depth_m (launch の depth_target_m で上書き可)
+    dive_offset_m: 2.5 # VISUAL_DIVE / HYDRO_DIVE。発見後にさらに潜る量(正=下)
+    post_check_rise_offset_m: 0.5 # VISUAL_POST_CHECK / HYDRO_NEAR_SURFACE。確認用の浮上量(正=上。XML では負の depth_offset として渡す)
+    surface_rise_offset_m: 4.0 # SURFACE。ミッション終了時の浮上量(正=上。XML では負の depth_offset として渡す)

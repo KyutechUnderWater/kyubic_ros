@@ -37,6 +37,7 @@
 #include "bluerov_control_bt_nodes/check_ros_bool_param.hpp"
 #include "bluerov_control_bt_nodes/go_to_blackboard_target.hpp"
 #include "bluerov_control_bt_nodes/go_to_depth.hpp"
+#include "bluerov_control_bt_nodes/load_mission_params.hpp"
 
 using namespace behavior_tree;
 
@@ -75,6 +76,7 @@ int main(int argc, char ** argv)
   factory.registerNodeType<bluerov_control_bt_nodes::CheckPingerFound>("CheckPingerFound", node);
   factory.registerNodeType<bluerov_control_bt_nodes::CheckBuoyDetected>("CheckBuoyDetected", node);
   factory.registerNodeType<bluerov_control_bt_nodes::CheckRosBoolParam>("CheckRosBoolParam", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::LoadMissionParams>("LoadMissionParams", node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");

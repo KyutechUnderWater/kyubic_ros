@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>bluerov_dashboard</name>
+  <version>0.1.0</version>
+  <description>Web-based operational dashboard for BlueROV (depth, IMU, power, GNSS, DVL, vehicle state, camera).</description>
+  <maintainer email="kyutech.robosub@gmail.com">Kyutech Underwater</maintainer>
+  <license>Apache License 2.0</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>rclpy</depend>
+  <depend>driver_msgs</depend>
+  <depend>blue_rov_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>cv_bridge</depend>
+  <exec_depend>python3-opencv</exec_depend>
+
+  <!-- nicegui is installed via pip, not rosdep-resolvable. Do NOT also pip
+       install opencv-python: it conflicts with cv_bridge's expected
+       apt-provided python3-opencv build and breaks cv2_to_imgmsg/imgmsg_to_cv2. -->
+
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

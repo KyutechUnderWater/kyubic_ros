@@ -37,5 +37,15 @@ def generate_launch_description() -> LaunchDescription:
                 ),
                 launch_arguments={"log_level": log_level}.items(),
             ),
+            IncludeLaunchDescription(
+                PathJoinSubstitution(
+                    [
+                        FindPackageShare("camera_driver"),
+                        "launch",
+                        "camera_driver.launch.py",
+                    ]
+                ),
+                launch_arguments={"log_level": log_level}.items(),
+            ),
         ]
     )

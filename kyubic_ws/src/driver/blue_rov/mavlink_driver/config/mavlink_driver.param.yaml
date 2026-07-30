@@ -18,20 +18,34 @@
     pwm_max: 1700
     depth_scale: 1.0
 
+    # roll/yawはトルク軸(N・m)。推力換算には重心-スラスター間の腕の長さが
+    # 必要で未計測のため、暫定値のまま。
     axis.roll.channel: 2
     axis.roll.limit: 3.0
     axis.roll.invert: false
+    # invert: true にして、水中ロボット標準のFRD規約(Z下が正=潜行)に
+    # robot_force.wrench.force.zの符号を合わせている。
+    #
+    # limitはT200公式性能データ(T200-Public-Performance-Data-10-20V-
+    # September-2019.xlsx)の14V/16Vシートを14.8V(4S LiPo)へ線形補間した
+    # 単体推力(forward 47.2N, reverse 36.7N)を基に算出。非対称なlimitが
+    # このコードに無いため、弱い方(reverse)を採用して安全側に倒している。
+    # heave: 垂直2基、角度ロス無し。 2 x 36.7N ≈ 73.4N
     axis.heave.channel: 3
-    axis.heave.limit: 17.0
-    axis.heave.invert: false
+    axis.heave.limit: 73.4
+    axis.heave.invert: true
     axis.yaw.channel: 4
     axis.yaw.limit: 10.0
     axis.yaw.invert: false
+    # forward/lateral: 水平ベクター4基、45°取付でcos45°=0.7071の効率。
+    # 対称なベクター配置と仮定した理論推定値のため、実機ベンチテストでの
+    # 検証を推奨(ArduSubの実際のモーターミキシングでは非対称になりうる)。
+    # 4 x 36.7N x 0.7071 ≈ 103.8N
     axis.forward.channel: 5
-    axis.forward.limit: 52.0
+    axis.forward.limit: 103.8
     axis.forward.invert: false
     axis.lateral.channel: 6
-    axis.lateral.limit: 30.0
+    axis.lateral.limit: 103.8
     axis.lateral.invert: false
 
     camera_channel: 8
