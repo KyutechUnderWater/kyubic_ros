@@ -17,6 +17,8 @@ import yaml
 from buoy_detector.buoy_geometry import (
     BoundingBox,
     CameraIntrinsics,
+    calculate_normalized_horizontal_offset,
+    estimate_body_yaw_from_bbox_center,
     estimate_range_inverse_scale,
     estimate_range_pinhole_area,
     project_bbox_center_to_camera,
@@ -36,7 +38,7 @@ def require_mapping(
 
 
 def load_config(config_path: Path) -> dict[str, Any]:
-    """ブイ位置推定用YAMLを読み込む。"""
+    """ブイ位置・ヨー角推定用YAMLを読み込む。"""
     if not config_path.is_file():
         raise FileNotFoundError(
             f"座標計算configがありません: {config_path}"
@@ -77,6 +79,28 @@ def build_intrinsics(
     return intrinsics.scaled_to(
         image_width=image_width,
         image_height=image_height,
+    )
+
+
+def calculate_body_yaw(
+    bbox: BoundingBox,
+    image_width: int,
+    image_height: int,
+    config: dict[str, Any],
+) -> float:
+    """BBox中心方向のbase_link FRDヨー角[rad]を計算する。"""
+    intrinsics = build_intrinsics(
+        config=config,
+        image_width=image_width,
+        image_height=image_height,
+    )
+    transform = require_mapping(config, "transform")
+    return estimate_body_yaw_from_bbox_center(
+        bbox=bbox,
+        intrinsics=intrinsics,
+        rotation_body_from_camera=transform[
+            "camera_to_body_rotation"
+        ],
     )
 
 
@@ -142,7 +166,7 @@ def calculate_body_position(
 
 
 class BuoyDetectorNode(Node):
-    """ROS画像からブイを検出し、base_link座標を配信する。"""
+    """ROS画像からブイを検出し、base_link座標とヨー角を配信する。"""
 
     def __init__(self) -> None:
         super().__init__("buoy_detector")
@@ -153,7 +177,7 @@ class BuoyDetectorNode(Node):
 
         self.declare_parameter(
             "model_path",
-            str(package_share / "models" / "best_ncnn_model"),
+            str(package_share / "models" / "best.pt"),
         )
         self.declare_parameter(
             "config_path",
@@ -164,15 +188,13 @@ class BuoyDetectorNode(Node):
             "output_topic",
             "/buoy/relative_position",
         )
-        self.declare_parameter(
-            "body_frame_id",
-            "base_link",
-        )
+        self.declare_parameter("body_frame_id", "base_link")
         self.declare_parameter("imgsz", 320)
         self.declare_parameter("confidence", 0.25)
         self.declare_parameter("device", "cpu")
         self.declare_parameter("class_id", 0)
-        self.declare_parameter("position_estimation_enabled", True)
+        # 暫定内部パラメータで距離を出さないよう、安全側を既定値にする。
+        self.declare_parameter("position_estimation_enabled", False)
 
         model_path = Path(
             str(self.get_parameter("model_path").value)
@@ -225,16 +247,23 @@ class BuoyDetectorNode(Node):
             f"device={self._device}"
         )
 
+        camera_config = require_mapping(self._config, "camera")
+        if bool(camera_config.get("provisional", False)):
+            self.get_logger().warning(
+                "暫定カメラ内部パラメータを使用しています。"
+                "ヨー角の符号と0点付近の制御には利用できますが、"
+                "角度の絶対値と三次元位置は校正後に再確認してください。"
+            )
+
         if not self._position_estimation_enabled:
             self.get_logger().warning(
                 "position_estimation_enabled=falseです。"
-                "検出時もposition_valid=false、座標=NaNで配信します。"
+                "ヨー角は配信しますが、位置座標は"
+                "position_valid=false、座標=NaNになります。"
             )
 
     def _validate_parameters(self, model_path: Path) -> None:
-        # NCNNエクスポートはmodel.ncnn.param/binを含むフォルダ形式、
-        # PyTorch(.pt)は単一ファイル形式なので両方を許容する。
-        if not model_path.is_file() and not model_path.is_dir():
+        if not model_path.is_file():
             raise FileNotFoundError(
                 f"YOLOモデルがありません: {model_path}"
             )
@@ -260,8 +289,11 @@ class BuoyDetectorNode(Node):
             return
 
         detected = False
+        yaw_valid = False
         position_valid = False
         confidence = 0.0
+        normalized_horizontal_offset: float | None = None
+        yaw_rad: float | None = None
         point_body: np.ndarray | None = None
 
         try:
@@ -279,8 +311,11 @@ class BuoyDetectorNode(Node):
             if results:
                 (
                     detected,
+                    yaw_valid,
                     position_valid,
                     confidence,
+                    normalized_horizontal_offset,
+                    yaw_rad,
                     point_body,
                 ) = self._process_result(
                     result=results[0],
@@ -294,8 +329,11 @@ class BuoyDetectorNode(Node):
         self._publish_result(
             source_msg=image_msg,
             detected=detected,
+            yaw_valid=yaw_valid,
             position_valid=position_valid,
             confidence=confidence,
+            normalized_horizontal_offset=normalized_horizontal_offset,
+            yaw_rad=yaw_rad,
             point_body=point_body,
         )
 
@@ -304,9 +342,17 @@ class BuoyDetectorNode(Node):
         result: Any,
         image_width: int,
         image_height: int,
-    ) -> tuple[bool, bool, float, np.ndarray | None]:
+    ) -> tuple[
+        bool,
+        bool,
+        bool,
+        float,
+        float | None,
+        float | None,
+        np.ndarray | None,
+    ]:
         if result.boxes is None or len(result.boxes) == 0:
-            return False, False, 0.0, None
+            return False, False, False, 0.0, None, None, None
 
         confidences = result.boxes.conf.detach().cpu().numpy()
         best_index = int(np.argmax(confidences))
@@ -330,10 +376,44 @@ class BuoyDetectorNode(Node):
             bbox.validate()
         except ValueError as error:
             self.get_logger().debug(f"BBoxを無効化しました: {error}")
-            return True, False, confidence, None
+            return True, False, False, confidence, None, None, None
+
+        normalized_horizontal_offset: float | None = None
+        try:
+            normalized_horizontal_offset = (
+                calculate_normalized_horizontal_offset(
+                    bbox=bbox,
+                    image_width=image_width,
+                )
+            )
+        except ValueError as error:
+            self.get_logger().debug(
+                f"正規化水平偏差を無効化しました: {error}"
+            )
+
+        yaw_valid = False
+        yaw_rad: float | None = None
+        try:
+            yaw_rad = calculate_body_yaw(
+                bbox=bbox,
+                image_width=image_width,
+                image_height=image_height,
+                config=self._config,
+            )
+            yaw_valid = bool(np.isfinite(yaw_rad))
+        except ValueError as error:
+            self.get_logger().debug(f"ヨー角を無効化しました: {error}")
 
         if not self._position_estimation_enabled:
-            return True, False, confidence, None
+            return (
+                True,
+                yaw_valid,
+                False,
+                confidence,
+                normalized_horizontal_offset,
+                yaw_rad,
+                None,
+            )
 
         border_margin_px = int(
             require_mapping(self._config, "validation")[
@@ -346,9 +426,17 @@ class BuoyDetectorNode(Node):
             margin_px=border_margin_px,
         ):
             self.get_logger().debug(
-                "BBoxが画像端に接触したため座標を無効化しました。"
+                "BBoxが画像端に接触したため位置座標を無効化しました。"
             )
-            return True, False, confidence, None
+            return (
+                True,
+                yaw_valid,
+                False,
+                confidence,
+                normalized_horizontal_offset,
+                yaw_rad,
+                None,
+            )
 
         try:
             point_body = calculate_body_position(
@@ -359,29 +447,65 @@ class BuoyDetectorNode(Node):
             )
         except ValueError as error:
             self.get_logger().debug(f"座標推定を無効化しました: {error}")
-            return True, False, confidence, None
+            return (
+                True,
+                yaw_valid,
+                False,
+                confidence,
+                normalized_horizontal_offset,
+                yaw_rad,
+                None,
+            )
 
-        return True, True, confidence, point_body
+        return (
+            True,
+            yaw_valid,
+            True,
+            confidence,
+            normalized_horizontal_offset,
+            yaw_rad,
+            point_body,
+        )
 
     def _publish_result(
         self,
         source_msg: Image,
         detected: bool,
+        yaw_valid: bool,
         position_valid: bool,
         confidence: float,
+        normalized_horizontal_offset: float | None,
+        yaw_rad: float | None,
         point_body: np.ndarray | None,
     ) -> None:
         output = BuoyRelativePosition()
         output.header.stamp = source_msg.header.stamp
         output.header.frame_id = self._body_frame_id
         output.detected = detected
+        output.yaw_valid = yaw_valid
         output.position_valid = position_valid
         output.confidence = float(confidence)
 
         invalid_value = float("nan")
+        output.normalized_horizontal_offset = invalid_value
+        output.relative_buoy_yaw_rad = invalid_value
         output.relative_buoy_x_m = invalid_value
         output.relative_buoy_y_m = invalid_value
         output.relative_buoy_z_m = invalid_value
+
+        if (
+            detected
+            and normalized_horizontal_offset is not None
+            and np.isfinite(normalized_horizontal_offset)
+        ):
+            output.normalized_horizontal_offset = float(
+                np.clip(normalized_horizontal_offset, -1.0, 1.0)
+            )
+
+        if yaw_valid and yaw_rad is not None and np.isfinite(yaw_rad):
+            output.relative_buoy_yaw_rad = float(yaw_rad)
+        else:
+            output.yaw_valid = False
 
         if position_valid and point_body is not None:
             if point_body.shape != (3,) or not np.all(

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>buoy_interfaces</name>
-  <version>0.2.0</version>
+  <version>0.5.0</version>
   <description>Custom ROS 2 interfaces for underwater buoy detection.</description>
 
   <maintainer email="maintainer@example.com">maintainer</maintainer>

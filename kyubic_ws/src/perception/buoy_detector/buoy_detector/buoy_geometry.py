@@ -100,6 +100,32 @@ class BoundingBox:
         )
 
 
+def calculate_normalized_horizontal_offset(
+    bbox: BoundingBox,
+    image_width: int,
+) -> float:
+    """BBox中心の符号付き水平偏差を画像半幅で正規化する。
+
+    画像中心を0、右方向を正、左方向を負とする。
+    BBox中心が画像内にある通常の条件では、おおむね-1～+1となる。
+    この値は焦点距離、主点、対象距離に依存しない。
+    """
+    bbox.validate()
+
+    if image_width <= 1:
+        raise ValueError("画像幅は2 pixel以上である必要があります。")
+
+    image_center_u = (float(image_width) - 1.0) * 0.5
+    half_width = float(image_width) * 0.5
+    offset = (bbox.center_u - image_center_u) / half_width
+
+    if not math.isfinite(offset):
+        raise ValueError("正規化水平偏差が有限値ではありません。")
+
+    # BBoxの僅かな画像外は検出器の丸めで起こり得るため安全に制限する。
+    return float(np.clip(offset, -1.0, 1.0))
+
+
 def calculate_bbox_scale(
     bbox: BoundingBox,
     image_width: int,
@@ -197,6 +223,59 @@ def project_bbox_center_to_camera(
     )
 
 
+
+
+def estimate_body_yaw_from_bbox_center(
+    bbox: BoundingBox,
+    intrinsics: CameraIntrinsics,
+    rotation_body_from_camera: Sequence[Sequence[float]],
+) -> float:
+    """BBox中心方向の機体座標系ヨー角を求める。
+
+    カメラ光学座標の視線ベクトルを機体座標へ回転し、
+    base_link FRDの水平面で atan2(Yb, Xb) を計算する。
+    右方向を正、左方向を負とし、返り値の単位はrad。
+    並進は方向角に影響しないため使用しない。
+    """
+    bbox.validate()
+    intrinsics.validate()
+
+    rotation = np.asarray(
+        rotation_body_from_camera,
+        dtype=np.float64,
+    )
+    if rotation.shape != (3, 3):
+        raise ValueError("回転行列は3×3である必要があります。")
+    if not np.all(np.isfinite(rotation)):
+        raise ValueError("回転行列に有限でない値があります。")
+
+    orthogonality_error = np.linalg.norm(
+        rotation @ rotation.T - np.eye(3)
+    )
+    determinant = float(np.linalg.det(rotation))
+    if orthogonality_error > 1.0e-5 or abs(determinant - 1.0) > 1.0e-5:
+        raise ValueError(
+            "camera_to_body_rotationは正しい回転行列ではありません。"
+        )
+
+    ray_camera = np.asarray(
+        [
+            (bbox.center_u - intrinsics.cx) / intrinsics.fx,
+            (bbox.center_v - intrinsics.cy) / intrinsics.fy,
+            1.0,
+        ],
+        dtype=np.float64,
+    )
+    ray_body = rotation @ ray_camera
+
+    forward = float(ray_body[0])
+    right = float(ray_body[1])
+    if not math.isfinite(forward) or not math.isfinite(right):
+        raise ValueError("ヨー角計算用の視線ベクトルが無効です。")
+    if math.hypot(forward, right) <= 1.0e-12:
+        raise ValueError("ヨー角を定義できない視線ベクトルです。")
+
+    return math.atan2(right, forward)
 
 def transform_camera_to_body(
     point_camera_xyz: Sequence[float],

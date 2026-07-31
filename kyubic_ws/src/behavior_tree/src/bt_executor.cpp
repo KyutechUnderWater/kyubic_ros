@@ -17,6 +17,8 @@
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
 
+#include "driver_msgs/msg/bool_stamped.hpp"
+
 #include "behavior_tree/filtered_logger.hpp"
 
 // Custom BT Node
@@ -83,6 +85,24 @@ int main(int argc, char ** argv)
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");
+
+  // リードスイッチトリガー待機 (wait_for_trigger=true のとき BT 開始前に待つ)
+  bool wait_for_trigger = node->declare_parameter<bool>("wait_for_trigger", false);
+  if (wait_for_trigger) {
+    RCLCPP_INFO(node->get_logger(), "Waiting for reed switch trigger on /driver/blue_rov/mission_start_trigger ...");
+    bool triggered = false;
+    auto trigger_sub = node->create_subscription<driver_msgs::msg::BoolStamped>(
+      "/driver/blue_rov/mission_start_trigger", 10,
+      [&triggered](driver_msgs::msg::BoolStamped::SharedPtr msg) {
+        if (msg->data) triggered = true;
+      });
+    rclcpp::Rate rate(10);
+    while (rclcpp::ok() && !triggered) {
+      rclcpp::spin_some(node);
+      rate.sleep();
+    }
+    RCLCPP_INFO(node->get_logger(), "Reed switch triggered! Starting behavior tree.");
+  }
 
   // 4. Retrieve path to BT XML file
   std::string xml_path = bt_xml_path;

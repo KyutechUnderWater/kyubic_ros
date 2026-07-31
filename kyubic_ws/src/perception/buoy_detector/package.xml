@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>buoy_detector</name>
-  <version>0.2.0</version>
-  <description>ROS 2 YOLO buoy detector publishing camera optical coordinates.</description>
+  <version>0.5.0</version>
+  <description>ROS 2 YOLO buoy detector publishing normalized image-center offset, base_link FRD yaw and position.</description>
 
   <maintainer email="maintainer@example.com">maintainer</maintainer>
   <license>Apache-2.0</license>

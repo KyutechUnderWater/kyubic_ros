@@ -1,15 +1,14 @@
 camera:
-  # 水中・カメラハウジング装着状態で校正した値へ置き換える。
-  # position_estimation_enabled=trueの場合、fxとfyは正の値が必要。
-  fx: 0.0
-  fy: 0.0
+  # 暫定値。800x600、水平画角を約90度、正方画素と仮定している。
+  # 水中・カメラハウジング装着状態で校正できた場合は必ず置き換える。
+  provisional: true
+  fx: 400.0
+  fy: 400.0
+  cx: 399.5
+  cy: 299.5
 
-  # 仮の主点位置。水中校正結果で置き換える。
-  cx: 960.0
-  cy: 540.0
-
-  calibration_width: 1920
-  calibration_height: 1080
+  calibration_width: 800
+  calibration_height: 600
 
 range:
   # 初期方式: pinhole_area
@@ -46,5 +45,6 @@ transform:
   camera_to_body_translation_m: [0.0, 0.0, 0.0]
 
 validation:
-  # BBoxが画像端に触れると面積が欠けるため、座標を無効化する。
+  # BBoxが画像端に触れると面積が欠けるため、位置座標を無効化する。
+  # ヨー角は方向制御に使えるため、BBoxが有効なら画像端でも算出する。
   border_margin_px: 2

@@ -35,3 +35,35 @@
 - 期待 vs 実際: 何を・何のためにやったのかが分からない、という漠然とした疑問
 - 回答要約: odomが一定時間(odom_timeout_s、既定1.0s)途絶えたら、Stateに関わらず強制的にEMERGENCYへ遷移させるフェイルセーフを追加。理由は、古いodom値のままPID制御を続けると計算が狂って暴走しうるため(masudanote.md Day4の警告に基づく)。node.pyの_odom_callbackで受信時刻を記録→_tick_fnで経過時間を計算しodom_staleを算出→control.pyのis_emergency(position_z, odom_stale)に渡し、位置が浅すぎる場合と同じ既存のEMERGENCY経路(emergency_surfacing起動)に合流させる形で実装。
 - 日付: 2026-07-26
+
+## Q: リードスイッチ実行時に起動されるものと、Blue用BTでBlueROVを動かすために追加すべきコードは？
+- ユーザー: pilot
+- 状況: reed_switch_driver / bluerov_control_bt_nodes / bluerov_phase2.xml
+- 期待 vs 実際: リードスイッチでミッション(BT)が動き出すと思っていたが、実際はUI表示とライト点滅のみ。Blue BTはこれから全部書く必要があると思っていたが、Phase 2は実装済み。
+- 回答要約: リードスイッチ反応時は reed_switch_driver が (1) Pi LED点滅 (2) mavlink_driver/led 経由でBlueROVライト点滅 (3) /driver/blue_rov/mission_start_trigger を1回publish するだけ。BT/旧FSMはこのトピックを購読しておらず、ミッション開始は init_wait_sec(既定180s)の固定Delayで決まる。Blue BTは bluerov_control_bt_nodes + bluerov_phase2.xml + bluerov_bt.launch.py が既にあり、起動は driver→localization→bluerov_bt + 手動ARM。競技本番でリードスイッチ連動するなら WaitForMissionStart 等の新BTノード、bt_executor登録、launch remap、MainTree XML変更が必要。旧bluerov_controlとBTは同時起動不可(robot_force競合)。
+- 日付: 2026-07-31
+
+## Q: 視覚的に、現在リードスイッチが起動するとどうなるか？
+- ユーザー: pilot
+- 状況: reed_switch_driver / bluerov_dashboard / mavlink_driver(led)
+- 期待 vs 実際: リードスイッチでミッションやスラスターが動き出すイメージがあるかもしれないが、実際は「点滅＋トピック1回＋ダッシュボード表示」だけ
+- 回答要約: 磁石のON/OFFでGPIO検知→reed_switch_driver._on_triggerが同時に3動作(Pi LED 0.2s点滅、BlueROVライトPWM 1900→0.2s後1100、mavlink_driver経由)、mission_start_triggerを1回publish。購読者はbluerov_dashboardのみ(LED緑・経過秒数・イベントログ)。BT/制御/ARM/スラスターは一切動かない。
+- 日付: 2026-07-31
+
+## Q: 自己位置推定の原点の取り方 / IMU のみで DVL 利用可能水深まで移動する実装方針は？
+- ユーザー: pilot
+- 状況: localization/dvl_odometry_component, imu_transform_component / bluerov_phase2.xml / BlueROV Phase 2
+- 期待 vs 実際: 地上起動→プール投下のため原点がズレる。DVL ロックできない浅い水深では IMU だけで自己位置推定・移動したい。その後 DVL ロック地点を改めて原点にしたい。
+- 回答要約:
+  ① 原点リセットは `/localization/reset` サービスを任意のタイミングで呼ぶだけ(dvl xy=0, IMU 姿勢=0, 深度=0 になる)。地上で localization 起動→投下直後にサービス呼び出し→その地点が原点。
+  ② DVL ERROR 中は dvl_odometry が x/y を0保持するだけで、IMU加速度からの位置積算はコードに存在しない。「IMU だけで x/y を測る」機能は現状ない。
+  ③ 推奨実装方針: 「GoToDepth で目標水深まで潜る(深度センサのみ)→DVL NORMAL になるまで待機→再び /localization/reset を呼んでそこを xy 原点にする→通常ウェイポイント移動」。DVL ロック後の 2 回目 reset を BT ノード化するには CaptureMissionOrigin + ResetLocalization を組み合わせた新 BT ノードを作るのが最小コスト。
+  ④ IMU 姿勢はリセットで「その瞬間 = 0」になるが、水中で姿勢が乱れた後は offset が動いてしまう。地上キャリブレーション値を使い続けたい場合は imu_transform の reset() を水に入る前（地上でキャリブ後）に1回だけ呼び、以降は呼ばないようにする必要がある(現状は ResetLocalization が IMU も同時にリセットしてしまうため、IMU だけリセットしないよう localization/reset の動作を分離することも検討が必要)。
+- 日付: 2026-07-31
+
+## Q: LifecycleManager(DeactivateManualNode) は何をしているか？
+- ユーザー: pilot
+- 状況: behavior_tree/bt_xml/iwakuni2026.xml L6-9 / Auto ツリーの先頭ノード
+- 期待 vs 実際: ノードの動作が不明
+- 回答要約: `manualNode`（手動操縦 Wrench 担当）を deactivate 状態に遷移させる BT アクション。自動モード開始直後に手動制御を止めることで、manual/auto 両ノードが同時に robot_force を送る競合を防ぐ。timeout_sec="1" で 1秒以内に遷移完了しなければ BT 失敗扱い。
+- 日付: 2026-07-31

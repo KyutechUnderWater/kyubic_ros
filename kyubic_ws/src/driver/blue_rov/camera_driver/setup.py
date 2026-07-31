@@ -16,6 +16,7 @@ setup(
         ("share/" + package_name, ["package.xml"]),
         (os.path.join("share", package_name, "launch"), glob("launch/*launch.py")),
         (os.path.join("share", package_name, "config"), glob("config/*.yaml")),
+        (os.path.join("share", package_name, "scripts"), glob("scripts/*")),
     ],
     install_requires=["setuptools", "PyGObject", "numpy"],
     zip_safe=True,

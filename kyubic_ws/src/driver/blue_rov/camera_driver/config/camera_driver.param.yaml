@@ -3,3 +3,6 @@
     udp_port: 5600
     max_fps: 30.0
     frame_id: "bluerov_camera"
+    # 地上PC (192.168.2.98) へ RTP/H264 をそのまま転送する。空文字で無効化。
+    forward_host: "192.168.2.98"
+    forward_port: 5601

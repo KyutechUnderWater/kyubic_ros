@@ -33,6 +33,8 @@ class CameraDriver(Node):
         self._udp_port = self.declare_parameter("udp_port", 5600).value
         self._max_fps = self.declare_parameter("max_fps", 15.0).value
         self._frame_id = self.declare_parameter("frame_id", "bluerov_camera").value
+        self._forward_host = self.declare_parameter("forward_host", "").value
+        self._forward_port = self.declare_parameter("forward_port", 5601).value
 
         self._bridge = CvBridge()
         self._publisher = self.create_publisher(Image, "image_raw", qos_profile_sensor_data)
@@ -41,7 +43,13 @@ class CameraDriver(Node):
         self._last_publish_time = 0.0
 
         Gst.init(None)
-        self._pipeline = self._build_pipeline(self._udp_port)
+        self._pipeline = self._build_pipeline(
+            self._udp_port, self._forward_host, self._forward_port
+        )
+        if self._forward_host:
+            self.get_logger().info(
+                f"RTPストリームを {self._forward_host}:{self._forward_port} へ転送します。"
+            )
         appsink = self._pipeline.get_by_name("sink")
         appsink.connect("new-sample", self._on_new_sample)
 
@@ -55,27 +63,47 @@ class CameraDriver(Node):
 
         self._pipeline.set_state(Gst.State.PLAYING)
 
-    def _build_pipeline(self, udp_port: int) -> Gst.Pipeline:
+    def _build_pipeline(
+        self, udp_port: int, forward_host: str, forward_port: int
+    ) -> Gst.Pipeline:
         """Construct the receive pipeline for one BlueROV camera.
 
         Args:
             udp_port: UDP port carrying the RTP/H264 stream from the vehicle.
+            forward_host: Optional client IP to forward the raw RTP stream to.
+            forward_port: UDP port on the client used for forwarded RTP.
 
         Returns:
             Gst.Pipeline: The constructed pipeline, not yet playing.
         """
         # rtpjitterbufferでネットワークジッターによるパケット順序の乱れを吸収する。
         # これが無いとUDP/RTP経由の映像はフレーム欠落・不規則な間隔になりやすい。
-        pipeline_str = (
-            f"udpsrc port={udp_port} ! "
-            "application/x-rtp, payload=96 ! "
-            "rtpjitterbuffer latency=200 ! "
+        decode_branch = (
+            "queue leaky=downstream max-size-buffers=2 ! "
             "rtph264depay ! "
             "avdec_h264 ! "
             "videoconvert ! "
             "video/x-raw, format=BGR ! "
             "appsink name=sink emit-signals=true max-buffers=1 drop=true sync=false"
         )
+        if forward_host:
+            pipeline_str = (
+                f"udpsrc port={udp_port} ! "
+                "application/x-rtp, payload=96 ! "
+                "rtpjitterbuffer latency=200 ! "
+                "tee name=t "
+                f"t. ! {decode_branch} "
+                "t. ! queue leaky=downstream max-size-buffers=2 ! "
+                f"udpsink host={forward_host} port={forward_port} "
+                "auto-multicast=false sync=false async=false"
+            )
+        else:
+            pipeline_str = (
+                f"udpsrc port={udp_port} ! "
+                "application/x-rtp, payload=96 ! "
+                "rtpjitterbuffer latency=200 ! "
+                f"{decode_branch}"
+            )
         return Gst.parse_launch(pipeline_str)
 
     def _on_new_sample(self, sink: Gst.Element) -> Gst.FlowReturn:

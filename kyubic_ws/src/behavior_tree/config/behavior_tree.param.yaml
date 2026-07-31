@@ -1,3 +1,4 @@
 /**:
   ros__parameters:
-    bt_xml_file: "base.xml"  # parent directory is behavior_tree/bt_xml
+    bt_xml_file: "iwakuni2026.xml"  # parent directory is behavior_tree/bt_xml
+    wait_for_trigger: true  # true: リードスイッチ発火まで BT 開始を待つ / false: 即時開始(テスト用)
