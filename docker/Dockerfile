@@ -111,6 +111,12 @@ RUN apt install -y ros-$ROS_DISTRO-desktop ros-$ROS_DISTRO-turtlesim ros-$ROS_DI
 
 
 #############################################################
+## Install GPIO libraries for Raspberry Pi (gpiozero lgpio backend)
+#############################################################
+RUN apt update && apt install -y python3-lgpio && rm -rf /var/lib/apt/lists/*
+
+
+#############################################################
 ## Install protolink dependencies (abseil-cpp, protobuf, etc)
 #############################################################
 RUN apt update && \
