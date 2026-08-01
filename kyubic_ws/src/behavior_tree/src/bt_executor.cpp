@@ -17,9 +17,8 @@
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include "driver_msgs/msg/bool_stamped.hpp"
-
 #include "behavior_tree/filtered_logger.hpp"
+#include "driver_msgs/msg/bool_stamped.hpp"
 
 // Custom BT Node
 #include "behavior_tree/always_running.hpp"
@@ -34,13 +33,13 @@
 #include "behavior_tree/waypoint_action.hpp"
 
 // BlueROV固有のBT葉ノード(bluerov_control_bt_nodesパッケージ)
-#include "bluerov_control_bt_nodes/capture_mission_origin.hpp"
 #include "bluerov_control_bt_nodes/check_buoy_detected.hpp"
-#include "bluerov_control_bt_nodes/check_pinger_found.hpp"
-#include "bluerov_control_bt_nodes/check_ros_bool_param.hpp"
-#include "bluerov_control_bt_nodes/go_to_blackboard_target.hpp"
-#include "bluerov_control_bt_nodes/go_to_depth.hpp"
-#include "bluerov_control_bt_nodes/load_mission_params.hpp"
+#include "bluerov_control_bt_nodes/check_buoy_in_frame.hpp"
+#include "bluerov_control_bt_nodes/check_buoy_position.hpp"
+#include "bluerov_control_bt_nodes/check_pinger_pitch.hpp"
+#include "bluerov_control_bt_nodes/write_axis_override_waypoint_csv.hpp"
+#include "bluerov_control_bt_nodes/write_hydrophone_waypoint_csv.hpp"
+#include "bluerov_control_bt_nodes/write_vision_waypoint_csv.hpp"
 
 using namespace behavior_tree;
 
@@ -73,15 +72,16 @@ int main(int argc, char ** argv)
   factory.registerNodeType<ResetLocalization>("ResetLocalization", logger_pub, node);
   factory.registerNodeType<FindPingerAction>("FindPingerAction", logger_pub, node);
   factory.registerNodeType<Talker>("Talker", node);
-  factory.registerNodeType<bluerov_control_bt_nodes::GoToDepth>("GoToDepth", node);
-  factory.registerNodeType<bluerov_control_bt_nodes::GoToBlackboardTarget>(
-    "GoToBlackboardTarget", node);
-  factory.registerNodeType<bluerov_control_bt_nodes::CheckPingerFound>("CheckPingerFound", node);
   factory.registerNodeType<bluerov_control_bt_nodes::CheckBuoyDetected>("CheckBuoyDetected", node);
-  factory.registerNodeType<bluerov_control_bt_nodes::CheckRosBoolParam>("CheckRosBoolParam", node);
-  factory.registerNodeType<bluerov_control_bt_nodes::LoadMissionParams>("LoadMissionParams", node);
-  factory.registerNodeType<bluerov_control_bt_nodes::CaptureMissionOrigin>(
-    "CaptureMissionOrigin", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::CheckPingerPitch>("CheckPingerPitch", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::WriteHydrophoneWaypointCSV>(
+    "WriteHydrophoneWaypointCSV", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::WriteAxisOverrideWaypointCSV>(
+    "WriteAxisOverrideWaypointCSV", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::CheckBuoyInFrame>("CheckBuoyInFrame", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::CheckBuoyPosition>("CheckBuoyPosition", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::WriteVisionWaypointCSV>(
+    "WriteVisionWaypointCSV", node);
 
   auto blackboard = BT::Blackboard::create();
   blackboard->set("mode", "manual");
@@ -89,7 +89,9 @@ int main(int argc, char ** argv)
   // リードスイッチトリガー待機 (wait_for_trigger=true のとき BT 開始前に待つ)
   bool wait_for_trigger = node->declare_parameter<bool>("wait_for_trigger", false);
   if (wait_for_trigger) {
-    RCLCPP_INFO(node->get_logger(), "Waiting for reed switch trigger on /driver/blue_rov/mission_start_trigger ...");
+    RCLCPP_INFO(
+      node->get_logger(),
+      "Waiting for reed switch trigger on /driver/blue_rov/mission_start_trigger ...");
     bool triggered = false;
     auto trigger_sub = node->create_subscription<driver_msgs::msg::BoolStamped>(
       "/driver/blue_rov/mission_start_trigger", 10,
@@ -126,7 +128,8 @@ int main(int argc, char ** argv)
     if (main_tree_id.empty()) {
       tree = factory.createTreeFromFile(xml_path, blackboard);
     } else {
-      RCLCPP_INFO(node->get_logger(), "main_tree_id指定あり: '%s' をrootとして実行します",
+      RCLCPP_INFO(
+        node->get_logger(), "main_tree_id指定あり: '%s' をrootとして実行します",
         main_tree_id.c_str());
       factory.registerBehaviorTreeFromFile(xml_path);
       tree = factory.createTree(main_tree_id, blackboard);

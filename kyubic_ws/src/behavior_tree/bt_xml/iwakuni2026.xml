@@ -3,10 +3,6 @@
   main_tree_to_execute="MainTree">
   <BehaviorTree ID="BlueROV2Auto">
     <Sequence name="AutoSequence">
-      <LifecycleManager name="DeactivateManualNode"
-        node_name="manualNode"
-        transition="deactivate"
-        timeout_sec="1" />
       <Talker name="AutomatickTalker"
         message="Automatick Mode Start"
         topic_name="/talker" />
@@ -19,48 +15,120 @@
         message="Waypoint Action Start"
         topic_name="/talker" />
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-        csv_file_path="assets/kobe/gate_path.csv" />
+        csv_file_path="assets/iwakuni/transit_shallow.csv" />
       <Talker name="AutomatickTalker"
         message="Waypoint Action Successful"
         topic_name="/talker" />
       <Talker name="AutomatickTalker"
-        message="QR Action Start"
+        message="Descend Waypoint Start"
         topic_name="/talker" />
-      <QrAction action_name="/planner/qr_planner/qr_plan" />
+      <WaypointAction action_name="planner/pdla_planner/pdla_plan"
+        csv_file_path="assets/iwakuni/descend_deep.csv" />
       <Talker name="AutomatickTalker"
-        message="Waypoint Action2 Start"
+        message="Descend Waypoint Successful"
         topic_name="/talker" />
-      <Switch2 name="Outbound_Selector"
-        variable="{selected_course}"
-        case_1="A"
-        case_2="B">
-        <WaypointAction name="Go_Right"
-          action_name="planner/pdla_planner/pdla_plan"
-          csv_file_path="assets/kobe/right.csv" />
-        <WaypointAction name="Go_Left"
-          action_name="planner/pdla_planner/pdla_plan"
-          csv_file_path="assets/kobe/left.csv" />
-        <AlwaysFailure name="Invalid_Course_Selection" />
-      </Switch2>
       <Talker name="AutomatickTalker"
-        message="Pinger Action Start"
+        message="Pinger Chase Start"
+        topic_name="/talker" />
+      <RetryUntilSuccessful num_attempts="-1">
+        <Fallback name="PingerCloseOrStep">
+          <CheckPingerPitch
+            pinger_direction_topic="pinger_direction"
+            pitch_threshold_deg="50.0" />
+          <Sequence name="PingerStepAndRetry">
+            <WriteHydrophoneWaypointCSV
+              pinger_direction_topic="pinger_direction"
+              odom_topic_name="odom"
+              step_distance_m="0.5"
+              csv_file_path="assets/iwakuni/hydrophone_step.csv" />
+            <WaypointAction
+              action_name="planner/pdla_planner/pdla_plan"
+              csv_file_path="assets/iwakuni/hydrophone_step.csv" />
+            <AlwaysFailure />
+          </Sequence>
+        </Fallback>
+      </RetryUntilSuccessful>
+      <Talker name="AutomatickTalker"
+        message="Pinger Close Enough"
+        topic_name="/talker" />
+      <Talker name="AutomatickTalker"
+        message="Final Descend Start"
+        topic_name="/talker" />
+      <WriteAxisOverrideWaypointCSV
+        odom_topic_name="odom"
+        override_z="2.5"
+        z_mode="altitude"
+        csv_file_path="assets/iwakuni/pinger_final_descend.csv" />
+      <WaypointAction
+        action_name="planner/pdla_planner/pdla_plan"
+        csv_file_path="assets/iwakuni/pinger_final_descend.csv" />
+      <Talker name="AutomatickTalker"
+        message="Final Descend Successful, Handing off to Vision"
         topic_name="/talker" />
       <FindPingerAction action_name="find_pinger" />
+
+      <Talker name="AutomatickTalker" message="Vision Approach Start" topic_name="/talker" />
+      <Timeout msec="180000">
+        <RetryUntilSuccessful num_attempts="-1">
+          <Fallback name="CenteringOrFinalApproach">
+            <Sequence name="FinalApproach">
+              <CheckBuoyPosition buoy_relative_position_topic="/buoy/relative_position"
+                odom_topic_name="odom" target_x="{target_x}" target_y="{target_y}" target_z="{target_z}" />
+              <WriteAxisOverrideWaypointCSV odom_topic_name="odom"
+                override_x="{target_x}" override_y="{target_y}" override_z="{target_z}"
+                csv_file_path="assets/iwakuni/buoy_approach.csv" />
+              <WaypointAction action_name="planner/pdla_planner/pdla_plan"
+                csv_file_path="assets/iwakuni/buoy_approach.csv" />
+            </Sequence>
+            <Sequence name="CenteringStep">
+              <WriteVisionWaypointCSV buoy_relative_position_topic="/buoy/relative_position"
+                odom_topic_name="odom" csv_file_path="assets/iwakuni/vision_step.csv" />
+              <WaypointAction action_name="planner/pdla_planner/pdla_plan"
+                csv_file_path="assets/iwakuni/vision_step.csv" />
+              <AlwaysFailure />
+            </Sequence>
+          </Fallback>
+        </RetryUntilSuccessful>
+      </Timeout>
+
+      <Talker name="AutomatickTalker" message="Buoy Contact, Holding Position" topic_name="/talker" />
+      <Delay delay_msec="10000" />
+
+      <Talker name="AutomatickTalker" message="Release Check Start" topic_name="/talker" />
+      <Timeout msec="30000">
+        <RetryUntilSuccessful num_attempts="-1">
+          <Sequence name="ReleaseConfirmed">
+            <Inverter>
+              <CheckPingerPitch pinger_direction_topic="pinger_direction" pitch_threshold_deg="70.0" />
+            </Inverter>
+            <Inverter>
+              <CheckBuoyInFrame buoy_relative_position_topic="/buoy/relative_position"
+                confidence_threshold="0.5" />
+            </Inverter>
+          </Sequence>
+        </RetryUntilSuccessful>
+      </Timeout>
+      <Talker name="AutomatickTalker" message="Release Confirmed" topic_name="/talker" />
+
       <Talker name="AutomatickTalker"
-        message="Return Waypoint Action Start"
+        message="Return Step 1 Start"
         topic_name="/talker" />
-      <Switch2 name="Inbound_Selector"
-        variable="{selected_course}"
-        case_1="A"
-        case_2="B">
-        <WaypointAction name="Return_Right"
-          action_name="planner/pdla_planner/pdla_plan"
-          csv_file_path="assets/kobe/return_right.csv" />
-        <WaypointAction name="Return_Left"
-          action_name="planner/pdla_planner/pdla_plan"
-          csv_file_path="assets/kobe/return_left.csv" />
-        <AlwaysFailure name="Invalid_Course_Selection" />
-      </Switch2>
+      <WriteAxisOverrideWaypointCSV
+        odom_topic_name="odom"
+        override_x="11.0"
+        csv_file_path="assets/iwakuni/return_step1.csv" />
+      <WaypointAction
+        action_name="planner/pdla_planner/pdla_plan"
+        csv_file_path="assets/iwakuni/return_step1.csv" />
+      <Talker name="AutomatickTalker"
+        message="Return Step 2 Start"
+        topic_name="/talker" />
+      <WaypointAction
+        action_name="planner/pdla_planner/pdla_plan"
+        csv_file_path="assets/iwakuni/return_final.csv" />
+      <Talker name="AutomatickTalker"
+        message="Return Successful"
+        topic_name="/talker" />
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
   </BehaviorTree>
@@ -186,6 +254,50 @@
         default="planner/pdla_planner/pdla_plan" />
       <input_port name="csv_file_path" />
     </Action>
+    <Action ID="WriteAxisOverrideWaypointCSV" editable="true">
+      <input_port name="odom_topic_name" default="odom" />
+      <input_port name="override_x" />
+      <input_port name="override_y" />
+      <input_port name="override_z" />
+      <input_port name="override_yaw" />
+      <input_port name="z_mode" default="depth" />
+      <input_port name="csv_file_path" />
+    </Action>
+    <Action ID="WriteHydrophoneWaypointCSV" editable="true">
+      <input_port name="pinger_direction_topic" default="pinger_direction" />
+      <input_port name="odom_topic_name" default="odom" />
+      <input_port name="step_distance_m" default="0.5" />
+      <input_port name="csv_file_path" />
+    </Action>
+    <Condition ID="CheckBuoyInFrame" editable="true">
+      <input_port name="buoy_relative_position_topic" default="/buoy/relative_position" />
+      <input_port name="confidence_threshold" default="0.5" />
+    </Condition>
+    <Condition ID="CheckPingerPitch" editable="true">
+      <input_port name="pinger_direction_topic" default="pinger_direction" />
+      <input_port name="pitch_threshold_deg" default="50.0" />
+    </Condition>
+    <Action ID="CheckBuoyPosition" editable="true">
+      <input_port name="buoy_relative_position_topic" default="/buoy/relative_position" />
+      <input_port name="odom_topic_name" default="odom" />
+      <input_port name="confidence_threshold" default="0.5" />
+      <input_port name="stale_timeout_sec" default="1.0" />
+      <output_port name="target_x" />
+      <output_port name="target_y" />
+      <output_port name="target_z" />
+    </Action>
+    <Action ID="WriteVisionWaypointCSV" editable="true">
+      <input_port name="buoy_relative_position_topic" default="/buoy/relative_position" />
+      <input_port name="odom_topic_name" default="odom" />
+      <input_port name="step_distance_m" default="0.3" />
+      <input_port name="vertical_gain_m" default="0.2" />
+      <input_port name="deadband_rad" default="0.035" />
+      <input_port name="horizontal_fov_rad" />
+      <input_port name="confidence_threshold" default="0.5" />
+      <input_port name="csv_file_path" />
+    </Action>
   </TreeNodesModel>
+
+
 
 </root>

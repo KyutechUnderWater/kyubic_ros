@@ -1,26 +1,30 @@
-"""BlueROV Phase 2: Behavior Tree(bt_executor) + wrench_planner + zero_order_hold + emergency
+"""BlueROV: Behavior Tree(bt_executor) + wrench_planner + zero_order_hold + emergency
 + heartbeat_publisher を起動する。
 
 Kyubicの behavior_tree/launch/behavior_tree.launch.py と
 control/automatic/planning/wrench_planner/launch/zoh_wrench_planner.launch.py を
 BlueROV向けに合成したもの。wrench_planner/zero_order_hold/emergency/bt_executorの
 ソースコードは一切変更していない(remapping・パラメータ・新規BT葉ノード登録のみ)。
-新規のBT葉ノードはbluerov_control_bt_nodesパッケージの5種類
-(GoToDepth/GoToBlackboardTarget/CheckPingerFound/CheckBuoyDetected/CheckRosBoolParam。
-kyubic_ws/src/behavior_tree/src/bt_executor.cppに登録行を追加済み)。
+新規のBT葉ノードはbluerov_control_bt_nodesパッケージ側にある
+(CheckBuoyDetected/CheckBuoyInFrame/CheckBuoyPosition/CheckPingerPitch/
+WriteHydrophoneWaypointCSV/WriteAxisOverrideWaypointCSV/WriteVisionWaypointCSV。
+kyubic_ws/src/behavior_tree/src/bt_executor.cppに登録行を追加済み)。実行するBT XMLは
+behavior_tree パッケージ側の bt_xml/iwakuni2026.xml (旧 bluerov_phase1.xml/
+bluerov_phase2.xml は iwakuni2026.xml へ統合され削除済み。経緯は
+bluerov_control_bt_nodes/README.md §10.1 参照)。iwakuni2026.xmlは「独自に
+WrenchPlanを出し続ける移動ノード(旧GoToDepth/GoToBlackboardTarget等)は使わず、
+現在odom基準の1点CSVを書いて既存のWaypointAction(PDLA)へ処理を任せる」方式に
+統一している(README §10.6/§10.7参照)。
 
 前提: driver_launcher の blue_rov_driver.launch.py と
 localization の localization_components.launch.py が別途起動済みであること。
 
 旧 bluerov_control/launch/bluerov_control.launch.py (bluerov_control_node、自前FSM+PID)は
-このPhase 2構成とは独立に残っている。移行が完了するまでは切り戻しできるよう並存させる。
+このBT構成とは独立に残っている。移行が完了するまでは切り戻しできるよう並存させる。
 
 launch引数:
-  - depth_target_m(既定1.0m): DESCEND_TO_7M相当。config/bluerov_mission.param.yaml の descend_depth_m を
-    default_depth_m として上書きする(プール向けの快捷手段)
-  - main_tree(既定""): 個別テスト用。bluerov_phase2.xml内の特定のBehaviorTree ID
-    (MainTree_VisualPath等)を直接rootとして起動する。空なら通常通りMainTreeを実行する
-    (例: ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py main_tree:=MainTree_VisualPath)
+  - main_tree(既定""): 個別テスト用。iwakuni2026.xml内の特定のBehaviorTree ID
+    を直接rootとして起動する。空なら通常通りMainTreeを実行する
 """
 
 from launch import LaunchDescription
@@ -28,17 +32,19 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import ComposableNodeContainer, LifecycleNode, Node
 from launch_ros.descriptions import ComposableNode
-from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description() -> LaunchDescription:
     log_level = LaunchConfiguration("log_level")
-    depth_target_m = LaunchConfiguration("depth_target_m")
     main_tree = LaunchConfiguration("main_tree")
 
     wrench_planner_config = PathJoinSubstitution(
-        [FindPackageShare("bluerov_control_bt_nodes"), "config", "bluerov_wrench_planner.param.yaml"]
+        [
+            FindPackageShare("bluerov_control_bt_nodes"),
+            "config",
+            "bluerov_wrench_planner.param.yaml",
+        ]
     )
     p_pid_controller_path = PathJoinSubstitution(
         [FindPackageShare("bluerov_control_bt_nodes"), "config"]
@@ -46,11 +52,10 @@ def generate_launch_description() -> LaunchDescription:
     emergency_config = PathJoinSubstitution(
         [FindPackageShare("emergency"), "config", "emergency.param.yaml"]
     )
+    # iwakuni2026.xmlはbluerov_control_bt_nodesではなくbehavior_treeパッケージ側にある
+    # (KyubicのbtExecutorNodeが共通で実行するBT XML置き場のため)。
     bt_xml_path = PathJoinSubstitution(
-        [FindPackageShare("bluerov_control_bt_nodes"), "bt_xml", "bluerov_phase2.xml"]
-    )
-    mission_config = PathJoinSubstitution(
-        [FindPackageShare("bluerov_control_bt_nodes"), "config", "bluerov_mission.param.yaml"]
+        [FindPackageShare("behavior_tree"), "bt_xml", "iwakuni2026.xml"]
     )
 
     # zero_order_hold + wrench_planner (Kyubicのzoh_wrench_planner.launch.pyと同じ構成)
@@ -101,7 +106,7 @@ def generate_launch_description() -> LaunchDescription:
         output="screen",
     )
 
-    # BT Manager(bluerov_phase2.xmlを実行。behavior_treeパッケージのソースは変更なし)
+    # BT Manager(iwakuni2026.xmlを実行。behavior_treeパッケージのソースは変更なし)
     # 新規BT葉ノードは相対トピック名(odom, zoh_wrench_plan, pinger_direction, buoy_detection)
     # しか知らないため、btExecutorNode(namespace無し)側で実トピック名にremapする
     # (Kyubic本家のbehavior_tree.launch.pyがimu/dvl/depth等をremapしているのと同じ流儀)。
@@ -112,11 +117,8 @@ def generate_launch_description() -> LaunchDescription:
         executable="behavior_tree",
         name="btExecutorNode",
         parameters=[
-            mission_config,
             {
                 "bt_xml_file": bt_xml_path,
-                # descend_depth_m の launch 上書き(GoToDepth が参照する default_depth_m)
-                "default_depth_m": ParameterValue(depth_target_m, value_type=float),
                 "main_tree_id": main_tree,
             },
         ],
@@ -147,16 +149,10 @@ def generate_launch_description() -> LaunchDescription:
                 description="Logging level",
             ),
             DeclareLaunchArgument(
-                "depth_target_m",
-                default_value="1.0",
-                description="GoToDepth(DESCEND_TO_7M相当)の潜航目標深度[m](NED、正=下方向)。"
-                "bluerov_mission.param.yaml の descend_depth_m を上書きする。プールの実測水深に合わせること",
-            ),
-            DeclareLaunchArgument(
                 "main_tree",
                 default_value="",
-                description="個別テスト用。bluerov_phase2.xml内のBehaviorTree ID"
-                "(例: MainTree_VisualPath)を直接rootとして起動する。空なら通常のMainTreeを実行",
+                description="個別テスト用。iwakuni2026.xml内のBehaviorTree IDを直接rootとして"
+                "起動する。空なら通常のMainTreeを実行",
             ),
             wrench_planner_container,
             emergency_node,

@@ -58,21 +58,32 @@ kyubic_ws/src/
   common/          shared C++ libs used across drivers/control (custom_socket, serial, timer, pid_controller, geodetic_converter, common_msgs)
   driver/          hardware drivers, split by vehicle
     kyubic/          Kyubic-specific: actuator_rp2040_driver, dvl_driver, gnss_driver, imu_driver, logic_distro_rp2040_driver, sensors_esp32_driver
-    blue_rov/        BlueROV-specific: mavlink_driver (Python), dvl75_driver (C++), blue_rov_msgs
+    blue_rov/        BlueROV-specific: mavlink_driver (Python), dvl75_driver (C++), blue_rov_msgs,
+                      camera_driver, reed_switch_driver, buoy_detector_driver (thin adapter: relays
+                      perception/buoy_detector's BuoyRelativePosition into bluerov_control_msgs/BuoyDetection)
     driver_msgs/     vehicle-agnostic common message/service types (IMU, Depth, DVL, PowerState, VehicleState, ...)
     driver_launcher/ per-vehicle launch bundles: kyubic_driver.launch.py / blue_rov_driver.launch.py
   localization/    localization + localization_msgs (Pose, Odometry, GlobalPos, Geodetic, ...)
+  perception/      buoy_detector (YOLO-based buoy detection), buoy_interfaces (BuoyRelativePosition msg)
   control/
     manual/          joy2wrench, joy_common(_msgs) — teleop input -> wrench
-    automatic/        planning, emergency, bluerov_control(_msgs) — BlueROV mission FSM (see below)
+    automatic/        planning/ (path_planner, wrench_planner + zero_order_hold, qr_planner,
+                       projection_dynamic_look_ahead_planner, return_mission_planner, planner_launcher,
+                       planner_msgs), emergency, bluerov_control(_msgs), bluerov_control_bt_nodes —
+                       BlueROV mission control, two parallel implementations (see below)
     controller/       p_pid_controller(_msgs)
-  behavior_tree/    BT.CPP-based mission logic; bt_xml/ holds mission trees (base.xml, qr.xml, kobe2025.xml, ...)
+  behavior_tree/    BT.CPP-based mission logic shared across vehicles; bt_executor.cpp registers leaf
+                     nodes (Kyubic's own plus BlueROV's, contributed from bluerov_control_bt_nodes);
+                     bt_xml/ holds Kyubic mission trees (base.xml, qr.xml, kobe2025.xml, iwakuni2026.xml)
   kyubic_bringup/   top-level launch entry points (kyubic.launch.py, kyubic_post.launch.py, client*.launch.py, manual.launch.py, web_visualizer.launch.py)
   system_health_check/  monitors node/system health
-  visualizer/       dashboard, rt_pose_plotter, trajectory_viewer, web_controller (+ archive/ for retired tools)
+  visualizer/       dashboard, bluerov_dashboard, rt_pose_plotter, trajectory_viewer, web_controller (+ archive/ for retired tools)
   tools/            path_generator, trdi_toolz, plotjuggler helpers
   oak_create_mapping/  OAK-D camera mapping package (ament_python, top-level — doesn't nest under another category)
-  sample/           reference/template packages (action server example, BT switch example) — copy from here when scaffolding new packages
+  test/             odom_distance_check — standalone integration-style check, not per-package unit tests
+  sample/           reference/template packages — copy from here when scaffolding new packages. Use
+                     action/wrench_action_sample*, bt_switch_sample, and blue_control; blueControl/ and
+                     othersapmleCode/ are informal scratch dumps, not templates to follow
   extra/            git submodules: BehaviorTree.CPP, protolink (do not edit; update via submodule)
 ```
 
@@ -88,9 +99,24 @@ This is the architectural rule that lets `localization`, `dashboard`, and other 
 
 See `blueNote.md` (Japanese) for a much deeper walkthrough of the BlueROV driver stack (mavlink_driver / dvl75_driver), including full pub/sub tables, config file locations, and manual bring-up/ARM/test procedures — read it before doing nontrivial BlueROV driver work. Per-package READMEs also exist for `driver_launcher`, `mavlink_driver`, `dvl75_driver`, and `blue_rov_msgs`.
 
-## BlueROV mission control: `blueRovControl/` vs `bluerov_control`
+## BlueROV mission control: three generations, two currently live
 
-The repo-root `blueRovControl/` directory (`main.py`, `flow.py`, `mavlink_io.py`, `qekf.py`, ...) is a **legacy, non-ROS2 standalone Python prototype** of the BlueROV mission state machine — it talks to MAVLink and a self-parsed IMU/DVL socket stream directly and is not built/run through colcon. It is superseded by `kyubic_ws/src/control/automatic/bluerov_control` (+ `bluerov_control_msgs`), a proper ROS 2 (`ament_python`) port: a single `bluerov_control_node` runs the same INIT→...→SURFACE FSM as a 10 Hz timer callback, subscribing to `/localization/odom` (replacing the old self-rolled QEKF) and `vehicle_state`, and publishing `robot_force` + `heartbeat` (remapped to `mavlink_driver`'s topics) plus stub perception/planning topics (`pinger_direction`, `buoy_detection`, defined in `bluerov_control_msgs`; `wrench_plan`, `planner_msgs/WrenchPlan`) that safely no-op until real sensor/acoustics nodes exist — SEARCH_HYDROPHONE's movement target is computed entirely externally (by an `sbl_controller_node`, not yet built) and consumed as an absolute `WrenchPlan` target rather than derived locally from bearing angles. Start order for a full BlueROV mission run: `driver_launcher blue_rov_driver.launch.py` → `localization localization_components.launch.py` → `bluerov_control bluerov_control.launch.py`. See `kyubic_ws/src/control/automatic/bluerov_control/README.md` (Japanese) for the full concept walkthrough, known limitations carried over from the old prototype (unverified sign conventions, lost gyro-bias correction), and PID retuning notes — the old PID gains are a starting point only since the output now goes through `mavlink_driver`'s `robot_force`/axis-limit scaling instead of raw MAVLink `MANUAL_CONTROL` PWM values. Don't add new functionality to `blueRovControl/`; extend the ROS2 port instead.
+1. **`blueRovControl/`** (repo root: `main.py`, `flow.py`, `mavlink_io.py`, `qekf.py`, ...) — **legacy, non-ROS2 standalone Python prototype**. Talks to MAVLink and a self-parsed IMU/DVL socket stream directly, not built/run through colcon, fully superseded. Don't add functionality here.
+2. **`bluerov_control`** (+ `bluerov_control_msgs`) — the first ROS 2 (`ament_python`) port: a single `bluerov_control_node` runs the mission as a monolithic 17-state FSM (`flow.py`) with its own cascaded PID (`control.py`) in one 10 Hz timer callback, subscribing to `/localization/odom` and `vehicle_state`, publishing `robot_force` + `heartbeat` to `mavlink_driver`.
+3. **`bluerov_control_bt_nodes`** — the **current direction**: re-architects BlueROV mission control onto Kyubic's proven, vehicle-agnostic stack (`behavior_tree`'s `bt_executor` + `planning/wrench_planner`'s cascaded PID and `zero_order_hold` + `emergency`), reused with zero source changes. This package supplies only the BlueROV-specific pieces: BT leaf nodes (`GoToDepth`, `GoToBlackboardTarget`, `CheckPingerFound`, `CheckBuoyDetected`, `CheckRosBoolParam`, `CaptureMissionOrigin`, registered into the shared `bt_executor.cpp`) and a BT XML (`bt_xml/bluerov_phase2.xml`) that reproduces all 17 states of the old `flow.py` FSM. `bluerov_control` has **not** been deleted — both launch paths currently coexist and are interchangeable but **must never run at once** (both would send `robot_force` to `mavlink_driver` and fight for control). `control.py` (the old self-rolled PID) is slated for removal once the BT path is validated on real hardware.
+
+Start order is the same for either generation — only step 3 differs:
+
+```bash
+ros2 launch driver_launcher blue_rov_driver.launch.py         # 1. drivers
+ros2 launch localization localization_components.launch.py    # 2. sensor fusion -> /localization/odom
+ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py      # 3a. current: BT-based mission control
+# ros2 launch bluerov_control bluerov_control.launch.py        # 3b. legacy fallback — do not run with 3a
+```
+
+Known unverified risks on the BT path (as of writing): the DVL/odom zero-value-on-error fix (see `bluerov_control_bt_nodes/README.md` §9) hasn't been repool-tested since Phase 2 landed, and `CaptureMissionOrigin`'s DVL-lock behavior at very shallow deployment depth is unverified — check that README before running a real pool/competition test.
+
+See `kyubic_ws/src/control/automatic/bluerov_control/README.md` and `kyubic_ws/src/control/automatic/bluerov_control_bt_nodes/README.md` (both Japanese) for full walkthroughs — FSM/BT-state mapping table, PID retuning notes (old gains are a starting point only; output now goes through `mavlink_driver`'s `robot_force`/axis-limit scaling, not raw MAVLink `MANUAL_CONTROL`), and per-state pool-test procedures. Changes to `behavior_tree/src/bt_executor.cpp` are shared infrastructure — flag them to the Kyubic maintainer even when made for BlueROV's sake.
 
 ## Typical bring-up entry points
 
@@ -106,6 +132,6 @@ All driver/bringup launch files accept a `log_level` argument (default `info`, b
 
 ## Adding a new package
 
-Use `kyubic_ws/src/sample/` (`action/wrench_action_sample*`, `bt_switch_sample`) as templates rather than starting from scratch — they demonstrate this repo's conventions for action servers and BT node integration. Place new packages under the existing category directory that matches their role (`driver/kyubic` vs `driver/blue_rov`, `control/manual` vs `control/automatic` vs `control/controller`, etc.) rather than inventing a new top-level category.
+Use `kyubic_ws/src/sample/` (`action/wrench_action_sample*`, `bt_switch_sample`) as templates rather than starting from scratch — they demonstrate this repo's conventions for action servers and BT node integration. Place new packages under the existing category directory that matches their role (`driver/kyubic` vs `driver/blue_rov`, `control/manual` vs `control/automatic` vs `control/controller`, `perception/`, etc.) rather than inventing a new top-level category.
 
 Never edit code inside `kyubic_ws/src/extra/` (BehaviorTree.CPP, protolink) — those are git submodules; update them via `git submodule update` and upstream them separately if changes are needed.

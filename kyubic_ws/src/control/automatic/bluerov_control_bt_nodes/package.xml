@@ -5,10 +5,12 @@
   <version>0.1.0</version>
   <description>
     BlueROV-specific Behavior Tree leaf nodes for reuse with Kyubic's bt_executor
-    (behavior_tree package). Phase 2: GoToDepth/GoToBlackboardTarget (movement),
-    CheckPingerFound/CheckBuoyDetected (detection), CheckRosBoolParam (generic debug-flag
-    condition), LoadMissionParams (mission yaml to blackboard) -- covers all 17 states of the
-    former bluerov_control flow.py FSM.
+    (behavior_tree package). CheckBuoyDetected/CheckBuoyInFrame/CheckBuoyPosition
+    (detection), CheckPingerPitch (condition), WriteHydrophoneWaypointCSV/
+    WriteAxisOverrideWaypointCSV/WriteVisionWaypointCSV (odom-relative
+    single-checkpoint CSV writers, for handing movement off to path_planner's
+    WaypointAction/PDLA). Used by behavior_tree's bt_xml/iwakuni2026.xml, the
+    current BlueROV mission control tree.
   </description>
   <maintainer email="kyutech.robosub@gmail.com">Kyutech Underwater</maintainer>
   <license>Apache License 2.0</license>
@@ -20,7 +22,9 @@
   <depend>planner_msgs</depend>
   <depend>localization_msgs</depend>
   <depend>bluerov_control_msgs</depend>
+  <depend>buoy_interfaces</depend>
   <depend>tf2</depend>
+  <depend>ament_index_cpp</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

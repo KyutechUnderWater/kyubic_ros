@@ -18,13 +18,14 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_library(bluerov_control_bt_nodes SHARED
-  ./src/go_to_depth.cpp
-  ./src/go_to_blackboard_target.cpp
-  ./src/check_pinger_found.cpp
   ./src/check_buoy_detected.cpp
-  ./src/check_ros_bool_param.cpp
-  ./src/load_mission_params.cpp
-  ./src/capture_mission_origin.cpp
+  ./src/check_pinger_pitch.cpp
+  ./src/waypoint_csv_writer.cpp
+  ./src/write_hydrophone_waypoint_csv.cpp
+  ./src/write_axis_override_waypoint_csv.cpp
+  ./src/check_buoy_in_frame.cpp
+  ./src/check_buoy_position.cpp
+  ./src/write_vision_waypoint_csv.cpp
 )
 
 install(DIRECTORY

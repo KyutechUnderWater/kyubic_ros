@@ -25,7 +25,7 @@
   <depend>joy_common_msgs</depend>
   <depend>action_tutorials_interfaces</depend>
   <depend>wrench_action_sample_msgs</depend>
-  <!-- BlueROV固有のBT葉ノード(GoToDepth等)。ソースはbluerov_control_bt_nodes側で管理 -->
+  <!-- BlueROV固有のBT葉ノード(WriteAxisOverrideWaypointCSV等)。ソースはbluerov_control_bt_nodes側で管理 -->
   <depend>bluerov_control_bt_nodes</depend>
 
   <test_depend>ament_lint_auto</test_depend>
