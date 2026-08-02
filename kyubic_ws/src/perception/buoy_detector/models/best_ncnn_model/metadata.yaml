@@ -1,0 +1,20 @@
+description: Ultralytics YOLO26n model trained on C:\Users\shoki\Home\.KUWR\KyutechUnderwaterBlue\buoy_detector\dataset\buoy_detect.yaml
+author: Ultralytics
+date: '2026-08-02T17:17:02.923843'
+version: 8.4.97
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+head: Detect
+batch: 1
+imgsz:
+- 320
+- 320
+names:
+  0: buoy_body
+args:
+  batch: 1
+  quantize: 16
+channels: 3
+end2end: false

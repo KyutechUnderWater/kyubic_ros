@@ -25,7 +25,7 @@ def generate_launch_description() -> LaunchDescription:
             DeclareLaunchArgument(
                 "model_path",
                 default_value=PathJoinSubstitution(
-                    [FindPackageShare("buoy_detector"), "models", "best.pt"]
+                    [FindPackageShare("buoy_detector"), "models", "best_ncnn_model"]
                 ),
                 description="YOLO学習済みモデルのパス",
             ),
