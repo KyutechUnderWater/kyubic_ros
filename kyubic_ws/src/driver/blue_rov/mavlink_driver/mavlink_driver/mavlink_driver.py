@@ -107,8 +107,14 @@ class MavlinkDriver(Node):
         self._stop_event = threading.Event()
 
         self._axis_values = {name: 0.0 for name in self._axes}
-        self._neutral_channels = self._make_neutral_channels()
-        self._camera_pwm = self._pwm_neutral
+        self._camera_pwm_neutral = angle_to_pwm(
+            (self._camera_angle_min_deg + self._camera_angle_max_deg) / 2.0,
+            self._camera_angle_min_deg,
+            self._camera_angle_max_deg,
+            self._camera_pwm_min,
+            self._camera_pwm_max,
+        )
+        self._camera_pwm = self._camera_pwm_neutral
         self._led_left_pwm = AUX_PWM_MIN
         self._led_right_pwm = AUX_PWM_MIN
         self._water_temperature = math.nan
@@ -171,13 +177,6 @@ class MavlinkDriver(Node):
                 raise ValueError(f"{channel_name} must be 0 or in the range 1..18")
             if channel and channel in occupied:
                 raise ValueError(f"{channel_name} conflicts with a control or camera channel")
-
-    def _make_neutral_channels(self) -> list[int]:
-        """Create the fixed portion of an RC override packet."""
-        channels = [RC_RELEASE] * 18
-        for axis in self._axes.values():
-            channels[axis.channel - 1] = self._pwm_neutral
-        return channels
 
     def _wrench_callback(self, message: WrenchStamped) -> None:
         with self._state_lock:
@@ -410,7 +409,7 @@ class MavlinkDriver(Node):
             command_alive = now - self._last_wrench <= self._command_timeout_s
             active = self._connected and self._vehicle_armed and control_alive and command_alive
             values = dict(self._axis_values)
-            camera_pwm = self._camera_pwm
+            camera_pwm = self._camera_pwm if active else self._camera_pwm_neutral
             led_left_pwm = self._led_left_pwm
             led_right_pwm = self._led_right_pwm
             target_system = self._target_system
@@ -426,9 +425,16 @@ class MavlinkDriver(Node):
         self._send_rc_override(channels, target_system, target_component)
 
     def _build_rc_channels(self, active: bool, axis_values: dict[str, float]) -> list[int]:
-        """Build an RC override packet from a stable command snapshot."""
-        channels = self._neutral_channels.copy()
+        """Build an RC override packet from a stable command snapshot.
+
+        When control is inactive, thruster axes are set to pwm_neutral explicitly.
+        Sending 65535 (RC_RELEASE / ignore) would leave the previous PWM latched,
+        which can cause unintended thrust after disarm or heartbeat timeout.
+        """
+        channels = [RC_RELEASE] * 18
         if not active:
+            for axis in self._axes.values():
+                channels[axis.channel - 1] = self._pwm_neutral
             return channels
         for name, axis in self._axes.items():
             channels[axis.channel - 1] = axis_to_pwm(
@@ -522,6 +528,11 @@ class MavlinkDriver(Node):
                 if ack_accepted and self._vehicle_armed == request.data:
                     response.success = True
                     response.message = "Vehicle arm state confirmed by MAVLink heartbeat"
+                    if not request.data:
+                        # Disarm confirmed: reset heartbeat and camera to neutral
+                        # so active becomes false immediately on next timer tick.
+                        self._last_control_heartbeat = 0.0
+                        self._camera_pwm = self._camera_pwm_neutral
                     return response
                 self._state_lock.wait(timeout=0.1)
 
@@ -555,7 +566,7 @@ class MavlinkDriver(Node):
             self._state_lock.notify_all()
 
     def destroy_node(self) -> bool:
-        """Send neutral axis commands and stop the MAVLink receiver before shutdown.
+        """Release thruster RC overrides and stop the MAVLink receiver before shutdown.
 
         Returns:
             bool: The result reported by the base ROS node implementation.
@@ -563,7 +574,12 @@ class MavlinkDriver(Node):
         with self._state_lock:
             target_system = self._target_system
             target_component = self._target_component
-        self._send_rc_override(self._neutral_channels.copy(), target_system, target_component)
+        shutdown_channels = [RC_RELEASE] * 18
+        for axis in self._axes.values():
+            shutdown_channels[axis.channel - 1] = self._pwm_neutral
+        if self._camera_channel:
+            self._set_channel(shutdown_channels, self._camera_channel, self._camera_pwm_neutral)
+        self._send_rc_override(shutdown_channels, target_system, target_component)
         self._stop_event.set()
         self._receiver_thread.join(timeout=1.0)
         return super().destroy_node()

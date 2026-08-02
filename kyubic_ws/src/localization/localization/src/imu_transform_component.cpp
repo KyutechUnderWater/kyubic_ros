@@ -19,6 +19,11 @@ namespace localization::imu
 
 IMUTransform::IMUTransform(const rclcpp::NodeOptions & options) : Node("imu_transform", options)
 {
+  apply_kyubic_axis_remap_ = declare_parameter<bool>("apply_kyubic_axis_remap", true);
+  RCLCPP_INFO(
+    this->get_logger(), "apply_kyubic_axis_remap=%s",
+    apply_kyubic_axis_remap_ ? "true (Kyubic G366)" : "false (passthrough, e.g. BlueROV mavlink)");
+
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
   pub_ = create_publisher<localization_msgs::msg::Odometry>("transformed", qos);
@@ -40,12 +45,21 @@ void IMUTransform::update_callback(const driver_msgs::msg::IMU::UniquePtr msg)
     odom_msg->header = msg->header;
     odom_msg->status.imu.id = common_msgs::msg::Status::ERROR;
   } else {
-    // z-axis transform
-    double gyro_x = msg->gyro.y;
-    double gyro_y = -msg->gyro.x;
-
-    roll = msg->orient.y;
-    pitch = -msg->orient.x;
+    double gyro_x = 0.0;
+    double gyro_y = 0.0;
+    if (apply_kyubic_axis_remap_) {
+      // Kyubic G366 取付向き向け: roll/pitch と gyro x/y を 90° 相当で入れ替え
+      gyro_x = msg->gyro.y;
+      gyro_y = -msg->gyro.x;
+      roll = msg->orient.y;
+      pitch = -msg->orient.x;
+    } else {
+      // BlueROV mavlink_driver 等: ArduSub 標準 FRD をそのまま使う
+      gyro_x = msg->gyro.x;
+      gyro_y = msg->gyro.y;
+      roll = msg->orient.x;
+      pitch = msg->orient.y;
+    }
     yaw = msg->orient.z;
 
     double yaw_offset = msg->orient.z - offset_angle.at(2);

@@ -13,8 +13,12 @@
 #include <behaviortree_cpp/action_node.h>
 
 #include <lifecycle_msgs/srv/change_state.hpp>
+#include <lifecycle_msgs/srv/get_state.hpp>
+#include <map>
+#include <optional>
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/string.hpp>
+#include <string>
 
 namespace behavior_tree
 {
@@ -62,6 +66,17 @@ public:
   void onHalted() override;
 
 private:
+  std::optional<uint8_t> getPrimaryState(
+    const std::string & node_name, std::chrono::duration<double> timeout) const;
+
+  bool isTransitionSatisfied(uint8_t current_state, const std::string & transition) const;
+
+  std::optional<uint8_t> resolveTransitionId(
+    uint8_t current_state, const std::string & transition) const;
+
+  bool beginChangeState(
+    const std::string & node_name, uint8_t transition_id, std::chrono::duration<double> timeout);
+
   rclcpp::Node::SharedPtr ros_node_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr logger_pub_;
   rclcpp::Client<lifecycle_msgs::srv::ChangeState>::SharedPtr change_state_client_;
@@ -69,6 +84,9 @@ private:
   std::shared_future<lifecycle_msgs::srv::ChangeState::Response::SharedPtr> future_response_;
 
   std::string last_service_name_;
+  std::string target_node_name_;
+  std::string requested_transition_;
+  std::optional<std::string> pending_transition_after_success_;
   std::map<std::string, uint8_t> transition_map_;
 };
 

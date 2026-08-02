@@ -26,7 +26,7 @@
 
 ## 起動コマンド(共通の前提)
 
-環境A・Bどちらでも、起動順は同じです(3が現行のBT構成)。
+環境A・Bどちらでも、起動順は同じです。
 
 ```bash
 # 1. ドライバ(mavlink_driver + dvl75_driver + camera_driver + reed_switch_driver)
@@ -35,9 +35,13 @@ ros2 launch driver_launcher blue_rov_driver.launch.py
 # 2. センサ融合(位置推定) -> /localization/odom
 ros2 launch localization localization_components.launch.py
 
-# 3. BT + wrench_planner(PID) + zero_order_hold + emergency + buoy_detector
+# 3. BT + planner_launcher(PDLA) + wrench_planner + zero_order_hold + emergency + buoy_detector
 ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py
 ```
+
+`planner_launcher` は `bluerov_bt.launch.py` に含まれる（別ターミナルでの起動は不要）。
+
+確認: `ros2 action list | grep pdla` で `/planner/pdla_planner/pdla_plan` が出ること。
 
 このほかに、`bluerov_bt.launch.py` は音響(ハイドロフォン)を**起動しません**。ハイドロフォン方向を
 使う手順(A-6以降、B-9)では別ターミナルで以下も起動します。
@@ -75,7 +79,7 @@ ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py
 ```
 
 それぞれ別ターミナルで起動し、エラーログが出ないこと・`ros2 node list` に想定ノード
-(`btExecutorNode`, `emergencyNode`, `planner/wrench_planner/*` など)が並ぶことを確認する。
+(`btExecutorNode`, `emergencyNode`, `planner/wrench_planner/*`, `planner/pdla_planner/*` など)が並ぶことを確認する。
 
 ### A-3. remap先トピックの疎通確認
 

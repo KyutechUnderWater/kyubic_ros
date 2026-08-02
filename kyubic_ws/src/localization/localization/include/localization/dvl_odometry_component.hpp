@@ -59,6 +59,8 @@ private:
   double last_altitude_ = 0.0;
   tf2::Vector3 last_velocity_world_{0.0, 0.0, 0.0};
   bool has_valid_measurement_ = false;
+  /// velocity_valid==false でも一度でも有効計測があれば WARNING で推定を継続する。
+  bool degraded_coast_on_invalid_dvl_ = true;
 
   /**
    * @brief Update position

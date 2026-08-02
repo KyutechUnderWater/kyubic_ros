@@ -597,13 +597,18 @@ class MonitorNode(Node):
         self._axis_pulse_timers[axis] = timer
         timer.start()
 
-    def emergency_stop(self) -> None:
-        """全軸ゼロ・ハートビート停止・Disarmを即座に行う。"""
+    def stop_thruster_commands(self) -> None:
+        """推力指令とmanual heartbeatを止め、スラスター指令をゼロにする。"""
         for timer in self._axis_pulse_timers.values():
             timer.cancel()
         self._axis_pulse_timers.clear()
         self._publish_wrench(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         self.state.thruster_test.manual_control_enabled = False
+        self.publish_tilt(90.0)
+
+    def emergency_stop(self) -> None:
+        """全軸ゼロ・ハートビート停止・Disarmを即座に行う。"""
+        self.stop_thruster_commands()
         self.call_set_armed(False)
         self.state.log_event("EMERGENCY STOP: disarm + zero wrench")
 
@@ -822,6 +827,7 @@ def render_camera_column(state: RobotState) -> dict:
 
                 def on_disarm():
                     if node_instance:
+                        node_instance.stop_thruster_commands()
                         node_instance.call_set_armed(False)
                         ui.notify("SENT: Disarm", type="info", color=UIColors.NEON_CYAN)
                     else:

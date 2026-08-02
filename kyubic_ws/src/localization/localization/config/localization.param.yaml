@@ -3,6 +3,8 @@
     offset_x: 0.4375
     offset_y: 0.0
     offset_z: 0.0
+    # DVL velocity_valid==false でも直前速度で航続(degraded)。精度は保証しない。
+    degraded_coast_on_invalid_dvl: true
 
 
 /localization/localization_component:

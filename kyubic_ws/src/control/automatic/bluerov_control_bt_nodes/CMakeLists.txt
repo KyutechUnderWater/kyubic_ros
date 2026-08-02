@@ -20,9 +20,11 @@ ament_auto_find_build_dependencies()
 ament_auto_add_library(bluerov_control_bt_nodes SHARED
   ./src/check_buoy_detected.cpp
   ./src/check_pinger_pitch.cpp
+  ./src/check_pinger_range.cpp
   ./src/waypoint_csv_writer.cpp
   ./src/buoy_detection_csv_reader.cpp
   ./src/write_hydrophone_waypoint_csv.cpp
+  ./src/write_pinger_waypoint_csv.cpp
   ./src/write_axis_override_waypoint_csv.cpp
   ./src/check_buoy_in_frame.cpp
   ./src/check_buoy_position.cpp

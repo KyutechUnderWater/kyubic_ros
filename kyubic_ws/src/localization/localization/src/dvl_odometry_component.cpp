@@ -22,6 +22,8 @@ DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odomet
   offset[0] = this->declare_parameter("offset_x", 0.0);
   offset[1] = this->declare_parameter("offset_y", 0.0);
   offset[2] = this->declare_parameter("offset_z", 0.0);
+  degraded_coast_on_invalid_dvl_ =
+    this->declare_parameter("degraded_coast_on_invalid_dvl", true);
 
   imu_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
 
@@ -44,20 +46,50 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
 
-  if (!msg->velocity_valid || imu_msg_->status.imu.id == common_msgs::msg::Status::ERROR) {
-    RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because velocity error occurred");
+  if (imu_msg_->status.imu.id == common_msgs::msg::Status::ERROR) {
+    RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because IMU error occurred");
     odom_msg->header = msg->header;
     odom_msg->status.dvl.id = common_msgs::msg::Status::ERROR;
-    // 直前の有効値を保持したままpublishする(ゼロ値が新鮮な値であるかのように
-    // 下流(localization_component等)へ伝播するのを防ぐ。Part A参照)。
-    // pos_x/pos_yは常に有効(reset()の0初期化がdead-reckoning原点として正当な値)。
     odom_msg->pose.position.x = pos_x;
     odom_msg->pose.position.y = pos_y;
-    // altitude/velocityは一度も有効値を受信していなければ0を「保持値」と称さない
-    // (has_valid_measurement_==falseの間はodom_msgのデフォルト0のままにする。
-    // status.dvl.id==ERRORなので下流はどのみち使わないが、この層単体でも
-    // 「未計測」と「保持値」を混同しないようにする)。
     if (has_valid_measurement_) {
+      odom_msg->pose.position.z_altitude = last_altitude_;
+      odom_msg->twist.linear.x = last_velocity_world_.x();
+      odom_msg->twist.linear.y = last_velocity_world_.y();
+      odom_msg->twist.linear.z_altitude = last_velocity_world_.z();
+    }
+  } else if (!msg->velocity_valid) {
+    odom_msg->header = msg->header;
+    odom_msg->pose.orientation = imu_msg_->pose.orientation;
+    odom_msg->twist.angular = imu_msg_->twist.angular;
+
+    if (!has_valid_measurement_ || !degraded_coast_on_invalid_dvl_) {
+      RCLCPP_ERROR_THROTTLE(
+        this->get_logger(), *this->get_clock(), 2000,
+        "DVL velocity invalid and no degraded estimate available");
+      odom_msg->status.dvl.id = common_msgs::msg::Status::ERROR;
+      odom_msg->pose.position.x = pos_x;
+      odom_msg->pose.position.y = pos_y;
+      if (has_valid_measurement_) {
+        odom_msg->pose.position.z_altitude = last_altitude_;
+        odom_msg->twist.linear.x = last_velocity_world_.x();
+        odom_msg->twist.linear.y = last_velocity_world_.y();
+        odom_msg->twist.linear.z_altitude = last_velocity_world_.z();
+      }
+    } else {
+      RCLCPP_WARN_THROTTLE(
+        this->get_logger(), *this->get_clock(), 2000,
+        "DVL velocity invalid; continuing degraded dead reckoning (last velocity coast)");
+      odom_msg->status.dvl.id = common_msgs::msg::Status::WARNING;
+
+      const auto now = this->get_clock()->now();
+      const double dt = (now - pre_time).nanoseconds() * 1e-9;
+      pre_time = now;
+      pos_x += last_velocity_world_.x() * dt;
+      pos_y += last_velocity_world_.y() * dt;
+
+      odom_msg->pose.position.x = pos_x;
+      odom_msg->pose.position.y = pos_y;
       odom_msg->pose.position.z_altitude = last_altitude_;
       odom_msg->twist.linear.x = last_velocity_world_.x();
       odom_msg->twist.linear.y = last_velocity_world_.y();
@@ -93,6 +125,7 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 
     {
       odom_msg->header = msg->header;
+      odom_msg->status.dvl.id = msg->status.id;
 
       odom_msg->pose.position.x = pos_x;
       odom_msg->pose.position.y = pos_y;

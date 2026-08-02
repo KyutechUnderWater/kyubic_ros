@@ -1,17 +1,21 @@
-import os
-from ament_index_python.packages import get_package_share_directory
 from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
-from launch.substitutions import LaunchConfiguration
+from launch_ros.substitutions import FindPackageShare
 from launch import LaunchDescription
 
 
 def generate_launch_description():
-    config = os.path.join(
-        get_package_share_directory("localization"), "config", "localization.param.yaml"
+    param_file_arg = DeclareLaunchArgument(
+        "param_file",
+        default_value="localization.param.yaml",
+        description="YAML under localization/config/ (use localization_bluerov.param.yaml for BlueROV)",
     )
 
+    config = PathJoinSubstitution(
+        [FindPackageShare("localization"), "config", LaunchConfiguration("param_file")]
+    )
     log_level_arg = DeclareLaunchArgument(
         "log_level",
         default_value=["info"],
@@ -49,6 +53,7 @@ def generate_launch_description():
                 package="localization",
                 plugin="localization::imu::IMUTransform",
                 remappings=[("imu", "/driver/imu")],
+                parameters=[config],
                 extra_arguments=[
                     {"use_intra_process_comms": True}
                 ],  # enable intra-process communication
@@ -87,4 +92,4 @@ def generate_launch_description():
         ],
     )
 
-    return LaunchDescription([log_level_arg, action_component_container])
+    return LaunchDescription([param_file_arg, log_level_arg, action_component_container])

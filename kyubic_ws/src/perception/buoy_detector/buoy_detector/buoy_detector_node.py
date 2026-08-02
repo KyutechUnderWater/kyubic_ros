@@ -33,6 +33,8 @@ CSV_FIELDS = [
     "frame_index",
     "timestamp_sec",
     "detected",
+    "yaw_valid",
+    "position_valid",
     "x",
     "y",
     "z",
@@ -52,7 +54,7 @@ CSV_PATH = (
     / "planning"
     / "path_planner"
     / "assets"
-    / "iwakuni2026"
+    / "iwakuni"
     / "bouy_point.csv"
 )
 
@@ -210,10 +212,9 @@ class BuoyDetectorNode(Node):
             get_package_share_directory("buoy_detector")
         )
 
-        # 変更1：PyTorchモデルではなく，変換済みNCNNモデルを指定する。
         self.declare_parameter(
             "model_path",
-            str(package_share / "models" / "best_ncnn_model"),
+            str(package_share / "models" / "best.pt"),
         )
         self.declare_parameter(
             "config_path",
@@ -315,9 +316,7 @@ class BuoyDetectorNode(Node):
             )
 
     def _validate_parameters(self, model_path: Path) -> None:
-        # 変更2：NCNNモデルは単一ファイルではなくフォルダなので，
-        # is_file()ではなくexists()で存在を確認する。
-        if not model_path.exists():
+        if not model_path.is_file():
             raise FileNotFoundError(
                 f"YOLOモデルがありません: {model_path}"
             )
@@ -418,6 +417,8 @@ class BuoyDetectorNode(Node):
             "frame_index": self._frame_index,
             "timestamp_sec": f"{timestamp_sec:.6f}",
             "detected": bool(detected),
+            "yaw_valid": bool(yaw_valid),
+            "position_valid": bool(position_valid),
             "x": x_value,
             "y": y_value,
             "z": z_value,

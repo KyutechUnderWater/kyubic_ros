@@ -33,7 +33,6 @@ void CheckPingerPitch::pingerCallback(const planner_msgs::msg::PingerDirection::
 BT::NodeStatus CheckPingerPitch::tick()
 {
   if (!latest_pinger_) {
-    // pinger_directionを一度も受信していない。安全側に倒し、まだ遠いとみなす。
     return BT::NodeStatus::FAILURE;
   }
 

@@ -25,7 +25,12 @@ setup(
         ),
         (
             os.path.join("share", package_name, "models"),
-            glob(os.path.join("models", "*")),
+            glob(os.path.join("models", ".pt")),
+            
+        ),
+        (
+            os.path.join("share", package_name, "models", "best_ncnn_model"),
+            glob(os.path.join("models", "best_ncnn_model", "*.*"))
         ),
     ],
     install_requires=["setuptools"],
@@ -42,6 +47,8 @@ setup(
         "console_scripts": [
             "buoy_detector_node = "
             "buoy_detector.buoy_detector_node:main",
+            "buoy_logger_node = "
+            "buoy_detector.buoy_logger_node:main",
         ],
     },
 )

@@ -22,7 +22,7 @@ DRIVER_CMD="ros2 launch driver_launcher blue_rov_driver.launch.py"
 CTRL_CMD="ros2 launch bluerov_control bluerov_control.launch.py"
 CTRL_BT_CMD="ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py"
 
-LOC_CMD="ros2 launch localization localization_components.launch.py"
+LOC_CMD="ros2 launch localization localization_components.launch.py param_file:=localization_bluerov.param.yaml"
 PERCEPTION_CMD="ros2 launch buoy_detector buoy_detector.launch.py"
 
 DASHBOARD_CMD="ros2 launch bluerov_dashboard bluerov_dashboard.launch.py"

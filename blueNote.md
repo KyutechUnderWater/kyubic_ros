@@ -120,7 +120,7 @@ flowchart TB
 | `torque.x` | roll | 2 |
 | `torque.z` | yaw | 4 |
 
-各軸の値は `axis.<name>.limit` で正規化され PWM（1300–1700、中立 1500）に変換されます。符号は `axis.<name>.invert` で反転可能。
+各軸の値は `axis.<name>.limit` で正規化され PWM（1100–1900、中立 1500）に変換されます。符号は `axis.<name>.invert` で反転可能。
 
 **Publish（センサ・状態の出力）**
 

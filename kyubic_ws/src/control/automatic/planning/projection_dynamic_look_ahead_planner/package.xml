@@ -16,6 +16,7 @@
   <depend>ament_cmake_eigen</depend>
   <depend>planner_msgs</depend>
   <depend>localization_msgs</depend>
+  <depend>std_srvs</depend>
   <depend>path_planner</depend>
   <depend>ament_index_cpp</depend>
   <depend>pluginlib</depend>

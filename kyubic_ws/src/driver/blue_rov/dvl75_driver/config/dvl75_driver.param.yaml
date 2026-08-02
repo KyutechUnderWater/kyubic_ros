@@ -12,7 +12,9 @@
     timeout_s: 1.0
     dvext_timeout_s: 1.0
     validate_checksum: true
-    minimum_confidence: 50
+    # 0 = accept any confidence (浅いプール・短距離テスト用)。
+    # 実海域では 50 以上を推奨。
+    minimum_confidence: 0
     # Four locked beams are normal; a three-beam solution is published as a
     # warning. Fewer than this value is an error and invalidates velocity.
     minimum_locked_beams: 3

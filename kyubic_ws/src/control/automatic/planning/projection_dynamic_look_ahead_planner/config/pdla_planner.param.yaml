@@ -9,12 +9,12 @@
     reach_tolerance:
       x: 0.05
       y: 0.05
-      z: 0.05
+      z: 0.5
       roll: 1.0
       yaw: 1.0
     waypoint_tolerance:
       x: 0.1
       y: 0.1
-      z: 0.1
+      z: 0.5
       roll: 3.0
       yaw: 3.0

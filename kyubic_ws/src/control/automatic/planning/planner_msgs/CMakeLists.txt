@@ -26,6 +26,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
  "msg/WrenchPlan.msg"
  "msg/PDLAFeedback.msg"
  "msg/PingerDirection.msg"
+ "msg/PingerPosition.msg"
  "action/PDLA.action"
  "action/QR.action"
  "action/FindPinger.action"

@@ -25,7 +25,7 @@ def generate_launch_description() -> LaunchDescription:
             DeclareLaunchArgument(
                 "model_path",
                 default_value=PathJoinSubstitution(
-                    [FindPackageShare("buoy_detector"), "models", "best_ncnn_model"]
+                    [FindPackageShare("buoy_detector"), "models", "best.pt"]
                 ),
                 description="YOLO学習済みモデルのパス",
             ),
@@ -62,7 +62,7 @@ def generate_launch_description() -> LaunchDescription:
             DeclareLaunchArgument("class_id", default_value="0"),
             DeclareLaunchArgument(
                 "position_estimation_enabled",
-                default_value="false",
+                default_value="true",
                 description=(
                     "falseの場合もYOLO検出とヨー角推定は行い、"
                     "position_valid=false、位置座標=NaNで配信する"

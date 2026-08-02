@@ -54,7 +54,58 @@ PDLAPlanner::PDLAPlanner(const rclcpp::NodeOptions & options) : Node("pdla_plann
     std::bind(&PDLAPlanner::handle_accepted, this, std::placeholders::_1),
     rcl_action_server_get_default_options(), callback_group_);
 
+  abort_active_goal_srv_ = create_service<std_srvs::srv::Trigger>(
+    "abort_active_goal",
+    std::bind(
+      &PDLAPlanner::abort_active_goal_callback, this, std::placeholders::_1,
+      std::placeholders::_2),
+    rclcpp::ServicesQoS(), callback_group_);
+
   RCLCPP_INFO(this->get_logger(), "PDLA Action Server started. Waiting for goal...");
+}
+
+void PDLAPlanner::clear_active_goal_state()
+{
+  step_idx = 0;
+  last_reached_ = false;
+  first_reached_ = true;
+  fine_flag_ = false;
+  step_state_ = planner_msgs::action::PDLA::Feedback::RUNNING;
+  target_pose_.clear();
+  {
+    std::lock_guard<std::mutex> odom_lock(odom_mutex_);
+    current_odom_.reset();
+  }
+}
+
+void PDLAPlanner::abort_active_goal_callback(
+  [[maybe_unused]] const std_srvs::srv::Trigger::Request::SharedPtr request,
+  const std_srvs::srv::Trigger::Response::SharedPtr response)
+{
+  std::lock_guard<std::mutex> lock(goal_mutex_);
+
+  if (!active_goal_handle_) {
+    response->success = true;
+    response->message = "No active PDLA goal";
+    RCLCPP_INFO(this->get_logger(), "abort_active_goal: no active goal");
+    return;
+  }
+
+  auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
+  result->success = false;
+
+  if (active_goal_handle_->is_active()) {
+    active_goal_handle_->abort(result);
+  } else if (active_goal_handle_->is_canceling()) {
+    active_goal_handle_->canceled(result);
+  }
+
+  active_goal_handle_.reset();
+  clear_active_goal_state();
+
+  response->success = true;
+  response->message = "Active PDLA goal aborted";
+  RCLCPP_WARN(this->get_logger(), "abort_active_goal: active goal aborted");
 }
 
 rclcpp_action::GoalResponse PDLAPlanner::handle_goal(
@@ -186,180 +237,139 @@ void PDLAPlanner::_runPlannerLogic(
     odom_copy = std::make_shared<localization_msgs::msg::Odometry>(*current_odom_);
   }
 
+  // センサーが ERROR の場合は前回の有効値(localization が保持)を使ってそのまま継続する。
+  // localization_component は ERROR 時にフィールドを更新しないため、
+  // odom_copy には最後に有効だった値が入っている（Part A 設計）。
   if (
     odom_copy->status.depth.id == common_msgs::msg::Status::ERROR ||
     odom_copy->status.imu.id == common_msgs::msg::Status::ERROR ||
     odom_copy->status.dvl.id == common_msgs::msg::Status::ERROR) {
-    RCLCPP_ERROR(this->get_logger(), "The current odometry is invalid");
-    return;
+    RCLCPP_WARN_THROTTLE(
+      this->get_logger(), *this->get_clock(), 2000,
+      "Odometry partially invalid (depth=%d imu=%d dvl=%d); "
+      "continuing with last valid values.",
+      odom_copy->status.depth.id, odom_copy->status.imu.id, odom_copy->status.dvl.id);
+  }
 
-    // TODO: Don't calculate the pid when some sensors become unusable
-    // Control when some sensors become unusable
-    // auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>();
-    // msg->header.stamp = this->get_clock()->now();
-    // msg->z_mode = target_pose_.at(step_idx).z_mode;
-    //
-    // if (
-    //   odom_copy->status.depth.id != common_msgs::msg::Status::ERROR &&
-    //   target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-    //   msg->targets.z = target_pose_.at(step_idx).z;
-    //   msg->master.z = odom_copy->pose.position.z_depth;
-    //   msg->slave.z = odom_copy->twist.linear.z_depth;
-    // } else if (
-    //   odom_copy->status.dvl.id != common_msgs::msg::Status::ERROR &&
-    //   target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-    //   msg->targets.z = target_pose_.at(step_idx).z;
-    //   msg->master.z = odom_copy->pose.position.z_altitude;
-    //   msg->slave.z = odom_copy->twist.linear.z_altitude;
-    // }
-    //
-    // if (odom_copy->status.imu.id != common_msgs::msg::Status::ERROR) {
-    //   msg->targets.roll = target_pose_.at(step_idx).roll;
-    //   msg->targets.yaw = target_pose_.at(step_idx).yaw;
-    //
-    //   msg->master.roll = odom_copy->pose.orientation.x;
-    //   msg->master.yaw = odom_copy->pose.orientation.z;
-    //
-    //   msg->slave.roll = odom_copy->twist.angular.x;
-    //   msg->slave.yaw = odom_copy->twist.angular.z;
-    // }
-    //
-    // if (odom_copy->status.dvl.id != common_msgs::msg::Status::ERROR) {
-    //   msg->targets.x = target_pose_.at(step_idx).x;
-    //   msg->targets.y = target_pose_.at(step_idx).y;
-    //
-    //   msg->master.x = odom_copy->pose.position.x;
-    //   msg->master.y = odom_copy->pose.position.y;
-    //
-    //   msg->slave.x = odom_copy->twist.linear.x;
-    //   msg->slave.y = odom_copy->twist.linear.y;
-    // }
-    //
-    // {
-    //   pub_->publish(std::move(msg));
-    //   RCLCPP_WARN(this->get_logger(), "Constrained Control (Sensor Error)");
-    // }
-  } else {
-    // ウェイポイント到達判定
-    bool reached = false;
-    PoseData target = target_pose_.at(step_idx);
-    Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
+  // ウェイポイント到達判定
+  bool reached = false;
+  PoseData target = target_pose_.at(step_idx);
+  Tolerance tol = (step_idx == target_pose_.size() - 1) ? reach_tolerance : waypoint_tolerance;
 
-    if (
-      _checkReached(target, odom_copy, tol) ||
-      step_state_ == planner_msgs::action::PDLA::Feedback::WAITING) {
-      auto now = this->get_clock()->now();
+  if (
+    _checkReached(target, odom_copy, tol) ||
+    step_state_ == planner_msgs::action::PDLA::Feedback::WAITING) {
+    auto now = this->get_clock()->now();
 
-      if (first_reached_) {
-        first_reached_ = false;
-        first_reached_time_ = now;
-      }
-
-      // If wait time is set
-      if ((now - first_reached_time_).nanoseconds() + 1 > target.wait_ms * 1e6) {
-        first_reached_ = reached = true;
-      } else
-        step_state_ = planner_msgs::action::PDLA::Feedback::WAITING;
+    if (first_reached_) {
+      first_reached_ = false;
+      first_reached_time_ = now;
     }
 
-    if (reached) {
-      timeout_->reset(this->get_clock()->now());
+    // If wait time is set
+    if ((now - first_reached_time_).nanoseconds() + 1 > target.wait_ms * 1e6) {
+      first_reached_ = reached = true;
+    } else
+      step_state_ = planner_msgs::action::PDLA::Feedback::WAITING;
+  }
 
-      if (step_idx == target_pose_.size() - 1) {
-        RCLCPP_INFO(this->get_logger(), "Reached end point!");
-        auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
-        result->success = true;
-        std::lock_guard<std::mutex> lock(goal_mutex_);
-        if (active_goal_handle_ == goal_handle && goal_handle->is_active()) {
-          goal_handle->succeed(result);
-          active_goal_handle_.reset();
-        }
-        return;
-      } else {
-        step_idx++;
-        RCLCPP_INFO(this->get_logger(), "Reached %zu/%lu waypoint.", step_idx, target_pose_.size());
-        _print_waypoint("Current", step_idx);
-        if (step_idx < target_pose_.size() - 1) {
-          _print_waypoint("Next   ", step_idx + 1);
-        }
+  if (reached) {
+    timeout_->reset(this->get_clock()->now());
+
+    if (step_idx == target_pose_.size() - 1) {
+      RCLCPP_INFO(this->get_logger(), "Reached end point!");
+      auto result = std::make_shared<planner_msgs::action::PDLA::Result>();
+      result->success = true;
+      std::lock_guard<std::mutex> lock(goal_mutex_);
+      if (active_goal_handle_ == goal_handle && goal_handle->is_active()) {
+        goal_handle->succeed(result);
+        active_goal_handle_.reset();
       }
-    }
-
-    // 仮想目標点の計算
-    Eigen::Vector3d virtual_goal_point;
-
-    if (step_idx == 0) {
-      virtual_goal_point << target_pose_.at(0).x, target_pose_.at(0).y, target_pose_.at(0).z;
-    } else if (step_idx == target_pose_.size() - 1) {
-      virtual_goal_point << target_pose_[step_idx].x, target_pose_[step_idx].y,
-        target_pose_[step_idx].z;
+      return;
     } else {
-      PoseData pre_step_pose = target_pose_.at(step_idx - 1);
-      PoseData current_step_pose = target_pose_.at(step_idx);
-      PoseData next_step_pose = target_pose_.at(step_idx + 1);
-      Eigen::Vector3d p1(pre_step_pose.x, pre_step_pose.y, pre_step_pose.z);
-      Eigen::Vector3d p2(current_step_pose.x, current_step_pose.y, current_step_pose.z);
-      Eigen::Vector3d p3(next_step_pose.x, next_step_pose.y, next_step_pose.z);
-
-      localization_msgs::msg::Pose current_pose = odom_copy->pose;
-
-      Eigen::Vector3d p0;
-      if (current_step_pose.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-        p0 << current_pose.position.x, current_pose.position.y, current_pose.position.z_depth;
-      } else if (current_step_pose.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
-        p0 << current_pose.position.x, current_pose.position.y, current_pose.position.z_altitude;
-      } else {
-        RCLCPP_FATAL(this->get_logger(), "z mode (%d) is failer.", current_step_pose.z_mode);
-        rclcpp::shutdown();
-      }
-
-      Eigen::Vector3d v02 = p2 - p0;
-      Eigen::Vector3d v12 = p2 - p1;
-      Eigen::Vector3d v23 = p3 - p2;
-
-      if (v02.dot(v23) <= 0 || v12.norm() == 0) {
-        virtual_goal_point = p2;
-      } else {
-        v02 = v02 * v12.norm() / v02.norm();
-        Eigen::Vector3d proj_v02_v23 = v02 * v02.dot(v23) / v02.norm();
-        virtual_goal_point = (p2 - v02) + (v02 + proj_v02_v23) * look_ahead_scale;
+      step_idx++;
+      RCLCPP_INFO(this->get_logger(), "Reached %zu/%lu waypoint.", step_idx, target_pose_.size());
+      _print_waypoint("Current", step_idx);
+      if (step_idx < target_pose_.size() - 1) {
+        _print_waypoint("Next   ", step_idx + 1);
       }
     }
+  }
 
-    // 仮想目標点のPublish
-    {
-      auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>();
+  // 仮想目標点の計算
+  Eigen::Vector3d virtual_goal_point;
 
-      msg->header.stamp = this->get_clock()->now();
-      msg->z_mode = target_pose_.at(step_idx).z_mode;
+  if (step_idx == 0) {
+    virtual_goal_point << target_pose_.at(0).x, target_pose_.at(0).y, target_pose_.at(0).z;
+  } else if (step_idx == target_pose_.size() - 1) {
+    virtual_goal_point << target_pose_[step_idx].x, target_pose_[step_idx].y,
+      target_pose_[step_idx].z;
+  } else {
+    PoseData pre_step_pose = target_pose_.at(step_idx - 1);
+    PoseData current_step_pose = target_pose_.at(step_idx);
+    PoseData next_step_pose = target_pose_.at(step_idx + 1);
+    Eigen::Vector3d p1(pre_step_pose.x, pre_step_pose.y, pre_step_pose.z);
+    Eigen::Vector3d p2(current_step_pose.x, current_step_pose.y, current_step_pose.z);
+    Eigen::Vector3d p3(next_step_pose.x, next_step_pose.y, next_step_pose.z);
 
-      msg->targets.x = virtual_goal_point.x();
-      msg->targets.y = virtual_goal_point.y();
-      msg->targets.z = virtual_goal_point.z();
-      msg->targets.roll = target_pose_.at(step_idx).roll;
-      msg->targets.yaw = target_pose_.at(step_idx).yaw;
+    localization_msgs::msg::Pose current_pose = odom_copy->pose;
 
-      msg->has_master = true;
-      msg->master.x = odom_copy->pose.position.x;
-      msg->master.y = odom_copy->pose.position.y;
-      msg->master.roll = odom_copy->pose.orientation.x;
-      msg->master.yaw = odom_copy->pose.orientation.z;
-
-      msg->has_slave = true;
-      msg->slave.x = odom_copy->twist.linear.x;
-      msg->slave.y = odom_copy->twist.linear.y;
-      msg->slave.roll = odom_copy->twist.angular.x;
-      msg->slave.yaw = odom_copy->twist.angular.z;
-
-      if (target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
-        msg->master.z = odom_copy->pose.position.z_depth;
-        msg->slave.z = odom_copy->twist.linear.z_depth;
-      } else {
-        msg->master.z = odom_copy->pose.position.z_altitude;
-        msg->slave.z = odom_copy->twist.linear.z_altitude;
-      }
-      pub_->publish(std::move(msg));
+    Eigen::Vector3d p0;
+    if (current_step_pose.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
+      p0 << current_pose.position.x, current_pose.position.y, current_pose.position.z_depth;
+    } else if (current_step_pose.z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_ALTITUDE) {
+      p0 << current_pose.position.x, current_pose.position.y, current_pose.position.z_altitude;
+    } else {
+      RCLCPP_FATAL(this->get_logger(), "z mode (%d) is failer.", current_step_pose.z_mode);
+      rclcpp::shutdown();
     }
+
+    Eigen::Vector3d v02 = p2 - p0;
+    Eigen::Vector3d v12 = p2 - p1;
+    Eigen::Vector3d v23 = p3 - p2;
+
+    if (v02.dot(v23) <= 0 || v12.norm() == 0) {
+      virtual_goal_point = p2;
+    } else {
+      v02 = v02 * v12.norm() / v02.norm();
+      Eigen::Vector3d proj_v02_v23 = v02 * v02.dot(v23) / v02.norm();
+      virtual_goal_point = (p2 - v02) + (v02 + proj_v02_v23) * look_ahead_scale;
+    }
+  }
+
+  // 仮想目標点のPublish
+  {
+    auto msg = std::make_unique<planner_msgs::msg::WrenchPlan>();
+
+    msg->header.stamp = this->get_clock()->now();
+    msg->z_mode = target_pose_.at(step_idx).z_mode;
+
+    msg->targets.x = virtual_goal_point.x();
+    msg->targets.y = virtual_goal_point.y();
+    msg->targets.z = virtual_goal_point.z();
+    msg->targets.roll = target_pose_.at(step_idx).roll;
+    msg->targets.yaw = target_pose_.at(step_idx).yaw;
+
+    msg->has_master = true;
+    msg->master.x = odom_copy->pose.position.x;
+    msg->master.y = odom_copy->pose.position.y;
+    msg->master.roll = odom_copy->pose.orientation.x;
+    msg->master.yaw = odom_copy->pose.orientation.z;
+
+    msg->has_slave = true;
+    msg->slave.x = odom_copy->twist.linear.x;
+    msg->slave.y = odom_copy->twist.linear.y;
+    msg->slave.roll = odom_copy->twist.angular.x;
+    msg->slave.yaw = odom_copy->twist.angular.z;
+
+    if (target_pose_.at(step_idx).z_mode == planner_msgs::msg::WrenchPlan::Z_MODE_DEPTH) {
+      msg->master.z = odom_copy->pose.position.z_depth;
+      msg->slave.z = odom_copy->twist.linear.z_depth;
+    } else {
+      msg->master.z = odom_copy->pose.position.z_altitude;
+      msg->slave.z = odom_copy->twist.linear.z_altitude;
+    }
+    pub_->publish(std::move(msg));
   }
 
   // Feedbackの送信

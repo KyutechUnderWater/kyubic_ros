@@ -27,6 +27,10 @@
 
   <!-- bluerov_bt.launch.pyがbuoy_detectorの検出ノードを起動するため -->
   <exec_depend>buoy_detector</exec_depend>
+  <exec_depend>projection_dynamic_look_ahead_planner</exec_depend>
+  <exec_depend>path_planner</exec_depend>
+  <exec_depend>wrench_planner</exec_depend>
+  <exec_depend>rclcpp_components</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

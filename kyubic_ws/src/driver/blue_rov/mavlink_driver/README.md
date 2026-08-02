@@ -72,7 +72,7 @@ launchファイルは相対名`imu`と`depth`だけを共通Topicへremapする�
 
 `robot_force`は`force.x/y/z`をforward/lateral/heave、`torque.x/z`をroll/yawへ対応付ける。各値は`axis.<name>.limit`で正規化し、`axis.<name>.invert`を反映してPWMへ変換。デフォルトの軸channelはroll=2、heave=3、yaw=4、forward=5、lateral=6。
 
-`require_control_heartbeat=true`では、`heartbeat`と`robot_force`が各timeout内にあり、かつvehicleがarmedの場合だけ有効なRC overrideを送信。それ以外では中立またはrelease値を送信する。
+`require_control_heartbeat=true`では、`heartbeat`と`robot_force`が各timeout内にあり、かつvehicleがarmedの場合だけ有効なRC overrideを送信。それ以外ではスラスター軸を`RC_RELEASE`(65535)にしてArduSub側の中立出力に任せ、推力指令を送らない。
 
 ## 設定
 

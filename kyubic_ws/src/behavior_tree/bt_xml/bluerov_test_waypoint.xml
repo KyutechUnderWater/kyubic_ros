@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  bluerov_test_waypoint.xml
+  ウェイポイント1点移動のテスト用 BT。
+  BatteryCheck / CheckSensorsStatus / Configure / Emergency をすべて省略し、
+  初期化(ZOH + ResetLocalization) → WaypointAction だけを実行する。
+
+  使用CSVを変えたいときは csv_file_path を書き換えること。
+  例: assets/iwakuni/transit_shallow.csv
+
+  起動方法:
+    bluerov_bt.launch.py の bt_xml_path がこのファイルを指すよう設定済み。
+    通常の起動手順と同じ:
+      ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py
+-->
+<root BTCPP_format="4"
+  main_tree_to_execute="MainTree">
+
+  <BehaviorTree ID="MainTree">
+    <Sequence name="TestSequence">
+
+      <!-- ZOH configure (初回起動時のみ必要。失敗してもスキップして続行) -->
+      <Fallback name="ConfigureZOHOrSkip">
+        <LifecycleManager name="ConfigureZOH"
+          node_name="planner/wrench_planner/zoh_wrench_planner_component"
+          transition="configure"
+          timeout_sec="3" />
+        <Talker name="ConfigureZOHSkippedTalker"
+          message="ZOH configure skipped (already configured)"
+          topic_name="/talker" />
+      </Fallback>
+
+      <!-- ZOH deactivate (前回の状態をリセット。未 activate 時は失敗するのでスキップ) -->
+      <Fallback name="DeactivateZOHOrSkip">
+        <LifecycleManager name="DeactivateZOH"
+          node_name="planner/wrench_planner/zoh_wrench_planner_component"
+          transition="deactivate"
+          timeout_sec="3" />
+        <Talker name="DeactivateZOHSkippedTalker"
+          message="ZOH deactivate skipped (ZOH not active)"
+          topic_name="/talker" />
+      </Fallback>
+
+      <!-- ローカライゼーションリセット (現在位置を原点に) -->
+      <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
+
+      <!-- PID積分項などのリセット -->
+      <PublishWrenchPlanReset
+        topic_name="/planner/wrench_planner/goal_current_odom"
+        reset_mask="31" />
+
+      <!-- ZOH activate (推力出力を有効化) -->
+      <LifecycleManager name="ActivateZOH"
+        node_name="planner/wrench_planner/zoh_wrench_planner_component"
+        transition="activate"
+        timeout_sec="3" />
+
+      <Talker name="StartTalker"
+        message="Test: moving to waypoint..."
+        topic_name="/talker" />
+
+      <!-- ウェイポイントへ移動 (CSVを変更して使い回す) -->
+      <WaypointAction
+        action_name="planner/pdla_planner/pdla_plan"
+        csv_file_path="assets/iwakuni/initial_dive_505.csv" />
+
+      <Talker name="DoneTalker"
+        message="Test: waypoint reached!"
+        topic_name="/talker" />
+
+    </Sequence>
+  </BehaviorTree>
+
+</root>

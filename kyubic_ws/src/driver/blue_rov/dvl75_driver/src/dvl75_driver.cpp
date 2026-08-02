@@ -332,7 +332,9 @@ void Dvl75Driver::publish_dvpdl(
     message.status.id = locked_beam_count == 4U ? common_msgs::msg::Status::NORMAL
                                                 : common_msgs::msg::Status::WARNING;
   } else {
-    message.status.id = common_msgs::msg::Status::ERROR;
+    // 計測品質不足でも DVPDL は届いている。ERROR ではなく WARNING とし、
+    // 下流で精度低下付きの推定継続(degraded mode)を可能にする。
+    message.status.id = common_msgs::msg::Status::WARNING;
   }
   report_tracking_status(message.status.id, locked_beam_count, dvpdl.confidence);
   dvl_publisher_->publish(message);

@@ -11,11 +11,22 @@
     require_control_heartbeat: true
     set_armed_timeout_s: 3.0
 
-    # Begin bench tests with this conservative range.  Calibrate signs and
-    # ranges while the vehicle is secured before operating in water.
-    pwm_min: 100
-    pwm_neutral: 500
-    pwm_max: 700
+    # MAVLink RC override PWM (µs). Must match ArduSub neutral (~1500).
+    # robot_force の物理量(N / N·m)は axis.<name>.limit でスケールし、
+    # ここは RC チャンネルの中立・最大偏位のみを定義する。
+    #
+    # 2026/08/03: pwm_min/max を1300/1700(中立±200µs)から1100/1900(±400µs、
+    # T200/ArduSubの標準フルレンジ)へ拡大。axis.*.limit の推力値(forward
+    # 47.2N, reverse 36.7N等)はT200公式性能データのフルレンジ(1100/1900)
+    # 側の値を基に算出されているため、PWMを±200µsしか振っていなかった
+    # 従来設定では、force/torqueがaxis.limitに達しても実際のPWM偏位は
+    # 1700止まりで、T200が本来出せるはずの推力に到達していなかった
+    # (T200の推力カーブは中立付近で非線形で、±200µsではフルレンジの
+    # 推力の一部しか出ない)。ArduSub側のRC_MIN/RC_MAX設定と一致している
+    # ことを実機で確認し、機体を拘束した状態でPWM/推力を確認すること。
+    pwm_min: 1100
+    pwm_neutral: 1500
+    pwm_max: 1900
     depth_scale: 1.0
 
     # roll/yawはトルク軸(N・m)。推力換算には重心-スラスター間の腕の長さが
@@ -35,6 +46,9 @@
     axis.heave.limit: 73.4
     axis.heave.invert: true
     axis.yaw.channel: 4
+    # limit は robot_force の最大トルク(N·m)。PWM偏位は pwm_min/max と limit で決まる。
+    # 回転の最大RC偏位を推力軸より小さくしたい場合は limit を下げる(実効 ~1/4 なら
+    # forward.limit の約1/10程度が目安。未検証のためベンチで調整すること)。
     axis.yaw.limit: 10.0
     axis.yaw.invert: false
     # forward/lateral: 水平ベクター4基、45°取付でcos45°=0.7071の効率。

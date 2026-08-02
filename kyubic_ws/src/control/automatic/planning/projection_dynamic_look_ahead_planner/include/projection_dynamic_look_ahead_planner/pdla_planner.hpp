@@ -10,6 +10,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <rclcpp_action/server_goal_handle.hpp>
+#include <std_srvs/srv/trigger.hpp>
 #include <timer/timeout.hpp>
 
 #include "planner_msgs/action/pdla.hpp"
@@ -40,6 +41,7 @@ private:
 
   rclcpp::Publisher<planner_msgs::msg::WrenchPlan>::SharedPtr pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_;
+  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr abort_active_goal_srv_;
   rclcpp_action::Server<planner_msgs::action::PDLA>::SharedPtr action_server_;
 
   rclcpp::TimerBase::SharedPtr timer_;
@@ -64,6 +66,12 @@ private:
   void _print_waypoint(std::string label, size_t step_idx);
 
   void timerCallback();
+
+  void abort_active_goal_callback(
+    const std_srvs::srv::Trigger::Request::SharedPtr request,
+    const std_srvs::srv::Trigger::Response::SharedPtr response);
+
+  void clear_active_goal_state();
 
   bool fine_flag_ = false;
   std::vector<PoseData> target_pose_;

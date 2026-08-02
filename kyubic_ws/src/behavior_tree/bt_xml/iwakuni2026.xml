@@ -27,15 +27,17 @@
 
       前提トピック / ノード:
         - /localization/odom (localization)
-        - pinger_direction (sbl_control / sbl.launch.py、音響追跡時)
+        - pinger_direction / pinger_position (別ラズパイ sbl_control、音響追跡時)
         - /buoy/relative_position (buoy_detector、ビジョン時)
         - planner/pdla_planner/pdla_plan (WaypointAction)
         - planner/wrench_planner (ZOH、LifecycleManager で activate)
 
       全体の流れ:
         1. 初期化(localization リセット・ZOH 起動)
+        1.5. 初回移動直前に IMU ヨー/姿勢ゼロ点リセット(現在の向き=yaw 0)
         2. 初期位置 (5,0,5) へ一気に移動(initial_dive_505.csv、z_mode=0 depth)
-        3. ハイドロフォン追跡(0.5m ずつ接近)
+        [3] ハイドロフォン追跡(0.5m ずつ接近)
+        pinger_position が有効なら絶対位置へ、未受信時は pinger_direction で相対ステップ。
         4. 最終潜航(水底からの高度。pinger_final_descend のみ z_mode=altitude)
         5. FindPingerAction(視覚捕捉)
         6. ビジョン突撃→復帰のあと [3] ハイドロ追跡へ戻る(ピンガー上から検出でサイクル終了)
@@ -43,21 +45,41 @@
         8. 復路(return_step1 / return_final)
     -->
     <Sequence name="AutoSequence">
-      <Delay delay_msec="60000">
+      <Delay delay_msec="10">
         <Talker name="WaitTalker"
-          message="Waiting 60 seconds before initialization..."
+          message="Waiting before mission stack reset..."
           topic_name="/talker" />
       </Delay>
-      <!-- [1. 初期化] -->
-      <!-- localization 原点リセット + wrench_planner(ZOH) を activate して制御を有効化 -->
+      <!-- [1. 初期化] 前回ミッションの残状態をクリアしてから制御を有効化 -->
+      <Talker name="AutomatickTalker"
+        message="Mission stack reset start"
+        topic_name="/talker" />
+      <Sequence name="MissionStackReset">
+        <AbortPdlaGoal
+          service_name="/planner/pdla_planner/abort_active_goal"
+          timeout_sec="2.0" />
+        <!-- ZOH が inactive(未 activate) のとき deactivate は invalid。失敗時はスキップして続行 -->
+        <Fallback name="DeactivateZOHForResetOrSkip">
+          <LifecycleManager name="DeactivateZOHForReset"
+            node_name="planner/wrench_planner/zoh_wrench_planner_component"
+            transition="deactivate"
+            timeout_sec="3" />
+          <Talker name="DeactivateZOHSkippedTalker"
+            message="DeactivateZOH skipped (ZOH not active)"
+            topic_name="/talker" />
+        </Fallback>
+        <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
+        <PublishWrenchPlanReset
+          topic_name="/planner/wrench_planner/goal_current_odom"
+          reset_mask="31" />
+        <LifecycleManager name="ActivateZOHNode"
+          node_name="planner/wrench_planner/zoh_wrench_planner_component"
+          transition="activate"
+          timeout_sec="3" />
+      </Sequence>
       <Talker name="AutomatickTalker"
         message="Automatick Mode Start"
         topic_name="/talker" />
-      <ResetLocalization service_name="/localization/reset" timeout_sec="2.0" />
-      <LifecycleManager name="ActivateZOHNode"
-        node_name="planner/wrench_planner/wrench_planner_component"
-        transition="activate"
-        timeout_sec="1" />
 
       <!--
         [2-7] ミッション本体 (7分タイムアウト付き)
@@ -73,11 +95,24 @@
 
       <!-- [2] 初期位置 (5,0,5) へ一気に移動。z_mode=0 は depth(水面から水深5m) -->
       <!-- 座標は path_planner/assets/iwakuni/initial_dive_505.csv で微調整 -->
+      <!--
+        [1.5] 進行方向を向いた状態でヨー/姿勢のゼロ点を確定。
+        MissionStackReset の ResetLocalization でも IMU はリセットされるが、
+        その後の ZOH activate 等の待ち時間で機体の向きが変わる可能性があるため、
+        初回 WaypointAction の直前にもう一度 imu_transform の reset を呼ぶ。
+        リードスイッチ発火後〜ここまでの間に進行方向へ機体を向けておくこと。
+      -->
+      <Talker name="ResetImuHeadingTalker"
+        message="Reset IMU heading: current vehicle orientation = yaw 0"
+        topic_name="/talker" />
+      <CallTriggerService name="ResetImuTransform"
+        service_name="/localization/imu/reset"
+        timeout_sec="2.0" />
       <Talker name="AutomatickTalker"
         message="Initial Dive To 5,0,5 Start"
         topic_name="/talker" />
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-        csv_file_path="assets/iwakuni/initial_dive_505.csv" />
+        csv_file_path="assets/sample/handytest.csv" />
       <Talker name="AutomatickTalker"
         message="Initial Dive To 5,0,5 Successful"
         topic_name="/talker" />
@@ -94,19 +129,23 @@
       <!--
         [3] ハイドロフォン追跡ループ
         RetryUntilSuccessful(-1) + Fallback(PingerCloseOrStep):
-          第1子 CheckPingerPitch(50°): pitch が閾値以下 → 十分近い → SUCCESS でループ脱出
+          第1子 Fallback(PingerCloseEnough):
+            CheckPingerRange(1.0m) または CheckPingerPitch(50°) → 十分近い → SUCCESS でループ脱出
           第2子 PingerStepAndRetry: 0.5m 前進 → AlwaysFailure で親を再試行
-        WriteHydrophoneWaypointCSV は Z_MODE_DEPTH(水深基準)固定。
-        pinger_direction は bluerov_bt.launch.py の pinger_direction_topic で remap。
+        WritePingerWaypointCSV は Z_MODE_DEPTH(水深基準)固定。
+        pinger_direction / pinger_position は bluerov_bt.launch.py で remap。
       -->
       <Talker name="AutomatickTalker"
         message="Pinger Chase Start"
         topic_name="/talker" />
       <RetryUntilSuccessful num_attempts="-1">
         <Fallback name="PingerCloseOrStep">
-          <CheckPingerPitch pitch_threshold_deg="50.0" />
+          <Fallback name="PingerCloseEnough">
+            <CheckPingerRange range_threshold_m="1.0" />
+            <CheckPingerPitch pitch_threshold_deg="50.0" />
+          </Fallback>
           <Sequence name="PingerStepAndRetry">
-            <WriteHydrophoneWaypointCSV
+            <WritePingerWaypointCSV
               odom_topic_name="odom"
               step_distance_m="0.5"
               csv_file_path="assets/iwakuni/hydrophone_step.csv" />
@@ -326,13 +365,13 @@
         <SetBlackboard value="B"
           output_key="selected_course" />
         <LifecycleManager name="ConfigureZOHNode"
-          node_name="planner/wrench_planner/wrench_planner_component"
+          node_name="planner/wrench_planner/zoh_wrench_planner_component"
           transition="configure"
-          timeout_sec="1" />
+          timeout_sec="3" />
         <LifecycleManager name="ConfigureEmergencyNode"
           node_name="emergencyNode"
           transition="configure"
-          timeout_sec="1" />
+          timeout_sec="3" />
       </Sequence>
     </Delay>
   </BehaviorTree>
@@ -347,17 +386,22 @@
   -->
   <BehaviorTree ID="Emergency">
     <Sequence name="EmergencySequence">
-      <LifecycleManager name="DeactivateZOHNode"
-        node_name="planner/wrench_planner/wrench_planner_component"
-        transition="deactivate"
-        timeout_sec="1" />
+      <Fallback name="DeactivateZOHOrSkip">
+        <LifecycleManager name="DeactivateZOHNode"
+          node_name="planner/wrench_planner/zoh_wrench_planner_component"
+          transition="deactivate"
+          timeout_sec="3" />
+        <Talker name="EmergencyDeactivateZOHSkippedTalker"
+          message="Emergency: DeactivateZOH skipped (ZOH not active)"
+          topic_name="/talker" />
+      </Fallback>
       <Talker name="EmergencyTalker"
         message="Emergency Mode Start"
         topic_name="/talker" />
       <LifecycleManager name="ActivateEmergencyNode"
         node_name="emergencyNode"
         transition="activate"
-        timeout_sec="1" />
+        timeout_sec="3" />
       <AlwaysRunning name="EmergencyRunning" />
     </Sequence>
   </BehaviorTree>
@@ -411,6 +455,20 @@
       <input_port name="transition" />
       <input_port name="timeout_sec" />
     </Action>
+    <Action ID="AbortPdlaGoal" editable="true">
+      <input_port name="service_name"
+        default="/planner/pdla_planner/abort_active_goal" />
+      <input_port name="timeout_sec" default="2.0" />
+    </Action>
+    <Action ID="CallTriggerService" editable="true">
+      <input_port name="service_name" />
+      <input_port name="timeout_sec" default="2.0" />
+    </Action>
+    <Action ID="PublishWrenchPlanReset" editable="true">
+      <input_port name="topic_name"
+        default="/planner/wrench_planner/goal_current_odom" />
+      <input_port name="reset_mask" default="31" />
+    </Action>
     <Action ID="ResetLocalization" editable="true">
       <input_port name="service_name" default="/localization/reset" />
       <input_port name="timeout_sec" default="1.0" />
@@ -430,6 +488,14 @@
       <input_port name="z_mode" default="depth" />
       <input_port name="csv_file_path" />
     </Action>
+    <Action ID="WritePingerWaypointCSV" editable="true">
+      <input_port name="pinger_position_topic" default="pinger_position" />
+      <input_port name="pinger_direction_topic" default="pinger_direction" />
+      <input_port name="odom_topic_name" default="odom" />
+      <input_port name="step_distance_m" default="0.5" />
+      <input_port name="score_threshold" default="1000000.0" />
+      <input_port name="csv_file_path" />
+    </Action>
     <Action ID="WriteHydrophoneWaypointCSV" editable="true">
       <input_port name="pinger_direction_topic" default="pinger_direction" />
       <input_port name="odom_topic_name" default="odom" />
@@ -439,6 +505,12 @@
     <Condition ID="CheckBuoyInFrame" editable="true">
       <input_port name="confidence_threshold" default="0.5" />
       <input_port name="stale_timeout_sec" default="1.0" />
+    </Condition>
+    <Condition ID="CheckPingerRange" editable="true">
+      <input_port name="pinger_position_topic" default="pinger_position" />
+      <input_port name="odom_topic_name" default="odom" />
+      <input_port name="range_threshold_m" default="1.0" />
+      <input_port name="score_threshold" default="1000000.0" />
     </Condition>
     <Condition ID="CheckPingerPitch" editable="true">
       <input_port name="pinger_direction_topic" default="pinger_direction" />

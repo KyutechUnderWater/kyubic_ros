@@ -13,6 +13,9 @@
 
 #include <ament_index_cpp/get_package_prefix.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <chrono>
+#include <lifecycle_msgs/msg/transition.hpp>
+#include <lifecycle_msgs/srv/change_state.hpp>
 #include <rclcpp/create_publisher.hpp>
 #include <rclcpp/publisher.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -28,6 +31,9 @@
 #include "behavior_tree/lifecycle_manager.hpp"
 #include "behavior_tree/qr_action.hpp"
 #include "behavior_tree/reset_localization.hpp"
+#include "behavior_tree/abort_pdla_goal.hpp"
+#include "behavior_tree/call_trigger_service.hpp"
+#include "behavior_tree/publish_wrench_plan_reset.hpp"
 #include "behavior_tree/talker.hpp"
 #include "behavior_tree/update_mode.hpp"
 #include "behavior_tree/waypoint_action.hpp"
@@ -37,11 +43,50 @@
 #include "bluerov_control_bt_nodes/check_buoy_in_frame.hpp"
 #include "bluerov_control_bt_nodes/check_buoy_position.hpp"
 #include "bluerov_control_bt_nodes/check_pinger_pitch.hpp"
+#include "bluerov_control_bt_nodes/check_pinger_range.hpp"
 #include "bluerov_control_bt_nodes/write_axis_override_waypoint_csv.hpp"
 #include "bluerov_control_bt_nodes/write_hydrophone_waypoint_csv.hpp"
+#include "bluerov_control_bt_nodes/write_pinger_waypoint_csv.hpp"
 #include "bluerov_control_bt_nodes/write_vision_waypoint_csv.hpp"
 
 using namespace behavior_tree;
+
+namespace
+{
+
+bool requestLifecycleTransition(
+  rclcpp::Node & node, const std::string & lifecycle_node_name, uint8_t transition_id,
+  std::chrono::milliseconds timeout = std::chrono::milliseconds(500))
+{
+  auto client = node.create_client<lifecycle_msgs::srv::ChangeState>(
+    "/" + lifecycle_node_name + "/change_state");
+  if (!client->wait_for_service(timeout)) {
+    return false;
+  }
+  auto request = std::make_shared<lifecycle_msgs::srv::ChangeState::Request>();
+  request->transition.id = transition_id;
+  auto future = client->async_send_request(request);
+  if (future.wait_for(timeout) != std::future_status::ready) {
+    return false;
+  }
+  return future.get()->success;
+}
+
+void deactivateManagedLifecycleNodesBestEffort(rclcpp::Node & node)
+{
+  using lifecycle_msgs::msg::Transition;
+  constexpr const char * k_zoh = "planner/wrench_planner/zoh_wrench_planner_component";
+  constexpr const char * k_emergency = "emergencyNode";
+
+  if (requestLifecycleTransition(node, k_emergency, Transition::TRANSITION_DEACTIVATE)) {
+    RCLCPP_INFO(node.get_logger(), "Deactivated %s on BT shutdown", k_emergency);
+  }
+  if (requestLifecycleTransition(node, k_zoh, Transition::TRANSITION_DEACTIVATE)) {
+    RCLCPP_INFO(node.get_logger(), "Deactivated %s on BT shutdown", k_zoh);
+  }
+}
+
+}  // namespace
 
 int main(int argc, char ** argv)
 {
@@ -70,12 +115,18 @@ int main(int argc, char ** argv)
   factory.registerNodeType<WaypointAction>("WaypointAction", logger_pub, node);
   factory.registerNodeType<QrAction>("QrAction", logger_pub, node);
   factory.registerNodeType<ResetLocalization>("ResetLocalization", logger_pub, node);
+  factory.registerNodeType<AbortPdlaGoal>("AbortPdlaGoal", logger_pub, node);
+  factory.registerNodeType<CallTriggerService>("CallTriggerService", logger_pub, node);
+  factory.registerNodeType<PublishWrenchPlanReset>("PublishWrenchPlanReset", node);
   factory.registerNodeType<FindPingerAction>("FindPingerAction", logger_pub, node);
   factory.registerNodeType<Talker>("Talker", node);
   factory.registerNodeType<bluerov_control_bt_nodes::CheckBuoyDetected>("CheckBuoyDetected", node);
   factory.registerNodeType<bluerov_control_bt_nodes::CheckPingerPitch>("CheckPingerPitch", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::CheckPingerRange>("CheckPingerRange", node);
   factory.registerNodeType<bluerov_control_bt_nodes::WriteHydrophoneWaypointCSV>(
     "WriteHydrophoneWaypointCSV", node);
+  factory.registerNodeType<bluerov_control_bt_nodes::WritePingerWaypointCSV>(
+    "WritePingerWaypointCSV", node);
   factory.registerNodeType<bluerov_control_bt_nodes::WriteAxisOverrideWaypointCSV>(
     "WriteAxisOverrideWaypointCSV", node);
   factory.registerNodeType<bluerov_control_bt_nodes::CheckBuoyInFrame>("CheckBuoyInFrame", node);
@@ -158,6 +209,7 @@ int main(int argc, char ** argv)
         node->get_logger(), "Behavior Tree finished with status: %s. Shutting down...",
         BT::toStr(status).c_str());
 
+      deactivateManagedLifecycleNodesBestEffort(*node);
       timer->cancel();
       rclcpp::shutdown();
     }

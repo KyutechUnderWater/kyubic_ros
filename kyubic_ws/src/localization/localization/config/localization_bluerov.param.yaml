@@ -1,0 +1,31 @@
+# BlueROV 向け localization パラメータ。
+#
+# Kyubic 本家の localization.param.yaml との主な差分:
+#   imu_transform_component.apply_kyubic_axis_remap: false
+#     mavlink_driver は ArduSub 標準 FRD (X前/Y右/Z下) で IMU を publish するため、
+#     Kyubic G366 向けの 90° 軸入れ替えをかけると DVL 速度のワールド座標変換が
+#     ずれ、odom の x/y が入れ替わったように見え横方向に暴走する。
+#
+# 起動例:
+#   ros2 launch localization localization_components.launch.py \
+#     param_file:=localization_bluerov.param.yaml
+
+/localization/imu/imu_transform_component:
+  ros__parameters:
+    apply_kyubic_axis_remap: false
+
+/localization/dvl/dvl_odometry_component:
+  ros__parameters:
+    offset_x: 0.4375
+    offset_y: 0.0
+    offset_z: 0.0
+    # DVL velocity_valid==false でも直前速度で航続(degraded)。精度は保証しない。
+    degraded_coast_on_invalid_dvl: true
+
+/localization/localization_component:
+  ros__parameters:
+    coord_system_id: 3
+    depth: true # If true, depth enable
+    imu: true # If true, imu enable
+    dvl: true # If true, dvl enable. Required imu is true.
+    gnss: false # If true, calculate global possition

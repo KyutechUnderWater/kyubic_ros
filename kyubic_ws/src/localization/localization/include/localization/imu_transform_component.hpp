@@ -34,6 +34,8 @@ private:
   double roll = 0.0;
   double pitch = 0.0;
   double yaw = 0.0;
+  /// Kyubic G366 向けの roll/pitch・gyro 軸入れ替え。BlueROV(mavlink FRD)は false。
+  bool apply_kyubic_axis_remap_ = true;
 
   /**
    * @brief Update imu data

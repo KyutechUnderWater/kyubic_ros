@@ -18,7 +18,12 @@ WrenchPlanを出し続ける移動ノード(旧GoToDepth/GoToBlackboardTarget等
 
 前提: driver_launcher の blue_rov_driver.launch.py と
 localization の localization_components.launch.py が別途起動済みであること。
-音響(SBL)は bluerov_bt では起動しない。別途
+
+PDLA (WaypointAction の Action サーバ) は blue_rov_planner_launcher.launch.py で起動。
+ZOH + WrenchPlanner は bluerov_wrench_planner_container (mavlink 向け) のみ。
+Kyubic 本家 planner_launcher.launch.py は Include しない (ZOH/Wrench が重複し、
+robot_force が actuator_rp2040 向けになるため)。
+bt_executor は reed_switch_driver が publish する
 ``ros2 launch sbl_control sbl.launch.py`` で PingerDirection を配信すること
 (pinger_direction_topic launch引数でトピック名を合わせる)。
 bt_executor は reed_switch_driver が publish する
@@ -31,8 +36,10 @@ bt_executor は reed_switch_driver が publish する
 launch引数:
   - main_tree(既定""): 個別テスト用。iwakuni2026.xml内の特定のBehaviorTree ID
     を直接rootとして起動する。空なら通常通りMainTreeを実行する
-  - pinger_direction_topic(既定"/pinger_direction"): sbl_control が発行する
+  - pinger_direction_topic(既定"/pinger_direction"): 別ラズパイが発行する
     planner_msgs/PingerDirection のトピック名
+  - pinger_position_topic(既定"/pinger_position"): 別ラズパイが発行する
+    planner_msgs/PingerPosition のトピック名
 """
 
 from launch import LaunchDescription
@@ -47,7 +54,9 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description() -> LaunchDescription:
     log_level = LaunchConfiguration("log_level")
     main_tree = LaunchConfiguration("main_tree")
+    bt_xml_file = LaunchConfiguration("bt_xml_file")
     pinger_direction_topic = LaunchConfiguration("pinger_direction_topic")
+    pinger_position_topic = LaunchConfiguration("pinger_position_topic")
 
     wrench_planner_config = PathJoinSubstitution(
         [
@@ -62,13 +71,26 @@ def generate_launch_description() -> LaunchDescription:
     emergency_config = PathJoinSubstitution(
         [FindPackageShare("emergency"), "config", "emergency.param.yaml"]
     )
-    # iwakuni2026.xmlはbluerov_control_bt_nodesではなくbehavior_treeパッケージ側にある
-    # (KyubicのbtExecutorNodeが共通で実行するBT XML置き場のため)。
+    # XMLファイルはbehavior_treeパッケージ側にある(bt_xml_file launch引数で切替)。
     bt_xml_path = PathJoinSubstitution(
-        [FindPackageShare("behavior_tree"), "bt_xml", "iwakuni2026.xml"]
+        [FindPackageShare("behavior_tree"), "bt_xml", bt_xml_file]
+    )
+    blue_rov_planner_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("bluerov_control_bt_nodes"),
+                    "launch",
+                    "blue_rov_planner_launcher.launch.py",
+                ]
+            )
+        ),
+        launch_arguments={
+            "log_level": log_level,
+        }.items(),
     )
 
-    # zero_order_hold + wrench_planner (Kyubicのzoh_wrench_planner.launch.pyと同じ構成)
+    # zero_order_hold + wrench_planner (BlueROV: robot_force → mavlink_driver)
     wrench_planner_container = ComposableNodeContainer(
         name="bluerov_wrench_planner_container",
         namespace="planner/wrench_planner",
@@ -117,11 +139,11 @@ def generate_launch_description() -> LaunchDescription:
     )
 
     # BT Manager(iwakuni2026.xmlを実行。behavior_treeパッケージのソースは変更なし)
-    # 新規BT葉ノードは相対トピック名(odom, zoh_wrench_plan, pinger_direction, buoy_detection)
-    # しか知らないため、btExecutorNode(namespace無し)側で実トピック名にremapする
+    # 新規BT葉ノードは相対トピック名(odom, zoh_wrench_plan, pinger_direction,
+    # pinger_position, buoy_detection)しか知らないため、btExecutorNode(namespace無し)側で
     # (Kyubic本家のbehavior_tree.launch.pyがimu/dvl/depth等をremapしているのと同じ流儀)。
-    # pinger_direction: sbl_control(sbl.launch.py)が発行。BT葉ノードは相対名
-    # pinger_direction を購読し、ここで実トピックへ remap する。
+    # pinger_direction / pinger_position: 別ラズパイ(sbl_control等)が発行。
+    # BT葉ノードは相対名を購読し、ここで実トピックへ remap する。
     bt_manager_node = Node(
         package="behavior_tree",
         executable="behavior_tree",
@@ -145,6 +167,7 @@ def generate_launch_description() -> LaunchDescription:
             # ("leak", "/driver/leak"),  # 後述の leak 追加後
             ("zoh_wrench_plan", "/planner/wrench_planner/zoh_wrench_plan"),
             ("pinger_direction", pinger_direction_topic),
+            ("pinger_position", pinger_position_topic),
             ("buoy_detection", "/perception/buoy_detection"),
         ],
         arguments=["--ros-args", "--log-level", log_level],
@@ -197,12 +220,22 @@ def generate_launch_description() -> LaunchDescription:
                 "起動する。空なら通常のMainTreeを実行",
             ),
             DeclareLaunchArgument(
+                "bt_xml_file",
+                default_value="iwakuni2026.xml",
+                description="behavior_tree/bt_xml/ 内のBT XMLファイル名",
+            ),
+            DeclareLaunchArgument(
                 "pinger_direction_topic",
                 default_value="/pinger_direction",
-                description="sbl_control(sbl.launch.py)が発行する planner_msgs/PingerDirection "
-                "トピック名",
+                description="別ラズパイが発行する planner_msgs/PingerDirection トピック名",
+            ),
+            DeclareLaunchArgument(
+                "pinger_position_topic",
+                default_value="/pinger_position",
+                description="別ラズパイが発行する planner_msgs/PingerPosition トピック名",
             ),
             wrench_planner_container,
+            blue_rov_planner_launch,
             emergency_node,
             bt_manager_node,
             buoy_detector_launch,
