@@ -2,7 +2,7 @@
 
 # Set user and group
 groupmod -g "$GROUP_ID" ros
-usermod -u "$USER_ID" -g "$GROUP_ID" -G sudo ros
+usermod -u "$USER_ID" -g "$GROUP_ID" -G sudo,dialout ros
 
 # Set password
 echo "ros:$1" | chpasswd

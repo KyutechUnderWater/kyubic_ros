@@ -7,7 +7,7 @@ set -euo pipefail
 
 VENV_SITE="${HOME}/kyubic_ros/.venv/lib/python3.12/site-packages"
 USER_SITE="${HOME}/.local/lib/python3.12/site-packages"
-PACKAGES=(pymavlink fastcrc lxml)
+PACKAGES=(pymavlink fastcrc lxml pywt scipy serial)
 
 if [[ ! -d "${VENV_SITE}" ]]; then
 	echo "sync_ros_python_deps: venv site-packages not found at ${VENV_SITE}" >&2

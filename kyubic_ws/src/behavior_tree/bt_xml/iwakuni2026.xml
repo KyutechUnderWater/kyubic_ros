@@ -3,26 +3,53 @@
   main_tree_to_execute="MainTree">
   <BehaviorTree ID="BlueROV2Auto">
     <!--
-      BlueROV2Auto: iwakuni2026大会用の自動ミッション本体(Autoモード時にMainTreeから呼ばれる)。
-      設計方針: 独自にWrenchPlanを出し続ける移動ノード(旧GoToDepth/GoToBlackboardTarget)は
-      使わず、「現在odom基準の1点CSVをWrite*WaypointCSV系ノードで書き、既存のWaypointAction
-      (PDLA、実績のある経路追従)へ処理を任せる」方式に統一している(詳細は
-      bluerov_control_bt_nodes/README.md §10参照)。
+      ====================================================================
+      BlueROV2Auto — iwakuni2026 大会用 自動ミッション本体
+      ====================================================================
+      呼び出し元: MainTree → SubTree(BlueROV2Auto)
+
+      設計方針:
+        - 移動は全て「1点CSVを書く → WaypointAction(PDLA)」に統一
+        - 独自に WrenchPlan を出し続けるノード(GoToDepth 等)は使わない
+        - 詳細: bluerov_control_bt_nodes/README.md §10
+
+      座標の読み方 (WriteAxisOverrideWaypointCSV / CSV の z 列):
+        z_mode="depth"(既定)     → z_depth 基準。正=下。水面からの水深[m]
+        z_mode="altitude"        → z_altitude 基準。正=上。水底からの高度[m]
+        静的 CSV(path_planner/assets/iwakuni/*.csv)は z_mode=0(depth)で人が微調整
+        XML内の override は既定 depth。pinger_final_descend のみ altitude
+
+      よく使う BT パターン:
+        Fallback       → 第1子が SUCCESS なら終了、FAILURE なら第2子へ
+        Timeout        → 子が制限時間内に終わらないと FAILURE
+        RetryUntilSuccessful + AlwaysFailure → 子を繰り返し再試行
+        Inverter       → 子の SUCCESS/FAILURE を反転
+
+      前提トピック / ノード:
+        - /localization/odom (localization)
+        - pinger_direction (sbl_control / sbl.launch.py、音響追跡時)
+        - /buoy/relative_position (buoy_detector、ビジョン時)
+        - planner/pdla_planner/pdla_plan (WaypointAction)
+        - planner/wrench_planner (ZOH、LifecycleManager で activate)
 
       全体の流れ:
-        1. 初期化(localizationリセット・ZOH起動)
-        2. 静的waypoint2本で浅場→深場へ移動(transit_shallow.csv / descend_deep.csv、
-           実測座標は別途要記入)
-        3. ハイドロフォン追跡: pinger_direction.pitchが閾値以下になるまで0.5mずつ接近
-        4. 最終潜航: 水底からの高度2.5mまで潜る
-        5. FindPingerAction: 画像処理でピンガー(ブイ)を視覚的に捕捉
-        6. Vision Approach: ブイを画面中心に寄せながら接近し、十分近づいたら最終突撃
-        7. 接触後10秒静止(ZOHが自動で位置ホールド)
-        8. 解放判定: pitch/画面内判定が両方「離れた」とみなせるまで待つ
-        9. 復路(return_step1.csv/return_final.csv、実測座標は別途要記入)
+        1. 初期化(localization リセット・ZOH 起動)
+        2. 初期位置 (5,0,5) へ一気に移動(initial_dive_505.csv、z_mode=0 depth)
+        3. ハイドロフォン追跡(0.5m ずつ接近)
+        4. 最終潜航(水底からの高度。pinger_final_descend のみ z_mode=altitude)
+        5. FindPingerAction(視覚捕捉)
+        6. ビジョン突撃→復帰のあと [3] ハイドロ追跡へ戻る(ピンガー上から検出でサイクル終了)
+        7. (7分タイムアウト時は停止位置へ退避)
+        8. 復路(return_step1 / return_final)
     -->
     <Sequence name="AutoSequence">
-      <!-- 1. 初期化: localization原点リセット、ZOH(wrench_planner)起動 -->
+      <Delay delay_msec="60000">
+        <Talker name="WaitTalker"
+          message="Waiting 60 seconds before initialization..."
+          topic_name="/talker" />
+      </Delay>
+      <!-- [1. 初期化] -->
+      <!-- localization 原点リセット + wrench_planner(ZOH) を activate して制御を有効化 -->
       <Talker name="AutomatickTalker"
         message="Automatick Mode Start"
         topic_name="/talker" />
@@ -32,44 +59,54 @@
         transition="activate"
         timeout_sec="1" />
 
-      <!-- 2a. 静的waypoint: 浅場での横移動(transit_shallow.csv、要実測座標記入) -->
-      <Talker name="AutomatickTalker"
-        message="Waypoint Action Start"
-        topic_name="/talker" />
-      <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-        csv_file_path="assets/iwakuni/transit_shallow.csv" />
-      <Talker name="AutomatickTalker"
-        message="Waypoint Action Successful"
-        topic_name="/talker" />
+      <!--
+        [2-7] ミッション本体 (7分タイムアウト付き)
+        Fallback(MissionCoreOrSevenMinTimeout):
+          第1子: Timeout(420000ms = 7分) で包んだ MissionCore
+          第2子: SevenMinTimeoutTo11009 (時間切れ時の退避)
+        7分以内に MissionCore が完了しないと Timeout が FAILURE を返し、
+        Fallback が第2子(停止ウェイポイントへ移動)を実行する。
+      -->
+      <Fallback name="MissionCoreOrSevenMinTimeout">
+        <Timeout msec="420000">
+          <Sequence name="MissionCore">
 
-      <!-- 2b. 静的waypoint: 深場への潜航(descend_deep.csv、要実測座標記入) -->
+      <!-- [2] 初期位置 (5,0,5) へ一気に移動。z_mode=0 は depth(水面から水深5m) -->
+      <!-- 座標は path_planner/assets/iwakuni/initial_dive_505.csv で微調整 -->
       <Talker name="AutomatickTalker"
-        message="Descend Waypoint Start"
+        message="Initial Dive To 5,0,5 Start"
         topic_name="/talker" />
       <WaypointAction action_name="planner/pdla_planner/pdla_plan"
-        csv_file_path="assets/iwakuni/descend_deep.csv" />
+        csv_file_path="assets/iwakuni/initial_dive_505.csv" />
       <Talker name="AutomatickTalker"
-        message="Descend Waypoint Successful"
+        message="Initial Dive To 5,0,5 Successful"
         topic_name="/talker" />
 
       <!--
-        3. ハイドロフォン追跡ループ(PingerCloseOrStep): pinger_direction.pitchが
-        pitch_threshold_deg(50°)以下になるまで、CheckPingerPitchで判定しつつ、
-        WriteHydrophoneWaypointCSVがピンガー方向へ0.5mずつのCSVを書き、
-        WaypointActionに1歩ずつ進ませる(Fallback+AlwaysFailureで「近いなら終了、
-        まだなら1歩進んでリトライ」を表現している)。
+        [3-6] ピンガー探索サイクル
+        音響追跡(3)→潜航(4)→視覚(5,6)→復帰(6c)のあと、
+        pitch>70°(上から)なら停止してサイクル終了→復路(8)へ。
+        それ以外は AlwaysFailure で [3] ハイドロ追跡へ戻りピンガーを再探索。
+      -->
+      <RetryUntilSuccessful num_attempts="-1">
+        <Sequence name="PingerVisionCycle">
+
+      <!--
+        [3] ハイドロフォン追跡ループ
+        RetryUntilSuccessful(-1) + Fallback(PingerCloseOrStep):
+          第1子 CheckPingerPitch(50°): pitch が閾値以下 → 十分近い → SUCCESS でループ脱出
+          第2子 PingerStepAndRetry: 0.5m 前進 → AlwaysFailure で親を再試行
+        WriteHydrophoneWaypointCSV は Z_MODE_DEPTH(水深基準)固定。
+        pinger_direction は bluerov_bt.launch.py の pinger_direction_topic で remap。
       -->
       <Talker name="AutomatickTalker"
         message="Pinger Chase Start"
         topic_name="/talker" />
       <RetryUntilSuccessful num_attempts="-1">
         <Fallback name="PingerCloseOrStep">
-          <CheckPingerPitch
-            pinger_direction_topic="pinger_direction"
-            pitch_threshold_deg="50.0" />
+          <CheckPingerPitch pitch_threshold_deg="50.0" />
           <Sequence name="PingerStepAndRetry">
             <WriteHydrophoneWaypointCSV
-              pinger_direction_topic="pinger_direction"
               odom_topic_name="odom"
               step_distance_m="0.5"
               csv_file_path="assets/iwakuni/hydrophone_step.csv" />
@@ -85,16 +122,17 @@
         topic_name="/talker" />
 
       <!--
-        4. 最終潜航: 今のx/y/roll/yawは維持したまま、水底からの高度が2.5mになるまで
-        WriteAxisOverrideWaypointCSV(override_z + z_mode="altitude")で1点CSVを書き、
-        WaypointActionへ処理を任せる。
+        [4] 最終潜航
+        x/y/roll/yaw は現在値維持。z だけ override。
+        z_mode="altitude": 水底から override_z[m] の高度へ。
+        注意: override_z="1.0" (要実測調整)
       -->
       <Talker name="AutomatickTalker"
         message="Final Descend Start"
         topic_name="/talker" />
       <WriteAxisOverrideWaypointCSV
         odom_topic_name="odom"
-        override_z="2.5"
+        override_z="6.5"
         z_mode="altitude"
         csv_file_path="assets/iwakuni/pinger_final_descend.csv" />
       <WaypointAction
@@ -104,25 +142,38 @@
         message="Final Descend Successful, Handing off to Vision"
         topic_name="/talker" />
 
-      <!-- 5. 画像処理でピンガー(ブイ)を視覚的に捕捉するまで待つ -->
+      <!-- [5. 視覚捕捉] -->
+      <!-- FindPingerAction: 画像処理でピンガー(ブイ)を検出するまで待機 -->
       <FindPingerAction action_name="find_pinger" />
 
       <!--
-        6. Vision Approach(中心合わせ→突撃、Timeout{180000ms}で全体保護):
-        CenteringOrFinalApproach Fallbackを画像処理のtickごとに評価する:
-          - FinalApproach(ブイに十分近く、position_valid=trueで距離が取れている時のみ成立):
-            CheckBuoyPositionでブイの絶対座標を出し、WriteAxisOverrideWaypointCSVで
-            そこへ向かう1点CSVを書き、WaypointActionで最終突撃する(1回で完了)。
-          - CenteringStep(それ以外の間は毎回こちら): WriteVisionWaypointCSVが画面内の
-            ズレからyaw補正+前進量を計算した1点CSVを書き、WaypointActionで少し進める。
-            AlwaysFailureで必ずFallbackへ戻り、次tickでFinalApproachの成立を再確認する。
+        [6] ビジョン突撃フェーズ
+        6a: CheckBuoyInFrame で画角にブイが入るまで無限待ち
+        6b: CenteringOrFinalApproach ループ(最大3分)
+             第1子 FinalApproach: 十分近い → 突撃 waypoint
+             第2子 CenteringStep: 画像中心へ1歩 → AlwaysFailure で再試行
+        6c: 復帰位置へ移動
+        6d: pitch>70°でサイクル終了、それ以外は [3] へ戻る
       -->
-      <Talker name="AutomatickTalker" message="Vision Approach Start" topic_name="/talker" />
-      <Timeout msec="180000">
+      <Talker name="AutomatickTalker"
+        message="Vision Collision Phase Start"
+        topic_name="/talker" />
+
+      <!-- 6a: ブイが画角に入るまで待つ -->
+      <Talker name="AutomatickTalker"
+        message="Vision Collision Start"
+        topic_name="/talker" />
+      <RetryUntilSuccessful num_attempts="-1">
+        <CheckBuoyInFrame confidence_threshold="0.5" />
+      </RetryUntilSuccessful>
+
+      <!-- 6b: 中心合わせ or 最終突撃 (Timeout 180000ms = 3分で打ち切り) -->
+      <Timeout msec="360000"> <!-- 6分 -->
         <RetryUntilSuccessful num_attempts="-1">
           <Fallback name="CenteringOrFinalApproach">
+            <!-- ブイに十分近い: CheckBuoyPosition が target_x/y/z をブラックボードへ出力 -->
             <Sequence name="FinalApproach">
-              <CheckBuoyPosition buoy_relative_position_topic="/buoy/relative_position"
+              <CheckBuoyPosition
                 odom_topic_name="odom" target_x="{target_x}" target_y="{target_y}" target_z="{target_z}" />
               <WriteAxisOverrideWaypointCSV odom_topic_name="odom"
                 override_x="{target_x}" override_y="{target_y}" override_z="{target_z}"
@@ -130,8 +181,9 @@
               <WaypointAction action_name="planner/pdla_planner/pdla_plan"
                 csv_file_path="assets/iwakuni/buoy_approach.csv" />
             </Sequence>
+            <!-- まだ遠い: 画像中心へ1歩進んでループ継続 -->
             <Sequence name="CenteringStep">
-              <WriteVisionWaypointCSV buoy_relative_position_topic="/buoy/relative_position"
+              <WriteVisionWaypointCSV
                 odom_topic_name="odom" csv_file_path="assets/iwakuni/vision_step.csv" />
               <WaypointAction action_name="planner/pdla_planner/pdla_plan"
                 csv_file_path="assets/iwakuni/vision_step.csv" />
@@ -141,49 +193,110 @@
         </RetryUntilSuccessful>
       </Timeout>
 
-      <!-- 7. 突撃(接触)後、10秒間その場で静止する(ZOHがwrench_planを自動でホールドする) -->
-      <Talker name="AutomatickTalker" message="Buoy Contact, Holding Position" topic_name="/talker" />
-      <Delay delay_msec="10000" />
+      <!-- 6c: 復帰ホールド位置へ (override_z=6.0 は既定 depth=水深6m) -->
+      <Talker name="AutomatickTalker"
+        message="Return To Hold Position 12,50,50"
+        topic_name="/talker" />
+      <WriteAxisOverrideWaypointCSV
+        odom_topic_name="odom"
+        override_x="9.0"
+        override_y="0.0"
+        override_z="6.0"
+        csv_file_path="assets/iwakuni/return_hold_9005.csv" />
+      <WaypointAction
+        action_name="planner/pdla_planner/pdla_plan"
+        csv_file_path="assets/iwakuni/return_hold_9005.csv" />
 
       <!--
-        8. 解放判定(Timeout{30000ms}で保護): 「ピンガーがほぼ真上(pitch≥70°)」かつ
-        「ブイがもう画面に写っていない」の両方が真になるまで待つ。CheckPingerPitch/
-        CheckBuoyInFrameはどちらも「pitch/写っている、で成功」という判定のため、
-        Inverterで反転させて「離れた」ことの判定にしている(閾値70°は暫定値。詳細と
-        Inverter方式を選んだ経緯はREADME §10.7参照)。
+        [6d] サイクル終了 or [3] へ戻る
+        Fallback(ExitCycleOrChaseAgain):
+          第1子: pitch>70°(上から) → 停止位置へ → SUCCESS でサイクル脱出
+          第2子: AlwaysFailure → 親 RetryUntilSuccessful が [3] から再実行
       -->
-      <Talker name="AutomatickTalker" message="Release Check Start" topic_name="/talker" />
-      <Timeout msec="30000">
-        <RetryUntilSuccessful num_attempts="-1">
-          <Sequence name="ReleaseConfirmed">
-            <Inverter>
-               <CheckPingerPitch pinger_direction_topic="pinger_direction" pitch_threshold_deg="70.0" />
-            </Inverter>
-            <Inverter>
-              <CheckBuoyInFrame buoy_relative_position_topic="/buoy/relative_position"
-                confidence_threshold="0.5" />
-            </Inverter>
-          </Sequence>
-        </RetryUntilSuccessful>
-      </Timeout>
-      <Talker name="AutomatickTalker" message="Release Confirmed" topic_name="/talker" />
+      <Talker name="AutomatickTalker"
+        message="Hydrophone Pitch Branch"
+        topic_name="/talker" />
+      <Fallback name="ExitCycleOrChaseAgain">
+        <!--
+          Inverter + CheckPingerPitch(70°):
+            pitch>70°(上から)のとき SUCCESS → 停止してサイクル終了
+        -->
+        <Sequence name="PingerFromAboveStop">
+          <Inverter>
+            <CheckPingerPitch pitch_threshold_deg="70.0" />
+          </Inverter>
+          <Talker name="AutomatickTalker"
+            message="Pinger From Above, Stop at 11,0,10"
+            topic_name="/talker" />
+          <WriteAxisOverrideWaypointCSV
+            odom_topic_name="odom"
+            override_x="9.0"
+            override_y="0.0"
+            override_z="6.0"
+            csv_file_path="assets/iwakuni/stop_11009.csv" />
+          <WaypointAction
+            action_name="planner/pdla_planner/pdla_plan"
+            csv_file_path="assets/iwakuni/stop_11009.csv" />
+        </Sequence>
+
+        <!-- 上からでない → [3] ハイドロ追跡へ戻ってピンガーを再探索 -->
+        <Sequence name="ReturnToHydrophoneChase">
+          <Talker name="AutomatickTalker"
+            message="Pinger Not From Above, Return To Hydrophone Chase"
+            topic_name="/talker" />
+          <AlwaysFailure />
+        </Sequence>
+      </Fallback>
+
+        </Sequence><!-- PingerVisionCycle -->
+      </RetryUntilSuccessful>
+      <Talker name="AutomatickTalker"
+        message="Pinger Vision Cycle Complete"
+        topic_name="/talker" />
+
+          </Sequence><!-- MissionCore 終了 -->
+        </Timeout><!-- 7分タイムアウト -->
+
+        <!--
+          [7分タイムアウト時の退避] MissionCoreOrSevenMinTimeout の第2子
+          MissionCore が 420000ms 内に終わらなかったときのみ実行。
+          Talker は「9,0,6」だが override は (9,0,6.5) depth。要実測調整。
+        -->
+        <Sequence name="SevenMinTimeoutTo11009">
+          <Talker name="AutomatickTalker"
+            message="7 Minute Timeout From Startup, Stop at 11,0,9"
+            topic_name="/talker" />
+          <WriteAxisOverrideWaypointCSV
+            odom_topic_name="odom"
+            override_x="9.0"
+            override_y="0.0"
+            override_z="6.5"
+            csv_file_path="assets/iwakuni/stop_11009.csv" />
+          <WaypointAction
+            action_name="planner/pdla_planner/pdla_plan"
+            csv_file_path="assets/iwakuni/stop_11009.csv" />
+        </Sequence>
+      </Fallback><!-- MissionCoreOrSevenMinTimeout 終了 -->
 
       <!--
-        9a. 復路ステップ1: 今のy/z/roll/yawは維持したまま、x座標を11.0mへ寄せる
-        (WriteAxisOverrideWaypointCSVで1点CSVを書き、WaypointActionへ処理を任せる)。
+        [8a] 復路ステップ1
+        x だけ 9.0m, z だけ 5.0m へ。y/roll/yaw は WriteAxisOverrideWaypointCSV が現在 odom から維持。
       -->
       <Talker name="AutomatickTalker"
         message="Return Step 1 Start"
         topic_name="/talker" />
       <WriteAxisOverrideWaypointCSV
         odom_topic_name="odom"
-        override_x="11.0"
+        override_x="9.0"
+        override_y="0.0"
+        override_z="5.0"
         csv_file_path="assets/iwakuni/return_step1.csv" />
       <WaypointAction
         action_name="planner/pdla_planner/pdla_plan"
         csv_file_path="assets/iwakuni/return_step1.csv" />
 
-      <!-- 9b. 復路ステップ2: 静的waypointで帰還完了地点まで移動(return_final.csv、要実測座標記入) -->
+      <!-- [8b. 復路ステップ2] -->
+      <!-- 静的 CSV return_final.csv で帰還完了地点まで移動(要実測座標記入) -->
       <Talker name="AutomatickTalker"
         message="Return Step 2 Start"
         topic_name="/talker" />
@@ -193,23 +306,25 @@
       <Talker name="AutomatickTalker"
         message="Return Successful"
         topic_name="/talker" />
+
+      <!-- ミッション完了。ツリーを RUNNING で維持(自動復帰・再実行はしない) -->
       <AlwaysRunning name="AutoRunning" />
     </Sequence>
   </BehaviorTree>
 
   <!--
-    Configure: マニュアル/ZOH(wrench_planner)/緊急浮上の各LifecycleNodeをconfigure状態にする
-    起動時の準備処理。MainTreeの先頭で一度だけ呼ばれる。
+    ====================================================================
+    Configure — 起動準備
+    ====================================================================
+    MainTree の先頭で一度だけ呼ばれる。
+    wrench_planner(ZOH) と emergencyNode を configure 状態にする。
+    selected_course ブラックボードを "B" に設定(現状ミッション分岐には未使用)。
   -->
   <BehaviorTree ID="Configure">
     <Delay delay_msec="2000">
       <Sequence name="ConfigureSequence">
         <SetBlackboard value="B"
           output_key="selected_course" />
-        <LifecycleManager name="ConfigureManualNode"
-          node_name="manualNode"
-          transition="configure"
-          timeout_sec="1" />
         <LifecycleManager name="ConfigureZOHNode"
           node_name="planner/wrench_planner/wrench_planner_component"
           transition="configure"
@@ -223,9 +338,12 @@
   </BehaviorTree>
 
   <!--
-    Emergency: リーク検知等でCheckSensorsStatusが失敗した場合にMainTreeから呼ばれる緊急対応。
-    ZOH(通常の推力計算)を止め、emergencyNodeを起動して緊急浮上を開始する。一度入ると
-    AlwaysRunningで居座り続ける(この機体で自動復帰はしない)。
+    ====================================================================
+    Emergency — 緊急浮上
+    ====================================================================
+    CheckSensorsStatus 失敗等で MainTree の Fallback から呼ばれる。
+    ZOH(通常推力)を deactivate → emergencyNode を activate → 緊急浮上。
+    AlwaysRunning で居座り続ける(この機体では自動復帰しない)。
   -->
   <BehaviorTree ID="Emergency">
     <Sequence name="EmergencySequence">
@@ -245,10 +363,16 @@
   </BehaviorTree>
 
   <!--
-    MainTree: このXMLの実際のエントリーポイント(root要素のmain_tree_to_execute)。
-    バッテリーチェック→Configure→センサー正常性を確認しながら、ジョイスティックの
-    manual/autoボタンでManual(手動操縦)/BlueROV2Auto(このファイルの自動ミッション)を
-    切り替える。センサー異常や致命的な失敗があればFallbackでEmergencyへ落ちる。
+    ====================================================================
+    MainTree — エントリーポイント (main_tree_to_execute)
+    ====================================================================
+    起動: reed_switch 発火後(bt_executor wait_for_trigger=true)
+    流れ:
+      2秒待機 → BatteryCheck
+      → Fallback:
+          第1子: Configure → センサー確認(最大10回) → BlueROV2Auto
+          第2子: Emergency
+    CheckSensorsStatus: imu/depth/dvl/leak の OR 判定(1つでも正常なら SUCCESS)
   -->
   <BehaviorTree ID="MainTree">
     <Delay delay_msec="2000">
@@ -257,23 +381,10 @@
         <Fallback>
           <Sequence>
             <SubTree ID="Configure" selected_course="{selected_course}" />
-            <ReactiveSequence>
-              <RetryUntilSuccessful num_attempts="10">
-                <CheckSensorsStatus leak="{leak}" />
-              </RetryUntilSuccessful>
-              <UpdateMode topic_name="/joy_common/joy_common"
-                manual_button="circle"
-                auto_button="cross"
-                mode="{mode}" />
-              <Switch2 name="mode_switch"
-                variable="{mode}"
-                case_1="manual"
-                case_2="auto">
-                <SubTree ID="Manual" />
-                <SubTree ID="BlueROV2Auto" selected_course="{selected_course}" />
-                <AlwaysFailure />
-              </Switch2>
-            </ReactiveSequence>
+            <RetryUntilSuccessful num_attempts="10">
+              <CheckSensorsStatus leak="{leak}" />
+            </RetryUntilSuccessful>
+            <SubTree ID="BlueROV2Auto" selected_course="{selected_course}" />
           </Sequence>
           <SubTree ID="Emergency" />
         </Fallback>
@@ -281,24 +392,7 @@
     </Delay>
   </BehaviorTree>
 
-  <!--
-    Manual: ジョイスティックによる手動操縦モード。manualNodeをactivateするだけで、
-    実際の操作入力の処理はjoy2wrench(manualNode本体)に任せている。
-  -->
-  <BehaviorTree ID="Manual">
-    <Sequence name="ManualSequence">
-      <Talker name="ManualTalker"
-        message="Manual Mode Start"
-        topic_name="/talker" />
-      <LifecycleManager name="ActivateManualNode"
-        node_name="manualNode"
-        transition="activate"
-        timeout_sec="1" />
-      <AlwaysRunning name="ManualRunning" />
-    </Sequence>
-  </BehaviorTree>
-
-  <!-- Description of Node Models (used by Groot) -->
+  <!-- Groot 用ノード定義(エディタ表示・ポート一覧) -->
   <TreeNodesModel>
     <Action ID="AlwaysRunning"
       editable="true" />
@@ -317,19 +411,9 @@
       <input_port name="transition" />
       <input_port name="timeout_sec" />
     </Action>
-    <Action ID="QrAction" editable="true">
-      <input_port name="action_name" default="qr_action" />
-    </Action>
     <Action ID="ResetLocalization" editable="true">
       <input_port name="service_name" default="/localization/reset" />
       <input_port name="timeout_sec" default="1.0" />
-    </Action>
-    <Action ID="UpdateMode"
-      editable="true">
-      <input_port name="topic_name" />
-      <input_port name="manual_button" />
-      <input_port name="auto_button" />
-      <output_port name="mode" />
     </Action>
     <Action ID="WaypointAction"
       editable="true">
@@ -353,15 +437,14 @@
       <input_port name="csv_file_path" />
     </Action>
     <Condition ID="CheckBuoyInFrame" editable="true">
-      <input_port name="buoy_relative_position_topic" default="/buoy/relative_position" />
       <input_port name="confidence_threshold" default="0.5" />
+      <input_port name="stale_timeout_sec" default="1.0" />
     </Condition>
     <Condition ID="CheckPingerPitch" editable="true">
       <input_port name="pinger_direction_topic" default="pinger_direction" />
       <input_port name="pitch_threshold_deg" default="50.0" />
     </Condition>
     <Action ID="CheckBuoyPosition" editable="true">
-      <input_port name="buoy_relative_position_topic" default="/buoy/relative_position" />
       <input_port name="odom_topic_name" default="odom" />
       <input_port name="confidence_threshold" default="0.5" />
       <input_port name="stale_timeout_sec" default="1.0" />
@@ -370,17 +453,15 @@
       <output_port name="target_z" />
     </Action>
     <Action ID="WriteVisionWaypointCSV" editable="true">
-      <input_port name="buoy_relative_position_topic" default="/buoy/relative_position" />
       <input_port name="odom_topic_name" default="odom" />
       <input_port name="step_distance_m" default="0.3" />
       <input_port name="vertical_gain_m" default="0.2" />
       <input_port name="deadband_rad" default="0.035" />
       <input_port name="horizontal_fov_rad" />
       <input_port name="confidence_threshold" default="0.5" />
+      <input_port name="stale_timeout_sec" default="1.0" />
       <input_port name="csv_file_path" />
     </Action>
   </TreeNodesModel>
-
-
 
 </root>

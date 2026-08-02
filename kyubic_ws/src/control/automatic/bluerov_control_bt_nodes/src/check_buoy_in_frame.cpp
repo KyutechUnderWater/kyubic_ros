@@ -1,5 +1,7 @@
 #include "bluerov_control_bt_nodes/check_buoy_in_frame.hpp"
 
+#include "bluerov_control_bt_nodes/buoy_detection_csv_reader.hpp"
+
 namespace bluerov_control_bt_nodes
 {
 
@@ -7,45 +9,37 @@ CheckBuoyInFrame::CheckBuoyInFrame(
   const std::string & name, const BT::NodeConfig & config, rclcpp::Node::SharedPtr ros_node)
 : BT::ConditionNode(name, config), ros_node_(ros_node)
 {
-  std::string topic_name;
-  if (!getInput("buoy_relative_position_topic", topic_name)) {
-    topic_name = "/buoy/relative_position";
-  }
-
-  detection_sub_ = ros_node_->create_subscription<buoy_interfaces::msg::BuoyRelativePosition>(
-    topic_name, 10, std::bind(&CheckBuoyInFrame::detectionCallback, this, std::placeholders::_1));
 }
 
 BT::PortsList CheckBuoyInFrame::providedPorts()
 {
   return {
-    BT::InputPort<std::string>(
-      "buoy_relative_position_topic", "/buoy/relative_position",
-      "perception/buoy_detectorが発行するトピック(buoy_detector_driver経由ではない生データ)"),
     BT::InputPort<double>(
       "confidence_threshold", 0.5,
-      "これ以上ならブイが写っているとみなす(暫定値。実測データで要調整)")};
-}
-
-void CheckBuoyInFrame::detectionCallback(
-  const buoy_interfaces::msg::BuoyRelativePosition::SharedPtr msg)
-{
-  latest_detection_ = msg;
+      "これ以上ならブイが写っているとみなす(暫定値。実測データで要調整)"),
+    BT::InputPort<double>(
+      "stale_timeout_sec", 1.0,
+      "buoy_detector_node.pyのCSV最終更新時刻がこれより古い場合は無視する[s]")};
 }
 
 BT::NodeStatus CheckBuoyInFrame::tick()
 {
-  if (!latest_detection_) {
-    // buoy_relative_positionを一度も受信していない。安全側に倒し、まだ写っていないとみなす。
+  double stale_timeout_sec = 1.0;
+  getInput("stale_timeout_sec", stale_timeout_sec);
+
+  buoy_detection_csv_reader::BuoyDetectionRow row;
+  if (!buoy_detection_csv_reader::ReadLatest(
+        buoy_detection_csv_reader::kBuoyDetectionCsvPath, stale_timeout_sec, row)) {
+    // CSV未生成、更新が古い(stale_timeout_sec超過)、または最終行を読めない。安全側に倒し、
+    // まだ写っていないとみなす。
     return BT::NodeStatus::FAILURE;
   }
 
   double confidence_threshold = 0.5;
   getInput("confidence_threshold", confidence_threshold);
 
-  return (latest_detection_->detected && latest_detection_->confidence >= confidence_threshold)
-           ? BT::NodeStatus::SUCCESS
-           : BT::NodeStatus::FAILURE;
+  return (row.detected && row.confidence >= confidence_threshold) ? BT::NodeStatus::SUCCESS
+                                                                    : BT::NodeStatus::FAILURE;
 }
 
 }  // namespace bluerov_control_bt_nodes

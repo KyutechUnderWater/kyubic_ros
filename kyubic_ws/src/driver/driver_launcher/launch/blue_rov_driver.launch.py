@@ -57,5 +57,6 @@ def generate_launch_description() -> LaunchDescription:
                 ),
                 launch_arguments={"log_level": log_level}.items(),
             ),
+            # 音響(SBL)は sbl_control パッケージ側で別起動する(bluerov_bt.launch.py 参照)。
         ]
     )

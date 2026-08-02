@@ -22,9 +22,11 @@
   <depend>planner_msgs</depend>
   <depend>localization_msgs</depend>
   <depend>bluerov_control_msgs</depend>
-  <depend>buoy_interfaces</depend>
   <depend>tf2</depend>
   <depend>ament_index_cpp</depend>
+
+  <!-- bluerov_bt.launch.pyがbuoy_detectorの検出ノードを起動するため -->
+  <exec_depend>buoy_detector</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

@@ -16,6 +16,7 @@
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>logic_distro_rp2040_driver</exec_depend>
   <exec_depend>mavlink_driver</exec_depend>
+  <exec_depend>reed_switch_driver</exec_depend>
   <exec_depend>sensors_esp32_driver</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>

@@ -1,11 +1,9 @@
-"""Setuptools configuration for the BlueROV camera driver."""
-
 import os
 from glob import glob
 
 from setuptools import find_packages, setup
 
-package_name = "camera_driver"
+package_name = "hydrophone_driver"
 
 setup(
     name=package_name,
@@ -16,17 +14,19 @@ setup(
         ("share/" + package_name, ["package.xml"]),
         (os.path.join("share", package_name, "launch"), glob("launch/*launch.py")),
         (os.path.join("share", package_name, "config"), glob("config/*.yaml")),
-        (os.path.join("share", package_name, "scripts"), glob("scripts/*")),
     ],
-    install_requires=["setuptools", "numpy"],
+    install_requires=["setuptools", "numpy", "PyWavelets", "scipy", "pyserial"],
     zip_safe=True,
     maintainer="Kyutech Underwater",
     maintainer_email="kyutech.robosub@gmail.com",
-    description="BlueROV UDP video stream driver.",
+    description="Hydrophone array driver publishing PingerDirection.",
     license="Apache License 2.0",
+    extras_require={
+        "test": ["pytest"],
+    },
     entry_points={
         "console_scripts": [
-            "camera_driver = camera_driver.camera_driver_node:main",
+            "hydrophone_driver = hydrophone_driver.sbl_direction_estimator_node:main",
         ],
     },
 )

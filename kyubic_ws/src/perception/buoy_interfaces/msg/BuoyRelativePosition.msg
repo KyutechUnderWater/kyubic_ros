@@ -22,6 +22,11 @@ float32 confidence
 # カメラ内部パラメータや対象距離には依存しない。未検出時はNaN。
 float32 normalized_horizontal_offset
 
+# BBox中心の、画像中心からの符号付き垂直偏差を画像半高さで正規化した値。
+# おおむね -1.0:上端、0.0:中央、+1.0:下端。下方向を正とする。
+# カメラ内部パラメータや対象距離には依存しない。未検出時はNaN。
+float32 normalized_vertical_offset
+
 # 機体正面からブイ方向への水平ヨー角[rad]。
 # base_link FRDにおいて右旋回方向を正、左旋回方向を負とする。
 # yaw_valid=falseの場合はNaN。

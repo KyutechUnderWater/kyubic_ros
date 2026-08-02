@@ -13,9 +13,9 @@
 
     # Begin bench tests with this conservative range.  Calibrate signs and
     # ranges while the vehicle is secured before operating in water.
-    pwm_min: 1300
-    pwm_neutral: 1500
-    pwm_max: 1700
+    pwm_min: 100
+    pwm_neutral: 500
+    pwm_max: 700
     depth_scale: 1.0
 
     # roll/yawはトルク軸(N・m)。推力換算には重心-スラスター間の腕の長さが

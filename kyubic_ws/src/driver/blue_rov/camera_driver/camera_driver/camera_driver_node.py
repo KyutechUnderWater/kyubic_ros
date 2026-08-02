@@ -9,7 +9,6 @@ from typing import Optional
 import gi
 import numpy as np
 import rclpy
-from cv_bridge import CvBridge
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image
@@ -36,7 +35,6 @@ class CameraDriver(Node):
         self._forward_host = self.declare_parameter("forward_host", "").value
         self._forward_port = self.declare_parameter("forward_port", 5601).value
 
-        self._bridge = CvBridge()
         self._publisher = self.create_publisher(Image, "image_raw", qos_profile_sensor_data)
 
         self._min_frame_interval_s = 1.0 / self._max_fps if self._max_fps > 0.0 else 0.0
@@ -126,7 +124,14 @@ class CameraDriver(Node):
             return Gst.FlowReturn.ERROR
         try:
             frame = np.frombuffer(mapinfo.data, dtype=np.uint8).reshape((height, width, 3))
-            msg = self._bridge.cv2_to_imgmsg(frame, encoding="bgr8")
+            frame = np.ascontiguousarray(frame)
+            msg = Image()
+            msg.height = height
+            msg.width = width
+            msg.encoding = "bgr8"
+            msg.is_bigendian = False
+            msg.step = width * 3
+            msg.data = frame.tobytes()
         finally:
             buffer.unmap(mapinfo)
 

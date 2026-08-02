@@ -42,7 +42,7 @@ BT::PortsList WriteHydrophoneWaypointCSV::providedPorts()
 {
   return {
     BT::InputPort<std::string>(
-      "pinger_direction_topic", "pinger_direction", "sbl_estimation_nodeが発行するトピック"),
+      "pinger_direction_topic", "pinger_direction", "sbl_controlが発行するトピック(相対名。launchでremap)"),
     BT::InputPort<std::string>("odom_topic_name", "odom", "現在姿勢を読むodomトピック"),
     BT::InputPort<double>("step_distance_m", 0.5, "ピンガー方向へ1回で進む距離[m]"),
     BT::InputPort<std::string>(

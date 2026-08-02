@@ -7,7 +7,7 @@ package_name = "buoy_detector"
 
 setup(
     name=package_name,
-    version="0.5.0",
+    version="0.6.0",
     packages=find_packages(exclude=["test"]),
     data_files=[
         (
@@ -34,7 +34,8 @@ setup(
     maintainer_email="maintainer@example.com",
     description=(
         "ROS 2 node for YOLO buoy detection, base_link FRD position, "
-        "yaw estimation, and normalized image-center error."
+        "yaw estimation, normalized horizontal/vertical image-center error, "
+        "and optional relative position."
     ),
     license="Apache-2.0",
     entry_points={

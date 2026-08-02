@@ -15,6 +15,9 @@ services:
     tty: true
     privileged: true
     network_mode: "host"
+    # Pi 5 の BCM GPIO (/dev/gpiochip4) は dialout グループ所有のため ros に付与する
+    group_add:
+      - dialout
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ../:/home/ros/kyubic_ros

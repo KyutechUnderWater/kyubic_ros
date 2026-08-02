@@ -3,7 +3,6 @@
 
 #include <behaviortree_cpp/action_node.h>
 
-#include <buoy_interfaces/msg/buoy_relative_position.hpp>
 #include <localization_msgs/msg/odometry.hpp>
 #include <rclcpp/rclcpp.hpp>
 
@@ -11,17 +10,18 @@ namespace bluerov_control_bt_nodes
 {
 
 /**
- * @brief 画像処理班の生データ(buoy_interfaces/msg/BuoyRelativePosition)を直接購読し、
+ * @brief perception/buoy_detector(buoy_detector_node.py)が書き出す固定CSVの最終行を読み、
  * 機体座標系の相対位置をNED絶対座標へ変換するBT葉ノード(iwakuni2026.xml、FinalApproach用)。
- * @details `CheckBuoyDetected`(§4、`bluerov_control_msgs/msg/BuoyDetection`を
- * `buoy_detector_driver`経由で購読)とは別経路。`CheckBuoyInFrame`/`WriteVisionWaypointCSV`と
- * 同じく`/buoy/relative_position`を直接見るため、`buoy_detector_driver`の起動を必要としない。
+ * @details 以前は`/buoy/relative_position`(buoy_interfaces/msg/BuoyRelativePosition)を
+ * 直接購読していたが、buoy_detector_node.pyが同じ検出値を毎フレーム追記している固定CSVを
+ * `buoy_detection_csv_reader`経由で読み取る方式に変更した(パス・列レイアウトは
+ * buoy_detection_csv_reader.hpp参照)。
  *
- * `detected==false`、`position_valid==false`(x/y/zがNaN)、confidenceが閾値未満、または
- * timestampがstale_timeout_sec超過の検出は使わない。有効な検出があれば、odomの姿勢を使い
- * 機体座標系の相対オフセット(relative_buoy_x/y/z_m)をNED絶対座標へ回転させ(CheckBuoyDetected
- * と同じtf2::Quaternion::setRPY + quatRotateのパターン)、target_x/y/zポートへ出力してSUCCESS。
- * それ以外はRUNNING(安全側で待機、誤ってSUCCESSを返さない)。
+ * detected==false、x/y/zが空欄(位置無効)、confidenceが閾値未満、またはCSVの最終更新時刻が
+ * stale_timeout_sec超過の場合は使わない。有効な検出があれば、odomの姿勢を使い機体座標系の
+ * 相対オフセットをNED絶対座標へ回転させ(CheckBuoyDetectedと同じtf2::Quaternion::setRPY +
+ * quatRotateのパターン)、target_x/y/zポートへ出力してSUCCESS。それ以外はRUNNING(安全側で
+ * 待機、誤ってSUCCESSを返さない)。
  */
 class CheckBuoyPosition : public BT::StatefulActionNode
 {
@@ -37,12 +37,9 @@ public:
 
 private:
   rclcpp::Node::SharedPtr ros_node_;
-  rclcpp::Subscription<buoy_interfaces::msg::BuoyRelativePosition>::SharedPtr detection_sub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr odom_sub_;
-  buoy_interfaces::msg::BuoyRelativePosition::SharedPtr latest_detection_;
   localization_msgs::msg::Odometry::SharedPtr latest_odom_;
 
-  void detectionCallback(const buoy_interfaces::msg::BuoyRelativePosition::SharedPtr msg);
   void odomCallback(const localization_msgs::msg::Odometry::SharedPtr msg);
 };
 

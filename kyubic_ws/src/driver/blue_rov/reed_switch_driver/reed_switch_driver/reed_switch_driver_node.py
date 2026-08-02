@@ -2,20 +2,61 @@
 
 from __future__ import annotations
 
+import os
 import threading
 from typing import Optional
+
+# gpiozero must pick lgpio before its pin factory is first resolved (Docker/Pi 5).
+os.environ.setdefault("GPIOZERO_PIN_FACTORY", "lgpio")
 
 import rclpy
 from driver_msgs.msg import LED, BoolStamped
 from rclpy.node import Node
 
 try:
-    from gpiozero import LED as GpioLED
+    from gpiozero import Device, LED as GpioLED
     from gpiozero import Button
 
     GPIOZERO_AVAILABLE = True
 except ImportError:
     GPIOZERO_AVAILABLE = False
+    Device = None  # type: ignore[misc, assignment]
+
+
+def _create_pin_factory(logger=None):
+    """Return a gpiozero pin factory usable inside Docker on Raspberry Pi.
+
+    gpiozero's auto-detection often fails in containers even when /dev/gpiochip*
+    is mounted. Prefer the lgpio backend (python3-lgpio). On Pi 5 the BCM header
+    pins live on /dev/gpiochip4, which is typically group-writable in Docker.
+    """
+    if not GPIOZERO_AVAILABLE:
+        raise RuntimeError(
+            "gpiozero is required to run reed_switch_driver on real hardware. "
+            "Install python3-gpiozero (and a pin factory such as python3-lgpio)."
+        )
+
+    from gpiozero.pins.lgpio import LGPIOFactory
+
+    factory_errors: list[str] = []
+    chip_candidates = ("/dev/gpiochip4", 4, 0)
+
+    for chip in chip_candidates:
+        try:
+            factory = LGPIOFactory(chip=chip)
+            Device.pin_factory = factory
+            if logger is not None:
+                logger.info(f"Using gpiozero LGPIOFactory(chip={chip!r})")
+            return factory
+        except Exception as exc:
+            factory_errors.append(f"{chip!r}: {exc}")
+
+    raise RuntimeError(
+        "Unable to initialize gpiozero LGPIOFactory. "
+        f"Tried chips {list(chip_candidates)}: {'; '.join(factory_errors)}. "
+        "If running in Docker on Raspberry Pi, ensure the container user is in the "
+        "'dialout' group (see docker/compose.yaml group_add) and restart the container."
+    )
 
 
 class ReedSwitchDriver(Node):
@@ -49,18 +90,15 @@ class ReedSwitchDriver(Node):
         self._blue_led_publisher = self.create_publisher(LED, "led", 10)
         self._blue_led_off_timer: Optional[threading.Timer] = None
 
-        if not GPIOZERO_AVAILABLE:
-            raise RuntimeError(
-                "gpiozero is required to run reed_switch_driver on real hardware. "
-                "Install python3-gpiozero (and a pin factory such as python3-lgpio)."
-            )
+        pin_factory = _create_pin_factory(self.get_logger())
 
         self._reed_switch: Optional[Button] = Button(
             self._reed_switch_pin,
             pull_up=True,
             bounce_time=self._debounce_s,
+            pin_factory=pin_factory,
         )
-        self._led: Optional[GpioLED] = GpioLED(self._led_pin)
+        self._led: Optional[GpioLED] = GpioLED(self._led_pin, pin_factory=pin_factory)
 
         if self._trigger_on_press:
             self._reed_switch.when_pressed = self._on_trigger

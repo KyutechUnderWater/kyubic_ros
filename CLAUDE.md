@@ -60,7 +60,11 @@ kyubic_ws/src/
     kyubic/          Kyubic-specific: actuator_rp2040_driver, dvl_driver, gnss_driver, imu_driver, logic_distro_rp2040_driver, sensors_esp32_driver
     blue_rov/        BlueROV-specific: mavlink_driver (Python), dvl75_driver (C++), blue_rov_msgs,
                       camera_driver, reed_switch_driver, buoy_detector_driver (thin adapter: relays
-                      perception/buoy_detector's BuoyRelativePosition into bluerov_control_msgs/BuoyDetection)
+                      perception/buoy_detector's BuoyRelativePosition into bluerov_control_msgs/BuoyDetection),
+                      hydrophone_driver (in-progress: six-channel hydrophone array, publishes
+                      planner_msgs/PingerDirection for CheckPingerPitch/WriteHydrophoneWaypointCSV —
+                      this is the acoustic input the bluerov_control_bt_nodes README still describes
+                      as an external/unimplemented "sbl_controller_node")
     driver_msgs/     vehicle-agnostic common message/service types (IMU, Depth, DVL, PowerState, VehicleState, ...)
     driver_launcher/ per-vehicle launch bundles: kyubic_driver.launch.py / blue_rov_driver.launch.py
   localization/    localization + localization_msgs (Pose, Odometry, GlobalPos, Geodetic, ...)
@@ -68,13 +72,16 @@ kyubic_ws/src/
   control/
     manual/          joy2wrench, joy_common(_msgs) — teleop input -> wrench
     automatic/        planning/ (path_planner, wrench_planner + zero_order_hold, qr_planner,
-                       projection_dynamic_look_ahead_planner, return_mission_planner, planner_launcher,
-                       planner_msgs), emergency, bluerov_control(_msgs), bluerov_control_bt_nodes —
+                       projection_dynamic_look_ahead_planner, planner_launcher, planner_msgs),
+                       emergency, bluerov_control(_msgs), bluerov_control_bt_nodes —
                        BlueROV mission control, two parallel implementations (see below)
     controller/       p_pid_controller(_msgs)
   behavior_tree/    BT.CPP-based mission logic shared across vehicles; bt_executor.cpp registers leaf
                      nodes (Kyubic's own plus BlueROV's, contributed from bluerov_control_bt_nodes);
-                     bt_xml/ holds Kyubic mission trees (base.xml, qr.xml, kobe2025.xml, iwakuni2026.xml)
+                     bt_xml/ holds mission trees (base.xml, qr.xml, kobe2025.xml, iwakuni2026.xml —
+                     iwakuni2026.xml is the current, single shared file: its MainTree dispatches to
+                     Configure/Emergency plus a BlueROV2Auto subtree that is BlueROV's entire current
+                     mission control)
   kyubic_bringup/   top-level launch entry points (kyubic.launch.py, kyubic_post.launch.py, client*.launch.py, manual.launch.py, web_visualizer.launch.py)
   system_health_check/  monitors node/system health
   visualizer/       dashboard, bluerov_dashboard, rt_pose_plotter, trajectory_viewer, web_controller (+ archive/ for retired tools)
@@ -103,7 +110,7 @@ See `blueNote.md` (Japanese) for a much deeper walkthrough of the BlueROV driver
 
 1. **`blueRovControl/`** (repo root: `main.py`, `flow.py`, `mavlink_io.py`, `qekf.py`, ...) — **legacy, non-ROS2 standalone Python prototype**. Talks to MAVLink and a self-parsed IMU/DVL socket stream directly, not built/run through colcon, fully superseded. Don't add functionality here.
 2. **`bluerov_control`** (+ `bluerov_control_msgs`) — the first ROS 2 (`ament_python`) port: a single `bluerov_control_node` runs the mission as a monolithic 17-state FSM (`flow.py`) with its own cascaded PID (`control.py`) in one 10 Hz timer callback, subscribing to `/localization/odom` and `vehicle_state`, publishing `robot_force` + `heartbeat` to `mavlink_driver`.
-3. **`bluerov_control_bt_nodes`** — the **current direction**: re-architects BlueROV mission control onto Kyubic's proven, vehicle-agnostic stack (`behavior_tree`'s `bt_executor` + `planning/wrench_planner`'s cascaded PID and `zero_order_hold` + `emergency`), reused with zero source changes. This package supplies only the BlueROV-specific pieces: BT leaf nodes (`GoToDepth`, `GoToBlackboardTarget`, `CheckPingerFound`, `CheckBuoyDetected`, `CheckRosBoolParam`, `CaptureMissionOrigin`, registered into the shared `bt_executor.cpp`) and a BT XML (`bt_xml/bluerov_phase2.xml`) that reproduces all 17 states of the old `flow.py` FSM. `bluerov_control` has **not** been deleted — both launch paths currently coexist and are interchangeable but **must never run at once** (both would send `robot_force` to `mavlink_driver` and fight for control). `control.py` (the old self-rolled PID) is slated for removal once the BT path is validated on real hardware.
+3. **`bluerov_control_bt_nodes`** — the **current direction, and now the only actively-developed one**: re-architects BlueROV mission control onto Kyubic's proven, vehicle-agnostic stack (`behavior_tree`'s `bt_executor` + `planning/wrench_planner`'s cascaded PID and `zero_order_hold` + `emergency`), reused with zero source changes. Its earlier "Phase 1/Phase 2" design (a separate `bluerov_phase2.xml` BT that reproduced all 17 states of the old `flow.py` FSM, plus leaf nodes `GoToDepth`, `GoToBlackboardTarget`, `CheckPingerFound`, `CheckRosBoolParam`, `CaptureMissionOrigin`) has since been **deleted and folded into `behavior_tree/bt_xml/iwakuni2026.xml`'s `BlueROV2Auto` subtree** — see `bluerov_control_bt_nodes/README.md` §10 (§1–9 are kept only as historical design record). The package now supplies the leaf nodes that `BlueROV2Auto` actually uses, registered into the shared `bt_executor.cpp`: `CheckBuoyDetected` (unused by any current XML), `CheckBuoyInFrame`, `CheckBuoyPosition`, `CheckPingerPitch`, `WriteHydrophoneWaypointCSV`, `WriteAxisOverrideWaypointCSV`, `WriteVisionWaypointCSV` — the last three are odom-relative single-checkpoint CSV writers that hand movement off to `path_planner`'s existing `WaypointAction` (PDLA) rather than issuing their own wrench plans. `bluerov_control` has **not** been deleted — both launch paths currently coexist and are interchangeable but **must never run at once** (both would send `robot_force` to `mavlink_driver` and fight for control). `control.py` (the old self-rolled PID) is slated for removal once the BT path is validated on real hardware.
 
 Start order is the same for either generation — only step 3 differs:
 
@@ -114,7 +121,9 @@ ros2 launch bluerov_control_bt_nodes bluerov_bt.launch.py      # 3a. current: BT
 # ros2 launch bluerov_control bluerov_control.launch.py        # 3b. legacy fallback — do not run with 3a
 ```
 
-Known unverified risks on the BT path (as of writing): the DVL/odom zero-value-on-error fix (see `bluerov_control_bt_nodes/README.md` §9) hasn't been repool-tested since Phase 2 landed, and `CaptureMissionOrigin`'s DVL-lock behavior at very shallow deployment depth is unverified — check that README before running a real pool/competition test.
+`bluerov_bt.launch.py` does not start acoustics: launch `sbl_control`'s `sbl.launch.py` separately if the mission needs `PingerDirection` (matching its `pinger_direction_topic` argument to the one passed to `bluerov_bt.launch.py`). `bt_executor` itself waits for `reed_switch_driver`'s `/driver/blue_rov/mission_start_trigger` before starting `MainTree` — there's no manual-mode branch, it goes straight into the `BlueROV2Auto` mission.
+
+Known unverified risks/TODOs on the BT path as of `bluerov_control_bt_nodes/README.md` §7 (check it before a real pool/competition test): Part A/B/C of the DVL/odom zero-value-on-error fix (§9) hasn't been repool-tested against `iwakuni2026.xml`; `BatteryCheck`/`CheckSensorsStatus` aren't wired in yet (Kyubic's battery thresholds are unverified for BlueROV's pack); PID gains (`config/p_pid_controller_gain_bluerov.yaml`) are untuned conservative defaults, especially roll (an axis the old `bluerov_control` never actually drove); nothing monitors `odom` staleness (only the *target* side is watched by `zero_order_hold` — if DVL/depth/IMU stay in `ERROR` and hold their last-known value, a "frozen" odom can flow downstream undetected); and `path_planner/assets/iwakuni/`'s `transit_shallow.csv`/`descend_deep.csv` (which `iwakuni2026.xml` reads) still need real-site coordinates filled in.
 
 See `kyubic_ws/src/control/automatic/bluerov_control/README.md` and `kyubic_ws/src/control/automatic/bluerov_control_bt_nodes/README.md` (both Japanese) for full walkthroughs — FSM/BT-state mapping table, PID retuning notes (old gains are a starting point only; output now goes through `mavlink_driver`'s `robot_force`/axis-limit scaling, not raw MAVLink `MANUAL_CONTROL`), and per-state pool-test procedures. Changes to `behavior_tree/src/bt_executor.cpp` are shared infrastructure — flag them to the Kyubic maintainer even when made for BlueROV's sake.
 

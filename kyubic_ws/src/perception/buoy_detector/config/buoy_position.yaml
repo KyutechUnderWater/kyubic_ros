@@ -1,50 +1,54 @@
 camera:
-  # 暫定値。800x600、水平画角を約90度、正方画素と仮定している。
-  # 水中・カメラハウジング装着状態で校正できた場合は必ず置き換える。
+  # Blue Robotics Low-Light HD USB CameraをBlueROV2のアクリルドーム内で
+  # 使用する条件を想定した暫定値。
+  # 空気中の想定値 fx, fy ≈ 1144（水平画角約80度）へ、
+  # 水中屈折による約1.33倍を適用して1530としている。
+  # 実測校正値ではないため、水中校正後に置き換えること。
   provisional: true
-  fx: 400.0
-  fy: 400.0
-  cx: 399.5
-  cy: 299.5
+  fx: 1530.0
+  fy: 1530.0
 
-  calibration_width: 800
-  calibration_height: 600
+  # 1920×1080画像の主点。
+  cx: 960.0
+  cy: 540.0
+
+  calibration_width: 1920
+  calibration_height: 1080
 
 range:
-  # 初期方式: pinhole_area
-  # 水槽内でBBox距離校正を実施した後: inverse_scale
+  # ブイ実寸とBBox面積から光軸方向距離を求める。
   model: pinhole_area
 
-  # 使用するブイのおおよその実寸[m]
+  # ブイの実寸[m]。
   buoy_width_m: 0.110
   buoy_height_m: 0.170
 
-  # inverse_scale用: Zc = scale_a / sqrt(bbox_area/image_area) + scale_b
+  # inverse_scaleを使う場合の校正式:
+  # Zc = scale_a / sqrt(bbox_area / image_area) + scale_b
+  # 現在は未校正のため使用不可。
   scale_a: 0.0
   scale_b: 0.0
 
   min_range_m: 0.10
-  max_range_m: 8.00
+  max_range_m: 10.00
 
 transform:
-  # カメラ光学座標から機体base_link（FRD）への回転行列。
   # camera optical: X=画像右、Y=画像下、Z=カメラ前方
-  # base_link FRD:  X=機体前、Y=機体右、Z=機体下
-  # 正面・水平に取り付けたカメラでは以下の対応になる。
-  # body_x = camera_z
-  # body_y = camera_x
-  # body_z = camera_y
+  # base_link FRD: X=機体前、Y=機体右、Z=機体下
   camera_to_body_rotation:
     - [0.0, 0.0, 1.0]
     - [1.0, 0.0, 0.0]
     - [0.0, 1.0, 0.0]
 
   # base_link原点から見たカメラ光学原点の位置[m]。
-  # 順番は [前方X, 右方向Y, 下方向Z]。
-  # 実機のカメラ取付位置を測定して置き換える。
-  camera_to_body_translation_m: [0.0, 0.0, 0.0]
+  # 順番は[前方X, 右方向Y, 下方向Z]。
+  camera_to_body_translation_m:
+    - 0.0
+    - 0.0
+    - 0.0
 
 validation:
-  # BBoxが画像端に触れると面積が欠けるため、位置座標を無効化する。
-  # ヨー角は方向制御に使えるため、BBoxが有効なら画像端でも算出する。
+  # BBoxが画像端からこの画素数以内へ接触した場合、
+  # 面積欠損による距離誤差を避けるためposition_valid=falseとする。
+  # 検出、正規化偏差、ヨー角は可能な限り維持する。
   border_margin_px: 2

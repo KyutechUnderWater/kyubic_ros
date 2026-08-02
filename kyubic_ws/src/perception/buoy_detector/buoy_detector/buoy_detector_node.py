@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 from typing import Any
 
@@ -18,11 +19,43 @@ from buoy_detector.buoy_geometry import (
     BoundingBox,
     CameraIntrinsics,
     calculate_normalized_horizontal_offset,
+    calculate_normalized_vertical_offset,
     estimate_body_yaw_from_bbox_center,
     estimate_range_inverse_scale,
     estimate_range_pinhole_area,
     project_bbox_center_to_camera,
     transform_camera_to_body,
+)
+
+
+# フレームごとに保存するCSVカラム。
+CSV_FIELDS = [
+    "frame_index",
+    "timestamp_sec",
+    "detected",
+    "yaw_valid",
+    "position_valid",
+    "x",
+    "y",
+    "z",
+    "yaw",
+    "horizontal_offset",
+    "vertical_offset",
+    "confidence",
+]
+
+# ユーザー指定の固定保存先・固定ファイル名。
+CSV_PATH = (
+    Path.home()
+    / "kyubic_ws"
+    / "src"
+    / "control"
+    / "automatic"
+    / "planning"
+    / "path_planner"
+    / "assets"
+    / "iwakuni"
+    / "bouy_point.csv"
 )
 
 
@@ -120,12 +153,17 @@ def calculate_body_position(
     range_config = require_mapping(config, "range")
     range_model = str(range_config["model"])
 
+    min_range_m = float(range_config.get("min_range_m", 0.1))
+    max_range_m = float(range_config.get("max_range_m", 50.0))
+
     if range_model == "pinhole_area":
         range_z_m = estimate_range_pinhole_area(
             bbox=bbox,
             intrinsics=intrinsics,
             buoy_width_m=float(range_config["buoy_width_m"]),
             buoy_height_m=float(range_config["buoy_height_m"]),
+            min_range_m=min_range_m,
+            max_range_m=max_range_m,
         )
     elif range_model == "inverse_scale":
         range_z_m = estimate_range_inverse_scale(
@@ -140,11 +178,10 @@ def calculate_body_position(
             "range.modelは'pinhole_area'または'inverse_scale'です。"
         )
 
-    min_range_m = float(range_config["min_range_m"])
-    max_range_m = float(range_config["max_range_m"])
     if not min_range_m <= range_z_m <= max_range_m:
         raise ValueError(
-            f"推定距離{range_z_m:.3f} mが有効範囲外です。"
+            f"推定距離 ({range_z_m:.2f} m) が許容範囲外 "
+            f"[{min_range_m}, {max_range_m}] です。"
         )
 
     point_camera = project_bbox_center_to_camera(
@@ -183,7 +220,7 @@ class BuoyDetectorNode(Node):
             "config_path",
             str(package_share / "config" / "buoy_position.yaml"),
         )
-        self.declare_parameter("input_image_topic", "/camera/image_raw")
+        self.declare_parameter("input_image_topic", "/driver/blue_rov/camera/image_raw")
         self.declare_parameter(
             "output_topic",
             "/buoy/relative_position",
@@ -194,7 +231,10 @@ class BuoyDetectorNode(Node):
         self.declare_parameter("device", "cpu")
         self.declare_parameter("class_id", 0)
         # 暫定内部パラメータで距離を出さないよう、安全側を既定値にする。
-        self.declare_parameter("position_estimation_enabled", False)
+        self.declare_parameter("position_estimation_enabled", True)
+
+        # ノード起動時に固定CSVを初期化し、画像受信ごとに1行追加する。
+        self.declare_parameter("csv_logging_enabled", True)
 
         model_path = Path(
             str(self.get_parameter("model_path").value)
@@ -221,11 +261,23 @@ class BuoyDetectorNode(Node):
         self._position_estimation_enabled = bool(
             self.get_parameter("position_estimation_enabled").value
         )
+        self._csv_logging_enabled = bool(
+            self.get_parameter("csv_logging_enabled").value
+        )
+
+        self._csv_path = CSV_PATH
+        self._csv_file: Any | None = None
+        self._csv_writer: csv.DictWriter | None = None
+        self._frame_index = 0
+        self._first_timestamp_sec: float | None = None
 
         self._validate_parameters(model_path=model_path)
         self._config = load_config(config_path)
         self._model = YOLO(str(model_path))
         self._bridge = CvBridge()
+
+        if self._csv_logging_enabled:
+            self._initialize_csv()
 
         self._publisher = self.create_publisher(
             BuoyRelativePosition,
@@ -244,15 +296,16 @@ class BuoyDetectorNode(Node):
             f"image={self._input_image_topic}, "
             f"output={self._output_topic}, "
             f"frame_id={self._body_frame_id}, "
-            f"device={self._device}"
+            f"device={self._device}, "
+            f"csv={self._csv_path if self._csv_path else 'disabled'}"
         )
 
         camera_config = require_mapping(self._config, "camera")
         if bool(camera_config.get("provisional", False)):
             self.get_logger().warning(
-                "暫定カメラ内部パラメータを使用しています。"
-                "ヨー角の符号と0点付近の制御には利用できますが、"
-                "角度の絶対値と三次元位置は校正後に再確認してください。"
+                "水中屈折を考慮した暫定カメラ内部パラメータを使用しています。"
+                "正規化偏差は利用できますが、ヨー角の絶対値と三次元位置は"
+                "実機の水中校正・距離検証後に再確認してください。"
             )
 
         if not self._position_estimation_enabled:
@@ -275,8 +328,139 @@ class BuoyDetectorNode(Node):
             raise ValueError("class_idは0以上で指定してください。")
         if not self._body_frame_id:
             raise ValueError("body_frame_idを空にはできません。")
+    @staticmethod
+    def _format_csv_float(value: float | None) -> str:
+        """有限な数値だけCSV文字列へ変換し、無効値は空欄にする。"""
+        if value is None or not np.isfinite(value):
+            return ""
+        return f"{float(value):.6f}"
+
+    def _initialize_csv(self) -> None:
+        """ノード起動を1試行として固定CSVを新規作成する。"""
+        self._csv_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            self._csv_file = self._csv_path.open(
+                "w",
+                encoding="utf-8-sig",
+                newline="",
+            )
+            self._csv_writer = csv.DictWriter(
+                self._csv_file,
+                fieldnames=CSV_FIELDS,
+            )
+            self._csv_writer.writeheader()
+            self._csv_file.flush()
+        except OSError as error:
+            self._csv_file = None
+            self._csv_writer = None
+            raise RuntimeError(
+                f"CSVを初期化できません: {self._csv_path}: {error}"
+            ) from error
+
+    def _relative_timestamp_sec(self, image_msg: Image) -> float:
+        """最初に受信した画像を0秒とする相対時刻を返す。"""
+        stamp = image_msg.header.stamp
+        timestamp_sec = (
+            float(stamp.sec)
+            + float(stamp.nanosec) * 1.0e-9
+        )
+        if timestamp_sec <= 0.0:
+            timestamp_sec = (
+                float(self.get_clock().now().nanoseconds) * 1.0e-9
+            )
+
+        if self._first_timestamp_sec is None:
+            self._first_timestamp_sec = timestamp_sec
+
+        return timestamp_sec - self._first_timestamp_sec
+
+    def _write_csv_row(
+        self,
+        timestamp_sec: float,
+        detected: bool,
+        position_valid: bool,
+        confidence: float,
+        horizontal_offset: float | None,
+        vertical_offset: float | None,
+        yaw_valid: bool,
+        yaw_rad: float | None,
+        point_body: np.ndarray | None,
+    ) -> None:
+        """コード内の推論結果を画像1枚につき1行保存する。"""
+        if self._csv_writer is None or self._csv_file is None:
+            return
+
+        x_value = ""
+        y_value = ""
+        z_value = ""
+        if (
+            position_valid
+            and point_body is not None
+            and point_body.shape == (3,)
+            and np.all(np.isfinite(point_body))
+        ):
+            x_value = self._format_csv_float(float(point_body[0]))
+            y_value = self._format_csv_float(float(point_body[1]))
+            z_value = self._format_csv_float(float(point_body[2]))
+
+        yaw_value = ""
+        if yaw_valid:
+            yaw_value = self._format_csv_float(yaw_rad)
+
+        confidence_value = (
+            float(confidence)
+            if np.isfinite(confidence)
+            else 0.0
+        )
+
+        row = {
+            "frame_index": self._frame_index,
+            "timestamp_sec": f"{timestamp_sec:.6f}",
+            "detected": bool(detected),
+            "yaw_valid": bool(yaw_valid),
+            "position_valid": bool(position_valid),
+            "x": x_value,
+            "y": y_value,
+            "z": z_value,
+            "yaw": yaw_value,
+            "horizontal_offset": self._format_csv_float(
+                horizontal_offset
+            ),
+            "vertical_offset": self._format_csv_float(
+                vertical_offset
+            ),
+            "confidence": f"{confidence_value:.6f}",
+        }
+
+        try:
+            self._csv_writer.writerow(row)
+            # 各画像更新後にディスクへ反映する。
+            self._csv_file.flush()
+        except OSError as error:
+            self.get_logger().error(
+                f"CSVへの書き込みに失敗しました: {error}"
+            )
+            try:
+                self._csv_file.close()
+            except OSError:
+                pass
+            self._csv_file = None
+            self._csv_writer = None
+        finally:
+            self._frame_index += 1
 
     def _image_callback(self, image_msg: Image) -> None:
+        timestamp_sec = self._relative_timestamp_sec(image_msg)
+
+        detected = False
+        yaw_valid = False
+        position_valid = False
+        confidence = 0.0
+        normalized_horizontal_offset: float | None = None
+        normalized_vertical_offset: float | None = None
+        yaw_rad: float | None = None
+        point_body: np.ndarray | None = None
+
         try:
             image = self._bridge.imgmsg_to_cv2(
                 image_msg,
@@ -286,15 +470,19 @@ class BuoyDetectorNode(Node):
             self.get_logger().error(
                 f"ROS画像をOpenCV画像へ変換できません: {error}"
             )
+            if self._csv_logging_enabled:
+                self._write_csv_row(
+                    timestamp_sec=timestamp_sec,
+                    detected=detected,
+                    position_valid=position_valid,
+                    confidence=confidence,
+                    horizontal_offset=normalized_horizontal_offset,
+                    vertical_offset=normalized_vertical_offset,
+                    yaw_valid=yaw_valid,
+                    yaw_rad=yaw_rad,
+                    point_body=point_body,
+                )
             return
-
-        detected = False
-        yaw_valid = False
-        position_valid = False
-        confidence = 0.0
-        normalized_horizontal_offset: float | None = None
-        yaw_rad: float | None = None
-        point_body: np.ndarray | None = None
 
         try:
             results = self._model.predict(
@@ -315,6 +503,7 @@ class BuoyDetectorNode(Node):
                     position_valid,
                     confidence,
                     normalized_horizontal_offset,
+                    normalized_vertical_offset,
                     yaw_rad,
                     point_body,
                 ) = self._process_result(
@@ -326,6 +515,21 @@ class BuoyDetectorNode(Node):
             # 1フレームの失敗でノード全体を停止させない。
             self.get_logger().error(f"画像推論に失敗しました: {error}")
 
+        # publish用メッセージではなく、コード内の計算変数を直接保存する。
+        # 検出なし・座標無効の場合も、画像更新1回につき必ず1行追加する。
+        if self._csv_logging_enabled:
+            self._write_csv_row(
+                timestamp_sec=timestamp_sec,
+                detected=detected,
+                position_valid=position_valid,
+                confidence=confidence,
+                horizontal_offset=normalized_horizontal_offset,
+                vertical_offset=normalized_vertical_offset,
+                yaw_valid=yaw_valid,
+                yaw_rad=yaw_rad,
+                point_body=point_body,
+            )
+
         self._publish_result(
             source_msg=image_msg,
             detected=detected,
@@ -333,6 +537,7 @@ class BuoyDetectorNode(Node):
             position_valid=position_valid,
             confidence=confidence,
             normalized_horizontal_offset=normalized_horizontal_offset,
+            normalized_vertical_offset=normalized_vertical_offset,
             yaw_rad=yaw_rad,
             point_body=point_body,
         )
@@ -349,10 +554,11 @@ class BuoyDetectorNode(Node):
         float,
         float | None,
         float | None,
+        float | None,
         np.ndarray | None,
     ]:
         if result.boxes is None or len(result.boxes) == 0:
-            return False, False, False, 0.0, None, None, None
+            return False, False, False, 0.0, None, None, None, None
 
         confidences = result.boxes.conf.detach().cpu().numpy()
         best_index = int(np.argmax(confidences))
@@ -376,7 +582,7 @@ class BuoyDetectorNode(Node):
             bbox.validate()
         except ValueError as error:
             self.get_logger().debug(f"BBoxを無効化しました: {error}")
-            return True, False, False, confidence, None, None, None
+            return True, False, False, confidence, None, None, None, None
 
         normalized_horizontal_offset: float | None = None
         try:
@@ -389,6 +595,19 @@ class BuoyDetectorNode(Node):
         except ValueError as error:
             self.get_logger().debug(
                 f"正規化水平偏差を無効化しました: {error}"
+            )
+
+        normalized_vertical_offset: float | None = None
+        try:
+            normalized_vertical_offset = (
+                calculate_normalized_vertical_offset(
+                    bbox=bbox,
+                    image_height=image_height,
+                )
+            )
+        except ValueError as error:
+            self.get_logger().debug(
+                f"正規化垂直偏差を無効化しました: {error}"
             )
 
         yaw_valid = False
@@ -411,6 +630,7 @@ class BuoyDetectorNode(Node):
                 False,
                 confidence,
                 normalized_horizontal_offset,
+                normalized_vertical_offset,
                 yaw_rad,
                 None,
             )
@@ -434,6 +654,7 @@ class BuoyDetectorNode(Node):
                 False,
                 confidence,
                 normalized_horizontal_offset,
+                normalized_vertical_offset,
                 yaw_rad,
                 None,
             )
@@ -453,6 +674,7 @@ class BuoyDetectorNode(Node):
                 False,
                 confidence,
                 normalized_horizontal_offset,
+                normalized_vertical_offset,
                 yaw_rad,
                 None,
             )
@@ -463,6 +685,7 @@ class BuoyDetectorNode(Node):
             True,
             confidence,
             normalized_horizontal_offset,
+            normalized_vertical_offset,
             yaw_rad,
             point_body,
         )
@@ -475,6 +698,7 @@ class BuoyDetectorNode(Node):
         position_valid: bool,
         confidence: float,
         normalized_horizontal_offset: float | None,
+        normalized_vertical_offset: float | None,
         yaw_rad: float | None,
         point_body: np.ndarray | None,
     ) -> None:
@@ -488,6 +712,7 @@ class BuoyDetectorNode(Node):
 
         invalid_value = float("nan")
         output.normalized_horizontal_offset = invalid_value
+        output.normalized_vertical_offset = invalid_value
         output.relative_buoy_yaw_rad = invalid_value
         output.relative_buoy_x_m = invalid_value
         output.relative_buoy_y_m = invalid_value
@@ -500,6 +725,15 @@ class BuoyDetectorNode(Node):
         ):
             output.normalized_horizontal_offset = float(
                 np.clip(normalized_horizontal_offset, -1.0, 1.0)
+            )
+
+        if (
+            detected
+            and normalized_vertical_offset is not None
+            and np.isfinite(normalized_vertical_offset)
+        ):
+            output.normalized_vertical_offset = float(
+                np.clip(normalized_vertical_offset, -1.0, 1.0)
             )
 
         if yaw_valid and yaw_rad is not None and np.isfinite(yaw_rad):
@@ -521,6 +755,21 @@ class BuoyDetectorNode(Node):
                 output.relative_buoy_z_m = float(point_body[2])
 
         self._publisher.publish(output)
+
+    def destroy_node(self) -> bool:
+        """終了時にCSVを確実に保存して閉じる。"""
+        if self._csv_file is not None:
+            try:
+                self._csv_file.flush()
+                self._csv_file.close()
+            except OSError as error:
+                self.get_logger().error(
+                    f"CSVを閉じる際にエラーが発生しました: {error}"
+                )
+            finally:
+                self._csv_file = None
+                self._csv_writer = None
+        return super().destroy_node()
 
 
 def main(args: list[str] | None = None) -> None:

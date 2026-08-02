@@ -42,7 +42,7 @@ def generate_launch_description() -> LaunchDescription:
             ),
             DeclareLaunchArgument(
                 "input_image_topic",
-                default_value="/camera/image_raw",
+                default_value="/driver/blue_rov/camera/image_raw",
             ),
             DeclareLaunchArgument(
                 "output_topic",

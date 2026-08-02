@@ -1,0 +1,27 @@
+/**:
+  ros__parameters:
+    # 6chハイドロフォンアレイの各センサ位置 [m] (body frame, ch0..ch5 の x,y,z を平坦化)
+    # 実機の幾何に合わせて調整すること
+    hydrophone_pos:
+      - -0.10
+      - -0.10
+      - 0.00
+      - 0.10
+      - -0.10
+      - 0.00
+      - 0.10
+      - 0.10
+      - 0.00
+      - -0.10
+      - 0.10
+      - 0.00
+      - 0.00
+      - 0.00
+      - 0.10
+      - 0.00
+      - 0.00
+      - -0.10
+    serial_port: "/dev/ttyACM0"
+    baudrate: 480000000
+    topic_name: "/pinger_direction"
+    channel_weights: [0.0, 1.0, 1.0, 1.0, 1.0, 0.0]

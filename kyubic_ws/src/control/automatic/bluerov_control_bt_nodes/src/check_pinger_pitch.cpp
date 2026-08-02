@@ -20,7 +20,7 @@ BT::PortsList CheckPingerPitch::providedPorts()
 {
   return {
     BT::InputPort<std::string>(
-      "pinger_direction_topic", "pinger_direction", "sbl_estimation_nodeが発行するトピック"),
+      "pinger_direction_topic", "pinger_direction", "sbl_controlが発行するトピック(相対名。launchでremap)"),
     BT::InputPort<double>(
       "pitch_threshold_deg", 50.0, "これ以下なら十分近いとみなす(未検証、実機で符号・向きを検証)")};
 }

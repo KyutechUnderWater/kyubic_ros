@@ -18,6 +18,12 @@ WrenchPlanを出し続ける移動ノード(旧GoToDepth/GoToBlackboardTarget等
 
 前提: driver_launcher の blue_rov_driver.launch.py と
 localization の localization_components.launch.py が別途起動済みであること。
+音響(SBL)は bluerov_bt では起動しない。別途
+``ros2 launch sbl_control sbl.launch.py`` で PingerDirection を配信すること
+(pinger_direction_topic launch引数でトピック名を合わせる)。
+bt_executor は reed_switch_driver が publish する
+/driver/blue_rov/mission_start_trigger を待ってから MainTree を開始し、
+自動的に BlueROV2Auto ミッションを実行する(手動モードへの分岐なし)。
 
 旧 bluerov_control/launch/bluerov_control.launch.py (bluerov_control_node、自前FSM+PID)は
 このBT構成とは独立に残っている。移行が完了するまでは切り戻しできるよう並存させる。
@@ -25,10 +31,13 @@ localization の localization_components.launch.py が別途起動済みであ�
 launch引数:
   - main_tree(既定""): 個別テスト用。iwakuni2026.xml内の特定のBehaviorTree ID
     を直接rootとして起動する。空なら通常通りMainTreeを実行する
+  - pinger_direction_topic(既定"/pinger_direction"): sbl_control が発行する
+    planner_msgs/PingerDirection のトピック名
 """
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import ComposableNodeContainer, LifecycleNode, Node
 from launch_ros.descriptions import ComposableNode
@@ -38,6 +47,7 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description() -> LaunchDescription:
     log_level = LaunchConfiguration("log_level")
     main_tree = LaunchConfiguration("main_tree")
+    pinger_direction_topic = LaunchConfiguration("pinger_direction_topic")
 
     wrench_planner_config = PathJoinSubstitution(
         [
@@ -110,8 +120,8 @@ def generate_launch_description() -> LaunchDescription:
     # 新規BT葉ノードは相対トピック名(odom, zoh_wrench_plan, pinger_direction, buoy_detection)
     # しか知らないため、btExecutorNode(namespace無し)側で実トピック名にremapする
     # (Kyubic本家のbehavior_tree.launch.pyがimu/dvl/depth等をremapしているのと同じ流儀)。
-    # pinger_direction/buoy_detectionの実際のトピック名は、以前bluerov_control側で
-    # 確認したものと同じ(音響班/画像処理班のノードが決まり次第、要再確認)。
+    # pinger_direction: sbl_control(sbl.launch.py)が発行。BT葉ノードは相対名
+    # pinger_direction を購読し、ここで実トピックへ remap する。
     bt_manager_node = Node(
         package="behavior_tree",
         executable="behavior_tree",
@@ -120,16 +130,48 @@ def generate_launch_description() -> LaunchDescription:
             {
                 "bt_xml_file": bt_xml_path,
                 "main_tree_id": main_tree,
+                # リードスイッチ(/driver/blue_rov/mission_start_trigger)発火まで
+                # MainTree開始を待つ。発火後はジョイスティック操作なしでBlueROV2Autoへ直行する
+                # (iwakuni2026.xml MainTree参照)。
+                "wait_for_trigger": True,
             },
         ],
         remappings=[
             ("odom", "/localization/odom"),
+            ("imu", "/driver/imu"),
+            ("depth", "/driver/depth"),
+            ("dvl", "/driver/dvl"),
+            ("power_state", "/driver/blue_rov/mavlink_driver/power_state"),
+            # ("leak", "/driver/leak"),  # 後述の leak 追加後
             ("zoh_wrench_plan", "/planner/wrench_planner/zoh_wrench_plan"),
-            ("pinger_direction", "/pinger_direction"),
+            ("pinger_direction", pinger_direction_topic),
             ("buoy_detection", "/perception/buoy_detection"),
         ],
         arguments=["--ros-args", "--log-level", log_level],
         output="screen",
+    )
+
+    # buoy_detector(perception側の検出ノードを直接起動。buoy_detector_driverは使用しない)。
+    # 出力トピック/buoy/relative_positionは、bt_xml/iwakuni2026.xmlのCheckBuoyInFrame/
+    # CheckBuoyPosition/WriteVisionWaypointCSVがbuoy_relative_position_topicポートで
+    # 直接購読するトピック名と一致させている。
+    buoy_detector_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [FindPackageShare("buoy_detector"), "launch", "buoy_detector.launch.py"]
+            )
+        ),
+        launch_arguments={
+            "input_image_topic": "/driver/blue_rov/camera/image_raw",
+            "output_topic": "/buoy/relative_position",
+            "body_frame_id": "base_link",
+            "confidence": "0.25",
+            "device": "cpu",
+            # iwakuni2026.xmlのCheckBuoyPosition(FinalApproach)はposition_valid==trueを
+            # 要求するため、position_estimation_enabledはtrueが必須(falseだとposition_valid
+            # が常にfalseになりFinalApproachが永久に成立しない)。
+            "position_estimation_enabled": "true",
+        }.items(),
     )
 
     heartbeat_publisher_node = Node(
@@ -154,9 +196,16 @@ def generate_launch_description() -> LaunchDescription:
                 description="個別テスト用。iwakuni2026.xml内のBehaviorTree IDを直接rootとして"
                 "起動する。空なら通常のMainTreeを実行",
             ),
+            DeclareLaunchArgument(
+                "pinger_direction_topic",
+                default_value="/pinger_direction",
+                description="sbl_control(sbl.launch.py)が発行する planner_msgs/PingerDirection "
+                "トピック名",
+            ),
             wrench_planner_container,
             emergency_node,
             bt_manager_node,
+            buoy_detector_launch,
             heartbeat_publisher_node,
         ]
     )

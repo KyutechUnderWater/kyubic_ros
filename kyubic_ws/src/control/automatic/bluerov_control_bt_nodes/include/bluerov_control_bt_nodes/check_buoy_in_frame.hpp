@@ -3,25 +3,27 @@
 
 #include <behaviortree_cpp/condition_node.h>
 
-#include <buoy_interfaces/msg/buoy_relative_position.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 namespace bluerov_control_bt_nodes
 {
 
 /**
- * @brief 画像処理班の生データ(buoy_interfaces/msg/BuoyRelativePosition)を直接購読し、
- * ブイがカメラに写っているかを毎tick即座に判定するConditionノード(iwakuni2026.xml、
- * `Final Descend Successful`直後の「写っていなければハイドロフォン方向へ向き直る」ループ)。
+ * @brief perception/buoy_detector(buoy_detector_node.py)が書き出す固定CSVの最終行を
+ * (buoy_detection_csv_reader経由で)読み、ブイがカメラに写っているかを毎tick即座に判定する
+ * Conditionノード(iwakuni2026.xml、`Final Descend Successful`直後の「写っていなければ
+ * ハイドロフォン方向へ向き直る」ループ)。
  * @details `CheckPingerPitch`と同じ実装パターン(RUNNINGを返さない。親のFallbackが
  * 2番目の子(向き直り)を毎tick試せるようにするため)。
  *
- * 前回作った`buoy_detector_driver`(BuoyRelativePosition -> bluerov_control_msgs/BuoyDetection
- * への変換アダプタ)経由ではなく、画像処理班の`perception/buoy_detector`が発行する
- * BuoyRelativePositionを直接購読する点に注意(`buoy_detector_driver`とは別経路)。
+ * 以前は`/buoy/relative_position`(buoy_interfaces/msg/BuoyRelativePosition)を直接購読して
+ * いたが、buoy_detector_node.pyが同じ検出値を毎フレーム追記している固定CSVを
+ * `buoy_detection_csv_reader`経由で読み取る方式に変更した(パス・列レイアウトは
+ * buoy_detection_csv_reader.hpp参照)。
  *
  * `detected == true` かつ `confidence >= confidence_threshold` ならSUCCESS。
- * それ以外(未受信の場合を含む)はFAILURE(安全側、まだ写っていないとみなす)。
+ * それ以外(CSV未生成・stale_timeout_sec超過・パース不能の場合を含む)はFAILURE(安全側、
+ * まだ写っていないとみなす)。
  */
 class CheckBuoyInFrame : public BT::ConditionNode
 {
@@ -35,10 +37,6 @@ public:
 
 private:
   rclcpp::Node::SharedPtr ros_node_;
-  rclcpp::Subscription<buoy_interfaces::msg::BuoyRelativePosition>::SharedPtr detection_sub_;
-  buoy_interfaces::msg::BuoyRelativePosition::SharedPtr latest_detection_;
-
-  void detectionCallback(const buoy_interfaces::msg::BuoyRelativePosition::SharedPtr msg);
 };
 
 }  // namespace bluerov_control_bt_nodes
