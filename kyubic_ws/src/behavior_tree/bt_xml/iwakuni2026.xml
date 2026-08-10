@@ -27,7 +27,7 @@
 
       前提トピック / ノード:
         - /localization/odom (localization)
-        - pinger_direction / pinger_position (別ラズパイ sbl_control、音響追跡時)
+        - pinger_direction (別ラズパイ sbl_control、音響追跡時)
         - /buoy/relative_position (buoy_detector、ビジョン時)
         - planner/pdla_planner/pdla_plan (WaypointAction)
         - planner/wrench_planner (ZOH、LifecycleManager で activate)
@@ -36,8 +36,8 @@
         1. 初期化(localization リセット・ZOH 起動)
         1.5. 初回移動直前に IMU ヨー/姿勢ゼロ点リセット(現在の向き=yaw 0)
         2. 初期位置 (5,0,5) へ一気に移動(initial_dive_505.csv、z_mode=0 depth)
-        [3] ハイドロフォン追跡(0.5m ずつ接近)
-        pinger_position が有効なら絶対位置へ、未受信時は pinger_direction で相対ステップ。
+        [3] ハイドロフォン追跡(0.5m ずつ、pinger_direction 方向へステップ)
+        十分近い判定は CheckPingerPitch(pitch≤50°、要実機検証)のみ。
         4. 最終潜航(水底からの高度。pinger_final_descend のみ z_mode=altitude)
         5. FindPingerAction(視覚捕捉)
         6. ビジョン突撃→復帰のあと [3] ハイドロ追跡へ戻る(ピンガー上から検出でサイクル終了)
@@ -129,23 +129,19 @@
       <!--
         [3] ハイドロフォン追跡ループ
         RetryUntilSuccessful(-1) + Fallback(PingerCloseOrStep):
-          第1子 Fallback(PingerCloseEnough):
-            CheckPingerRange(1.0m) または CheckPingerPitch(50°) → 十分近い → SUCCESS でループ脱出
-          第2子 PingerStepAndRetry: 0.5m 前進 → AlwaysFailure で親を再試行
-        WritePingerWaypointCSV は Z_MODE_DEPTH(水深基準)固定。
-        pinger_direction / pinger_position は bluerov_bt.launch.py で remap。
+          第1子: CheckPingerPitch(50°) → 十分近い → SUCCESS でループ脱出
+          第2子 PingerStepAndRetry: pinger_direction へ 0.5m 前進 → AlwaysFailure で親を再試行
+        WriteHydrophoneWaypointCSV は Z_MODE_DEPTH(水深基準)固定。
+        pinger_direction は bluerov_bt.launch.py で remap。
       -->
       <Talker name="AutomatickTalker"
         message="Pinger Chase Start"
         topic_name="/talker" />
       <RetryUntilSuccessful num_attempts="-1">
         <Fallback name="PingerCloseOrStep">
-          <Fallback name="PingerCloseEnough">
-            <CheckPingerRange range_threshold_m="1.0" />
-            <CheckPingerPitch pitch_threshold_deg="50.0" />
-          </Fallback>
+          <CheckPingerPitch pitch_threshold_deg="50.0" />
           <Sequence name="PingerStepAndRetry">
-            <WritePingerWaypointCSV
+            <WriteHydrophoneWaypointCSV
               odom_topic_name="odom"
               step_distance_m="0.5"
               csv_file_path="assets/iwakuni/hydrophone_step.csv" />

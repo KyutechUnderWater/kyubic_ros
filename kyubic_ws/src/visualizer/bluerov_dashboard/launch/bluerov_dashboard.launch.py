@@ -33,7 +33,7 @@ def generate_launch_description() -> LaunchDescription:
                     ("power_state", "/driver/blue_rov/mavlink_driver/power_state"),
                     ("gnss", "/driver/blue_rov/mavlink_driver/gnss"),
                     ("vehicle_state", "/driver/blue_rov/mavlink_driver/vehicle_state"),
-                    ("dvl", "/driver/dvl"),
+                    ("dvl", "/driver/blue_rov/dvl75_driver/dvl75"),
                     ("image_raw", "/driver/blue_rov/camera/image_raw"),
                     ("set_armed", "/driver/blue_rov/mavlink_driver/set_armed"),
                     ("led", "/driver/blue_rov/mavlink_driver/led"),

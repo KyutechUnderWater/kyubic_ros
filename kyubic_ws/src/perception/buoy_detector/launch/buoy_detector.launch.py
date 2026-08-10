@@ -19,15 +19,20 @@ def generate_launch_description() -> LaunchDescription:
     position_estimation_enabled = LaunchConfiguration(
         "position_estimation_enabled"
     )
+    start_enabled = LaunchConfiguration("start_enabled")
 
     return LaunchDescription(
         [
             DeclareLaunchArgument(
                 "model_path",
                 default_value=PathJoinSubstitution(
-                    [FindPackageShare("buoy_detector"), "models", "best.pt"]
+                    [FindPackageShare("buoy_detector"), "models", "best_ncnn_model"]
                 ),
-                description="YOLO学習済みモデルのパス",
+                description=(
+                    "YOLO学習済みモデルのパス。既定はNCNN FP16版ディレクトリ"
+                    "(RasPiのCPU推論で.ptの約3倍速)。.ptを使う場合は"
+                    "model_path:=.../models/best.pt を指定"
+                ),
             ),
             DeclareLaunchArgument(
                 "config_path",
@@ -68,6 +73,15 @@ def generate_launch_description() -> LaunchDescription:
                     "position_valid=false、位置座標=NaNで配信する"
                 ),
             ),
+            DeclareLaunchArgument(
+                "start_enabled",
+                default_value="false",
+                description=(
+                    "起動直後から画処理を行うか。既定はfalseで、"
+                    "/perception/image_processing_enable (std_msgs/Bool) の"
+                    "trueを受けてから推論・配信を開始する。単体テスト時はtrue"
+                ),
+            ),
             Node(
                 package="buoy_detector",
                 executable="buoy_detector_node",
@@ -92,6 +106,10 @@ def generate_launch_description() -> LaunchDescription:
                         ),
                         "position_estimation_enabled": ParameterValue(
                             position_estimation_enabled,
+                            value_type=bool,
+                        ),
+                        "start_enabled": ParameterValue(
+                            start_enabled,
                             value_type=bool,
                         ),
                     }

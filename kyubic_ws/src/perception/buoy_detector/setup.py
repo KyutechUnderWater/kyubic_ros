@@ -25,8 +25,7 @@ setup(
         ),
         (
             os.path.join("share", package_name, "models"),
-            glob(os.path.join("models", ".pt")),
-            
+            glob(os.path.join("models", "*.pt")),
         ),
         (
             os.path.join("share", package_name, "models", "best_ncnn_model"),

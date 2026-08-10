@@ -12,6 +12,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image
+from std_msgs.msg import Bool
 from ultralytics import YOLO
 import yaml
 
@@ -236,6 +237,12 @@ class BuoyDetectorNode(Node):
         # ノード起動時に固定CSVを初期化し、画像受信ごとに1行追加する。
         self.declare_parameter("csv_logging_enabled", True)
 
+        # 画処理のON/OFF制御。enable_topic(std_msgs/Bool)がtrueの間だけYOLO推論・配信する。
+        # ミッション(pinger_search_control)がVISION_ALIGN中にtrueを配信する。
+        # 単体テストで常時ONにしたい場合は start_enabled:=true で起動する。
+        self.declare_parameter("enable_topic", "/perception/image_processing_enable")
+        self.declare_parameter("start_enabled", False)
+
         model_path = Path(
             str(self.get_parameter("model_path").value)
         ).expanduser()
@@ -264,6 +271,8 @@ class BuoyDetectorNode(Node):
         self._csv_logging_enabled = bool(
             self.get_parameter("csv_logging_enabled").value
         )
+        self._enable_topic = str(self.get_parameter("enable_topic").value)
+        self._enabled = bool(self.get_parameter("start_enabled").value)
 
         self._csv_path = CSV_PATH
         self._csv_file: Any | None = None
@@ -273,7 +282,8 @@ class BuoyDetectorNode(Node):
 
         self._validate_parameters(model_path=model_path)
         self._config = load_config(config_path)
-        self._model = YOLO(str(model_path))
+        # NCNNエクスポート(ディレクトリ指定)はtaskを自動推定できないため明示する
+        self._model = YOLO(str(model_path), task="detect")
         self._bridge = CvBridge()
 
         if self._csv_logging_enabled:
@@ -290,6 +300,12 @@ class BuoyDetectorNode(Node):
             self._image_callback,
             qos_profile_sensor_data,
         )
+        self._enable_subscription = self.create_subscription(
+            Bool,
+            self._enable_topic,
+            self._enable_callback,
+            10,
+        )
 
         self.get_logger().info(
             "Buoy detector started: "
@@ -297,7 +313,8 @@ class BuoyDetectorNode(Node):
             f"output={self._output_topic}, "
             f"frame_id={self._body_frame_id}, "
             f"device={self._device}, "
-            f"csv={self._csv_path if self._csv_path else 'disabled'}"
+            f"csv={self._csv_path if self._csv_path else 'disabled'}, "
+            f"enabled={self._enabled} (enable_topic={self._enable_topic})"
         )
 
         camera_config = require_mapping(self._config, "camera")
@@ -316,7 +333,8 @@ class BuoyDetectorNode(Node):
             )
 
     def _validate_parameters(self, model_path: Path) -> None:
-        if not model_path.is_file():
+        # .ptはファイル、NCNNエクスポート(best_ncnn_model)はディレクトリ
+        if not model_path.exists():
             raise FileNotFoundError(
                 f"YOLOモデルがありません: {model_path}"
             )
@@ -449,7 +467,15 @@ class BuoyDetectorNode(Node):
         finally:
             self._frame_index += 1
 
+    def _enable_callback(self, msg: Bool) -> None:
+        if msg.data != self._enabled:
+            self.get_logger().info(f"image processing {'enabled' if msg.data else 'disabled'}")
+        self._enabled = msg.data
+
     def _image_callback(self, image_msg: Image) -> None:
+        if not self._enabled:
+            return  # 画処理OFF中はYOLO推論・配信・CSV記録を行わない
+
         timestamp_sec = self._relative_timestamp_sec(image_msg)
 
         detected = False

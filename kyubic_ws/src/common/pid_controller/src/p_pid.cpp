@@ -51,6 +51,14 @@ double VelocityP_PID::update(double current_slave, double current_master, double
   return slave_pid_->update(current_slave, master_out);
 }
 
+double VelocityP_PID::update_velocity_direct(double current_slave, double target_velocity)
+{
+  // Skip the master (position) P term entirely; still clamp to [lo, hi] so the
+  // axis's configured velocity limit is honored regardless of entry point.
+  master_out = std::clamp(target_velocity, lo, hi);
+  return slave_pid_->update(current_slave, master_out);
+}
+
 void VelocityP_PID::set_param_offset(double offset) { slave_pid_->set_offset(offset); }
 
 double VelocityP_PID::get_master_out() { return master_out; }

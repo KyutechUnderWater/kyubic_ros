@@ -26,7 +26,12 @@
 
     # Normal operation never modifies the DVL's persistent configuration.
     # Run dvl75_setup.launch.py once when provisioning a DVL instead.
-    apply_device_config: false
+    apply_device_config: true
+    # MANUAL-MODEを解除してオートモードへ戻す。MANUAL-MODEはSticky(電源off/onを跨いで保持)
+    # ではないため、この起動時コマンドで明示的にOFFを送って毎回確実に自動モードにする。
+    startup_commands:
+    - "MANUAL-MODE OFF"
+
     device_host_address: ""
     # Omit startup_commands when no additional command is required. An empty
     # YAML sequence has no element type and cannot represent ROS string[].

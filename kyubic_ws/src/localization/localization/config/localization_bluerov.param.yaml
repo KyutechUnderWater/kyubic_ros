@@ -21,6 +21,11 @@
     offset_z: 0.0
     # DVL velocity_valid==false でも直前速度で航続(degraded)。精度は保証しない。
     degraded_coast_on_invalid_dvl: true
+    # DVL速度が無効な間、直前速度を凍結する代わりにIMU加速度(重力補正込み)を積分して
+    # 速度を延伸する。DVLが復帰した瞬間に実測値で補正されるので、ドリフトはDVL途絶時間に
+    # 限定される。ただし重力ベクトルの符号・座標系は未検証。有効化する前に、機体を拘束した
+    # 静止状態・傾斜状態でtrueにした際の推定速度がゼロ付近を保つか必ずベンチで確認すること。
+    use_imu_accel_dead_reckoning: true
 
 /localization/localization_component:
   ros__parameters:

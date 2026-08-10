@@ -32,8 +32,8 @@ try:
         LED,
         PowerState,
         VehicleState,
+        DVL,
     )
-    from blue_rov_msgs.msg import DVL75
     from localization_msgs.msg import Odometry
 
     ROS_AVAILABLE = True
@@ -66,7 +66,7 @@ except ImportError:
         def destroy_node(self):
             pass
 
-    Depth = Gnss = IMU = PowerState = VehicleState = DVL75 = object
+    Depth = Gnss = IMU = PowerState = VehicleState = DVL = object
     BoolStamped = Int32Stamped = LED = WrenchStamped = Bool = Odometry = object
 
 
@@ -408,7 +408,7 @@ class MonitorNode(Node):
         self.create_subscription(PowerState, "power_state", self.cb_power, 10)
         self.create_subscription(Gnss, "gnss", self.cb_gnss, 10)
         self.create_subscription(VehicleState, "vehicle_state", self.cb_vehicle_state, 10)
-        self.create_subscription(DVL75, "dvl", self.cb_dvl, 10)
+        self.create_subscription(DVL, "driver/dvl", self.cb_dvl, 10)
         self.create_subscription(
             Image, "image_raw", self.cb_camera, qos_profile_sensor_data
         )
@@ -486,17 +486,28 @@ class MonitorNode(Node):
         d.custom_mode = msg.custom_mode
         d.system_status = msg.system_status
 
+    
     def cb_dvl(self, msg) -> None:
         d = self.state.dvl
-        d.last_update = time.time()
-        d.status_id = 0 if msg.dvext_valid else 2
-        d.velocity_north = msg.velocity_north
-        d.velocity_east = msg.velocity_east
-        d.velocity_up = msg.velocity_up
+        # 共通のステータス更新関数を使ってステータスID（0=正常, 2=エラー等）を取得
+        self._update_common(d, msg)
+        
+        # 速度が有効でない場合は強制的にエラー(2)扱いにする
+        if not msg.velocity_valid:
+            d.status_id = 2
+
+        # Vector3型の中にx, y, zが入っているため、msg.velocity.x のようにアクセス
+        d.velocity_north = msg.velocity.x
+        d.velocity_east = msg.velocity.y
+        d.velocity_up = msg.velocity.z
         d.altitude = msg.altitude
-        d.confidence = msg.confidence
-        d.bottom_lock = msg.bottom_lock
-        d.speed_norm = math.sqrt(msg.velocity_north**2 + msg.velocity_east**2)
+        
+        # 新しい型には confidence が無いため、エラー値(velocity_error)を利用するか0固定にする
+        d.confidence = 0 
+        
+        # 新しい型には bottom_lock の直接的なbool値が無いため、velocity_valid で代用
+        d.bottom_lock = msg.velocity_valid
+        d.speed_norm = math.sqrt(msg.velocity.x**2 + msg.velocity.y**2)
 
     def cb_camera(self, msg) -> None:
         now = time.time()

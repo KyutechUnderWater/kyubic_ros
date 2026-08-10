@@ -1,0 +1,89 @@
+/control/automatic/pinger_search/pinger_search_node:
+  ros__parameters:
+    # ---- ミッション定数 ----
+    start_delay_s: 45.0           # トリガ後、Yaw1記憶・ミッション開始までの待機時間 [s]
+    mission_timeout_s: 600.0      # step9: 開始(30秒待機明け)から9分で強制浮上
+    cruise_depth_m: 6.0           # step2: 探査時の保持深度 [m]
+    finish_depth_m: 1.0           # step8/9: 終了時の浮上深度 [m]
+    max_depth_m: 11.5              # step4で許す最大深度(安全上限) [m]
+    depth_step_m: 0.2             # step4の1ステップ降下量 [m]
+
+    # ---- 推力・時間 ----
+    dash_force_n: 20.0            # step1: 開始直後の前進力 [N]
+    dash_duration_s: 20.0          # step1: 前進時間 [s]
+    approach_forward_force_n: 20.0  # step3/音響追尾: ピンガーへ向く→前進の「前進」力 [N]
+    approach_forward_s: 5.0       # step3/音響追尾: 1回の前進時間 [s]
+    charge_force_n: 20.0          # step6: YOLO中心合わせ後の突進力 [N] (enable_vision:true時のみ)
+    charge_duration_s: 10.0        # step6: 突進時間 [s]
+    post_charge_lift_m: 0.5      # step6終了後: ブイはひも+磁石で目標物の下側に係留されているため、
+                                  # 突進後にこの分だけ浮上して引っ張り、磁石を外す [m]
+    post_charge_lift_trial_s: 4.0     # まず通常の深度PIDで浮上を試みる時間 [s]。
+                                  # 到達できなければ「ブイに引っかかった」と判定し最大推力へ切り替える
+    post_charge_lift_duration_s: 4.0  # 最大推力へ切り替えた後、前進を続けながら行う時間 [s]
+    post_charge_lift_force_n: 73.4    # 浮上力 [N]。深度PIDは使わず固定の最大推力を出し続ける
+                                  # (mavlink_driver axis.heave.limit=73.4Nが実際の上限。
+                                  # heave垂直2基36.7N×2、mavlink_driver.param.yaml参照)
+    retreat_force_n: 20.0         # step7: 後進力(正の値で指定、-xに印加) [N]
+    retreat_duration_s: 13.0       # step7: 後進時間 [s]
+    action_pause_s: 2.0           # 1動作(ダッシュ/前進/突進/後進等)後の小休止 [s]
+
+    # ---- 到達判定 ----
+    depth_tolerance_m: 0.1        # 深度目標の許容誤差 [m]
+    yaw_tolerance_deg: 15.0       # ヨー目標の許容誤差 [deg] (step3の「向き終わり」判定にも使用)
+    settle_duration_s: 1.5        # 許容内に連続滞在してから到達とみなす時間 [s]
+
+    # ---- ステートタイムアウト (条件待ちのハング防止。超過で次へ強制遷移) ----
+    state_timeout_s: 100.0        # 条件待ちステート共通の上限滞在時間 [s]
+    approach_timeout_s: 300.0     # PINGER_APPROACHのみ(移動距離があるので長め) [s]
+
+    # ---- ピンガー判定 ----
+    # 角度規約(確認済み): yawはロボット正面=0deg・右=正(+180)・左=負(-180)、pitchは上=正・下=負
+    pinger_filter_window: 3       # メディアンフィルタ窓(奇数推奨)。外れ値(単発の飛び)を除去
+    pinger_score_max: 100.0       # score(最適化誤差、小さいほど良い)がこれ超のサンプルは棄却
+    pinger_avg_samples: 2         # step3: 旋回目標を決める観測回数。停止して観測し、
+                                  # 外れ値を除いた平均方位に正面を合わせる。
+                                  # ピンガーは約1Hz+メディアン済みなので2〜3で十分
+                                  # (多くすると1回の停止観測が長くなる)
+    pinger_avg_outlier_deg: 20.0  # 平均時、メディアンからこれ超ズレたサンプルを棄却 [deg]
+    pinger_yaw_sign: 1.0          # yaw正=右(確認済み)。逆の機体構成になったら-1.0
+    pinger_depression_sign: -1.0  # 伏角=sign*pitch。pitch負=下(確認済み)なので-1.0のまま
+    pinger_below_pitch_deg: 68.0  # 伏角がこれ以上で「ほぼ真下」→ step4開始
+    pinger_front_pitch_deg: 10.0  # |伏角|がこれ以内で「正面」→ step5へ
+    pinger_above_pitch_deg: 10.0  # 伏角が-これより上で「ロボットより上」→ 浮上終了(step8)
+    pinger_above_hold_s: 10.0     # 「上」判定がこの秒数連続で成立したら:
+                                  #   探査(PINGER_APPROACH)中 → 通り過ぎ確定、浮上して終了
+                                  #   突進(CHARGE)中 → 中断して後進→cruise深度→SURFACE_CHECK
+    pinger_front_confirm_s: 3.0   # step4: 正面ピッチ条件がこの秒数連続で成立したら
+                                  # 「確実に正面」とみなす [s] (ピンガー約1Hz ≒ 3サンプル)
+                                  # ヨーの最終合わせは浮上後(RISE_ALIGN)に行う
+    charge_rise_m: 0.1            # step4': 突進前に浮上する量 [m]。ピンガーが目標物の
+                                  # 下側に付いているため、少し上がってからヨー合わせ・突進する
+    surface_check_duration_s: 5.0 # step8でピンガーを観測する最低時間 [s]
+
+    # ---- YOLO中心合わせ(step5-6) ----
+    enable_vision: false          # 画処理を使うか。falseならstep5-6をスキップし、
+                                  # 正面確認後そのままCHARGE(数秒前進)する
+    center_tolerance: 0.15        # 水平正規化偏差(±1.0)の中央判定閾値
+                                  # (深度は画処理で合わせない: 左右のみ判定・調整)
+    center_hold_s: 1.5            # 中央に居続けたら突進(CHARGE)へ移る時間 [s]
+    vision_yaw_rate_deg_s: 20.0   # 水平偏差1.0あたりのyaw目標変化速度 [deg/s]
+    buoy_timeout_s: 1.0           # 検出がこの時間途絶えたらピンガーアプローチに戻る [s]
+    light_pwm: 1500               # 画処理中のライト明るさ(PWM)。1100=消灯〜1900=最大。
+                                  # 画処理ONと同時に点灯し、OFFで消灯する
+
+    # ---- 深度PID (出力=force.z [N]、正=潜航。0.7mプールの実機合わせ値を引き継ぎ) ----
+    depth_kp: 50.0                # 比例: 誤差1mあたりの推力 [N/m]
+    depth_ki: 3.0                 # 積分: 定常偏差(浮力ずれ)の打ち消し
+    depth_kd: 6.0                 # 微分: 行き過ぎの抑制
+    depth_force_limit_n: 20.0     # 深度推力の上限 [N] (緩やかな深度保持用の意図的な低め設定。
+                                  # mavlink_driver axis.heave.limitの実際値は73.4N)
+
+    # ---- ヨーPID (入力=誤差[deg]、出力=torque.z [Nm]、正=右旋回。実機合わせ値を引き継ぎ) ----
+    yaw_kp: 0.03                  # 比例 [Nm/deg]
+    yaw_ki: 0.001                 # 積分
+    yaw_kd: 0.001                 # 微分: 旋回の行き過ぎ抑制
+    yaw_torque_limit_nm: 1.0      # ヨートルク上限 [Nm] (mavlink_driver yaw軸limitは10Nm)
+    yaw_torque_sign: 1.0          # torque.z正=右旋回でない機体なら-1.0
+
+    # ---- 監視 ----
+    sensor_timeout_s: 1.0         # imu/depthがこの時間途絶えたら中立wrenchを出す [s]

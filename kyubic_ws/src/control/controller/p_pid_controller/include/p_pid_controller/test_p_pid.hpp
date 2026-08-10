@@ -42,6 +42,21 @@ private:
 
   uint8_t pre_z_mode = 0;
 
+  /// True once a real target has been received, or the first odometry sample
+  /// has been used to seed a hold-current-position target.
+  bool has_target_received_ = false;
+
+  /// True once the first odometry sample has been received.
+  bool has_odom_received_ = false;
+
+  /// Wall-clock time the last odometry sample was received. Used to detect a stale
+  /// odom (e.g. a flaky DVL) independently of publish_rate_hz's fixed-rate timer.
+  rclcpp::Time last_odom_time_;
+
+  /// If no odometry has been received within this many seconds, withhold
+  /// robot_force instead of coasting on stale data indefinitely.
+  double odom_timeout_s_ = 1.0;
+
   /**
    * @brief Get target value (x, y, z, roll, yaw)
    * @details Get target value via topic communication

@@ -6,7 +6,7 @@
     command_rate_hz: 10.0
     connection_timeout_s: 3.0
     reconnect_delay_s: 2.0
-    command_timeout_s: 0.5
+    command_timeout_s: 2.0
     control_heartbeat_timeout_s: 1.0
     require_control_heartbeat: true
     set_armed_timeout_s: 3.0

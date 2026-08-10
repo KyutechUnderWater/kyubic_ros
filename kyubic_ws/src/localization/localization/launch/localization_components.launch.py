@@ -69,6 +69,7 @@ def generate_launch_description():
                         "transformed_imu",
                         "/localization/imu/transformed",
                     ),
+                    ("imu_raw", "/driver/imu"),
                 ],
                 parameters=[config],
                 extra_arguments=[

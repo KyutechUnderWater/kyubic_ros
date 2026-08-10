@@ -115,6 +115,31 @@ double P_PIDController::pid_yaw_update(
   return pid_yaw_->update(current_slave, current_master, target_master);
 }
 
+double P_PIDController::pid_x_update_velocity(double current_slave, double target_velocity)
+{
+  return pid_x_->update_velocity_direct(current_slave, target_velocity);
+}
+
+double P_PIDController::pid_y_update_velocity(double current_slave, double target_velocity)
+{
+  return pid_y_->update_velocity_direct(current_slave, target_velocity);
+}
+
+double P_PIDController::pid_z_update_velocity(double current_slave, double target_velocity)
+{
+  return pid_z_->update_velocity_direct(current_slave, target_velocity);
+}
+
+double P_PIDController::pid_roll_update_velocity(double current_slave, double target_velocity)
+{
+  return pid_roll_->update_velocity_direct(current_slave, target_velocity);
+}
+
+double P_PIDController::pid_yaw_update_velocity(double current_slave, double target_velocity)
+{
+  return pid_yaw_->update_velocity_direct(current_slave, target_velocity);
+}
+
 std::array<double, 5> P_PIDController::update(std::array<std::array<double, 3>, 5> data)
 {
   std::array<std::shared_ptr<pid_controller::VelocityP_PID>, 5> list_pid_ = {

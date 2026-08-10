@@ -50,6 +50,16 @@ public:
   double pid_roll_update(double current_slave, double current_master, double target);
   double pid_yaw_update(double current_slave, double current_master, double target);
 
+  /**
+   * @brief Drive an axis's inner velocity loop directly from a target velocity, bypassing the
+   * outer position P loop. For tuning/verifying the velocity loop in isolation.
+   */
+  double pid_x_update_velocity(double current_slave, double target_velocity);
+  double pid_y_update_velocity(double current_slave, double target_velocity);
+  double pid_z_update_velocity(double current_slave, double target_velocity);
+  double pid_roll_update_velocity(double current_slave, double target_velocity);
+  double pid_yaw_update_velocity(double current_slave, double target_velocity);
+
   void set_z_offset(double force);
   void set_roll_offset(double roll_deg);
 

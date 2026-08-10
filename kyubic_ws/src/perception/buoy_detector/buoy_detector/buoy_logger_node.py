@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+from datetime import datetime
 from pathlib import Path
 
 from buoy_interfaces.msg import BuoyRelativePosition
@@ -17,9 +18,14 @@ CSV_HEADER = [
     "stamp_sec",
     "stamp_nanosec",
     "image_filename",
+    "frame_id",
     "detected",
+    "yaw_valid",
     "position_valid",
     "confidence",
+    "normalized_horizontal_offset",
+    "normalized_vertical_offset",
+    "relative_buoy_yaw_rad",
     "relative_buoy_x_m",
     "relative_buoy_y_m",
     "relative_buoy_z_m",
@@ -45,7 +51,7 @@ class BuoyLoggerNode(Node):
             "input_detection_topic", "/buoy/relative_position"
         )
         self.declare_parameter("output_dir", "~/buoy_logs")
-        self.declare_parameter("save_rate_hz", 1.5)
+        self.declare_parameter("save_rate_hz", 1.0)
         self.declare_parameter("image_format", "jpg")
 
         self._input_image_topic = str(
@@ -54,9 +60,11 @@ class BuoyLoggerNode(Node):
         self._input_detection_topic = str(
             self.get_parameter("input_detection_topic").value
         )
-        self._output_dir = Path(
-            str(self.get_parameter("output_dir").value)
-        ).expanduser()
+        run_name = datetime.now().strftime("run_%Y%m%d_%H%M%S")
+        self._output_dir = (
+            Path(str(self.get_parameter("output_dir").value)).expanduser()
+            / run_name
+        )
         self._save_rate_hz = float(self.get_parameter("save_rate_hz").value)
         self._image_format = str(self.get_parameter("image_format").value)
 
@@ -157,15 +165,20 @@ class BuoyLoggerNode(Node):
         detection_msg: BuoyRelativePosition | None,
     ) -> None:
         if detection_msg is None:
-            row = [stamp_sec, stamp_nanosec, image_filename, "", "", "", "", "", ""]
+            row = [stamp_sec, stamp_nanosec, image_filename, "", "", "", "", "", "", "", "", "", "", ""]
         else:
             row = [
                 stamp_sec,
                 stamp_nanosec,
                 image_filename,
+                detection_msg.header.frame_id,
                 detection_msg.detected,
+                detection_msg.yaw_valid,
                 detection_msg.position_valid,
                 detection_msg.confidence,
+                detection_msg.normalized_horizontal_offset,
+                detection_msg.normalized_vertical_offset,
+                detection_msg.relative_buoy_yaw_rad,
                 detection_msg.relative_buoy_x_m,
                 detection_msg.relative_buoy_y_m,
                 detection_msg.relative_buoy_z_m,

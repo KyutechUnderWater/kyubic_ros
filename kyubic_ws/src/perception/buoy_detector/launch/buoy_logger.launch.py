@@ -16,7 +16,7 @@ def generate_launch_description() -> LaunchDescription:
         [
             DeclareLaunchArgument(
                 "input_image_topic",
-                default_value="/camera/image_raw",
+                default_value="/driver/blue_rov/camera/image_raw",
             ),
             DeclareLaunchArgument(
                 "input_detection_topic",
@@ -29,7 +29,7 @@ def generate_launch_description() -> LaunchDescription:
             ),
             DeclareLaunchArgument(
                 "save_rate_hz",
-                default_value="1.5",
+                default_value="1.0",
                 description="画像・検出結果を保存する頻度[Hz]",
             ),
             DeclareLaunchArgument(

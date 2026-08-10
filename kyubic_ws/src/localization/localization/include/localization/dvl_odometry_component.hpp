@@ -40,6 +40,7 @@ class DVLOdometry : public rclcpp::Node
 private:
   rclcpp::Publisher<localization_msgs::msg::Odometry>::SharedPtr pub_;
   rclcpp::Subscription<localization_msgs::msg::Odometry>::SharedPtr sub_imu_;
+  rclcpp::Subscription<driver_msgs::msg::IMU>::SharedPtr sub_imu_raw_;
   rclcpp::Subscription<driver_msgs::msg::DVL>::SharedPtr sub_dvl_;
   rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr srv_;
 
@@ -47,6 +48,10 @@ private:
 
   std::array<float, 3> offset;
   std::shared_ptr<localization_msgs::msg::Odometry> imu_msg_;
+  /// Raw (untransformed) IMU sample, used only for body-frame linear acceleration
+  /// (localization_msgs::msg::Odometry carries no accel field). Orientation/angular
+  /// velocity still come from imu_msg_ as before.
+  std::shared_ptr<driver_msgs::msg::IMU> imu_raw_msg_;
 
   double pos_x = 0.0;
   double pos_y = 0.0;
@@ -62,6 +67,16 @@ private:
   /// velocity_valid==false でも一度でも有効計測があれば WARNING で推定を継続する。
   bool degraded_coast_on_invalid_dvl_ = true;
 
+  /// DVL速度が無効な間、直前速度を凍結する代わりにIMUの加速度(重力補正込み、body->world
+  /// 回転はDVL有効時と同じq_rotを流用)を積分して速度を延伸するかどうか。DVLが有効に戻った
+  /// 瞬間、実測速度で必ず補正(reset)されるので、ドリフトはDVL途絶時間分に限定される。
+  /// 重力ベクトルの符号・座標系は未検証のため、既定はfalse。有効化する前に、機体を拘束した
+  /// 静止・傾斜状態で、本パラメータをtrueにした際の推定速度がゼロ付近を保つか必ず確認すること。
+  bool use_imu_accel_dead_reckoning_ = false;
+
+  /// Standard gravity [m/s^2], used only when use_imu_accel_dead_reckoning_ is true.
+  static constexpr double kGravity = 9.80665;
+
   /**
    * @brief Update position
    * @details After getting the dvl data, the position is calculated based on the previous value and send to topic.
@@ -76,6 +91,12 @@ private:
    * @note The calculation cycle depends on the cycle of the topic sent from the imu driver.
    */
   void update_imu_callback(const localization_msgs::msg::Odometry::UniquePtr msg);
+
+  /**
+   * @brief Update raw imu data (for body-frame linear acceleration only)
+   * @details Acquisition the raw imu data, used by the accel dead-reckoning coast path.
+   */
+  void update_imu_raw_callback(const driver_msgs::msg::IMU::UniquePtr msg);
 
   /**
    * @brief Call reset func

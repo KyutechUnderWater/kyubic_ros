@@ -118,6 +118,10 @@ class MavlinkDriver(Node):
         self._led_left_pwm = AUX_PWM_MIN
         self._led_right_pwm = AUX_PWM_MIN
         self._water_temperature = math.nan
+        # Body-frame (FRD) linear acceleration [m/s^2] from the most recent HIGHRES_IMU
+        # message. ATTITUDE (which drives _publish_imu) carries no acceleration, so this
+        # is tracked separately and merged in whenever an IMU message is published.
+        self._last_accel = (math.nan, math.nan, math.nan)
 
         self._depth_pub = self.create_publisher(Depth, "depth", 10)
         self._imu_pub = self.create_publisher(IMU, "imu", 10)
@@ -291,6 +295,9 @@ class MavlinkDriver(Node):
         elif message_type == "SCALED_PRESSURE2":
             with self._state_lock:
                 self._water_temperature = message.temperature / 100.0
+        elif message_type == "HIGHRES_IMU":
+            with self._state_lock:
+                self._last_accel = (message.xacc, message.yacc, message.zacc)
         elif message_type == "ATTITUDE":
             self._publish_imu(message)
         elif message_type == "GPS_RAW_INT":
@@ -316,9 +323,11 @@ class MavlinkDriver(Node):
         message.header.frame_id = "imu"
         message.status.id = 0
         message.temperature = math.nan
-        message.accel.x = math.nan
-        message.accel.y = math.nan
-        message.accel.z = math.nan
+        with self._state_lock:
+            accel_x, accel_y, accel_z = self._last_accel
+        message.accel.x = accel_x
+        message.accel.y = accel_y
+        message.accel.z = accel_z
         message.gyro.x = radians_to_degrees(mav_message.rollspeed)
         message.gyro.y = radians_to_degrees(mav_message.pitchspeed)
         message.gyro.z = radians_to_degrees(mav_message.yawspeed)

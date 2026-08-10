@@ -10,6 +10,7 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Vector3.h>
 
+#include <cmath>
 #include <localization/dvl_odometry_component.hpp>
 
 using namespace std::chrono_literals;
@@ -22,10 +23,11 @@ DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odomet
   offset[0] = this->declare_parameter("offset_x", 0.0);
   offset[1] = this->declare_parameter("offset_y", 0.0);
   offset[2] = this->declare_parameter("offset_z", 0.0);
-  degraded_coast_on_invalid_dvl_ =
-    this->declare_parameter("degraded_coast_on_invalid_dvl", true);
+  degraded_coast_on_invalid_dvl_ = this->declare_parameter("degraded_coast_on_invalid_dvl", true);
+  use_imu_accel_dead_reckoning_ = this->declare_parameter("use_imu_accel_dead_reckoning", false);
 
   imu_msg_ = std::make_shared<localization_msgs::msg::Odometry>();
+  imu_raw_msg_ = std::make_shared<driver_msgs::msg::IMU>();
 
   rclcpp::QoS qos(rclcpp::KeepLast(1));
 
@@ -33,6 +35,8 @@ DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odomet
   sub_imu_ = create_subscription<localization_msgs::msg::Odometry>(
     "transformed_imu", qos,
     std::bind(&DVLOdometry::update_imu_callback, this, std::placeholders::_1));
+  sub_imu_raw_ = create_subscription<driver_msgs::msg::IMU>(
+    "imu_raw", qos, std::bind(&DVLOdometry::update_imu_raw_callback, this, std::placeholders::_1));
   sub_dvl_ = create_subscription<driver_msgs::msg::DVL>(
     "dvl", qos, std::bind(&DVLOdometry::update_callback, this, std::placeholders::_1));
   srv_ = create_service<std_srvs::srv::Trigger>(
@@ -45,6 +49,21 @@ DVLOdometry::DVLOdometry(const rclcpp::NodeOptions & options) : Node("dvl_odomet
 void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 {
   auto odom_msg = std::make_unique<localization_msgs::msg::Odometry>();
+
+  // Self-heal: pos_x/pos_y/last_velocity_world_ only ever accumulate via +=, so a single
+  // non-finite update (e.g. from a bug, or bad sensor data) would otherwise poison them
+  // permanently, with no branch below able to recover it on its own.
+  if (
+    !std::isfinite(pos_x) || !std::isfinite(pos_y) || !std::isfinite(last_velocity_world_.x()) ||
+    !std::isfinite(last_velocity_world_.y())) {
+    RCLCPP_ERROR(
+      this->get_logger(),
+      "pos_x/pos_y/last_velocity_world_ became non-finite; resetting horizontal state.");
+    if (!std::isfinite(pos_x)) pos_x = 0.0;
+    if (!std::isfinite(pos_y)) pos_y = 0.0;
+    if (!std::isfinite(last_velocity_world_.x())) last_velocity_world_.setX(0.0);
+    if (!std::isfinite(last_velocity_world_.y())) last_velocity_world_.setY(0.0);
+  }
 
   if (imu_msg_->status.imu.id == common_msgs::msg::Status::ERROR) {
     RCLCPP_ERROR(this->get_logger(), "Don't calculate odometry. Because IMU error occurred");
@@ -77,16 +96,80 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
         odom_msg->twist.linear.z_altitude = last_velocity_world_.z();
       }
     } else {
-      RCLCPP_WARN_THROTTLE(
-        this->get_logger(), *this->get_clock(), 2000,
-        "DVL velocity invalid; continuing degraded dead reckoning (last velocity coast)");
       odom_msg->status.dvl.id = common_msgs::msg::Status::WARNING;
 
       const auto now = this->get_clock()->now();
       const double dt = (now - pre_time).nanoseconds() * 1e-9;
       pre_time = now;
-      pos_x += last_velocity_world_.x() * dt;
-      pos_y += last_velocity_world_.y() * dt;
+
+      const bool accel_is_finite = std::isfinite(imu_raw_msg_->accel.x) &&
+                                   std::isfinite(imu_raw_msg_->accel.y) &&
+                                   std::isfinite(imu_raw_msg_->accel.z);
+
+      if (use_imu_accel_dead_reckoning_ && accel_is_finite) {
+        // Extend last_velocity_world_ using IMU acceleration instead of freezing it,
+        // so the velocity fed to the controller doesn't hold a stale value for the
+        // whole gap. DVL correcting last_velocity_world_ to a fresh measurement as
+        // soon as it's valid again (see the last branch below) bounds the drift to
+        // one gap's duration.
+        RCLCPP_WARN_THROTTLE(
+          this->get_logger(), *this->get_clock(), 2000,
+          "DVL velocity invalid; continuing degraded dead reckoning (IMU accel coast)");
+
+        tf2::Quaternion q_rot;
+        q_rot.setRPY(
+          imu_msg_->pose.orientation.x * DEGREE_TO_RADIAN,
+          imu_msg_->pose.orientation.y * DEGREE_TO_RADIAN,
+          imu_msg_->pose.orientation.z * DEGREE_TO_RADIAN);
+
+        tf2::Vector3 accel_body(
+          imu_raw_msg_->accel.x, imu_raw_msg_->accel.y, imu_raw_msg_->accel.z);
+        tf2::Vector3 accel_world_raw = tf2::quatRotate(q_rot, accel_body);
+        // Proper acceleration (accelerometer reading) = coordinate acceleration -
+        // gravity, so coordinate acceleration = reading + gravity. Gravity vector
+        // assumes the same body(FRD)->world rotation as the DVL-valid branch below,
+        // where +Z is down (world Z is unused here; only x/y are applied).
+        tf2::Vector3 accel_world = accel_world_raw + tf2::Vector3(0.0, 0.0, kGravity);
+
+        tf2::Vector3 next_velocity =
+          last_velocity_world_ + tf2::Vector3(accel_world.x(), accel_world.y(), 0.0) * dt;
+        if (std::isfinite(next_velocity.x()) && std::isfinite(next_velocity.y())) {
+          last_velocity_world_ = next_velocity;
+        } else {
+          RCLCPP_ERROR_THROTTLE(
+            this->get_logger(), *this->get_clock(), 2000,
+            "IMU accel coast produced a non-finite velocity; discarding this update and "
+            "holding the last known velocity instead.");
+        }
+      } else {
+        if (use_imu_accel_dead_reckoning_) {
+          RCLCPP_ERROR_THROTTLE(
+            this->get_logger(), *this->get_clock(), 2000,
+            "use_imu_accel_dead_reckoning is enabled but the latest IMU acceleration is "
+            "not finite (HIGHRES_IMU likely not being received); falling back to last "
+            "velocity coast.");
+        } else {
+          RCLCPP_WARN_THROTTLE(
+            this->get_logger(), *this->get_clock(), 2000,
+            "DVL velocity invalid; continuing degraded dead reckoning (last velocity coast)");
+        }
+      }
+
+      // Defense in depth: never accumulate into pos_x/pos_y from a non-finite velocity,
+      // regardless of how it got that way. Without this, a single bad sample would
+      // permanently poison pos_x/pos_y via +=, with no way for a later valid DVL fix to
+      // recover it (the valid branch below also uses +=, not an overwrite).
+      if (std::isfinite(last_velocity_world_.x()) && std::isfinite(last_velocity_world_.y())) {
+        pos_x += last_velocity_world_.x() * dt;
+        pos_y += last_velocity_world_.y() * dt;
+      } else {
+        RCLCPP_ERROR_THROTTLE(
+          this->get_logger(), *this->get_clock(), 2000,
+          "last_velocity_world_ is non-finite; resetting it and holding position to avoid "
+          "permanently poisoning pos_x/pos_y.");
+        last_velocity_world_.setX(0.0);
+        last_velocity_world_.setY(0.0);
+      }
 
       odom_msg->pose.position.x = pos_x;
       odom_msg->pose.position.y = pos_y;
@@ -146,6 +229,11 @@ void DVLOdometry::update_callback(const driver_msgs::msg::DVL::UniquePtr msg)
 void DVLOdometry::update_imu_callback(localization_msgs::msg::Odometry::UniquePtr msg)
 {
   imu_msg_ = std::move(msg);
+}
+
+void DVLOdometry::update_imu_raw_callback(driver_msgs::msg::IMU::UniquePtr msg)
+{
+  imu_raw_msg_ = std::move(msg);
 }
 
 void DVLOdometry::reset_callback(

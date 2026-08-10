@@ -127,6 +127,18 @@ public:
   double update(double current_slave, double current_master, double target_master);
 
   /**
+   * @brief Update PID cycle bypassing the outer master P loop
+   * @param current_slave Slave process value
+   * @param target_velocity Target velocity fed directly to the inner (slave) loop, in the
+   * same units as current_slave. Still clamped to [lo, hi] like the master loop's output would
+   * be, so the axis's configured velocity limit is respected.
+   * @return Manipulated value
+   * @details Use this for tuning/verifying the inner velocity loop in isolation, without the
+   * outer position loop's P term or position-error-driven target.
+   */
+  double update_velocity_direct(double current_slave, double target_velocity);
+
+  /**
    * @brief Reset previous slave output
    * @return none
    */
