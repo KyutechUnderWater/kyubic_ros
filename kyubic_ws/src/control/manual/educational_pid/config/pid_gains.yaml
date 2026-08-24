@@ -1,0 +1,8 @@
+/educational_pid_node:
+  ros__parameters:
+    kp_depth: 1.0
+    ki_depth: 0.0
+    kd_depth: 0.1
+    kp_yaw: 1.0
+    ki_yaw: 0.0
+    kd_yaw: 0.1
