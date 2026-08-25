@@ -220,3 +220,5 @@ rosbag2_*
 
 cache/
 .welcome-displayed
+core
+core.*
