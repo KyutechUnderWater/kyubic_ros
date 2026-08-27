@@ -1,25 +1,22 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>educational_pid</name>
+  <name>educational_pid_robot_prep</name>
   <version>0.1.0</version>
-  <description>Educational PID controller for heading and depth.</description>
+  <description>Day 4 safety gate and exercises for real-robot PID preparation.</description>
   <maintainer email="kyutech.robosub@gmail.com">Kyutech Underwater Robotics Team</maintainer>
   <license>Apache License 2.0</license>
 
   <depend>rclpy</depend>
   <depend>geometry_msgs</depend>
-  <depend>joy_common_msgs</depend>
   <depend>localization_msgs</depend>
-  <depend>common_msgs</depend>
-  <depend>std_srvs</depend>
   <depend>std_msgs</depend>
-  <depend>p_pid_controller_msgs</depend>
+  <depend>std_srvs</depend>
 
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
-  <exec_depend>joy_common</exec_depend>
+  <exec_depend>educational_pid</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

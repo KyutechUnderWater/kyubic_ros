@@ -1,0 +1,19 @@
+/**:
+  ros__parameters:
+    allow_arm: true
+    allow_manual_xy: false
+    # Launch引数で、試験する軸だけtrueにする。既定値は両方false。
+    allow_depth: false
+    allow_yaw: false
+    max_force_x: 0.0
+    max_force_y: 0.0
+    max_force_z: 2.0
+    max_torque_z: 0.5
+    publish_period: 0.05
+    command_timeout: 0.3
+    require_single_input_publisher: true
+    require_sole_output_publisher: true
+    require_output_subscriber: true
+    required_output_subscriber_name: "actuator_rp2040_driver"
+    require_heartbeat: true
+    heartbeat_timeout: 1.0

@@ -1,0 +1,27 @@
+/**:
+  ros__parameters:
+    # 起動時はPIDが無効。実測値を確認してからros2 param setで変更する。
+    target_depth: 0.0
+    target_yaw: 0.0
+
+    # 3日目のPC用ゲインをそのまま実機へ使用しない。
+    # まずPのみ・低い出力上限・一軸ずつ確認する。
+    kp_depth: 0.5
+    ki_depth: 0.0
+    kd_depth: 0.0
+    kp_yaw: 0.02
+    ki_yaw: 0.0
+    kd_yaw: 0.0
+
+    integral_limit_depth: 0.5
+    integral_limit_yaw: 5.0
+    max_force_z: 2.0
+    max_torque_z: 0.5
+    depth_feedforward: 0.0
+
+    # 4日目はX・Yの手動移動を行わない。
+    manual_force_x_scale: 0.0
+    manual_force_y_scale: 0.0
+    control_period: 0.1
+    sensor_timeout: 0.5
+    joy_timeout: 0.5

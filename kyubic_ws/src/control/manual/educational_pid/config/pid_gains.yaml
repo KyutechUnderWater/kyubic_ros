@@ -1,8 +1,24 @@
-/educational_pid_node:
+/**:
   ros__parameters:
-    kp_depth: 1.0
+    # PC用の初期値。実機用ゲインとして使用しないこと。
+    target_depth: 1.0
+    target_yaw: 45.0
+
+    kp_depth: 10.0
     ki_depth: 0.0
-    kd_depth: 0.1
-    kp_yaw: 1.0
+    kd_depth: 8.0
+    kp_yaw: 0.08
     ki_yaw: 0.0
-    kd_yaw: 0.1
+    kd_yaw: 0.04
+
+    integral_limit_depth: 2.0
+    integral_limit_yaw: 30.0
+    max_force_z: 8.0
+    max_torque_z: 3.0
+    depth_feedforward: 0.0
+
+    manual_force_x_scale: 52.0
+    manual_force_y_scale: 30.0
+    control_period: 0.1
+    sensor_timeout: 0.5
+    joy_timeout: 0.5

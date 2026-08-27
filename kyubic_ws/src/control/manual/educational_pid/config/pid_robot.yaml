@@ -1,0 +1,25 @@
+/**:
+  ros__parameters:
+    # 実機では、起動時の現在値を確認してから目標値を設定する。
+    target_depth: 0.0
+    target_yaw: 0.0
+
+    # 保守的な開始値。必ず水中・係留・低い出力上限で一軸ずつ確認する。
+    kp_depth: 1.0
+    ki_depth: 0.0
+    kd_depth: 0.1
+    kp_yaw: 0.05
+    ki_yaw: 0.0
+    kd_yaw: 0.01
+
+    integral_limit_depth: 1.0
+    integral_limit_yaw: 10.0
+    max_force_z: 5.0
+    max_torque_z: 2.0
+    depth_feedforward: 0.0
+
+    manual_force_x_scale: 52.0
+    manual_force_y_scale: 30.0
+    control_period: 0.1
+    sensor_timeout: 0.5
+    joy_timeout: 0.5

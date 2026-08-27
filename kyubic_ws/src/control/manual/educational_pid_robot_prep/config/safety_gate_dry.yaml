@@ -1,0 +1,18 @@
+/**:
+  ros__parameters:
+    allow_arm: true
+    allow_manual_xy: false
+    allow_depth: true
+    allow_yaw: true
+    max_force_x: 0.0
+    max_force_y: 0.0
+    max_force_z: 2.0
+    max_torque_z: 0.5
+    publish_period: 0.05
+    command_timeout: 0.3
+    require_single_input_publisher: true
+    require_sole_output_publisher: true
+    require_output_subscriber: false
+    required_output_subscriber_name: ""
+    require_heartbeat: false
+    heartbeat_timeout: 1.0
